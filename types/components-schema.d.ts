@@ -200,7 +200,7 @@ export interface DividerStoryblok {
 export interface DownloadStoryblok {
   name?: string;
   description?: string;
-  previewImage?: MultilinkStoryblok;
+  previewImage?: AssetStoryblok;
   url?: MultilinkStoryblok;
   size?: string;
   format?: string;
@@ -230,8 +230,8 @@ export interface EventDetailStoryblok {
 
 export interface EventFilterStoryblok {
   datePicker_title?: string;
-  "datePicker_tab-0d16d0e3-f3b1-46cc-b000-75f34e01708a"?: unknown;
-  "datePicker_tab-353e5776-bac2-4360-b2d9-2fa050e1980e"?: unknown;
+  "datePicker_tab-88b6f0ae-2d1e-4a4c-9142-024d6f5315e6"?: unknown;
+  "datePicker_tab-fcc5df0f-c2e7-412f-9e44-6135e9b591d9"?: unknown;
   datePicker_toggle?: boolean;
   categories_title?: string;
   categories_categoryCheckboxes?: CategoryCheckboxesStoryblok[];
