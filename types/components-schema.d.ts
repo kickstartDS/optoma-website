@@ -1,4 +1,4 @@
-import { StoryblokStory } from "storyblok-generate-ts";
+import {StoryblokStory} from 'storyblok-generate-ts'
 
 export interface BlogAsideStoryblok {
   author?: BlogAuthorStoryblok[];
@@ -200,7 +200,7 @@ export interface DividerStoryblok {
 export interface DownloadStoryblok {
   name?: string;
   description?: string;
-  previewImage?: AssetStoryblok;
+  previewImage?: MultilinkStoryblok;
   url?: MultilinkStoryblok;
   size?: string;
   format?: string;
@@ -230,8 +230,8 @@ export interface EventDetailStoryblok {
 
 export interface EventFilterStoryblok {
   datePicker_title?: string;
-  "datePicker_tab-031b763d-b9bb-4efd-b1ba-35d3f1eea44b"?: unknown;
-  "datePicker_tab-0b6ac043-bae7-4201-83f9-1a3165c7e2f3"?: unknown;
+  "datePicker_tab-0d16d0e3-f3b1-46cc-b000-75f34e01708a"?: unknown;
+  "datePicker_tab-353e5776-bac2-4360-b2d9-2fa050e1980e"?: unknown;
   datePicker_toggle?: boolean;
   categories_title?: string;
   categories_categoryCheckboxes?: CategoryCheckboxesStoryblok[];
@@ -263,50 +263,6 @@ export interface EventListStoryblok {
   events?: EventListTeaserStoryblok[];
   _uid: string;
   component: "event-list";
-}
-
-export interface EventListTeaserStoryblok {
-  category?: string;
-  title?: string;
-  text?: string;
-  date?: string;
-  time?: string;
-  location_name?: string;
-  location_address?: string;
-  tags?: TagsStoryblok[];
-  image_src?: AssetStoryblok;
-  image_alt?: string;
-  url?: MultilinkStoryblok;
-  ctaText?: string;
-  ariaLabel?: string;
-  className?: string;
-  _uid: string;
-  component: "event-list-teaser";
-}
-
-export interface DownloadsStoryblok {
-  name?: string;
-  description?: string;
-  previewImage?: MultilinkStoryblok;
-  url?: MultilinkStoryblok;
-  size?: string;
-  format?: string;
-  _uid: string;
-  component: "downloads";
-}
-
-export interface EventLatestTeaserStoryblok {
-  date?: string;
-  calendar_month?: string;
-  calendar_day?: string;
-  title?: string;
-  location?: string;
-  url?: MultilinkStoryblok;
-  cta?: string;
-  ariaLabel?: string;
-  className?: string;
-  _uid: string;
-  component: "event-latest-teaser";
 }
 
 export interface EventListTeaserStoryblok {
@@ -433,12 +389,7 @@ export interface HtmlStoryblok {
   consentText?: string;
   consentButtonLabel?: string;
   consentBackgroundImage?: AssetStoryblok;
-  consentAspectRatio?:
-    | ""
-    | "VALUE_16_9"
-    | "VALUE_16_10"
-    | "VALUE_4_3"
-    | "VALUE_1_1";
+  consentAspectRatio?: "" | "VALUE_16_9" | "VALUE_16_10" | "VALUE_4_3" | "VALUE_1_1";
   _uid: string;
   component: "html";
 }
@@ -630,13 +581,7 @@ export interface SectionStoryblok {
   width?: "" | "full" | "max" | "wide" | "default" | "narrow";
   style?: "" | "default" | "framed" | "deko";
   backgroundColor?: "" | "default" | "accent" | "bold";
-  transition?:
-    | ""
-    | "none"
-    | "to_default"
-    | "to_accent"
-    | "to_bold"
-    | "to_inverted";
+  transition?: "" | "none" | "to_default" | "to_accent" | "to_bold" | "to_inverted";
   backgroundImage?: AssetStoryblok;
   spotlight?: boolean;
   spaceBefore?: "" | "default" | "small" | "none";
@@ -654,41 +599,8 @@ export interface SectionStoryblok {
   content_align?: "" | "left" | "center" | "right";
   content_gutter?: "" | "large" | "default" | "small" | "none";
   content_mode?: "" | "default" | "tile" | "list" | "slider";
-  content_tileWidth?:
-    | ""
-    | "smallest"
-    | "default"
-    | "medium"
-    | "large"
-    | "largest"
-    | "full";
-  components?: (
-    | GlobalReferenceStoryblok
-    | BlogTeaserStoryblok
-    | BusinessCardStoryblok
-    | ContentNavStoryblok
-    | CtaStoryblok
-    | DividerStoryblok
-    | DownloadsStoryblok
-    | EventLatestTeaserStoryblok
-    | EventListTeaserStoryblok
-    | FaqStoryblok
-    | FeaturesStoryblok
-    | GalleryStoryblok
-    | HeroStoryblok
-    | ImageTextStoryblok
-    | InfoTableStoryblok
-    | LogosStoryblok
-    | MosaicStoryblok
-    | SliderStoryblok
-    | SplitEvenStoryblok
-    | SplitWeightedStoryblok
-    | StatsStoryblok
-    | TeaserCardStoryblok
-    | TestimonialsStoryblok
-    | TextStoryblok
-    | VideoCurtainStoryblok
-  )[];
+  content_tileWidth?: "" | "smallest" | "default" | "medium" | "large" | "largest" | "full";
+  components?: (InfoTableStoryblok | SplitEvenStoryblok | SplitWeightedStoryblok | GlobalReferenceStoryblok)[];
   buttons?: ButtonsStoryblok[];
   _uid: string;
   component: "section";
@@ -750,139 +662,16 @@ export interface SplitEvenStoryblok {
     | FeaturesStoryblok
     | GalleryStoryblok
     | HeroStoryblok
+    | HtmlStoryblok
+    | ImageStoryStoryblok
     | ImageTextStoryblok
-    | InfoTableStoryblok
     | LogosStoryblok
     | MosaicStoryblok
     | SliderStoryblok
-    | SplitEvenStoryblok
-    | SplitWeightedStoryblok
     | StatsStoryblok
     | TeaserCardStoryblok
     | TestimonialsStoryblok
     | TextStoryblok
-    | VideoCurtainStoryblok
-  )[];
-  secondComponents?: (
-    | BlogTeaserStoryblok
-    | BusinessCardStoryblok
-    | ContentNavStoryblok
-    | CtaStoryblok
-    | DividerStoryblok
-    | DownloadsStoryblok
-    | EventLatestTeaserStoryblok
-    | EventListTeaserStoryblok
-    | FaqStoryblok
-    | FeaturesStoryblok
-    | GalleryStoryblok
-    | HeroStoryblok
-    | HtmlStoryblok
-    | ImageStoryStoryblok
-    | ImageTextStoryblok
-    | InfoTableStoryblok
-    | LogosStoryblok
-    | MosaicStoryblok
-    | SliderStoryblok
-    | SplitEvenStoryblok
-    | SplitWeightedStoryblok
-    | StatsStoryblok
-    | TeaserCardStoryblok
-    | TestimonialsStoryblok
-    | TextStoryblok
-  )[];
-  _uid: string;
-  component: "split-even";
-}
-
-export interface SplitWeightedStoryblok {
-  verticalGutter?: "" | "large" | "default" | "small" | "none";
-  horizontalGutter?: "" | "large" | "default" | "small" | "none";
-  verticalAlign?: "" | "top" | "center" | "bottom" | "sticky";
-  mainLayout_gutter?: "" | "large" | "default" | "small" | "none";
-  mainLayout_minWidth?: "" | "narrow" | "default" | "wide";
-  asideLayout_gutter?: "" | "large" | "default" | "small" | "none";
-  asideLayout_minWidth?: "" | "narrow" | "default" | "wide";
-  order_mobile?: "" | "mainFirst" | "asideFirst";
-  order_desktop?: "" | "mainFirst" | "asideFirst";
-  mainComponents?: (
-    | BlogTeaserStoryblok
-    | BusinessCardStoryblok
-    | ContentNavStoryblok
-    | CtaStoryblok
-    | DividerStoryblok
-    | DownloadsStoryblok
-    | EventLatestTeaserStoryblok
-    | EventListTeaserStoryblok
-    | FaqStoryblok
-    | FeaturesStoryblok
-    | GalleryStoryblok
-    | HeroStoryblok
-    | HtmlStoryblok
-    | ImageStoryStoryblok
-    | ImageTextStoryblok
-    | InfoTableStoryblok
-    | LogosStoryblok
-    | MosaicStoryblok
-    | SliderStoryblok
-    | SplitEvenStoryblok
-    | SplitWeightedStoryblok
-    | StatsStoryblok
-    | TeaserCardStoryblok
-    | TestimonialsStoryblok
-    | TextStoryblok
-    | VideoCurtainStoryblok
-  )[];
-  asideComponents?: (
-    | BlogTeaserStoryblok
-    | BusinessCardStoryblok
-    | ContentNavStoryblok
-    | CtaStoryblok
-    | DividerStoryblok
-    | DownloadsStoryblok
-    | EventLatestTeaserStoryblok
-    | EventListTeaserStoryblok
-    | FaqStoryblok
-    | FeaturesStoryblok
-    | GalleryStoryblok
-    | HeroStoryblok
-    | HtmlStoryblok
-    | ImageStoryStoryblok
-    | ImageTextStoryblok
-    | InfoTableStoryblok
-    | LogosStoryblok
-    | MosaicStoryblok
-    | SliderStoryblok
-    | SplitEvenStoryblok
-    | SplitWeightedStoryblok
-    | StatsStoryblok
-    | TeaserCardStoryblok
-    | TestimonialsStoryblok
-    | TextStoryblok
-    | VideoCurtainStoryblok
-  )[];
-  _uid: string;
-  component: "split-weighted";
-}
-
-export interface SplitEvenStoryblok {
-  contentMinWidth?: "" | "narrow" | "medium" | "wide";
-  contentGutter?: "" | "small" | "default" | "large" | "none";
-  mobileReverse?: boolean;
-  verticalAlign?: "" | "top" | "center" | "bottom" | "sticky";
-  verticalGutter?: "" | "large" | "default" | "small" | "none";
-  horizontalGutter?: "" | "large" | "default" | "small" | "none";
-  firstComponents?: (
-    | BlogTeaserStoryblok
-    | BusinessCardStoryblok
-    | ContentNavStoryblok
-    | DividerStoryblok
-    | EventLatestTeaserStoryblok
-    | EventListTeaserStoryblok
-    | FaqStoryblok
-    | HtmlStoryblok
-    | ImageStoryStoryblok
-    | MosaicStoryblok
-    | SliderStoryblok
     | VideoCurtainStoryblok
   )[];
   secondComponents?: never[];

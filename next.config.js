@@ -25,6 +25,7 @@ const nextConfig = {
     "@kickstartds/form",
     "@kickstartds/ds-agency-premium",
   ],
+  output: "standalone",
 };
 
 module.exports = {

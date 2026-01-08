@@ -218,8 +218,10 @@ const SplitEven = forwardRef<
       {...rest}
       firstComponents={
         firstComponents &&
+        // @ts-expect-error
         firstComponents.length > 0 && (
           <>
+            {/* @ts-expect-error */}
             {firstComponents.map((component) => (
               <StoryblokComponent
                 key={component._uid}
@@ -231,8 +233,10 @@ const SplitEven = forwardRef<
       }
       secondComponents={
         secondComponents &&
+        // @ts-expect-error
         secondComponents.length > 0 && (
           <>
+            {/* @ts-expect-error */}
             {secondComponents.map((component) => (
               <StoryblokComponent
                 key={component._uid}
@@ -267,6 +271,7 @@ const SplitWeighted = forwardRef<
           <>
             {mainComponents.map((component) => (
               <StoryblokComponent
+                // @ts-expect-error
                 key={component._uid}
                 blok={unflatten(component)}
               ></StoryblokComponent>
@@ -280,6 +285,7 @@ const SplitWeighted = forwardRef<
           <>
             {asideComponents.map((component) => (
               <StoryblokComponent
+                // @ts-expect-error
                 key={component._uid}
                 blok={unflatten(component)}
               ></StoryblokComponent>

@@ -10,5 +10,6 @@ export const SectionProvider: FC<PropsWithChildren> = (props) => {
       <PrevSection {...props} ref={ref} />
     </HeadlineLevelProvider>
   ));
+  // @ts-expect-error
   return <SectionContext.Provider {...props} value={Section} />;
 };
