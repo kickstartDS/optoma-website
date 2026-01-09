@@ -744,7 +744,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "business-card",
@@ -968,7 +968,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "buttons",
@@ -1277,7 +1277,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "cta",
@@ -1566,7 +1566,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "dates",
@@ -1720,7 +1720,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "download",
@@ -1881,7 +1881,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "event-detail",
@@ -2405,7 +2405,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "event-list",
@@ -2666,7 +2666,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "faq",
@@ -2724,7 +2724,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "feature",
@@ -3035,7 +3035,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "footer",
@@ -3316,14 +3316,14 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "global",
       "display_name": "Global",
       "description": null,
       "created_at": "2026-01-09T11:25:14.244Z",
-      "updated_at": "2026-01-09T11:25:14.244Z",
+      "updated_at": "2026-01-09T11:57:23.185Z",
       "id": 132171015148573,
       "schema": {
         "global": {
@@ -3332,9 +3332,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "5250f1ac-6794-4087-b458-133efda78f8e"
-          ]
+          "component_group_whitelist": []
         }
       },
       "image": null,
@@ -3925,7 +3923,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "html",
@@ -4031,7 +4029,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "images",
@@ -4278,7 +4276,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "image-text",
@@ -4406,14 +4404,14 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "info-table",
       "display_name": "Info Table",
       "description": null,
       "created_at": "2026-01-09T11:24:56.388Z",
-      "updated_at": "2026-01-09T11:24:56.388Z",
+      "updated_at": "2026-01-09T11:56:51.793Z",
       "id": 132170942010370,
       "schema": {
         "data": {
@@ -4434,7 +4432,7 @@
       "all_presets": [],
       "preset_id": null,
       "real_name": "Info Table",
-      "component_group_uuid": "5250f1ac-6794-4087-b458-133efda78f8e",
+      "component_group_uuid": "6ede43e8-7f02-4a92-b572-153719b7b2d0",
       "color": "#05566a",
       "icon": "block-wallet",
       "internal_tags_list": [],
@@ -4880,7 +4878,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "matches",
@@ -5025,7 +5023,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "navItems",
@@ -5582,7 +5580,7 @@
       "display_name": "Section",
       "description": null,
       "created_at": "2026-01-09T11:24:57.244Z",
-      "updated_at": "2026-01-09T11:24:57.244Z",
+      "updated_at": "2026-01-09T11:58:01.749Z",
       "id": 132170945520643,
       "schema": {
         "width": {
@@ -6134,11 +6132,12 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "5250f1ac-6794-4087-b458-133efda78f8e",
+            "6ede43e8-7f02-4a92-b572-153719b7b2d0",
             "56b7934f-3c78-4f43-9462-555a5ec33984"
           ],
           "description": "Abstracts a blog post concept into JSON schema",
-          "required": false
+          "required": false,
+          "component_group_denylist": []
         },
         "buttons": {
           "id": 0,
@@ -6329,7 +6328,7 @@
       "display_name": "Settings",
       "description": null,
       "created_at": "2026-01-09T11:25:13.455Z",
-      "updated_at": "2026-01-09T11:25:13.455Z",
+      "updated_at": "2026-01-09T14:10:44.573Z",
       "id": 132171011916828,
       "schema": {
         "header": {
@@ -6382,6 +6381,11 @@
           "type": "text",
           "description": "Content of the icon sprite for this project",
           "required": false
+        },
+        "token": {
+          "type": "text",
+          "pos": 4,
+          "id": "-6869YdXTN-pmfcGeU8I9Q"
         }
       },
       "image": null,
@@ -6529,7 +6533,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "socialSharing",
@@ -6599,7 +6603,7 @@
       "display_name": "Split Even",
       "description": null,
       "created_at": "2026-01-09T11:24:54.387Z",
-      "updated_at": "2026-01-09T11:24:54.387Z",
+      "updated_at": "2026-01-09T11:58:30.179Z",
       "id": 132170933814272,
       "schema": {
         "contentMinWidth": {
@@ -6775,10 +6779,12 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "6ede43e8-7f02-4a92-b572-153719b7b2d0"
+            "6ede43e8-7f02-4a92-b572-153719b7b2d0",
+            "56b7934f-3c78-4f43-9462-555a5ec33984"
           ],
           "description": "Abstracts a blog post concept into JSON schema",
-          "required": false
+          "required": false,
+          "component_group_denylist": []
         },
         "secondComponents": {
           "id": 0,
@@ -6789,10 +6795,13 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "ca7f141c-075c-425b-acbe-be53ea31fc63"
+            "ca7f141c-075c-425b-acbe-be53ea31fc63",
+            "6ede43e8-7f02-4a92-b572-153719b7b2d0",
+            "56b7934f-3c78-4f43-9462-555a5ec33984"
           ],
           "description": "Abstracts a blog post concept into JSON schema",
-          "required": false
+          "required": false,
+          "component_group_denylist": []
         }
       },
       "image": null,
@@ -6822,7 +6831,7 @@
       ],
       "preset_id": null,
       "real_name": "Split Even",
-      "component_group_uuid": "5250f1ac-6794-4087-b458-133efda78f8e",
+      "component_group_uuid": "6ede43e8-7f02-4a92-b572-153719b7b2d0",
       "color": "#05566a",
       "icon": "block-wallet",
       "internal_tags_list": [],
@@ -6836,7 +6845,7 @@
       "display_name": "Split Weighted",
       "description": null,
       "created_at": "2026-01-09T11:24:55.397Z",
-      "updated_at": "2026-01-09T11:24:55.397Z",
+      "updated_at": "2026-01-09T11:58:53.473Z",
       "id": 132170937951233,
       "schema": {
         "verticalGutter": {
@@ -7145,10 +7154,13 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "6ae4a26f-6478-467f-bb88-f33a48b54761"
+            "6ae4a26f-6478-467f-bb88-f33a48b54761",
+            "6ede43e8-7f02-4a92-b572-153719b7b2d0",
+            "56b7934f-3c78-4f43-9462-555a5ec33984"
           ],
           "description": "Abstracts a blog post concept into JSON schema",
-          "required": false
+          "required": false,
+          "component_group_denylist": []
         },
         "asideComponents": {
           "id": 0,
@@ -7159,10 +7171,13 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "fc416a9b-a00d-44ba-804a-876b8a80a2e8"
+            "fc416a9b-a00d-44ba-804a-876b8a80a2e8",
+            "6ede43e8-7f02-4a92-b572-153719b7b2d0",
+            "56b7934f-3c78-4f43-9462-555a5ec33984"
           ],
           "description": "Abstracts a blog post concept into JSON schema",
-          "required": false
+          "required": false,
+          "component_group_denylist": []
         }
       },
       "image": null,
@@ -7192,7 +7207,7 @@
       ],
       "preset_id": null,
       "real_name": "Split Weighted",
-      "component_group_uuid": "5250f1ac-6794-4087-b458-133efda78f8e",
+      "component_group_uuid": "6ede43e8-7f02-4a92-b572-153719b7b2d0",
       "color": "#05566a",
       "icon": "block-wallet",
       "internal_tags_list": [],
@@ -7324,7 +7339,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "tags",
@@ -7568,7 +7583,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "testimonial",
@@ -7810,7 +7825,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "text",
@@ -7913,7 +7928,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     },
     {
       "name": "tile",
@@ -8291,7 +8306,7 @@
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
       "metadata": {},
-      "component_group_name": "FirstComponents"
+      "component_group_name": "Components"
     }
   ]
 }
