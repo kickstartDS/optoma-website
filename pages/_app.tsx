@@ -60,6 +60,7 @@ export default function App({
   const { settings, story, blurHashes, language } = pageProps;
   const headerProps = settings?.header ? unflatten(settings?.header) : {};
   const footerProps = settings?.footer ? unflatten(settings?.footer) : {};
+  const token = settings?.token || "";
   const storyProps = story?.content ? unflatten(story?.content) : {};
   const router = useRouter();
 
@@ -93,6 +94,7 @@ export default function App({
                   pageSeo={story?.content.seo}
                   fallbackName={story?.name}
                 />
+                {token && <style data-tokens>{token}</style>}
                 {headerProps && (
                   <Header
                     logo={{}}
