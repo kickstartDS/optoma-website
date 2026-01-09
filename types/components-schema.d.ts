@@ -230,8 +230,8 @@ export interface EventDetailStoryblok {
 
 export interface EventFilterStoryblok {
   datePicker_title?: string;
-  "datePicker_tab-88b6f0ae-2d1e-4a4c-9142-024d6f5315e6"?: unknown;
-  "datePicker_tab-fcc5df0f-c2e7-412f-9e44-6135e9b591d9"?: unknown;
+  "datePicker_tab-f302c615-eb42-472b-b861-63c85f95dfe7"?: unknown;
+  "datePicker_tab-779c2b4d-d54d-43c3-b572-d7cac892b6fd"?: unknown;
   datePicker_toggle?: boolean;
   categories_title?: string;
   categories_categoryCheckboxes?: CategoryCheckboxesStoryblok[];
