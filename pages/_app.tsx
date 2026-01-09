@@ -17,7 +17,6 @@ import ImageRatioProviders from "@/components/ImageRatioProviders";
 
 import palette from "@kickstartds/ds-agency-premium/global.client.js";
 import "@kickstartds/ds-agency-premium/global.css";
-import "@/token/tokens.css";
 import "@/index.scss";
 import { BlurHashProvider } from "@/components/BlurHashContext";
 import { LanguageProvider } from "@/components/LanguageContext";
