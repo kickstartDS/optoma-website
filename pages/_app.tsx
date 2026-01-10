@@ -130,6 +130,7 @@ export default function App({
                   <Section width="max" spaceAfter="none" spaceBefore="none">
                     <Breadcrumb pages={breadcrumbItems} />
                     <JsonLd<BreadcrumbList>
+                      name="Breadcrumb"
                       item={{
                         "@context": "https://schema.org",
                         "@type": "BreadcrumbList",
