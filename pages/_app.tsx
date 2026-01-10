@@ -1,3 +1,4 @@
+import path from "path";
 import { useEffect } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
@@ -6,6 +7,7 @@ import { useRouter } from "next/router";
 import DsaProviders from "@kickstartds/ds-agency-premium/providers";
 import { Header } from "@kickstartds/ds-agency-premium/header";
 import { Footer } from "@kickstartds/ds-agency-premium/footer";
+import { Breadcrumb } from "@kickstartds/ds-agency-premium/breadcrumb";
 import { initStoryblok } from "@/helpers/storyblok";
 import { unflatten } from "@/helpers/unflatten";
 import Meta from "@/components/Meta";
@@ -20,6 +22,7 @@ import "@kickstartds/ds-agency-premium/global.css";
 import "@/index.scss";
 import { BlurHashProvider } from "@/components/BlurHashContext";
 import { LanguageProvider } from "@/components/LanguageContext";
+import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
 
 initStoryblok(process.env.NEXT_STORYBLOK_API_TOKEN);
 if (typeof window !== "undefined") {
@@ -81,6 +84,22 @@ export default function App({
     return () => router.events.off("routeChangeStart", handleRouteChange);
   }, [router.events]);
 
+  const url = new URL(router.asPath, "http://dummy-base");
+  const pathSegments = url.pathname.split("/").filter(Boolean);
+  const pages = pathSegments.map((segment) => ({
+    label: segment.charAt(0).toUpperCase() + segment.slice(1),
+    url: path.join(
+      "/",
+      ...pathSegments.slice(0, pathSegments.indexOf(segment) + 1)
+    ),
+  }));
+  if (pages.length > 0 && pages[0].label.toLowerCase() === "_preview") {
+    pages.shift();
+  }
+  if (pages[0].label !== "Home") {
+    pages.unshift({ label: "Home", url: "/" });
+  }
+
   return (
     <LanguageProvider language={language}>
       <BlurHashProvider blurHashes={blurHashes}>
@@ -102,6 +121,9 @@ export default function App({
                     floating={floatHeader}
                   />
                 )}
+                <Section width="max" spaceAfter="none" spaceBefore="none">
+                  {pages && pages.length > 1 && <Breadcrumb pages={pages} />}
+                </Section>
                 <Component {...pageProps} />
                 {footerProps && (
                   <Footer
