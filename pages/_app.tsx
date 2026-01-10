@@ -93,10 +93,10 @@ export default function App({
       ...pathSegments.slice(0, pathSegments.indexOf(segment) + 1)
     ),
   }));
-  if (pages.length > 0 && pages[0].label.toLowerCase() === "_preview") {
+  if (pages.length > 0 && pages[0]?.label.toLowerCase() === "_preview") {
     pages.shift();
   }
-  if (pages[0].label !== "Home") {
+  if (pages[0]?.label !== "Home") {
     pages.unshift({ label: "Home", url: "/" });
   }
 
