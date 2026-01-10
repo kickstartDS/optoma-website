@@ -26,9 +26,10 @@ document
 
 window._ks.radio.on(lazyEvents.beforeunveil, (_, el) => {
   if (el.tagName === "SECTION") {
-    window.umami.track("view.section.reached", {
-      title: el.dataset.title,
-      index: parseInt(el.dataset.index, 10) + 1,
-    });
+    if (window.umami)
+      window.umami.track("view.section.reached", {
+        title: el.dataset.title,
+        index: parseInt(el.dataset.index, 10) + 1,
+      });
   }
 });
