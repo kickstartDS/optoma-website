@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
+import { JsonLd } from "react-schemaorg";
+import { BreadcrumbList } from "schema-dts";
 
 import DsaProviders from "@kickstartds/ds-agency-premium/providers";
 import { Header } from "@kickstartds/ds-agency-premium/header";
@@ -86,18 +88,21 @@ export default function App({
 
   const url = new URL(router.asPath, "http://dummy-base");
   const pathSegments = url.pathname.split("/").filter(Boolean);
-  const pages = pathSegments.map((segment) => ({
+  const breadcrumbItems = pathSegments.map((segment) => ({
     label: segment.charAt(0).toUpperCase() + segment.slice(1),
     url: path.join(
       "/",
       ...pathSegments.slice(0, pathSegments.indexOf(segment) + 1)
     ),
   }));
-  if (pages.length > 0 && pages[0]?.label.toLowerCase() === "_preview") {
-    pages.shift();
+  if (
+    breadcrumbItems.length > 0 &&
+    breadcrumbItems[0]?.label.toLowerCase() === "_preview"
+  ) {
+    breadcrumbItems.shift();
   }
-  if (pages[0]?.label !== "Home") {
-    pages.unshift({ label: "Home", url: "/" });
+  if (breadcrumbItems[0]?.label !== "Home") {
+    breadcrumbItems.unshift({ label: "Home", url: "/" });
   }
 
   return (
@@ -121,9 +126,25 @@ export default function App({
                     floating={floatHeader}
                   />
                 )}
-                <Section width="max" spaceAfter="none" spaceBefore="none">
-                  {pages && pages.length > 1 && <Breadcrumb pages={pages} />}
-                </Section>
+                {breadcrumbItems && breadcrumbItems.length > 1 && (
+                  <Section width="max" spaceAfter="none" spaceBefore="none">
+                    <Breadcrumb pages={breadcrumbItems} />
+                    <JsonLd<BreadcrumbList>
+                      item={{
+                        "@context": "https://schema.org",
+                        "@type": "BreadcrumbList",
+                        itemListElement: breadcrumbItems.map((item, index) => ({
+                          "@type": "ListItem",
+                          position: index + 1,
+                          name: item.label,
+                          item: `${process.env.NEXT_PUBLIC_SITE_URL || ""}${
+                            item.url
+                          }`,
+                        })),
+                      }}
+                    />
+                  </Section>
+                )}
                 <Component {...pageProps} />
                 {footerProps && (
                   <Footer
