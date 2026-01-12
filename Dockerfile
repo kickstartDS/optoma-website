@@ -37,6 +37,7 @@ RUN chown 1001:1001 .next
 
 COPY --from=builder --chown=1001:1001 /app/.next/standalone ./
 COPY --from=builder --chown=1001:1001 /app/.next/static ./.next/static
+COPY --from=builder --chown=1001:1001 /app/public ./public
 
 USER nextjs
 

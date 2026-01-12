@@ -38,7 +38,7 @@ type PageProps = {
 const Page: React.FC<PageProps> = ({ blok }) => (
   <>
     {/* <StoryblokRichTextProvider> */}
-    <main {...storyblokEditable(blok)}>
+    <main {...storyblokEditable(blok)} data-pagefind-body>
       <ImagePriorityProvider priority>
         {blok.section?.slice(0, 1).map((nestedBlok) => (
           <StoryblokComponent blok={nestedBlok} key={nestedBlok._uid} />
