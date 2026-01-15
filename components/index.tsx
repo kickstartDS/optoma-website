@@ -228,6 +228,13 @@ export const components = {
       )
     )
   ),
+  prompter: editable(
+    dynamic(() =>
+      import("./prompter/PrompterComponent").then(
+        (mod) => mod.PrompterComponent
+      )
+    )
+  ),
   "split-even": editable(
     dynamic(() =>
       import("@kickstartds/ds-agency-premium/split-even").then(

@@ -7014,6 +7014,102 @@
       "real_name": "Global Rereference",
       "component_group_uuid": "4ccc7daa-eeb1-4f0b-9f51-99e9707e10e4",
       "component_group_name": "Global"
+    },
+    {
+      "name": "prompter",
+      "display_name": "Prompter",
+      "created_at": "2026-01-15T19:48:55.723Z",
+      "updated_at": "2026-01-15T19:48:55.723Z",
+      "id": 299,
+      "schema": {
+        "sections": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Sections",
+          "key": "sections",
+          "type": "number",
+          "description": "Number of sections to generate",
+          "required": false
+        },
+        "includeStory": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "IncludeStory",
+          "key": "includeStory",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Whether to include the current story as main context",
+          "required": false
+        },
+        "useIdea": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "UseIdea",
+          "key": "useIdea",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Whether to use an idea as part of the context",
+          "required": false
+        },
+        "relatedStories": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "RelatedStories",
+          "key": "relatedStories",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "relatedStories"
+          ]
+        },
+        "userPrompt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "UserPrompt",
+          "key": "userPrompt",
+          "type": "text",
+          "description": "Custom prompt to guide content generation",
+          "required": false
+        },
+        "systemPrompt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SystemPrompt",
+          "key": "systemPrompt",
+          "type": "text",
+          "default_value": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured.",
+          "description": "System-level instructions for content generation",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Prompter",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
+      "component_group_name": "FirstComponents"
+    },
+    {
+      "name": "relatedStories",
+      "display_name": "RelatedStories",
+      "created_at": "2026-01-15T19:48:55.722Z",
+      "updated_at": "2026-01-15T19:48:55.722Z",
+      "id": 271,
+      "schema": {
+        "entry": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "RelatedStories",
+          "key": "relatedStories",
+          "type": "text",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "RelatedStories",
+      "color": "#05566a",
+      "icon": "block-wallet"
     }
   ]
 }

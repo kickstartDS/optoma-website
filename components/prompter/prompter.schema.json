@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://cms.mydesignsystem.com/prompter.schema.json",
+  "title": "Prompter",
+  "description": "Component used to create new website content using AI prompts",
+  "type": "object",
+  "properties": {
+    "sections": {
+      "title": "Section count",
+      "description": "Number of sections to generate",
+      "type": "integer"
+    },
+    "includeStory": {
+      "title": "Include Story?",
+      "description": "Whether to include the current story as main context",
+      "type": "boolean",
+      "default": true
+    },
+    "useIdea": {
+      "title": "Use Idea?",
+      "description": "Whether to use an idea as part of the context",
+      "type": "boolean",
+      "default": true
+    },
+    "relatedStories": {
+      "title": "Related Stories",
+      "description": "Additional related stories to include as context",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "userPrompt": {
+      "title": "User Prompt",
+      "description": "Custom prompt to guide content generation",
+      "type": "string"
+    },
+    "systemPrompt": {
+      "title": "System Prompt",
+      "description": "System-level instructions for content generation",
+      "type": "string",
+      "default": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured."
+    }
+  },
+  "additionalProperties": false
+}

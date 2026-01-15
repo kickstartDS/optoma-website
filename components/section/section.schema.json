@@ -16,6 +16,9 @@
             "anyOf": [
               {
                 "$ref": "http://cms.mydesignsystem.com/info-table.schema.json"
+              },
+              {
+                "$ref": "http://cms.mydesignsystem.com/prompter.schema.json"
               }
             ]
           }

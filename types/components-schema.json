@@ -5511,7 +5511,7 @@
       "display_name": "Page",
       "description": null,
       "created_at": "2026-01-15T14:50:37.456Z",
-      "updated_at": "2026-01-15T15:38:24.086Z",
+      "updated_at": "2026-01-15T20:00:16.074Z",
       "id": 134344857426949,
       "schema": {
         "section": {
@@ -5523,8 +5523,10 @@
           "restrict_type": "",
           "restrict_components": true,
           "component_whitelist": [
-            "section"
-          ]
+            "section",
+            "prompter"
+          ],
+          "component_denylist": []
         },
         "tab-19b9bc1d-7fe8-4949-a340-3260c16b6ee6": {
           "id": "Gbm8HX_oSUmjQDJgwWtu5g",
@@ -5615,6 +5617,92 @@
       "metadata": {}
     },
     {
+      "name": "prompter",
+      "display_name": "Prompter",
+      "description": null,
+      "created_at": "2026-01-15T19:46:18.127Z",
+      "updated_at": "2026-01-15T19:46:18.127Z",
+      "id": 134417523213033,
+      "schema": {
+        "sections": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Sections",
+          "key": "sections",
+          "type": "number",
+          "description": "Number of sections to generate",
+          "required": false
+        },
+        "includeStory": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "IncludeStory",
+          "key": "includeStory",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Whether to include the current story as main context",
+          "required": false
+        },
+        "useIdea": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "UseIdea",
+          "key": "useIdea",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Whether to use an idea as part of the context",
+          "required": false
+        },
+        "relatedStories": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "RelatedStories",
+          "key": "relatedStories",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "relatedStories"
+          ]
+        },
+        "userPrompt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "UserPrompt",
+          "key": "userPrompt",
+          "type": "text",
+          "description": "Custom prompt to guide content generation",
+          "required": false
+        },
+        "systemPrompt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SystemPrompt",
+          "key": "systemPrompt",
+          "type": "text",
+          "default_value": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured.",
+          "description": "System-level instructions for content generation",
+          "required": false
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "Prompter",
+      "component_group_uuid": "b2d71812-e4b5-4525-9832-549eb8322725",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {},
+      "component_group_name": "Components"
+    },
+    {
       "name": "questions",
       "display_name": "Questions",
       "description": null,
@@ -5649,6 +5737,39 @@
       "all_presets": [],
       "preset_id": null,
       "real_name": "Questions",
+      "component_group_uuid": null,
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {}
+    },
+    {
+      "name": "relatedStories",
+      "display_name": "RelatedStories",
+      "description": null,
+      "created_at": "2026-01-15T19:46:17.422Z",
+      "updated_at": "2026-01-15T19:46:17.422Z",
+      "id": 134417520325352,
+      "schema": {
+        "entry": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "RelatedStories",
+          "key": "relatedStories",
+          "type": "text",
+          "required": false
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "RelatedStories",
       "component_group_uuid": null,
       "color": "#05566a",
       "icon": "block-wallet",
@@ -6001,7 +6122,7 @@
       "display_name": "Section",
       "description": null,
       "created_at": "2026-01-15T14:54:29.304Z",
-      "updated_at": "2026-01-15T15:16:54.583Z",
+      "updated_at": "2026-01-15T19:58:02.646Z",
       "id": 134345807084646,
       "schema": {
         "width": {
@@ -6570,6 +6691,13 @@
           "component_whitelist": [
             "buttons"
           ]
+        },
+        "aiDraft": {
+          "type": "boolean",
+          "pos": 26,
+          "display_name": "AI Draft?",
+          "description": "If true, the section is marked as an AI-generated draft",
+          "id": "CGeFqt3mSq6IrWkNCqjJRg"
         }
       },
       "image": null,

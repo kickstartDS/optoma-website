@@ -1,0 +1,67 @@
+@import "./prompter-badge/prompter-badge.scss";
+@import "./prompter-headline/prompter-headline.scss";
+@import "./prompter-button/prompter-button.scss";
+@import "./prompter-section/prompter-section.scss";
+@import "./prompter-section-input/prompter-section-input.scss";
+@import "./prompter-select-field/prompter-select-field.scss";
+@import "./prompter-selection-display/prompter-selection-display.scss";
+@import "./prompter-submitted-text/prompter-submitted-text.scss";
+@import "./prompter-loading-indicator/prompter-loading-indicator.scss";
+
+:root {
+  --prompter-color: #800080;
+  --prompter-font-family:
+    system-ui, -apple-system, BlinkMacSystemFont, "Avenir Next", "Avenir", "Segoe UI", "Lucida Grande",
+    "Helvetica Neue", "Helvetica", "Fira Sans", "Roboto", "Noto", "Droid Sans", "Cantarell", "Oxygen", "Ubuntu",
+    "Franklin Gothic Medium", "Century Gothic", "Liberation Sans", sans-serif;
+
+  .prompter {
+    position: relative;
+
+    &__generated-content {
+      position: relative;
+
+      &::after {
+        content: "";
+        top: 4rem;
+        bottom: 2rem;
+        width: 1px;
+        border: 0;
+        border-left: 4px dashed var(--prompter-color);
+        position: absolute;
+        left: 1rem;
+      }
+    }
+
+    &__story {
+      position: relative;
+      background-color: rgb(27, 22, 29) !important;
+      color: white;
+
+      summary {
+        box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        cursor: pointer;
+        top: 0;
+        transform: translateY(calc(-100% - 0.75em));
+        right: 1em;
+        z-index: 99;
+        border-radius: 99px;
+        padding: 0.35em 1.125em;
+        position: absolute;
+        background-color: rgb(27, 22, 29);
+        width: fit-content;
+        font: var(--ks-font-interface-s);
+        font-weight: var(--ks-font-weight-semi-bold);
+      }
+    }
+
+    &__story-code {
+      background-color: rgb(34, 29, 36);
+      padding-left: 40px;
+      margin: 0;
+      padding-top: 1em;
+      overflow-x: auto;
+    }
+  }
+}
