@@ -3,8 +3,8 @@
     {
       "name": "tags",
       "display_name": "Tags",
-      "created_at": "2026-01-09T11:19:05.760Z",
-      "updated_at": "2026-01-09T11:19:05.760Z",
+      "created_at": "2026-01-15T14:47:12.984Z",
+      "updated_at": "2026-01-15T14:47:12.984Z",
       "id": 0,
       "schema": {
         "entry": {
@@ -23,76 +23,90 @@
       "icon": "block-wallet"
     },
     {
-      "name": "blog-head",
-      "display_name": "Blog Head",
-      "created_at": "2026-01-09T11:19:05.761Z",
-      "updated_at": "2026-01-09T11:19:05.761Z",
+      "name": "contact",
+      "display_name": "Contact",
+      "created_at": "2026-01-15T14:47:12.987Z",
+      "updated_at": "2026-01-15T14:47:12.987Z",
       "id": 1,
       "schema": {
-        "date": {
+        "label": {
           "id": 0,
           "pos": 0,
-          "display_name": "Date",
-          "key": "date",
-          "type": "datetime",
-          "disable_time": true,
-          "description": "Datum der Veröffentlichung des Blogbeitrags",
-          "required": false
-        },
-        "tags": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Tags",
-          "key": "tags",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "tags"
-          ]
-        },
-        "headline": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Headline",
-          "key": "headline",
-          "type": "markdown",
-          "description": "Headline des Blogbeitrags",
-          "required": false
-        },
-        "image": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Image",
-          "key": "image",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Hauptbild des Blogbeitrags",
-          "required": false
-        },
-        "alt": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Alt",
-          "key": "alt",
+          "display_name": "Label",
+          "key": "label",
           "type": "text",
-          "description": "Alternativtext für das Bild des Blogbeitrags",
+          "description": "Label describing the contact method (e.g., 'Email', 'Phone').",
+          "required": false
+        },
+        "icon": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Icon",
+          "key": "icon",
+          "type": "text",
+          "description": "Icon name or identifier representing the contact method.",
+          "required": false
+        },
+        "url": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Url",
+          "key": "url",
+          "type": "multilink",
+          "allow_target_blank": true,
+          "email_link_type": true,
+          "asset_link_type": true,
+          "show_anchor": true,
+          "description": "URL or link for the contact method, if applicable.",
           "required": false
         }
       },
       "is_nestable": true,
-      "real_name": "Blog Head",
+      "real_name": "Contact",
+      "color": "#05566a",
+      "icon": "contact"
+    },
+    {
+      "name": "buttons",
+      "display_name": "Buttons",
+      "created_at": "2026-01-15T14:47:12.987Z",
+      "updated_at": "2026-01-15T14:47:12.987Z",
+      "id": 2,
+      "schema": {
+        "label": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Label",
+          "key": "label",
+          "type": "text",
+          "description": "Text label for the link.",
+          "required": false
+        },
+        "url": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Url",
+          "key": "url",
+          "type": "multilink",
+          "allow_target_blank": true,
+          "email_link_type": true,
+          "asset_link_type": true,
+          "show_anchor": true,
+          "description": "URL the link points to.",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Buttons",
       "color": "#05566a",
       "icon": "block-wallet"
     },
     {
       "name": "links",
       "display_name": "Links",
-      "created_at": "2026-01-09T11:19:05.764Z",
-      "updated_at": "2026-01-09T11:19:05.764Z",
-      "id": 2,
+      "created_at": "2026-01-15T14:47:12.988Z",
+      "updated_at": "2026-01-15T14:47:12.988Z",
+      "id": 3,
       "schema": {
         "icon": {
           "id": 0,
@@ -104,7 +118,7 @@
           "options": [
             {
               "name": "allowedIcons",
-              "_uid": "139fc669-d892-40f9-87a3-8d9b4545c008"
+              "_uid": "156486a0-6419-4157-9384-fa3b42e6f64e"
             }
           ],
           "required": false
@@ -154,315 +168,11 @@
       "icon": "block-wallet"
     },
     {
-      "name": "blog-author",
-      "display_name": "Blog Author",
-      "created_at": "2026-01-09T11:19:05.764Z",
-      "updated_at": "2026-01-09T11:19:05.764Z",
-      "id": 3,
-      "schema": {
-        "name": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Name",
-          "key": "name",
-          "type": "text",
-          "description": "Name des Autors oder der Autorin",
-          "required": false
-        },
-        "byline": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Byline",
-          "key": "byline",
-          "type": "text",
-          "description": "Kurze Beschreibung oder Titel des Autors oder der Autorin",
-          "required": false
-        },
-        "tab-e0596d49-6721-4a8f-8b40-09a3fd4fff1d": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Image",
-          "key": "tab-e0596d49-6721-4a8f-8b40-09a3fd4fff1d",
-          "keys": [
-            "image_src",
-            "image_alt",
-            "image_fullWidth",
-            "image_aspectRatio"
-          ],
-          "type": "tab",
-          "description": "Bild des Autors oder der Autorin",
-          "required": false
-        },
-        "image_src": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Src",
-          "key": "image_src",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "URL of the image to display",
-          "required": false
-        },
-        "image_alt": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Alt",
-          "key": "image_alt",
-          "type": "text",
-          "description": "Alt text of the image",
-          "required": false
-        },
-        "image_fullWidth": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "FullWidth",
-          "key": "image_fullWidth",
-          "type": "boolean",
-          "description": "Image uses all the horizontal space vailable",
-          "required": false
-        },
-        "image_aspectRatio": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "AspectRatio",
-          "key": "image_aspectRatio",
-          "type": "option",
-          "default_value": "square",
-          "description": "Aspect Ratio of the Images",
-          "options": [
-            {
-              "name": "wide",
-              "value": "wide",
-              "_uid": "ad802f96-4288-419e-a558-5ff485d9cb18"
-            },
-            {
-              "name": "square",
-              "value": "square",
-              "_uid": "d3469315-a651-4a2d-bb55-24480607224a"
-            },
-            {
-              "name": "vertical",
-              "value": "vertical",
-              "_uid": "d789da0d-2660-4ec8-b08e-03205b0665bd"
-            }
-          ],
-          "required": false
-        },
-        "links": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Links",
-          "key": "links",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "links"
-          ]
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Blog Author",
-      "color": "#05566a",
-      "icon": "block-wallet"
-    },
-    {
-      "name": "socialSharing",
-      "display_name": "SocialSharing",
-      "created_at": "2026-01-09T11:19:05.764Z",
-      "updated_at": "2026-01-09T11:19:05.764Z",
-      "id": 4,
-      "schema": {
-        "icon": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Icon",
-          "key": "icon",
-          "type": "custom",
-          "field_type": "storyblok-icon-sprite-picker-field-plugin",
-          "options": [
-            {
-              "name": "allowedIcons",
-              "_uid": "9d86f3f9-21be-4090-8640-340731829147"
-            }
-          ],
-          "description": "Das Icon für den Social Link",
-          "required": false
-        },
-        "url": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Url",
-          "key": "url",
-          "type": "multilink",
-          "allow_target_blank": true,
-          "email_link_type": true,
-          "asset_link_type": true,
-          "show_anchor": true,
-          "description": "Die URL zum Teilen des Blogbeitrags",
-          "required": false
-        },
-        "title": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Title",
-          "key": "title",
-          "type": "text",
-          "description": "Dem Benutzer angezeigter Name des Links",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "SocialSharing",
-      "color": "#05566a",
-      "icon": "block-wallet"
-    },
-    {
-      "name": "blog-aside",
-      "display_name": "Blog Aside",
-      "created_at": "2026-01-09T11:19:05.764Z",
-      "updated_at": "2026-01-09T11:19:05.764Z",
-      "id": 5,
-      "schema": {
-        "author": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Author",
-          "key": "author",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "blog-author"
-          ],
-          "maximum": 1,
-          "minimum": 0
-        },
-        "socialSharing": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "SocialSharing",
-          "key": "socialSharing",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "socialSharing"
-          ],
-          "description": "Link zum Teilen des Blogbeitrags"
-        },
-        "readingTime": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "ReadingTime",
-          "key": "readingTime",
-          "type": "text",
-          "description": "Lesezeit des Blogbeitrags",
-          "required": false
-        },
-        "date": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Date",
-          "key": "date",
-          "type": "datetime",
-          "disable_time": true,
-          "description": "Datum der Veröffentlichung des Blogbeitrags",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Blog Aside",
-      "color": "#05566a",
-      "icon": "block-wallet"
-    },
-    {
-      "name": "contact",
-      "display_name": "Contact",
-      "created_at": "2026-01-09T11:19:05.769Z",
-      "updated_at": "2026-01-09T11:19:05.769Z",
-      "id": 7,
-      "schema": {
-        "label": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Label",
-          "key": "label",
-          "type": "text",
-          "description": "Label describing the contact method (e.g., 'Email', 'Phone').",
-          "required": false
-        },
-        "icon": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Icon",
-          "key": "icon",
-          "type": "text",
-          "description": "Icon name or identifier representing the contact method.",
-          "required": false
-        },
-        "url": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Url",
-          "key": "url",
-          "type": "multilink",
-          "allow_target_blank": true,
-          "email_link_type": true,
-          "asset_link_type": true,
-          "show_anchor": true,
-          "description": "URL or link for the contact method, if applicable.",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Contact",
-      "color": "#05566a",
-      "icon": "contact"
-    },
-    {
-      "name": "buttons",
-      "display_name": "Buttons",
-      "created_at": "2026-01-09T11:19:05.769Z",
-      "updated_at": "2026-01-09T11:19:05.769Z",
-      "id": 8,
-      "schema": {
-        "label": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Label",
-          "key": "label",
-          "type": "text",
-          "description": "Text label for the link.",
-          "required": false
-        },
-        "url": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Url",
-          "key": "url",
-          "type": "multilink",
-          "allow_target_blank": true,
-          "email_link_type": true,
-          "asset_link_type": true,
-          "show_anchor": true,
-          "description": "URL the link points to.",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Buttons",
-      "color": "#05566a",
-      "icon": "block-wallet"
-    },
-    {
       "name": "download",
       "display_name": "Download",
-      "created_at": "2026-01-09T11:19:05.776Z",
-      "updated_at": "2026-01-09T11:19:05.776Z",
-      "id": 12,
+      "created_at": "2026-01-15T14:47:12.996Z",
+      "updated_at": "2026-01-15T14:47:12.996Z",
+      "id": 6,
       "schema": {
         "name": {
           "id": 0,
@@ -534,9 +244,9 @@
     {
       "name": "questions",
       "display_name": "Questions",
-      "created_at": "2026-01-09T11:19:05.783Z",
-      "updated_at": "2026-01-09T11:19:05.783Z",
-      "id": 14,
+      "created_at": "2026-01-15T14:47:13.000Z",
+      "updated_at": "2026-01-15T14:47:13.000Z",
+      "id": 8,
       "schema": {
         "question": {
           "id": 0,
@@ -565,9 +275,9 @@
     {
       "name": "feature",
       "display_name": "Feature",
-      "created_at": "2026-01-09T11:19:05.786Z",
-      "updated_at": "2026-01-09T11:19:05.786Z",
-      "id": 15,
+      "created_at": "2026-01-15T14:47:13.002Z",
+      "updated_at": "2026-01-15T14:47:13.002Z",
+      "id": 9,
       "schema": {
         "icon": {
           "id": 0,
@@ -579,7 +289,7 @@
           "options": [
             {
               "name": "allowedIcons",
-              "_uid": "3b48bee4-15d6-4d66-9e65-344bbe7e6a08"
+              "_uid": "245b2d27-4e68-4d55-9c6f-a70d287e684a"
             }
           ],
           "description": "The icon for the feature",
@@ -603,11 +313,11 @@
           "description": "The description of the feature",
           "required": false
         },
-        "tab-3303d2fc-f9ac-4335-a87e-dde9ae542296": {
+        "tab-bd32a5bd-74df-4d0f-b0ee-59261d3f10e4": {
           "id": 0,
           "pos": 0,
           "display_name": "Cta",
-          "key": "tab-3303d2fc-f9ac-4335-a87e-dde9ae542296",
+          "key": "tab-bd32a5bd-74df-4d0f-b0ee-59261d3f10e4",
           "keys": [
             "cta_url",
             "cta_label",
@@ -650,7 +360,7 @@
           "options": [
             {
               "name": "allowedIcons",
-              "_uid": "baf678dc-183e-42c2-b20b-6d4b995fb0d8"
+              "_uid": "cefde1e5-e272-4484-9e00-c7e9cd3bea2b"
             }
           ],
           "default_value": "arrow-right",
@@ -666,9 +376,9 @@
     {
       "name": "images",
       "display_name": "Images",
-      "created_at": "2026-01-09T11:19:05.788Z",
-      "updated_at": "2026-01-09T11:19:05.788Z",
-      "id": 16,
+      "created_at": "2026-01-15T14:47:13.003Z",
+      "updated_at": "2026-01-15T14:47:13.003Z",
+      "id": 10,
       "schema": {
         "src": {
           "id": 0,
@@ -709,9 +419,9 @@
     {
       "name": "logo",
       "display_name": "Logo",
-      "created_at": "2026-01-09T11:19:05.798Z",
-      "updated_at": "2026-01-09T11:19:05.798Z",
-      "id": 19,
+      "created_at": "2026-01-15T14:47:13.009Z",
+      "updated_at": "2026-01-15T14:47:13.009Z",
+      "id": 13,
       "schema": {
         "src": {
           "id": 0,
@@ -743,9 +453,9 @@
     {
       "name": "tile",
       "display_name": "Tile",
-      "created_at": "2026-01-09T11:19:05.801Z",
-      "updated_at": "2026-01-09T11:19:05.801Z",
-      "id": 20,
+      "created_at": "2026-01-15T14:47:13.010Z",
+      "updated_at": "2026-01-15T14:47:13.010Z",
+      "id": 14,
       "schema": {
         "headline": {
           "id": 0,
@@ -774,11 +484,11 @@
           "description": "Der Haupttext der Kachel, der den Inhalt detailliert beschreibt.",
           "required": false
         },
-        "tab-69475cb6-dfae-4700-b7b8-d915f9e24b97": {
+        "tab-f33f0a34-7b50-4859-b907-ab52a683e61d": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
-          "key": "tab-69475cb6-dfae-4700-b7b8-d915f9e24b97",
+          "key": "tab-f33f0a34-7b50-4859-b907-ab52a683e61d",
           "keys": [
             "image_src",
             "image_alt"
@@ -808,11 +518,11 @@
           "description": "Alt text to display for picture",
           "required": false
         },
-        "tab-17a8d930-6865-47c1-bb12-406ddb216aec": {
+        "tab-ce0c5917-053c-4f97-be85-ace223e596db": {
           "id": 0,
           "pos": 0,
           "display_name": "Button",
-          "key": "tab-17a8d930-6865-47c1-bb12-406ddb216aec",
+          "key": "tab-ce0c5917-053c-4f97-be85-ace223e596db",
           "keys": [
             "button_toggle",
             "button_label",
@@ -865,7 +575,7 @@
           "options": [
             {
               "name": "allowedIcons",
-              "_uid": "cb49ee93-62a5-4a6a-b52c-61cbc23d985f"
+              "_uid": "a0795df7-505a-4da4-8b9a-1054fe0afd04"
             }
           ],
           "description": "Choose an icon",
@@ -891,6 +601,15 @@
           ],
           "description": "Ein optionales Hintergrundbild, das hinter dem Inhalt der Kachel angezeigt wird.",
           "required": false
+        },
+        "textColor": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TextColor",
+          "key": "textColor",
+          "type": "text",
+          "description": "Die Farbe des Textes in der Kachel, die die Lesbarkeit unterstützt.",
+          "required": false
         }
       },
       "is_nestable": true,
@@ -901,9 +620,9 @@
     {
       "name": "stat",
       "display_name": "Stat",
-      "created_at": "2026-01-09T11:19:05.806Z",
-      "updated_at": "2026-01-09T11:19:05.806Z",
-      "id": 36,
+      "created_at": "2026-01-15T14:47:13.012Z",
+      "updated_at": "2026-01-15T14:47:13.012Z",
+      "id": 20,
       "schema": {
         "number": {
           "id": 0,
@@ -942,7 +661,7 @@
           "options": [
             {
               "name": "allowedIcons",
-              "_uid": "ef48d49f-e200-4284-9575-1dbe5e0bf73c"
+              "_uid": "aa2c2891-9859-41b8-9121-2763a64861df"
             }
           ],
           "description": "Ein optionales Icon, das den Fakt visuell unterstützt. Dies kann ein Symbol oder eine Grafik sein, die den Fakt repräsentiert.",
@@ -957,9 +676,9 @@
     {
       "name": "testimonial",
       "display_name": "Testimonial",
-      "created_at": "2026-01-09T11:19:05.811Z",
-      "updated_at": "2026-01-09T11:19:05.811Z",
-      "id": 37,
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 21,
       "schema": {
         "quote": {
           "id": 0,
@@ -988,11 +707,11 @@
           "description": "The title of the quote author",
           "required": false
         },
-        "tab-c0dbce39-990e-4c68-bf86-051e7030e00e": {
+        "tab-2f6a5723-2898-4534-a33c-e0293fbf00b0": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
-          "key": "tab-c0dbce39-990e-4c68-bf86-051e7030e00e",
+          "key": "tab-2f6a5723-2898-4534-a33c-e0293fbf00b0",
           "keys": [
             "image_src",
             "image_alt"
@@ -1037,11 +756,1395 @@
       "icon": "block-wallet"
     },
     {
+      "name": "cta",
+      "display_name": "Cta",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 22,
+      "schema": {
+        "headline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Headline",
+          "key": "headline",
+          "type": "markdown",
+          "description": "Headline für den Call-to-Action",
+          "required": false
+        },
+        "sub": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Sub",
+          "key": "sub",
+          "type": "markdown",
+          "description": "Subheadline unterhalb der Headline",
+          "required": false
+        },
+        "text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "text",
+          "type": "markdown",
+          "description": "Infotext für den Call-to-Action",
+          "required": false
+        },
+        "highlightText": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HighlightText",
+          "key": "highlightText",
+          "type": "boolean",
+          "description": "Soll der Infotext hervorgehoben werden?",
+          "required": false
+        },
+        "colorNeutral": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ColorNeutral",
+          "key": "colorNeutral",
+          "type": "boolean",
+          "description": "Sollen Infotext und Buttons in neutralen Farben dargestellt werden?",
+          "required": false
+        },
+        "buttons": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Buttons",
+          "key": "buttons",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "buttons"
+          ],
+          "description": "Button"
+        },
+        "backgroundColor": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "BackgroundColor",
+          "key": "backgroundColor",
+          "type": "text",
+          "description": "Hintergrundfarbe für den Call-to-Action",
+          "required": false
+        },
+        "backgroundImage": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "BackgroundImage",
+          "key": "backgroundImage",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Hintergrundbild für den Call-to-Action",
+          "required": false
+        },
+        "tab-268db7c7-6b27-42b8-8cb3-fb6fdff175ae": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Image",
+          "key": "tab-268db7c7-6b27-42b8-8cb3-fb6fdff175ae",
+          "keys": [
+            "image_src",
+            "image_padding",
+            "image_alt",
+            "image_align"
+          ],
+          "type": "tab",
+          "description": "Bild welches nebem dem Infotext angezeigt wird",
+          "required": false
+        },
+        "image_src": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Src",
+          "key": "image_src",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Image source to use",
+          "required": false
+        },
+        "image_padding": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Padding",
+          "key": "image_padding",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Toggle padding of the image",
+          "required": false
+        },
+        "image_alt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Alt",
+          "key": "image_alt",
+          "type": "text",
+          "description": "Image description",
+          "required": false
+        },
+        "image_align": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Align",
+          "key": "image_align",
+          "type": "option",
+          "default_value": "center",
+          "description": "Select a vertical alignment for the image",
+          "options": [
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "7c8356b2-9c86-4be4-94e2-1051f1c09337"
+            },
+            {
+              "name": "top",
+              "value": "top",
+              "_uid": "83b67825-2690-4f07-9edf-68579135acdd"
+            },
+            {
+              "name": "bottom",
+              "value": "bottom",
+              "_uid": "a9856ce5-e5e9-4073-abaf-1b9462d6ef43"
+            }
+          ],
+          "required": false
+        },
+        "tab-f595210a-003c-4015-9420-88053d377cf3": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Order",
+          "key": "tab-f595210a-003c-4015-9420-88053d377cf3",
+          "keys": [
+            "order_mobileImageLast",
+            "order_desktopImageLast"
+          ],
+          "type": "tab",
+          "description": "Reihenfolge von Bild und Infotext",
+          "required": false
+        },
+        "order_mobileImageLast": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "MobileImageLast",
+          "key": "order_mobileImageLast",
+          "type": "boolean",
+          "description": "Switch to displaying the image after the text on mobile",
+          "required": false
+        },
+        "order_desktopImageLast": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "DesktopImageLast",
+          "key": "order_desktopImageLast",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Switch to displaying the image after the text on desktop",
+          "required": false
+        },
+        "textAlign": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TextAlign",
+          "key": "textAlign",
+          "type": "option",
+          "default_value": "left",
+          "description": "Ausrichtung des Textes im Call-to-Action",
+          "options": [
+            {
+              "name": "left",
+              "value": "left",
+              "_uid": "5ec00b5a-d198-4c16-969d-9d3bbd90c9b5"
+            },
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "2be8a653-0507-4652-91f8-e86d14fe745d"
+            }
+          ],
+          "required": false
+        },
+        "align": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Align",
+          "key": "align",
+          "type": "option",
+          "default_value": "center",
+          "description": "Vertikale Ausrichtung des Inhalts im Call-to-Action",
+          "options": [
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "f2217454-fdfe-49d8-89d5-6aaa35d6dc36"
+            },
+            {
+              "name": "top",
+              "value": "top",
+              "_uid": "199cdf70-4448-49b5-959f-5b3a8f726304"
+            },
+            {
+              "name": "bottom",
+              "value": "bottom",
+              "_uid": "6d574535-730a-48ca-a319-881012e89f32"
+            }
+          ],
+          "required": false
+        },
+        "padding": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Padding",
+          "key": "padding",
+          "type": "boolean",
+          "description": "Innenabstand des Call-to-Action Elements",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Cta",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "features",
+      "display_name": "Features",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 23,
+      "schema": {
+        "layout": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Layout",
+          "key": "layout",
+          "type": "option",
+          "default_value": "largeTiles",
+          "description": "Das Layout der Features-Sektion, das die Anordnung und Struktur der enthaltenen Merkmale definiert.",
+          "options": [
+            {
+              "name": "largeTiles",
+              "value": "largeTiles",
+              "_uid": "dc186eb3-1851-448b-bf0a-f9d5f5fc0186"
+            },
+            {
+              "name": "smallTiles",
+              "value": "smallTiles",
+              "_uid": "56373a0d-ec08-4a74-9a2a-b51aac9ff439"
+            },
+            {
+              "name": "list",
+              "value": "list",
+              "_uid": "7a2d444c-d364-4a60-bcc6-4b2081cb5c57"
+            }
+          ],
+          "required": false
+        },
+        "style": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Style",
+          "key": "style",
+          "type": "option",
+          "default_value": "stack",
+          "description": "Der Stil der Features-Sektion, der das visuelle Erscheinungsbild beeinflusst.",
+          "options": [
+            {
+              "name": "intext",
+              "value": "intext",
+              "_uid": "290277bc-92c5-4e9d-898d-f3c72326859b"
+            },
+            {
+              "name": "stack",
+              "value": "stack",
+              "_uid": "204c9169-5540-4ddf-81a3-c66a8c007507"
+            },
+            {
+              "name": "centered",
+              "value": "centered",
+              "_uid": "524b9110-ec33-4584-ab24-21709337644c"
+            },
+            {
+              "name": "besideLarge",
+              "value": "besideLarge",
+              "_uid": "b7d90a0a-84a1-4ffe-9dc7-c9f5c54a186d"
+            },
+            {
+              "name": "besideSmall",
+              "value": "besideSmall",
+              "_uid": "5d6c54cb-25b9-4a3a-ab18-6714e68fa54a"
+            }
+          ],
+          "required": false
+        },
+        "tab-7e90367a-a713-4cdc-a0fb-00eb44da94af": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Ctas",
+          "key": "tab-7e90367a-a713-4cdc-a0fb-00eb44da94af",
+          "keys": [
+            "ctas_toggle",
+            "ctas_style"
+          ],
+          "type": "tab",
+          "description": "Übergreifende Einstellungen für Handlungsaufrufen, die den Benutzer zu Aktionen auffordern, wie z.B. 'Mehr erfahren' oder 'Jetzt kaufen'.",
+          "required": false
+        },
+        "ctas_toggle": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Toggle",
+          "key": "ctas_toggle",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Activate/disable the CTAs",
+          "required": false
+        },
+        "ctas_style": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Style",
+          "key": "ctas_style",
+          "type": "option",
+          "default_value": "link",
+          "options": [
+            {
+              "name": "button",
+              "value": "button",
+              "_uid": "9754b379-efd0-4137-8cb5-88c2ef4759da"
+            },
+            {
+              "name": "link",
+              "value": "link",
+              "_uid": "a8ff2fda-e2ec-4e9a-9086-330473a25734"
+            },
+            {
+              "name": "intext",
+              "value": "intext",
+              "_uid": "6a0f5038-3aec-484e-9096-b70ca4e67f52"
+            }
+          ],
+          "required": false
+        },
+        "feature": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Feature",
+          "key": "feature",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "feature"
+          ],
+          "description": "Feature"
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Features",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "gallery",
+      "display_name": "Gallery",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 24,
+      "schema": {
+        "images": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Images",
+          "key": "images",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "images"
+          ]
+        },
+        "layout": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Layout",
+          "key": "layout",
+          "type": "option",
+          "default_value": "smallTiles",
+          "description": "Das Layout der Galerie, das die Anordnung der Bilder definiert.",
+          "options": [
+            {
+              "name": "stack",
+              "value": "stack",
+              "_uid": "d3c0631b-ab18-414a-8fda-0739f8cf7df9"
+            },
+            {
+              "name": "smallTiles",
+              "value": "smallTiles",
+              "_uid": "4dcdd194-8485-4968-be0a-306f3344bff7"
+            },
+            {
+              "name": "largeTiles",
+              "value": "largeTiles",
+              "_uid": "adb825fa-6c08-4237-9310-85d14f7781f0"
+            }
+          ],
+          "required": false
+        },
+        "aspectRatio": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "AspectRatio",
+          "key": "aspectRatio",
+          "type": "option",
+          "default_value": "unset",
+          "description": "Das Seitenverhältnis der Bilder in der Galerie, das die Breite und Höhe der Bilder definiert.",
+          "options": [
+            {
+              "name": "unset",
+              "value": "unset",
+              "_uid": "f07e6f70-491c-4746-9006-958e306d848e"
+            },
+            {
+              "name": "square",
+              "value": "square",
+              "_uid": "b630fa29-a3cc-4ce8-ad40-42e2385dd2c4"
+            },
+            {
+              "name": "wide",
+              "value": "wide",
+              "_uid": "b2dfb771-98d5-4421-836d-183fa043daf7"
+            },
+            {
+              "name": "landscape",
+              "value": "landscape",
+              "_uid": "34de4d55-82f5-4a30-b7e7-c4d86c7e4aa0"
+            }
+          ],
+          "required": false
+        },
+        "lightbox": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Lightbox",
+          "key": "lightbox",
+          "type": "boolean",
+          "description": "Ob die Bilder in einer Lightbox angezeigt werden sollen, wenn sie angeklickt werden.",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Gallery",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "hero",
+      "display_name": "Hero",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 25,
+      "schema": {
+        "headline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Headline",
+          "key": "headline",
+          "type": "markdown",
+          "description": "Headline für das Visual",
+          "required": false
+        },
+        "sub": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Sub",
+          "key": "sub",
+          "type": "markdown",
+          "description": "Subheadline unterhalb der Headline",
+          "required": false
+        },
+        "text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "text",
+          "type": "markdown",
+          "description": "Textinhalt des Hero Elements",
+          "required": false
+        },
+        "highlightText": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HighlightText",
+          "key": "highlightText",
+          "type": "boolean",
+          "description": "Textinhalt visuell hervorheben",
+          "required": false
+        },
+        "colorNeutral": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ColorNeutral",
+          "key": "colorNeutral",
+          "type": "boolean",
+          "description": "Textinhalt and buttons in neutraler Farbe darstellen",
+          "required": false
+        },
+        "height": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Height",
+          "key": "height",
+          "type": "option",
+          "default_value": "default",
+          "description": "Anzeigehöhe des Hero Elements",
+          "options": [
+            {
+              "name": "small",
+              "value": "small",
+              "_uid": "520ec348-ecbe-45f4-9e81-f692973ce42f"
+            },
+            {
+              "name": "default",
+              "value": "default",
+              "_uid": "2b4027e4-721e-4c10-8171-55705c321264"
+            },
+            {
+              "name": "fullImage",
+              "value": "fullImage",
+              "_uid": "6fa9fccf-427f-4c31-8e7c-ac21fa0b88e6"
+            },
+            {
+              "name": "fullScreen",
+              "value": "fullScreen",
+              "_uid": "da3e2cd6-30b2-4315-901e-85c42dabd2e0"
+            }
+          ],
+          "required": false
+        },
+        "textbox": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Textbox",
+          "key": "textbox",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Auswählen ob der Textinhalt innerhalb einer eigenen Box angezeigt werden soll",
+          "required": false
+        },
+        "invertText": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "InvertText",
+          "key": "invertText",
+          "type": "boolean",
+          "description": "Invert the text color for better contrast against the background",
+          "required": false
+        },
+        "buttons": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Buttons",
+          "key": "buttons",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "buttons"
+          ],
+          "description": "Button für das Hero Element"
+        },
+        "skipButton": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SkipButton",
+          "key": "skipButton",
+          "type": "boolean",
+          "description": "Add a skip button to the hero module",
+          "required": false
+        },
+        "overlay": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Overlay",
+          "key": "overlay",
+          "type": "boolean",
+          "description": "Overlay über das Bild legen um Lesbarkeit zu verbessern",
+          "required": false
+        },
+        "tab-649fe063-2a01-4d6c-835a-4c2a90b56803": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Image",
+          "key": "tab-649fe063-2a01-4d6c-835a-4c2a90b56803",
+          "keys": [
+            "image_srcMobile",
+            "image_srcTablet",
+            "image_srcDesktop",
+            "image_src",
+            "image_indent",
+            "image_alt"
+          ],
+          "type": "tab",
+          "description": "Hintergrundbild für das Hero Element",
+          "required": false
+        },
+        "image_srcMobile": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SrcMobile",
+          "key": "image_srcMobile",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Background image source for small screens",
+          "required": false
+        },
+        "image_srcTablet": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SrcTablet",
+          "key": "image_srcTablet",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Background image source for medium screens",
+          "required": false
+        },
+        "image_srcDesktop": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SrcDesktop",
+          "key": "image_srcDesktop",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Background image source for large screens",
+          "required": false
+        },
+        "image_src": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Src",
+          "key": "image_src",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Override for img tag of picture element, if needed",
+          "required": false
+        },
+        "image_indent": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Indent",
+          "key": "image_indent",
+          "type": "option",
+          "default_value": "none",
+          "description": "Choose to indent the image horizontally on small screens",
+          "options": [
+            {
+              "name": "none",
+              "value": "none",
+              "_uid": "60b71b37-13bf-42d1-a160-7bdabe543ee6"
+            },
+            {
+              "name": "left",
+              "value": "left",
+              "_uid": "8536c392-b167-4892-a791-44195f1b2d18"
+            },
+            {
+              "name": "right",
+              "value": "right",
+              "_uid": "962abc16-d836-48d7-82eb-7493fdde23f2"
+            }
+          ],
+          "required": false
+        },
+        "image_alt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Alt",
+          "key": "image_alt",
+          "type": "text",
+          "description": "Alt text to display for picture",
+          "required": false
+        },
+        "textPosition": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TextPosition",
+          "key": "textPosition",
+          "type": "option",
+          "default_value": "left",
+          "description": "Ausrichtung des Hero Inhaltes auswählen",
+          "options": [
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "d98f110e-d975-46d1-b479-834f65dc4950"
+            },
+            {
+              "name": "below",
+              "value": "below",
+              "_uid": "e5e38af5-1739-4e42-b110-e9880e6fda76"
+            },
+            {
+              "name": "offset",
+              "value": "offset",
+              "_uid": "38d9b165-edcd-42c5-adf5-96a39ef6b2a0"
+            },
+            {
+              "name": "left",
+              "value": "left",
+              "_uid": "dd1620eb-4360-4ec2-b32c-a952afe17789"
+            },
+            {
+              "name": "right",
+              "value": "right",
+              "_uid": "56f47c4f-d204-45f2-9deb-af0aceb5b228"
+            },
+            {
+              "name": "corner",
+              "value": "corner",
+              "_uid": "e83fc5d2-9dd9-4385-8bda-6ff333a74c3e"
+            },
+            {
+              "name": "bottom",
+              "value": "bottom",
+              "_uid": "304d37bf-33a0-4adf-bc86-69c682d0b32b"
+            }
+          ],
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Hero",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "image-text",
+      "display_name": "Image Text",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 26,
+      "schema": {
+        "text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "text",
+          "type": "markdown",
+          "description": "Der Text, der neben dem Bild angezeigt wird.",
+          "required": false
+        },
+        "highlightText": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HighlightText",
+          "key": "highlightText",
+          "type": "boolean",
+          "description": "Text hervorheben, um besondere Aufmerksamkeit zu erregen.",
+          "required": false
+        },
+        "tab-aef4da96-b97c-4211-9f50-08dbf4bc2be7": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Image",
+          "key": "tab-aef4da96-b97c-4211-9f50-08dbf4bc2be7",
+          "keys": [
+            "image_src",
+            "image_alt"
+          ],
+          "type": "tab",
+          "description": "Das Bild, das neben dem Text angezeigt wird.",
+          "required": false
+        },
+        "image_src": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Src",
+          "key": "image_src",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "URL of the image to display",
+          "required": false
+        },
+        "image_alt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Alt",
+          "key": "image_alt",
+          "type": "text",
+          "description": "Alt text of the image",
+          "required": false
+        },
+        "layout": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Layout",
+          "key": "layout",
+          "type": "option",
+          "description": "Das Layout des Image Text Elements, z.B. ob das Bild links oder rechts vom Text angezeigt wird.",
+          "options": [
+            {
+              "name": "above",
+              "value": "above",
+              "_uid": "1ab53b17-f182-456d-9f3f-b76a893b3043"
+            },
+            {
+              "name": "below",
+              "value": "below",
+              "_uid": "a886f348-6afc-4977-a994-0500653e7757"
+            },
+            {
+              "name": "beside-right",
+              "value": "beside_right",
+              "_uid": "ce788259-53a3-47ac-913f-118b5217e3a6"
+            },
+            {
+              "name": "beside-left",
+              "value": "beside_left",
+              "_uid": "2e46acf9-4238-4835-a9c0-ffac9d31a876"
+            }
+          ],
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Image Text",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "logos",
+      "display_name": "Logos",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 27,
+      "schema": {
+        "tagline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Tagline",
+          "key": "tagline",
+          "type": "text",
+          "description": "Optionaler Text, der über den Logos angezeigt wird.",
+          "required": false
+        },
+        "logo": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Logo",
+          "key": "logo",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "logo"
+          ],
+          "description": "Logo entry for Logos component"
+        },
+        "align": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Align",
+          "key": "align",
+          "type": "option",
+          "default_value": "center",
+          "description": "Die Ausrichtung der Logos, z.B. links oder zentriert.",
+          "options": [
+            {
+              "name": "left",
+              "value": "left",
+              "_uid": "1f638847-bb3d-48ee-9fdf-59d5358d2e77"
+            },
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "5cb80d49-fe5f-4d54-8e50-fbbc5e21e503"
+            }
+          ],
+          "required": false
+        },
+        "logosPerRow": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "LogosPerRow",
+          "key": "logosPerRow",
+          "type": "number",
+          "description": "Anzahl der Logos, die in einer Zeile angezeigt werden sollen.",
+          "required": false
+        },
+        "tab-c9fea8ea-4a3f-4b15-9fe2-febc4720810e": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Cta",
+          "key": "tab-c9fea8ea-4a3f-4b15-9fe2-febc4720810e",
+          "keys": [
+            "cta_toggle",
+            "cta_text",
+            "cta_link",
+            "cta_label",
+            "cta_style"
+          ],
+          "type": "tab",
+          "description": "Optionaler Call-to-Action, der unter den Logos angezeigt wird.",
+          "required": false
+        },
+        "cta_toggle": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Toggle",
+          "key": "cta_toggle",
+          "type": "boolean",
+          "description": "Activate/disable the CTA",
+          "required": false
+        },
+        "cta_text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "cta_text",
+          "type": "text",
+          "description": "A short CTA text",
+          "required": false
+        },
+        "cta_link": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Link",
+          "key": "cta_link",
+          "type": "multilink",
+          "allow_target_blank": true,
+          "email_link_type": true,
+          "asset_link_type": true,
+          "show_anchor": true,
+          "default_value": "#",
+          "description": "The CTA link",
+          "required": false
+        },
+        "cta_label": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Label",
+          "key": "cta_label",
+          "type": "text",
+          "description": "The text label displayed on the link",
+          "required": false
+        },
+        "cta_style": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Style",
+          "key": "cta_style",
+          "type": "option",
+          "default_value": "text",
+          "options": [
+            {
+              "name": "button",
+              "value": "button",
+              "_uid": "8fb10cbc-5069-471b-ab43-ffeee5ae66e1"
+            },
+            {
+              "name": "text",
+              "value": "text",
+              "_uid": "a1f47fab-2abf-42f0-9407-d06b6abf0589"
+            }
+          ],
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Logos",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "stats",
+      "display_name": "Stats",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 28,
+      "schema": {
+        "stat": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Stat",
+          "key": "stat",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "stat"
+          ]
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Stats",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "teaser-card",
+      "display_name": "Teaser Card",
+      "created_at": "2026-01-15T14:47:13.015Z",
+      "updated_at": "2026-01-15T14:47:13.015Z",
+      "id": 29,
+      "schema": {
+        "headline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Headline",
+          "key": "headline",
+          "type": "markdown",
+          "description": "Die Überschrift der Teaser-Karte, die den Inhalt zusammenfasst.",
+          "required": false
+        },
+        "text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "text",
+          "type": "markdown",
+          "description": "Ein kurzer Text, der den Inhalt der Teaser-Karte beschreibt.",
+          "required": false
+        },
+        "label": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Label",
+          "key": "label",
+          "type": "text",
+          "description": "Ein optionales Label, das zusätzliche Informationen oder Kategorien für die Teaser-Karte bereitstellt.",
+          "required": false
+        },
+        "layout": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Layout",
+          "key": "layout",
+          "type": "option",
+          "default_value": "stack",
+          "description": "Das Layout der Teaser-Karte, das die Anordnung von Text, Bild und anderen Elementen bestimmt.",
+          "options": [
+            {
+              "name": "stack",
+              "value": "stack",
+              "_uid": "268201ab-96c8-4508-b8b1-afcd2c86b9c6"
+            },
+            {
+              "name": "row",
+              "value": "row",
+              "_uid": "cc3eeb81-11df-4dcd-9761-625fb12f647a"
+            }
+          ],
+          "required": false
+        },
+        "centered": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Centered",
+          "key": "centered",
+          "type": "boolean",
+          "description": "Whether the Teaser Card is centered",
+          "required": false
+        },
+        "url": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Url",
+          "key": "url",
+          "type": "multilink",
+          "allow_target_blank": true,
+          "email_link_type": true,
+          "asset_link_type": true,
+          "show_anchor": true,
+          "description": "Das Ziel, auf das die Teaser-Karte verweist, z.B. eine URL oder eine interne Seite.",
+          "required": false
+        },
+        "tab-7170ba7e-c663-459f-9091-461a35ae2fc9": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Button",
+          "key": "tab-7170ba7e-c663-459f-9091-461a35ae2fc9",
+          "keys": [
+            "button_label",
+            "button_chevron",
+            "button_hidden"
+          ],
+          "type": "tab",
+          "description": "Ein optionaler Button, als explizites Element zum das Öffnen der hinterlegten Seite.",
+          "required": false
+        },
+        "button_label": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Label",
+          "key": "button_label",
+          "type": "text",
+          "description": "Label of the button. Still A11Y relevant when the button is hidden.",
+          "required": false
+        },
+        "button_chevron": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Chevron",
+          "key": "button_chevron",
+          "type": "boolean",
+          "description": "Toggle arrow icon",
+          "required": false
+        },
+        "button_hidden": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Hidden",
+          "key": "button_hidden",
+          "type": "boolean",
+          "description": "Toggle wether you want the card to have a visible button or not",
+          "required": false
+        },
+        "image": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Image",
+          "key": "image",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Ein Bild, das die Teaser-Karte visuell unterstützt. Dies kann ein Hauptbild oder ein Hintergrundbild sein.",
+          "required": false
+        },
+        "imageRatio": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ImageRatio",
+          "key": "imageRatio",
+          "type": "option",
+          "default_value": "wide",
+          "description": "Das Verhältnis des Bildes, das in der Teaser-Karte verwendet wird, z.B. quadratisch oder weit.",
+          "options": [
+            {
+              "name": "wide",
+              "value": "wide",
+              "_uid": "43193a2d-1fdb-41ff-95e1-3c4dcdffd084"
+            },
+            {
+              "name": "landscape",
+              "value": "landscape",
+              "_uid": "586842f0-0204-4425-adbd-f4e280aa02af"
+            },
+            {
+              "name": "square",
+              "value": "square",
+              "_uid": "5aa500d6-f959-4783-8960-f07526684a47"
+            },
+            {
+              "name": "unset",
+              "value": "unset",
+              "_uid": "428b96a3-2493-45d8-bcee-9e8a2549d8a0"
+            }
+          ],
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Teaser Card",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "testimonials",
+      "display_name": "Testimonials",
+      "created_at": "2026-01-15T14:47:13.016Z",
+      "updated_at": "2026-01-15T14:47:13.016Z",
+      "id": 30,
+      "schema": {
+        "layout": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Layout",
+          "key": "layout",
+          "type": "option",
+          "default_value": "slider",
+          "description": "Das Layout des Testimonials, z.B. ob es in einem Raster, Slider oder einer Liste angezeigt wird.",
+          "options": [
+            {
+              "name": "slider",
+              "value": "slider",
+              "_uid": "57ff936e-e91b-4494-9bf9-66db9dc31cc5"
+            },
+            {
+              "name": "list",
+              "value": "list",
+              "_uid": "3b81316b-5ab4-45f7-89c8-0a87dad85359"
+            },
+            {
+              "name": "alternating",
+              "value": "alternating",
+              "_uid": "b852c87c-f2c5-446a-851f-cab6ff4f1b2a"
+            }
+          ],
+          "required": false
+        },
+        "quoteSigns": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "QuoteSigns",
+          "key": "quoteSigns",
+          "type": "option",
+          "default_value": "normal",
+          "description": "Die Darstellung der Anführungszeichen um das Zitat, z.B. ob sie angezeigt werden oder nicht.",
+          "options": [
+            {
+              "name": "normal",
+              "value": "normal",
+              "_uid": "0acd87df-9bd2-4a12-aa14-7cabf10c711b"
+            },
+            {
+              "name": "large",
+              "value": "large",
+              "_uid": "ca0462ee-633e-4386-a7e0-33e77fd0b5b6"
+            },
+            {
+              "name": "none",
+              "value": "none",
+              "_uid": "673e050d-6b84-4efe-8269-de7fe9410eb6"
+            }
+          ],
+          "required": false
+        },
+        "testimonial": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Testimonial",
+          "key": "testimonial",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "testimonial"
+          ],
+          "description": "Testimonial entry of Testimonials component"
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Testimonials",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
+      "name": "text",
+      "display_name": "Text",
+      "created_at": "2026-01-15T14:47:13.016Z",
+      "updated_at": "2026-01-15T14:47:13.016Z",
+      "id": 31,
+      "schema": {
+        "text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "text",
+          "type": "markdown",
+          "description": "Der darzustellende Textinhalt.",
+          "required": false
+        },
+        "layout": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Layout",
+          "key": "layout",
+          "type": "option",
+          "default_value": "singleColumn",
+          "description": "Das Layout des Textes, z.B. ob er einspaltig oder mehrspaltig dargestellt wird.",
+          "options": [
+            {
+              "name": "singleColumn",
+              "value": "singleColumn",
+              "_uid": "e0596f49-d9c0-424a-ae1f-04776c84b954"
+            },
+            {
+              "name": "multiColumn",
+              "value": "multiColumn",
+              "_uid": "ac4528b1-e8d5-4693-a7d1-b75220425a0a"
+            }
+          ],
+          "required": false
+        },
+        "align": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Align",
+          "key": "align",
+          "type": "option",
+          "default_value": "left",
+          "description": "Die Ausrichtung des Textes, z.B. links oder zentriert.",
+          "options": [
+            {
+              "name": "left",
+              "value": "left",
+              "_uid": "af2ad311-68b8-44da-a735-a0fc9b992dc0"
+            },
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "97ce3b87-ffa2-4773-9e96-b3d789739941"
+            }
+          ],
+          "required": false
+        },
+        "highlightText": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HighlightText",
+          "key": "highlightText",
+          "type": "boolean",
+          "description": "Ob der Text hervorgehoben werden soll, z.B. durch eine andere Farbe, Schriftart oder Größe.",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Text",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
+      "component_group_name": "Components"
+    },
+    {
       "name": "blog-teaser",
       "display_name": "Blog Teaser",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 39,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 67,
       "schema": {
         "date": {
           "id": 0,
@@ -1104,11 +2207,11 @@
           "description": "Alternativtext für das Bild des Blogbeitrags",
           "required": false
         },
-        "tab-bed68d37-835c-4ee6-b0b7-9bb24fe62362": {
+        "tab-c3ba9bf2-df74-4b82-8648-92a4ec80d525": {
           "id": 0,
           "pos": 0,
           "display_name": "Link",
-          "key": "tab-bed68d37-835c-4ee6-b0b7-9bb24fe62362",
+          "key": "tab-c3ba9bf2-df74-4b82-8648-92a4ec80d525",
           "keys": [
             "link_url",
             "link_text"
@@ -1149,11 +2252,11 @@
           "description": "Lesezeit des Blogbeitrags",
           "required": false
         },
-        "tab-4f04157e-a844-4ac2-83b5-19897b7bf5b5": {
+        "tab-fdb1a15e-bfb4-4a1a-9161-595981f5cc73": {
           "id": 0,
           "pos": 0,
           "display_name": "Author",
-          "key": "tab-4f04157e-a844-4ac2-83b5-19897b7bf5b5",
+          "key": "tab-fdb1a15e-bfb4-4a1a-9161-595981f5cc73",
           "keys": [
             "author_name",
             "author_title",
@@ -1192,21 +2295,30 @@
           ],
           "description": "The image URL of the author",
           "required": false
+        },
+        "className": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ClassName",
+          "key": "className",
+          "type": "text",
+          "description": "Zusätzliche CSS-Klasse(n) für den Blog Teaser",
+          "required": false
         }
       },
       "is_nestable": true,
       "real_name": "Blog Teaser",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "business-card",
       "display_name": "Business Card",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 40,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 68,
       "schema": {
         "centered": {
           "id": 0,
@@ -1217,11 +2329,11 @@
           "description": "Whether the business card content is centered.",
           "required": false
         },
-        "tab-b3d89073-05b9-4e3b-930c-c474f7524dec": {
+        "tab-efb73481-5747-4a7d-a203-3ab6f27a360b": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
-          "key": "tab-b3d89073-05b9-4e3b-930c-c474f7524dec",
+          "key": "tab-efb73481-5747-4a7d-a203-3ab6f27a360b",
           "keys": [
             "image_src",
             "image_alt"
@@ -1252,11 +2364,11 @@
           "description": "Alternative text describing the background image.",
           "required": false
         },
-        "tab-2f509491-ee9d-4007-b94e-508aa7a4e994": {
+        "tab-8d197e93-02fa-4905-8d29-9eb5dcd3cb35": {
           "id": 0,
           "pos": 0,
           "display_name": "Logo",
-          "key": "tab-2f509491-ee9d-4007-b94e-508aa7a4e994",
+          "key": "tab-8d197e93-02fa-4905-8d29-9eb5dcd3cb35",
           "keys": [
             "logo_src",
             "logo_alt",
@@ -1319,11 +2431,11 @@
           "description": "The physical or mailing address displayed on the business card.",
           "required": false
         },
-        "tab-d6ea97d5-d2fb-48d6-8c30-09f87d38dd91": {
+        "tab-fe7e9d98-2f5b-483d-be3f-4c888fb83f34": {
           "id": 0,
           "pos": 0,
           "display_name": "Avatar",
-          "key": "tab-d6ea97d5-d2fb-48d6-8c30-09f87d38dd91",
+          "key": "tab-fe7e9d98-2f5b-483d-be3f-4c888fb83f34",
           "keys": [
             "avatar_src",
             "avatar_alt"
@@ -1383,21 +2495,21 @@
       "real_name": "Business Card",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "content-nav",
       "display_name": "Content Nav",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 42,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 70,
       "schema": {
-        "tab-e60ee306-e04c-4917-80b6-c27d2c9a8bf2": {
+        "tab-2a4940ab-4312-4117-87d0-86f47e99ef91": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
-          "key": "tab-e60ee306-e04c-4917-80b6-c27d2c9a8bf2",
+          "key": "tab-2a4940ab-4312-4117-87d0-86f47e99ef91",
           "keys": [
             "image_src",
             "image_alt"
@@ -1463,211 +2575,15 @@
       "real_name": "Content Nav",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "cta",
-      "display_name": "Cta",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 43,
-      "schema": {
-        "headline": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Headline",
-          "key": "headline",
-          "type": "markdown",
-          "description": "Headline für den Call-to-Action",
-          "required": false
-        },
-        "sub": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Sub",
-          "key": "sub",
-          "type": "markdown",
-          "description": "Subheadline unterhalb der Headline",
-          "required": false
-        },
-        "text": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Text",
-          "key": "text",
-          "type": "markdown",
-          "description": "Infotext für den Call-to-Action",
-          "required": false
-        },
-        "buttons": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Buttons",
-          "key": "buttons",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ],
-          "description": "Button"
-        },
-        "tab-06f6afe9-1718-47c7-a36f-fdbd50327bb8": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Image",
-          "key": "tab-06f6afe9-1718-47c7-a36f-fdbd50327bb8",
-          "keys": [
-            "image_src",
-            "image_padding",
-            "image_alt",
-            "image_align"
-          ],
-          "type": "tab",
-          "description": "Bild welches nebem dem Infotext angezeigt wird",
-          "required": false
-        },
-        "image_src": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Src",
-          "key": "image_src",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Image source to use",
-          "required": false
-        },
-        "image_padding": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Padding",
-          "key": "image_padding",
-          "type": "boolean",
-          "default_value": true,
-          "description": "Toggle padding of the image",
-          "required": false
-        },
-        "image_alt": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Alt",
-          "key": "image_alt",
-          "type": "text",
-          "description": "Image description",
-          "required": false
-        },
-        "image_align": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Align",
-          "key": "image_align",
-          "type": "option",
-          "default_value": "center",
-          "description": "Select a vertical alignment for the image",
-          "options": [
-            {
-              "name": "center",
-              "value": "center",
-              "_uid": "d0bab5aa-8365-47d3-9f71-061b93281847"
-            },
-            {
-              "name": "top",
-              "value": "top",
-              "_uid": "88dbf63b-ddf9-4d0b-a02f-a2461dc76beb"
-            },
-            {
-              "name": "bottom",
-              "value": "bottom",
-              "_uid": "63884b7d-80bf-4de5-8d49-22332637c1f7"
-            }
-          ],
-          "required": false
-        },
-        "tab-1bf8092b-fdd4-494b-8324-fa3345f2b452": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Order",
-          "key": "tab-1bf8092b-fdd4-494b-8324-fa3345f2b452",
-          "keys": [
-            "order_mobileImageLast",
-            "order_desktopImageLast"
-          ],
-          "type": "tab",
-          "description": "Reihenfolge von Bild und Infotext",
-          "required": false
-        },
-        "order_mobileImageLast": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "MobileImageLast",
-          "key": "order_mobileImageLast",
-          "type": "boolean",
-          "description": "Switch to displaying the image after the text on mobile",
-          "required": false
-        },
-        "order_desktopImageLast": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "DesktopImageLast",
-          "key": "order_desktopImageLast",
-          "type": "boolean",
-          "default_value": true,
-          "description": "Switch to displaying the image after the text on desktop",
-          "required": false
-        },
-        "align": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Align",
-          "key": "align",
-          "type": "option",
-          "default_value": "center",
-          "description": "Select a vertical alignment for the content",
-          "options": [
-            {
-              "name": "center",
-              "value": "center",
-              "_uid": "bc84a6f8-0be2-40c1-8c4a-ebdbbdc24234"
-            },
-            {
-              "name": "top",
-              "value": "top",
-              "_uid": "38cf724d-da63-4d7d-a904-148ceec82ae3"
-            },
-            {
-              "name": "bottom",
-              "value": "bottom",
-              "_uid": "c2c77ee1-6692-4ab3-b4c6-ce58147ade1b"
-            }
-          ],
-          "required": false
-        },
-        "padding": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Padding",
-          "key": "padding",
-          "type": "boolean",
-          "description": "Toggle padding of the content",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Cta",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "divider",
       "display_name": "Divider",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 44,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 72,
       "schema": {
         "variant": {
           "id": 0,
@@ -1681,14 +2597,32 @@
             {
               "name": "default",
               "value": "default",
-              "_uid": "50a5c6ba-5933-41ff-8c72-32a4b59b3699"
+              "_uid": "0638b0cc-3d5d-4b52-bb48-36eb6e1e71fd"
             },
             {
               "name": "accent",
               "value": "accent",
-              "_uid": "49c99192-c66d-4ce0-9792-8c33117a6ccf"
+              "_uid": "45b8fc94-8a50-4e3a-92f3-5f7cf3ffe9a7"
             }
           ],
+          "required": false
+        },
+        "className": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ClassName",
+          "key": "className",
+          "type": "text",
+          "description": "Zusätzliche CSS-Klasse für benutzerdefinierte Stile.",
+          "required": false
+        },
+        "component": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Component",
+          "key": "component",
+          "type": "text",
+          "description": "Die Komponente, die für den Trenner verwendet wird.",
           "required": false
         }
       },
@@ -1696,15 +2630,15 @@
       "real_name": "Divider",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "downloads",
       "display_name": "Downloads",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 45,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 73,
       "schema": {
         "download": {
           "id": 0,
@@ -1723,15 +2657,15 @@
       "real_name": "Downloads",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "event-latest-teaser",
       "display_name": "Event Latest Teaser",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 46,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 74,
       "schema": {
         "date": {
           "id": 0,
@@ -1743,11 +2677,11 @@
           "description": "The date of the event",
           "required": false
         },
-        "tab-66b1f19b-f083-4083-9b9b-fa29022ed932": {
+        "tab-ae888716-6c03-4b25-9d2d-dedbc2861b3d": {
           "id": 0,
           "pos": 0,
           "display_name": "Calendar",
-          "key": "tab-66b1f19b-f083-4083-9b9b-fa29022ed932",
+          "key": "tab-ae888716-6c03-4b25-9d2d-dedbc2861b3d",
           "keys": [
             "calendar_month",
             "calendar_day"
@@ -1836,15 +2770,15 @@
       "real_name": "Event Latest Teaser",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "event-list-teaser",
       "display_name": "Event List Teaser",
-      "created_at": "2026-01-09T11:19:05.816Z",
-      "updated_at": "2026-01-09T11:19:05.816Z",
-      "id": 47,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 75,
       "schema": {
         "category": {
           "id": 0,
@@ -1892,11 +2826,11 @@
           "description": "The time of the event",
           "required": false
         },
-        "tab-03f50ce0-8dd5-4e59-828f-9813decee368": {
+        "tab-d490efe0-93b4-47f5-b7e6-6776b39d99a9": {
           "id": 0,
           "pos": 0,
           "display_name": "Location",
-          "key": "tab-03f50ce0-8dd5-4e59-828f-9813decee368",
+          "key": "tab-d490efe0-93b4-47f5-b7e6-6776b39d99a9",
           "keys": [
             "location_name",
             "location_address"
@@ -1935,11 +2869,11 @@
             "tags"
           ]
         },
-        "tab-67165f5f-e24a-4510-a400-dc67b598fb44": {
+        "tab-51a004e8-dfd5-4968-8b28-76c9413dc7ac": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
-          "key": "tab-67165f5f-e24a-4510-a400-dc67b598fb44",
+          "key": "tab-51a004e8-dfd5-4968-8b28-76c9413dc7ac",
           "keys": [
             "image_src",
             "image_alt"
@@ -2013,15 +2947,15 @@
       "real_name": "Event List Teaser",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "faq",
       "display_name": "Faq",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 48,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 76,
       "schema": {
         "questions": {
           "id": 0,
@@ -2041,425 +2975,15 @@
       "real_name": "Faq",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "features",
-      "display_name": "Features",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 49,
-      "schema": {
-        "layout": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Layout",
-          "key": "layout",
-          "type": "option",
-          "default_value": "largeTiles",
-          "description": "Das Layout der Features-Sektion, das die Anordnung und Struktur der enthaltenen Merkmale definiert.",
-          "options": [
-            {
-              "name": "largeTiles",
-              "value": "largeTiles",
-              "_uid": "6f313c33-05b2-476b-a03e-4636f31c02ff"
-            },
-            {
-              "name": "smallTiles",
-              "value": "smallTiles",
-              "_uid": "88576eec-a8dd-43a4-89bb-43188e5d57ad"
-            },
-            {
-              "name": "list",
-              "value": "list",
-              "_uid": "405dfe96-0277-4675-a3ef-e09d3b3c844a"
-            }
-          ],
-          "required": false
-        },
-        "style": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Style",
-          "key": "style",
-          "type": "option",
-          "default_value": "stack",
-          "description": "Der Stil der Features-Sektion, der das visuelle Erscheinungsbild beeinflusst.",
-          "options": [
-            {
-              "name": "intext",
-              "value": "intext",
-              "_uid": "f7f1165a-24b3-4dc8-bf76-87bf06a26611"
-            },
-            {
-              "name": "stack",
-              "value": "stack",
-              "_uid": "076b23a9-b312-46c3-9825-891bc9722aaf"
-            },
-            {
-              "name": "centered",
-              "value": "centered",
-              "_uid": "4348946e-31f4-4098-8779-7f1c9d755e6c"
-            },
-            {
-              "name": "besideLarge",
-              "value": "besideLarge",
-              "_uid": "22a2d8d3-54a4-4fda-8a80-cf801b408992"
-            },
-            {
-              "name": "besideSmall",
-              "value": "besideSmall",
-              "_uid": "ea3a372e-4a26-4471-94de-cf75ad8abc5c"
-            }
-          ],
-          "required": false
-        },
-        "tab-f40973ca-0171-47b4-9b21-647a8ba6bc01": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Ctas",
-          "key": "tab-f40973ca-0171-47b4-9b21-647a8ba6bc01",
-          "keys": [
-            "ctas_toggle",
-            "ctas_style"
-          ],
-          "type": "tab",
-          "description": "Übergreifende Einstellungen für Handlungsaufrufen, die den Benutzer zu Aktionen auffordern, wie z.B. 'Mehr erfahren' oder 'Jetzt kaufen'.",
-          "required": false
-        },
-        "ctas_toggle": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Toggle",
-          "key": "ctas_toggle",
-          "type": "boolean",
-          "default_value": true,
-          "description": "Activate/disable the CTAs",
-          "required": false
-        },
-        "ctas_style": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Style",
-          "key": "ctas_style",
-          "type": "option",
-          "default_value": "link",
-          "options": [
-            {
-              "name": "button",
-              "value": "button",
-              "_uid": "f274d573-2a7d-4539-8209-d36de1f303c0"
-            },
-            {
-              "name": "link",
-              "value": "link",
-              "_uid": "a626c078-9723-4358-bfd4-6efdf8a30af0"
-            },
-            {
-              "name": "intext",
-              "value": "intext",
-              "_uid": "e72460e8-1a1b-42c8-a872-5945eead524d"
-            }
-          ],
-          "required": false
-        },
-        "feature": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Feature",
-          "key": "feature",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "feature"
-          ],
-          "description": "Feature"
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Features",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "gallery",
-      "display_name": "Gallery",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 50,
-      "schema": {
-        "images": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Images",
-          "key": "images",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "images"
-          ]
-        },
-        "layout": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Layout",
-          "key": "layout",
-          "type": "option",
-          "default_value": "smallTiles",
-          "description": "Das Layout der Galerie, das die Anordnung der Bilder definiert.",
-          "options": [
-            {
-              "name": "stack",
-              "value": "stack",
-              "_uid": "35b7798c-a26b-4b71-b170-86a2dc1d2212"
-            },
-            {
-              "name": "smallTiles",
-              "value": "smallTiles",
-              "_uid": "f20af035-6047-49a9-a57f-466c0d085db9"
-            },
-            {
-              "name": "largeTiles",
-              "value": "largeTiles",
-              "_uid": "c667108e-26aa-4143-b6b9-5792ea4a856a"
-            }
-          ],
-          "required": false
-        },
-        "aspectRatio": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "AspectRatio",
-          "key": "aspectRatio",
-          "type": "option",
-          "default_value": "unset",
-          "description": "Das Seitenverhältnis der Bilder in der Galerie, das die Breite und Höhe der Bilder definiert.",
-          "options": [
-            {
-              "name": "unset",
-              "value": "unset",
-              "_uid": "e787fe9a-6e40-4e76-aef2-7e2ac776a591"
-            },
-            {
-              "name": "square",
-              "value": "square",
-              "_uid": "e06fa961-e5c6-433e-9763-f493f01491d9"
-            },
-            {
-              "name": "wide",
-              "value": "wide",
-              "_uid": "83b706f6-19de-46ce-b607-f4ad97e07111"
-            },
-            {
-              "name": "landscape",
-              "value": "landscape",
-              "_uid": "4d8c3c55-c5df-48a7-a1ce-56e43d95d85f"
-            }
-          ],
-          "required": false
-        },
-        "lightbox": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Lightbox",
-          "key": "lightbox",
-          "type": "boolean",
-          "description": "Ob die Bilder in einer Lightbox angezeigt werden sollen, wenn sie angeklickt werden.",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Gallery",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "hero",
-      "display_name": "Hero",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 51,
-      "schema": {
-        "headline": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Headline",
-          "key": "headline",
-          "type": "markdown",
-          "description": "Headline für das Visual",
-          "required": false
-        },
-        "sub": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Sub",
-          "key": "sub",
-          "type": "markdown",
-          "description": "Subheadline unterhalb der Headline",
-          "required": false
-        },
-        "text": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Text",
-          "key": "text",
-          "type": "markdown",
-          "description": "Textinhalt des Hero Elements",
-          "required": false
-        },
-        "invertText": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "InvertText",
-          "key": "invertText",
-          "type": "boolean",
-          "description": "Invert the text color for better contrast against the background",
-          "required": false
-        },
-        "buttons": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Buttons",
-          "key": "buttons",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ],
-          "description": "Button für das Hero Element"
-        },
-        "skipButton": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "SkipButton",
-          "key": "skipButton",
-          "type": "boolean",
-          "description": "Add a skip button to the hero module",
-          "required": false
-        },
-        "tab-9716b8b9-81fd-4b27-a89c-cefd9adb92d3": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Image",
-          "key": "tab-9716b8b9-81fd-4b27-a89c-cefd9adb92d3",
-          "keys": [
-            "image_srcMobile",
-            "image_srcTablet",
-            "image_srcDesktop",
-            "image_src",
-            "image_indent",
-            "image_alt"
-          ],
-          "type": "tab",
-          "description": "Hintergrundbild für das Hero Element",
-          "required": false
-        },
-        "image_srcMobile": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "SrcMobile",
-          "key": "image_srcMobile",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Background image source for small screens",
-          "required": false
-        },
-        "image_srcTablet": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "SrcTablet",
-          "key": "image_srcTablet",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Background image source for medium screens",
-          "required": false
-        },
-        "image_srcDesktop": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "SrcDesktop",
-          "key": "image_srcDesktop",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Background image source for large screens",
-          "required": false
-        },
-        "image_src": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Src",
-          "key": "image_src",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Override for img tag of picture element, if needed",
-          "required": false
-        },
-        "image_indent": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Indent",
-          "key": "image_indent",
-          "type": "option",
-          "default_value": "none",
-          "description": "Choose to indent the image horizontally on small screens",
-          "options": [
-            {
-              "name": "none",
-              "value": "none",
-              "_uid": "aae5a8a9-4b3e-4a49-801d-d12b6188c2dc"
-            },
-            {
-              "name": "left",
-              "value": "left",
-              "_uid": "40b20b20-32c9-4b6e-ba99-35c9b6a49da8"
-            },
-            {
-              "name": "right",
-              "value": "right",
-              "_uid": "aab694d8-1aec-45cb-b549-ee43cdd4c497"
-            }
-          ],
-          "required": false
-        },
-        "image_alt": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Alt",
-          "key": "image_alt",
-          "type": "text",
-          "description": "Alt text to display for picture",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Hero",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "html",
       "display_name": "Html",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 52,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 80,
       "schema": {
         "html": {
           "id": 0,
@@ -2521,24 +3045,51 @@
             {
               "name": "16:9",
               "value": "VALUE_16_9",
-              "_uid": "7d4a7e4a-d463-4b54-9034-260b9e942a90"
+              "_uid": "40ab5032-7863-41b7-852c-e8c6709f696f"
             },
             {
               "name": "16:10",
               "value": "VALUE_16_10",
-              "_uid": "6a9fee4c-c201-4885-b31e-9bfb97ec26ce"
+              "_uid": "d5f489ea-8244-4dcb-a89d-2b13ad34afba"
             },
             {
               "name": "4:3",
               "value": "VALUE_4_3",
-              "_uid": "6d66a564-d134-4d09-9c3b-5f95079f1029"
+              "_uid": "8c0f7777-93ca-4785-9c34-15fa70cefaf9"
             },
             {
               "name": "1:1",
               "value": "VALUE_1_1",
-              "_uid": "88794c92-6980-45af-a37a-0f9cfcd20d75"
+              "_uid": "1a79b1c8-bba3-4889-b4d8-a14fa5c53858"
             }
           ],
+          "required": false
+        },
+        "inverted": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Inverted",
+          "key": "inverted",
+          "type": "boolean",
+          "description": "Ob die eingebetteten Inhalte invertiert dargestellt werden sollen.",
+          "required": false
+        },
+        "className": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ClassName",
+          "key": "className",
+          "type": "text",
+          "description": "Zusätzliche CSS-Klasse(n) für die Überschrift, um das Styling anzupassen",
+          "required": false
+        },
+        "component": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Component",
+          "key": "component",
+          "type": "text",
+          "description": "Die Komponente, die für die HTML-Einbettung verwendet wird.",
           "required": false
         }
       },
@@ -2546,15 +3097,15 @@
       "real_name": "Html",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "image-story",
       "display_name": "Image Story",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 53,
+      "created_at": "2026-01-15T14:47:13.022Z",
+      "updated_at": "2026-01-15T14:47:13.022Z",
+      "id": 81,
       "schema": {
         "headline": {
           "id": 0,
@@ -2563,6 +3114,15 @@
           "key": "headline",
           "type": "markdown",
           "description": "Die Hauptüberschrift der Image Story",
+          "required": false
+        },
+        "largeHeadline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "LargeHeadline",
+          "key": "largeHeadline",
+          "type": "boolean",
+          "description": "Die Überschrift in großer Schrift darstellen",
           "required": false
         },
         "sub": {
@@ -2595,14 +3155,23 @@
             {
               "name": "textLeft",
               "value": "textLeft",
-              "_uid": "26069651-8a12-4adf-8aa0-8df6662a4406"
+              "_uid": "c0277a26-60ee-46c3-b177-b892ba09e6c9"
             },
             {
               "name": "imageLeft",
               "value": "imageLeft",
-              "_uid": "d59bcfa8-fe57-460b-9ade-9733d7c12015"
+              "_uid": "802050b8-cf46-4b13-a4a2-f862adf782d4"
             }
           ],
+          "required": false
+        },
+        "padding": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Padding",
+          "key": "padding",
+          "type": "boolean",
+          "description": "Zusätzlichen Innenabstand um die Image Story hinzufügen",
           "required": false
         },
         "buttons": {
@@ -2617,11 +3186,11 @@
             "buttons"
           ]
         },
-        "tab-754d6f32-d5b6-4691-ab56-e1746b6a2b1b": {
+        "tab-d1ca4038-6c80-4e00-a0cb-5440b11fb994": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
-          "key": "tab-754d6f32-d5b6-4691-ab56-e1746b6a2b1b",
+          "key": "tab-d1ca4038-6c80-4e00-a0cb-5440b11fb994",
           "keys": [
             "image_src",
             "image_aspectRatio",
@@ -2656,22 +3225,22 @@
             {
               "name": "unset",
               "value": "unset",
-              "_uid": "866bbdf4-e0ce-4824-846a-c7dee91a2790"
+              "_uid": "eb292283-be1e-403c-9564-05d7377c2aea"
             },
             {
               "name": "square",
               "value": "square",
-              "_uid": "f091f465-eee1-469c-8554-aca9060ea3dd"
+              "_uid": "42c3b476-8b61-4d6b-913d-7a9af785945f"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "4d4bf773-68d4-4b33-9e12-97e4ebed49bf"
+              "_uid": "06344006-0bc9-42b0-a632-29296121695a"
             },
             {
               "name": "landscape",
               "value": "landscape",
-              "_uid": "e4118e9d-40a5-4cff-9d99-07ef05614b16"
+              "_uid": "0bef08a4-b9f4-4f6d-8eb6-185e9cc60a16"
             }
           ],
           "required": false
@@ -2697,17 +3266,39 @@
             {
               "name": "center",
               "value": "center",
-              "_uid": "4caf6de5-60af-4e5a-b2e4-460c18f71ff2"
+              "_uid": "4996a2d9-3dbd-4c0b-8b05-79879288891a"
             },
             {
               "name": "top",
               "value": "top",
-              "_uid": "1d4c70d8-3a1e-45ff-8dae-9083e0756633"
+              "_uid": "2a1dd163-12e3-43dc-b56e-2965dc041ad1"
             },
             {
               "name": "bottom",
               "value": "bottom",
-              "_uid": "fe0f5295-5b55-4258-87df-c0899d0ad0c1"
+              "_uid": "d461307d-d005-4a3e-9f1f-bcb112d304a6"
+            }
+          ],
+          "required": false
+        },
+        "textAlign": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TextAlign",
+          "key": "textAlign",
+          "type": "option",
+          "default_value": "left",
+          "description": "Die Ausrichtung des Textes innerhalb der Image Story, z.B. links oder zentriert",
+          "options": [
+            {
+              "name": "left",
+              "value": "left",
+              "_uid": "a7ac0b72-89ed-44ad-b955-8613fb4e0bd8"
+            },
+            {
+              "name": "center",
+              "value": "center",
+              "_uid": "0dfe4e42-1ca9-490b-91f3-ca5ff16bb986"
             }
           ],
           "required": false
@@ -2717,237 +3308,15 @@
       "real_name": "Image Story",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "image-text",
-      "display_name": "Image Text",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 54,
-      "schema": {
-        "text": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Text",
-          "key": "text",
-          "type": "markdown",
-          "description": "Der Text, der neben dem Bild angezeigt wird.",
-          "required": false
-        },
-        "highlightText": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "HighlightText",
-          "key": "highlightText",
-          "type": "boolean",
-          "description": "Text hervorheben, um besondere Aufmerksamkeit zu erregen.",
-          "required": false
-        },
-        "tab-a4187910-ca29-4eda-a5d7-db301e8efb96": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Image",
-          "key": "tab-a4187910-ca29-4eda-a5d7-db301e8efb96",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
-          "type": "tab",
-          "description": "Das Bild, das neben dem Text angezeigt wird.",
-          "required": false
-        },
-        "image_src": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Src",
-          "key": "image_src",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "URL of the image to display",
-          "required": false
-        },
-        "image_alt": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Alt",
-          "key": "image_alt",
-          "type": "text",
-          "description": "Alt text of the image",
-          "required": false
-        },
-        "layout": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Layout",
-          "key": "layout",
-          "type": "option",
-          "description": "Das Layout des Image Text Elements, z.B. ob das Bild links oder rechts vom Text angezeigt wird.",
-          "options": [
-            {
-              "name": "above",
-              "value": "above",
-              "_uid": "3c3ef3ed-5692-417d-ad6e-406c28c61a80"
-            },
-            {
-              "name": "below",
-              "value": "below",
-              "_uid": "de988a9d-280f-4b94-bcdc-fec45c6e7b51"
-            },
-            {
-              "name": "beside-right",
-              "value": "beside_right",
-              "_uid": "62ee3a3f-7b88-4c55-a6f0-306d5c3d1f19"
-            },
-            {
-              "name": "beside-left",
-              "value": "beside_left",
-              "_uid": "213b00ef-8442-46bb-9408-a3f3747b2cd9"
-            }
-          ],
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Image Text",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "logos",
-      "display_name": "Logos",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 55,
-      "schema": {
-        "tagline": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Tagline",
-          "key": "tagline",
-          "type": "text",
-          "description": "Optionaler Text, der über den Logos angezeigt wird.",
-          "required": false
-        },
-        "logo": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Logo",
-          "key": "logo",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "logo"
-          ],
-          "description": "Logo entry for Logos component"
-        },
-        "logosPerRow": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "LogosPerRow",
-          "key": "logosPerRow",
-          "type": "number",
-          "description": "Anzahl der Logos, die in einer Zeile angezeigt werden sollen.",
-          "required": false
-        },
-        "tab-b5a832a9-c571-49f6-9f40-98b9d75ea697": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Cta",
-          "key": "tab-b5a832a9-c571-49f6-9f40-98b9d75ea697",
-          "keys": [
-            "cta_toggle",
-            "cta_text",
-            "cta_link",
-            "cta_label",
-            "cta_style"
-          ],
-          "type": "tab",
-          "description": "Optionaler Call-to-Action, der unter den Logos angezeigt wird.",
-          "required": false
-        },
-        "cta_toggle": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Toggle",
-          "key": "cta_toggle",
-          "type": "boolean",
-          "description": "Activate/disable the CTA",
-          "required": false
-        },
-        "cta_text": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Text",
-          "key": "cta_text",
-          "type": "text",
-          "description": "A short CTA text",
-          "required": false
-        },
-        "cta_link": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Link",
-          "key": "cta_link",
-          "type": "multilink",
-          "allow_target_blank": true,
-          "email_link_type": true,
-          "asset_link_type": true,
-          "show_anchor": true,
-          "default_value": "#",
-          "description": "The CTA link",
-          "required": false
-        },
-        "cta_label": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Label",
-          "key": "cta_label",
-          "type": "text",
-          "description": "The text label displayed on the link",
-          "required": false
-        },
-        "cta_style": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Style",
-          "key": "cta_style",
-          "type": "option",
-          "default_value": "text",
-          "options": [
-            {
-              "name": "button",
-              "value": "button",
-              "_uid": "5d549843-29ee-4ced-94c1-dcad179180e1"
-            },
-            {
-              "name": "text",
-              "value": "text",
-              "_uid": "e2a2828d-1219-465b-82b9-49a791960ff1"
-            }
-          ],
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Logos",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "mosaic",
       "display_name": "Mosaic",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 56,
+      "created_at": "2026-01-15T14:47:13.023Z",
+      "updated_at": "2026-01-15T14:47:13.023Z",
+      "id": 84,
       "schema": {
         "layout": {
           "id": 0,
@@ -2961,17 +3330,17 @@
             {
               "name": "alternate",
               "value": "alternate",
-              "_uid": "5df6803f-b531-498d-a5b5-895a780a892e"
+              "_uid": "ac2c7bfc-6f09-4ec9-a3c1-4c7fc1629a70"
             },
             {
               "name": "textLeft",
               "value": "textLeft",
-              "_uid": "f64ba4e4-4749-45ab-8b62-b1e8bafbc705"
+              "_uid": "37efc4ba-dcd0-4367-95bf-2b1b6168ba86"
             },
             {
               "name": "textRight",
               "value": "textRight",
-              "_uid": "6f836ece-af50-47c4-aec8-8826e6bc3e94"
+              "_uid": "a8d80fc7-504d-4448-8044-a889895bedf0"
             }
           ],
           "required": false
@@ -3002,15 +3371,15 @@
       "real_name": "Mosaic",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "slider",
       "display_name": "Slider",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 57,
+      "created_at": "2026-01-15T14:47:13.023Z",
+      "updated_at": "2026-01-15T14:47:13.023Z",
+      "id": 85,
       "schema": {
         "autoplay": {
           "id": 0,
@@ -3049,6 +3418,15 @@
           "description": "Stellt sicher, dass alle Slider-Elemente die gleiche Höhe haben, um ein einheitliches Layout zu gewährleisten.",
           "required": false
         },
+        "gap": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Gap",
+          "key": "gap",
+          "type": "number",
+          "description": "Der Abstand zwischen den einzelnen Slider-Elementen in Pixeln, um visuelle Trennung zu schaffen.",
+          "required": false
+        },
         "arrows": {
           "id": 0,
           "pos": 0,
@@ -3070,14 +3448,37 @@
             {
               "name": "slider",
               "value": "slider",
-              "_uid": "9f8b0d77-8441-4b4a-96d2-64415dd601e0"
+              "_uid": "9df5dfa1-2a0a-4259-8d44-a4ef542444a5"
             },
             {
               "name": "carousel",
               "value": "carousel",
-              "_uid": "dc1a60f8-dcbd-4352-ae9f-2fb791959434"
+              "_uid": "e15b444e-2223-42ad-bfe9-d7f5d314cbd8"
             }
           ],
+          "required": false
+        },
+        "className": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ClassName",
+          "key": "className",
+          "type": "text",
+          "description": "Zusätzliche CSS-Klasse(n) für den Slider, um benutzerdefinierte Stile anzuwenden.",
+          "required": false
+        },
+        "components": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Components",
+          "key": "components",
+          "type": "bloks",
+          "restrict_type": "groups",
+          "restrict_components": true,
+          "component_group_whitelist": [
+            "ab810e22-a464-4876-9f50-9a126b0cbb16"
+          ],
+          "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         }
       },
@@ -3085,350 +3486,15 @@
       "real_name": "Slider",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "stats",
-      "display_name": "Stats",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 58,
-      "schema": {
-        "stat": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Stat",
-          "key": "stat",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "stat"
-          ]
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Stats",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "teaser-card",
-      "display_name": "Teaser Card",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 59,
-      "schema": {
-        "headline": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Headline",
-          "key": "headline",
-          "type": "markdown",
-          "description": "Die Überschrift der Teaser-Karte, die den Inhalt zusammenfasst.",
-          "required": false
-        },
-        "text": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Text",
-          "key": "text",
-          "type": "markdown",
-          "description": "Ein kurzer Text, der den Inhalt der Teaser-Karte beschreibt.",
-          "required": false
-        },
-        "label": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Label",
-          "key": "label",
-          "type": "text",
-          "description": "Ein optionales Label, das zusätzliche Informationen oder Kategorien für die Teaser-Karte bereitstellt.",
-          "required": false
-        },
-        "layout": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Layout",
-          "key": "layout",
-          "type": "option",
-          "default_value": "stack",
-          "description": "Das Layout der Teaser-Karte, das die Anordnung von Text, Bild und anderen Elementen bestimmt.",
-          "options": [
-            {
-              "name": "stack",
-              "value": "stack",
-              "_uid": "c45de34f-e10c-40cc-85fd-6d4a260e0bec"
-            },
-            {
-              "name": "row",
-              "value": "row",
-              "_uid": "b8a3ed62-17aa-455f-8ddb-7f3a87ab7dae"
-            }
-          ],
-          "required": false
-        },
-        "centered": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Centered",
-          "key": "centered",
-          "type": "boolean",
-          "description": "Whether the Teaser Card is centered",
-          "required": false
-        },
-        "url": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Url",
-          "key": "url",
-          "type": "multilink",
-          "allow_target_blank": true,
-          "email_link_type": true,
-          "asset_link_type": true,
-          "show_anchor": true,
-          "description": "Das Ziel, auf das die Teaser-Karte verweist, z.B. eine URL oder eine interne Seite.",
-          "required": false
-        },
-        "tab-da5d5dd7-1cbb-40e8-a46a-8303e8799866": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Button",
-          "key": "tab-da5d5dd7-1cbb-40e8-a46a-8303e8799866",
-          "keys": [
-            "button_label",
-            "button_chevron",
-            "button_hidden"
-          ],
-          "type": "tab",
-          "description": "Ein optionaler Button, als explizites Element zum das Öffnen der hinterlegten Seite.",
-          "required": false
-        },
-        "button_label": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Label",
-          "key": "button_label",
-          "type": "text",
-          "description": "Label of the button. Still A11Y relevant when the button is hidden.",
-          "required": false
-        },
-        "button_chevron": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Chevron",
-          "key": "button_chevron",
-          "type": "boolean",
-          "description": "Toggle arrow icon",
-          "required": false
-        },
-        "button_hidden": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Hidden",
-          "key": "button_hidden",
-          "type": "boolean",
-          "description": "Toggle wether you want the card to have a visible button or not",
-          "required": false
-        },
-        "image": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Image",
-          "key": "image",
-          "type": "asset",
-          "filetypes": [
-            "images"
-          ],
-          "description": "Ein Bild, das die Teaser-Karte visuell unterstützt. Dies kann ein Hauptbild oder ein Hintergrundbild sein.",
-          "required": false
-        },
-        "imageRatio": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "ImageRatio",
-          "key": "imageRatio",
-          "type": "option",
-          "default_value": "wide",
-          "description": "Das Verhältnis des Bildes, das in der Teaser-Karte verwendet wird, z.B. quadratisch oder weit.",
-          "options": [
-            {
-              "name": "wide",
-              "value": "wide",
-              "_uid": "5062990a-1fd1-4c9d-8012-01b68dfb25eb"
-            },
-            {
-              "name": "landscape",
-              "value": "landscape",
-              "_uid": "56c5dd16-38e0-46cb-ac98-9435184c9efe"
-            },
-            {
-              "name": "square",
-              "value": "square",
-              "_uid": "3ac8a5ee-c316-4fdc-aac1-96fe995c0175"
-            },
-            {
-              "name": "unset",
-              "value": "unset",
-              "_uid": "18594ae1-8d2f-4891-a6ea-165e7f8d8d1c"
-            }
-          ],
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Teaser Card",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "testimonials",
-      "display_name": "Testimonials",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 60,
-      "schema": {
-        "layout": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Layout",
-          "key": "layout",
-          "type": "option",
-          "default_value": "slider",
-          "description": "Das Layout des Testimonials, z.B. ob es in einem Raster, Slider oder einer Liste angezeigt wird.",
-          "options": [
-            {
-              "name": "slider",
-              "value": "slider",
-              "_uid": "9c09c32a-a01c-441d-9212-4e3932208057"
-            },
-            {
-              "name": "list",
-              "value": "list",
-              "_uid": "5d3a11e2-3cf7-4afc-aaa6-5b79a6d5408d"
-            },
-            {
-              "name": "alternating",
-              "value": "alternating",
-              "_uid": "d1c306da-3f83-481d-9e5f-2b30a376b5df"
-            }
-          ],
-          "required": false
-        },
-        "quoteSigns": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "QuoteSigns",
-          "key": "quoteSigns",
-          "type": "option",
-          "default_value": "normal",
-          "description": "Die Darstellung der Anführungszeichen um das Zitat, z.B. ob sie angezeigt werden oder nicht.",
-          "options": [
-            {
-              "name": "normal",
-              "value": "normal",
-              "_uid": "02984890-87d9-478b-b47d-1cafaef4d8d7"
-            },
-            {
-              "name": "large",
-              "value": "large",
-              "_uid": "2fd332fc-d3c0-432a-9af3-c4373fec98ac"
-            },
-            {
-              "name": "none",
-              "value": "none",
-              "_uid": "10cb7b34-45d6-4606-b1eb-c34ef0661250"
-            }
-          ],
-          "required": false
-        },
-        "testimonial": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Testimonial",
-          "key": "testimonial",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "testimonial"
-          ],
-          "description": "Testimonial entry of Testimonials component"
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Testimonials",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
-      "component_group_name": "FirstComponents"
-    },
-    {
-      "name": "text",
-      "display_name": "Text",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 61,
-      "schema": {
-        "text": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Text",
-          "key": "text",
-          "type": "markdown",
-          "description": "Der darzustellende Textinhalt.",
-          "required": false
-        },
-        "layout": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Layout",
-          "key": "layout",
-          "type": "option",
-          "default_value": "singleColumn",
-          "description": "Das Layout des Textes, z.B. ob er einspaltig oder mehrspaltig dargestellt wird.",
-          "options": [
-            {
-              "name": "singleColumn",
-              "value": "singleColumn",
-              "_uid": "c3f33d34-5374-4900-ba0b-ed22746b2691"
-            },
-            {
-              "name": "multiColumn",
-              "value": "multiColumn",
-              "_uid": "b4efb0c2-50a9-4768-aec9-c375b70e7e3f"
-            }
-          ],
-          "required": false
-        },
-        "highlightText": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "HighlightText",
-          "key": "highlightText",
-          "type": "boolean",
-          "description": "Ob der Text hervorgehoben werden soll, z.B. durch eine andere Farbe, Schriftart oder Größe.",
-          "required": false
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Text",
-      "color": "#05566a",
-      "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "video-curtain",
       "display_name": "Video Curtain",
-      "created_at": "2026-01-09T11:19:05.817Z",
-      "updated_at": "2026-01-09T11:19:05.817Z",
-      "id": 62,
+      "created_at": "2026-01-15T14:47:13.023Z",
+      "updated_at": "2026-01-15T14:47:13.023Z",
+      "id": 90,
       "schema": {
         "headline": {
           "id": 0,
@@ -3497,11 +3563,11 @@
           "description": "Ob ein Overlay über dem Video angezeigt werden soll, um die Lesbarkeit des Textes zu verbessern.",
           "required": false
         },
-        "tab-b0027f45-61f2-45a2-b074-ad5323a222a7": {
+        "tab-563cd973-a3f5-4b74-8eb9-d8ea5758c5d5": {
           "id": 0,
           "pos": 0,
           "display_name": "Video",
-          "key": "tab-b0027f45-61f2-45a2-b074-ad5323a222a7",
+          "key": "tab-563cd973-a3f5-4b74-8eb9-d8ea5758c5d5",
           "keys": [
             "video_srcMobile",
             "video_srcTablet",
@@ -3559,27 +3625,27 @@
             {
               "name": "center",
               "value": "center",
-              "_uid": "8e0a7872-1b7d-430e-8e7c-d490eef094b9"
+              "_uid": "09332302-7e79-48ef-bf4e-944e464b5527"
             },
             {
               "name": "bottom",
               "value": "bottom",
-              "_uid": "b8e32501-2c5c-4773-ab19-190804c30e98"
+              "_uid": "35866c17-25c6-4a0f-9914-602bb98fd05d"
             },
             {
               "name": "left",
               "value": "left",
-              "_uid": "4fc8d342-d778-4fd7-a56c-80f07a6a6edb"
+              "_uid": "9e6620ec-f8f4-41f7-a7f5-0df54bd803d0"
             },
             {
               "name": "right",
               "value": "right",
-              "_uid": "68110d86-e6c5-462d-8e8e-3cc7929e5bd3"
+              "_uid": "c26eead3-aab1-4b60-83f2-8ab38395b6ef"
             },
             {
               "name": "corner",
               "value": "corner",
-              "_uid": "e78f5357-9462-47e2-9b58-7cb99f1b9e96"
+              "_uid": "a1a91f24-34e4-488b-8351-81510f83ddb8"
             }
           ],
           "required": false
@@ -3589,15 +3655,15 @@
       "real_name": "Video Curtain",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "e411889f-65ca-43a2-858d-f41e8994dc4b",
+      "component_group_uuid": "d6dc36ea-6625-4103-8784-af891d6b18bb",
       "component_group_name": "FirstComponents"
     },
     {
       "name": "split-even",
       "display_name": "Split Even",
-      "created_at": "2026-01-09T11:19:05.832Z",
-      "updated_at": "2026-01-09T11:19:05.832Z",
-      "id": 211,
+      "created_at": "2026-01-15T14:47:13.035Z",
+      "updated_at": "2026-01-15T14:47:13.035Z",
+      "id": 290,
       "schema": {
         "contentMinWidth": {
           "id": 0,
@@ -3611,17 +3677,17 @@
             {
               "name": "narrow",
               "value": "narrow",
-              "_uid": "b2853f71-386e-42c2-b255-6b6bd50519b0"
+              "_uid": "a8ab8123-7bb3-4f6b-b91b-71b37866ec13"
             },
             {
               "name": "medium",
               "value": "medium",
-              "_uid": "84c56332-bd87-4e30-b4d4-11ff7d597858"
+              "_uid": "d639d8a5-9ce4-4510-8429-2044640b11f4"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "1ebb9739-7e6b-40bf-b01a-0969f1f7395e"
+              "_uid": "3cbf9f77-6950-4913-a39a-3352c21583fc"
             }
           ],
           "required": false
@@ -3638,22 +3704,22 @@
             {
               "name": "small",
               "value": "small",
-              "_uid": "fbc13062-e1fc-4f49-8b4c-c8a0ccb88213"
+              "_uid": "d7f6dae0-5f0b-46bf-b883-0572c0557bce"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "cf8bb2e3-00a5-4b24-91c6-95633216eaeb"
+              "_uid": "bc44b7d2-5bdc-4db9-b38b-a9deaace84c0"
             },
             {
               "name": "large",
               "value": "large",
-              "_uid": "907c6c22-dbdf-44cf-ae02-f6be94a8a7a5"
+              "_uid": "69bcae5d-2667-4488-9fa8-ff4dc3caf359"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "04c27eba-5b0b-4954-892e-844298fe041d"
+              "_uid": "f51914c4-9291-439b-beb8-29dc426d9543"
             }
           ],
           "required": false
@@ -3679,22 +3745,22 @@
             {
               "name": "top",
               "value": "top",
-              "_uid": "f9c7b7dd-993a-4575-b209-5956054b7656"
+              "_uid": "f477ca71-6822-4e7b-8e94-8a575c99ceed"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "fe7d3c35-1420-45fd-9f3f-7bf600e5fa3d"
+              "_uid": "ac6dc943-2670-4a2f-a07e-ac508e84e360"
             },
             {
               "name": "bottom",
               "value": "bottom",
-              "_uid": "94b30deb-975e-4158-8cc0-5b7dc4269b43"
+              "_uid": "060df348-6759-4d29-8db8-101df3f54964"
             },
             {
               "name": "sticky",
               "value": "sticky",
-              "_uid": "f0a4a8de-88a4-4de2-887d-16dfd070ac40"
+              "_uid": "b7517ba4-e444-45b9-91ca-92a48447f579"
             }
           ],
           "required": false
@@ -3711,22 +3777,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "113a8fcb-eb76-4515-ab27-635f6758a232"
+              "_uid": "ee00c027-6d2c-4be9-a6ea-dcae745bdaee"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "713233d9-2511-443a-82cb-c7eb0ed9651a"
+              "_uid": "5ea5a695-5229-420c-ab88-b38553ef7323"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "544604d8-bb8d-48b0-9bc0-28fff29a0488"
+              "_uid": "50626d48-3e90-4448-a5d6-56e3039a4a59"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "57e3c3db-cad3-4579-bc9b-9797a6186753"
+              "_uid": "fd87bacf-7517-4207-8151-c7e744050ae2"
             }
           ],
           "required": false
@@ -3743,22 +3809,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "ae561bab-ac7c-460b-8381-2ea6d06e971d"
+              "_uid": "9de6b1bd-f61f-40c7-ba39-6ef8002e5ee3"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "2c87ebf7-c4f9-4790-9760-541a53c1c882"
+              "_uid": "297cf7ae-175f-46b7-97f8-84622949cbe0"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "aa3093ec-6bc7-4e8b-8489-a6111be6e0d7"
+              "_uid": "b8e99a2c-028f-450c-b244-172158433ecb"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "8f175586-949a-4b92-bcbc-e9c9bd8a0413"
+              "_uid": "691157c5-9605-42d7-94cb-43295b6338c4"
             }
           ],
           "required": false
@@ -3772,9 +3838,9 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "e411889f-65ca-43a2-858d-f41e8994dc4b"
+            "d6dc36ea-6625-4103-8784-af891d6b18bb"
           ],
-          "description": "Abstracts a blog post concept into JSON schema",
+          "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         },
         "secondComponents": {
@@ -3786,9 +3852,9 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "ca7f141c-075c-425b-acbe-be53ea31fc63"
+            "2d07c612-ca3d-4f44-bd27-68ac1a725d16"
           ],
-          "description": "Abstracts a blog post concept into JSON schema",
+          "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         }
       },
@@ -3796,15 +3862,15 @@
       "real_name": "Split Even",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "49893402-aedf-41f3-a426-c27970d9e5d8",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
       "component_group_name": "Components"
     },
     {
       "name": "split-weighted",
       "display_name": "Split Weighted",
-      "created_at": "2026-01-09T11:19:05.832Z",
-      "updated_at": "2026-01-09T11:19:05.832Z",
-      "id": 212,
+      "created_at": "2026-01-15T14:47:13.035Z",
+      "updated_at": "2026-01-15T14:47:13.035Z",
+      "id": 291,
       "schema": {
         "verticalGutter": {
           "id": 0,
@@ -3818,22 +3884,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "8679225b-4870-4462-a2f0-03c1219b3ad0"
+              "_uid": "b67249c7-2c58-4db6-8fa9-76b800a3d190"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "88ebc843-51bf-4bf1-bef2-26d7abba4422"
+              "_uid": "8fab4498-05c8-437f-9ee0-4c3268d67d63"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "63ed8012-05be-4eae-9068-f345e069b117"
+              "_uid": "d7ebfe6d-4834-4735-90e4-b5c078ea3509"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "9236ef8b-3204-4b90-9134-270abf4372c0"
+              "_uid": "bc655dce-2805-47b9-aa0a-4d8e6e23f1de"
             }
           ],
           "required": false
@@ -3850,22 +3916,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "b03bc9de-5f25-447c-bfe7-1dc76dc4408f"
+              "_uid": "9a8d5b95-8ade-40e0-aa0d-f59e1d2a7eed"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "12d18783-d6e7-439a-9a55-b13ee110671b"
+              "_uid": "9e8fae75-ab79-4c9e-a369-ebd763319506"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "49244d37-a158-4e2f-ba13-c3882c0653b8"
+              "_uid": "3fdcb57a-75e3-4efd-a3cf-41b946220bc3"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "bad6bf15-e19c-4ff5-b714-5597dc92b553"
+              "_uid": "dc607cde-ddff-49cf-b074-ba7f54fc865d"
             }
           ],
           "required": false
@@ -3882,31 +3948,31 @@
             {
               "name": "top",
               "value": "top",
-              "_uid": "6f6ffdc2-5327-46d2-8eba-bdec3d174466"
+              "_uid": "a7ae5861-34a5-4666-8c1d-b083adf90667"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "8a154d47-7342-48d9-b0fc-2a7f299797ea"
+              "_uid": "4c584ec2-9ff5-4e29-b93c-db8643b0271a"
             },
             {
               "name": "bottom",
               "value": "bottom",
-              "_uid": "51143762-fef4-47e8-91a5-d705ec1b429e"
+              "_uid": "85b54dc3-6549-48db-a7e5-ddaa5a84675e"
             },
             {
               "name": "sticky",
               "value": "sticky",
-              "_uid": "93428687-8615-4b0a-9e96-7b4a3cee078e"
+              "_uid": "f2fdc647-17b2-44ce-a173-ffc10bcff447"
             }
           ],
           "required": false
         },
-        "tab-666a9982-3469-4550-a1f6-0ea784bebfa3": {
+        "tab-676845d5-c523-4ef2-b606-6a4e1c2a9569": {
           "id": 0,
           "pos": 0,
           "display_name": "MainLayout",
-          "key": "tab-666a9982-3469-4550-a1f6-0ea784bebfa3",
+          "key": "tab-676845d5-c523-4ef2-b606-6a4e1c2a9569",
           "keys": [
             "mainLayout_gutter",
             "mainLayout_minWidth"
@@ -3927,22 +3993,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "f59bfcec-cc78-498f-b698-bddf83e9264e"
+              "_uid": "b0ff3035-bcbe-44e5-9542-781bf83f21d9"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "809c0636-41c7-42e5-9b21-ed0794d23186"
+              "_uid": "0acf65d9-0cf2-42d8-a663-85553b8eca86"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "7c9414ee-112d-4694-8ee8-33a66c9f3147"
+              "_uid": "62358810-576d-4003-8dd6-88088f532525"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "d63e5007-a727-4584-acab-3da60d49097d"
+              "_uid": "a0f4ce09-b6ef-4f08-989f-691309d82340"
             }
           ],
           "required": false
@@ -3959,26 +4025,26 @@
             {
               "name": "narrow",
               "value": "narrow",
-              "_uid": "89b97c9d-8894-4707-8e8d-730beaa53856"
+              "_uid": "61d3c774-a7fb-49af-aff7-6fc680199958"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "5f9012b9-3ffe-4fb2-9b9e-fe804e71bd26"
+              "_uid": "774562b6-5fb7-45ab-a8a6-733f816d844c"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "5e1e317e-ebd6-483a-b207-7b5d26d816c5"
+              "_uid": "e6017286-d6ee-4378-9c3b-2174ce941e8f"
             }
           ],
           "required": false
         },
-        "tab-f513f4c3-4b31-4b95-bb5e-4a98523e84ed": {
+        "tab-ca1421d0-03ba-4dac-945d-182b1f65e4ae": {
           "id": 0,
           "pos": 0,
           "display_name": "AsideLayout",
-          "key": "tab-f513f4c3-4b31-4b95-bb5e-4a98523e84ed",
+          "key": "tab-ca1421d0-03ba-4dac-945d-182b1f65e4ae",
           "keys": [
             "asideLayout_gutter",
             "asideLayout_minWidth"
@@ -3999,22 +4065,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "cd137aaf-d112-4aa2-b3ce-011cffbbf495"
+              "_uid": "65663067-257b-4db2-a2ae-ab396246de92"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "267c33c8-8359-4347-a451-cf36e069c4b5"
+              "_uid": "497b153e-2629-4af7-a435-edf8a9f7efb4"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "44b95399-7c2d-4434-9867-540106cae689"
+              "_uid": "cb0cccf4-ea65-4a4d-afe9-5fb68282532e"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "4530f122-a1bf-4515-9c58-adfd1f0f5d2f"
+              "_uid": "40c4e7ae-cb97-4544-9583-f695ad2b05ae"
             }
           ],
           "required": false
@@ -4031,26 +4097,26 @@
             {
               "name": "narrow",
               "value": "narrow",
-              "_uid": "075790c9-ac84-4496-b132-70f5c69f3bd5"
+              "_uid": "1da67989-4173-4181-90c7-b75d18a61220"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "4270d417-d8c5-4618-be67-001bc2d6f6d3"
+              "_uid": "572ed7fd-d469-41be-b4ac-e7daea2c321e"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "192ec503-b5d4-41e2-a5a2-79571bafd934"
+              "_uid": "5731eb58-9bbf-4a2e-ad21-5b3f4b79d1cc"
             }
           ],
           "required": false
         },
-        "tab-611362bd-a115-4d27-a7b9-cf02b5db06a6": {
+        "tab-52643b9d-1951-4607-b97d-30cd9a762a6d": {
           "id": 0,
           "pos": 0,
           "display_name": "Order",
-          "key": "tab-611362bd-a115-4d27-a7b9-cf02b5db06a6",
+          "key": "tab-52643b9d-1951-4607-b97d-30cd9a762a6d",
           "keys": [
             "order_mobile",
             "order_desktop"
@@ -4071,12 +4137,12 @@
             {
               "name": "mainFirst",
               "value": "mainFirst",
-              "_uid": "d0d61fe0-eb88-4b23-b4d0-17a3fdd56928"
+              "_uid": "09c7d3e5-af32-4fc0-bfef-440a5f0ca191"
             },
             {
               "name": "asideFirst",
               "value": "asideFirst",
-              "_uid": "00b2a5c2-ea35-4724-a13b-b1a7e08a3469"
+              "_uid": "49429e38-5e91-49ff-bd6d-f203227fd518"
             }
           ],
           "required": false
@@ -4093,12 +4159,12 @@
             {
               "name": "mainFirst",
               "value": "mainFirst",
-              "_uid": "84f7bfe6-d048-45ea-ae6a-454d8bd525bb"
+              "_uid": "6c7e6d7d-f382-470e-811d-311c70f08d89"
             },
             {
               "name": "asideFirst",
               "value": "asideFirst",
-              "_uid": "cb55f8df-0fca-456e-a24e-a5b0c01b3af4"
+              "_uid": "337821b2-729c-4c65-9658-4e48a5f290c1"
             }
           ],
           "required": false
@@ -4112,9 +4178,9 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "6ae4a26f-6478-467f-bb88-f33a48b54761"
+            "0ba8037d-2795-4806-b0eb-1fb7d6bb50ce"
           ],
-          "description": "Abstracts a blog post concept into JSON schema",
+          "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         },
         "asideComponents": {
@@ -4126,9 +4192,9 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "fc416a9b-a00d-44ba-804a-876b8a80a2e8"
+            "029a2a48-fdc2-4b81-ade3-721f13f95c21"
           ],
-          "description": "Abstracts a blog post concept into JSON schema",
+          "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         }
       },
@@ -4136,15 +4202,15 @@
       "real_name": "Split Weighted",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "49893402-aedf-41f3-a426-c27970d9e5d8",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
       "component_group_name": "Components"
     },
     {
       "name": "info-table",
       "display_name": "Info Table",
-      "created_at": "2026-01-09T11:19:05.832Z",
-      "updated_at": "2026-01-09T11:19:05.832Z",
-      "id": 218,
+      "created_at": "2026-01-15T14:47:13.035Z",
+      "updated_at": "2026-01-15T14:47:13.035Z",
+      "id": 297,
       "schema": {
         "data": {
           "id": 0,
@@ -4160,15 +4226,15 @@
       "real_name": "Info Table",
       "color": "#05566a",
       "icon": "block-wallet",
-      "component_group_uuid": "49893402-aedf-41f3-a426-c27970d9e5d8",
+      "component_group_uuid": "ab810e22-a464-4876-9f50-9a126b0cbb16",
       "component_group_name": "Components"
     },
     {
       "name": "section",
       "display_name": "Section",
-      "created_at": "2026-01-09T11:19:05.832Z",
-      "updated_at": "2026-01-09T11:19:05.832Z",
-      "id": 220,
+      "created_at": "2026-01-15T14:47:13.035Z",
+      "updated_at": "2026-01-15T14:47:13.035Z",
+      "id": 299,
       "schema": {
         "width": {
           "id": 0,
@@ -4182,27 +4248,27 @@
             {
               "name": "full",
               "value": "full",
-              "_uid": "c9fb7a26-284b-4d82-b3a7-06ff12ac916d"
+              "_uid": "5a751998-98c3-4ef0-b826-37d8d156c095"
             },
             {
               "name": "max",
               "value": "max",
-              "_uid": "3bfd2d7d-ac0b-4a4c-873d-d0b668e11102"
+              "_uid": "abb86ac2-baf4-4bff-afd1-62d62dbd7df8"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "865dcc60-adf6-480c-a8eb-4d18aa1a42fb"
+              "_uid": "41221086-09ec-4130-8c49-040886f266ac"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "7fe2a309-59de-45f1-b3ea-879504ec39d9"
+              "_uid": "ae9a3e92-c8cb-491f-9e21-68b38ef810f6"
             },
             {
               "name": "narrow",
               "value": "narrow",
-              "_uid": "e2c385f3-8447-4602-8af3-f4ac839aaafc"
+              "_uid": "2598e01f-f815-46db-b709-1662bbf9874d"
             }
           ],
           "required": false
@@ -4219,17 +4285,17 @@
             {
               "name": "default",
               "value": "default",
-              "_uid": "462f3ea5-f7c9-4d76-9abd-022f99e233ae"
+              "_uid": "3f6f181a-e349-469e-8c60-f9c28bf6e4b9"
             },
             {
               "name": "framed",
               "value": "framed",
-              "_uid": "393bd2a1-60b5-497e-a2b6-db74e5fa2007"
+              "_uid": "44c7c3b3-9d26-4d0b-b38a-1500492cac6b"
             },
             {
               "name": "deko",
               "value": "deko",
-              "_uid": "16c0f51e-ff30-40e8-97ce-67422c1a9751"
+              "_uid": "b6766e6a-48ba-4be3-b61a-948ec5e4c5fa"
             }
           ],
           "required": false
@@ -4246,17 +4312,17 @@
             {
               "name": "default",
               "value": "default",
-              "_uid": "5a92f030-96ef-4283-9694-5d5514eb9bca"
+              "_uid": "e362cd89-2ee2-41f3-b766-07ce98cf5478"
             },
             {
               "name": "accent",
               "value": "accent",
-              "_uid": "4b1dda52-5e7f-4b56-a902-20b70804ce67"
+              "_uid": "4b2c87ca-04db-4f4b-8d30-e0412aef5db7"
             },
             {
               "name": "bold",
               "value": "bold",
-              "_uid": "742aa561-8b85-4fbc-a531-23899f636097"
+              "_uid": "934d1278-df4a-4ac5-acab-efef72e341ba"
             }
           ],
           "required": false
@@ -4273,27 +4339,27 @@
             {
               "name": "none",
               "value": "none",
-              "_uid": "7aa8b748-43af-48d5-b134-5da2756de309"
+              "_uid": "985b3c68-5abc-451a-ae58-1ad44f21ee84"
             },
             {
               "name": "to-default",
               "value": "to_default",
-              "_uid": "47573828-95f3-4112-8a58-2e461d232848"
+              "_uid": "9fffdac4-62c2-4796-a7c6-b84f6463caab"
             },
             {
               "name": "to-accent",
               "value": "to_accent",
-              "_uid": "518d7351-45ae-4918-be6c-b619a3cbbb7f"
+              "_uid": "57c11b20-0f6a-475b-918d-9aa6d8fc1988"
             },
             {
               "name": "to-bold",
               "value": "to_bold",
-              "_uid": "ee1127af-184d-4a17-ab55-b73b7e15ad55"
+              "_uid": "47de1611-44b4-46da-9e76-25bfb55e26ed"
             },
             {
               "name": "to-inverted",
               "value": "to_inverted",
-              "_uid": "e105846e-df5b-483d-82a1-db92157981a7"
+              "_uid": "63814274-5c28-4055-93db-8de452bcb9d3"
             }
           ],
           "required": false
@@ -4331,17 +4397,17 @@
             {
               "name": "default",
               "value": "default",
-              "_uid": "69846e33-2954-4aaa-aa9a-c3c4b304afcb"
+              "_uid": "053220e5-5492-4a5d-9a0b-5ef9617bf7fb"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "4587e59b-cb68-41f7-bff6-f78644614b3b"
+              "_uid": "01667b59-cb65-4eaf-a71d-74cd888741d6"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "852b7b24-e366-4508-ade9-c33fe16a0928"
+              "_uid": "bb47b578-ebe3-4d02-b42f-f95ae06cf306"
             }
           ],
           "required": false
@@ -4358,17 +4424,17 @@
             {
               "name": "default",
               "value": "default",
-              "_uid": "8203969b-e22a-44b5-b1a2-b44243b195b9"
+              "_uid": "d49057cb-923a-458b-aafa-be9872e8ebd5"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "63d646b1-1c65-45ab-a227-a6c1e09538b4"
+              "_uid": "1a1b124e-416d-4e0f-9c6d-fb6838f13cb3"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "9fba6500-7ff3-42c0-9c06-6bb71051ba29"
+              "_uid": "f02a2240-7381-46fc-bb03-9fb331754f8f"
             }
           ],
           "required": false
@@ -4391,11 +4457,11 @@
           "description": "Soll zusätzlicher Platz für einen schwebenden Header berücksichtigt werden?",
           "required": false
         },
-        "tab-c544754e-017a-4c92-8dcc-747f66fc8727": {
+        "tab-f01c7174-dd08-4cbb-8dfe-0491e36cf210": {
           "id": 0,
           "pos": 0,
           "display_name": "Headline",
-          "key": "tab-c544754e-017a-4c92-8dcc-747f66fc8727",
+          "key": "tab-f01c7174-dd08-4cbb-8dfe-0491e36cf210",
           "keys": [
             "headline_text",
             "headline_large",
@@ -4439,22 +4505,22 @@
             {
               "name": "unset",
               "value": "unset",
-              "_uid": "063a222c-51a4-4614-9300-1e92116ffe4a"
+              "_uid": "eb114255-3678-40e5-8067-fb27bb7e03ef"
             },
             {
               "name": "narrow",
               "value": "narrow",
-              "_uid": "1a33a0f4-45f0-4149-99bb-5554d803179d"
+              "_uid": "abda7532-20fe-49f2-8282-8c7d583ffddd"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "0432eb90-3474-499c-b20c-91cc04367db8"
+              "_uid": "ccd3c3a1-396a-4678-8ccd-a7cb7a68a34d"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "786e3463-203c-47fa-a7ee-ef145deb9337"
+              "_uid": "aa93edd6-b81e-4338-ac85-50cb51087108"
             }
           ],
           "required": false
@@ -4470,17 +4536,17 @@
             {
               "name": "left",
               "value": "left",
-              "_uid": "94287099-4377-48ae-85b8-a379fdc7e69d"
+              "_uid": "36e8c1af-c2a9-4574-b29b-b24c4b952887"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "52c9cb73-2f07-44af-9110-8b6bf5d9d3bd"
+              "_uid": "56c5c66a-6cf8-4a39-b293-e101313ab02a"
             },
             {
               "name": "right",
               "value": "right",
-              "_uid": "f1368722-3111-463d-a09b-27206474fb4f"
+              "_uid": "b4b4442e-190d-4160-81f0-c51d3f42eb61"
             }
           ],
           "required": false
@@ -4496,17 +4562,17 @@
             {
               "name": "left",
               "value": "left",
-              "_uid": "5ca3ca59-41af-44e1-b00a-cd9f62184ee6"
+              "_uid": "a1dfbec1-11a4-4256-8231-f6d781a9a4ca"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "8ad6d57a-a831-487c-8426-03c23546fe2c"
+              "_uid": "6ac3e9c9-52af-4cab-a6a9-3d7bf7c40a0f"
             },
             {
               "name": "right",
               "value": "right",
-              "_uid": "3a42e13c-a5bc-4be4-85b7-1dfee0b6ea8d"
+              "_uid": "c3dfb1c3-b344-46a7-b0f2-4b057adde4a4"
             }
           ],
           "required": false
@@ -4529,11 +4595,11 @@
           "description": "Switch the order of headline and subheadline",
           "required": false
         },
-        "tab-f903fbe5-0cb2-4621-91b3-6e0345470ee6": {
+        "tab-e8c8fd1c-73d1-4a81-b0f1-72f633083cc7": {
           "id": 0,
           "pos": 0,
           "display_name": "Content",
-          "key": "tab-f903fbe5-0cb2-4621-91b3-6e0345470ee6",
+          "key": "tab-e8c8fd1c-73d1-4a81-b0f1-72f633083cc7",
           "keys": [
             "content_width",
             "content_align",
@@ -4557,22 +4623,22 @@
             {
               "name": "unset",
               "value": "unset",
-              "_uid": "878c9938-05c4-4b5a-ab8e-c43b87481d10"
+              "_uid": "7f7a0bad-b214-4304-adbd-9e23ad572ae2"
             },
             {
               "name": "narrow",
               "value": "narrow",
-              "_uid": "e28d1937-fdd0-48a1-b275-fdf4b5a730a1"
+              "_uid": "fa9094f4-1887-4db8-be03-4d80df58c822"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "31bb5d90-3267-4cab-8a4a-b7c92649e52e"
+              "_uid": "582a1f8c-5eca-427a-9782-e79316d01eae"
             },
             {
               "name": "wide",
               "value": "wide",
-              "_uid": "63e2ec30-24cd-4ed2-bc72-11e2d258b785"
+              "_uid": "76c3d40e-715a-403f-aa6e-0be731591be9"
             }
           ],
           "required": false
@@ -4589,17 +4655,17 @@
             {
               "name": "left",
               "value": "left",
-              "_uid": "4f6b4f32-eea0-4695-ba48-5b3a8b4f08b6"
+              "_uid": "43a29ef9-3208-4dbe-bc23-8d637b609c8e"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "68bca464-67c7-4124-9c2e-798a9dd3e61c"
+              "_uid": "6803f128-ac34-4f08-9380-5ef5729705f2"
             },
             {
               "name": "right",
               "value": "right",
-              "_uid": "18317206-65f5-45e4-9ce2-cb96121adb6f"
+              "_uid": "a64144b0-690f-4e1c-b206-b414e355e7c0"
             }
           ],
           "required": false
@@ -4616,22 +4682,22 @@
             {
               "name": "large",
               "value": "large",
-              "_uid": "ecc611d2-6876-4df7-9cf7-e3c89230e1ab"
+              "_uid": "af808331-59fa-4f78-b8fd-7abfb894bbe5"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "a8c880cb-9657-40ed-bf3f-830c227f52f9"
+              "_uid": "37265066-f2a9-4a85-86fc-4eab2faadec7"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "b76faaf5-b743-498e-8359-bf816ca056e2"
+              "_uid": "b310b986-38e2-4783-9e56-0d30f9c319e8"
             },
             {
               "name": "none",
               "value": "none",
-              "_uid": "9e6726f8-b45b-4fa6-bc64-90635caf8440"
+              "_uid": "04575c49-db8a-4bb5-856b-868b7841052a"
             }
           ],
           "required": false
@@ -4648,22 +4714,22 @@
             {
               "name": "default",
               "value": "default",
-              "_uid": "1c295451-2d22-4a20-a7df-dee79973ad64"
+              "_uid": "da6d98b6-dbdb-48c1-81c3-823b30b9a129"
             },
             {
               "name": "tile",
               "value": "tile",
-              "_uid": "d8667280-36a5-4b18-ad3c-f2eac3b0ee1e"
+              "_uid": "3c9be7e0-3643-4438-a117-9f544470aa6e"
             },
             {
               "name": "list",
               "value": "list",
-              "_uid": "bb81e319-609c-477c-a698-a039501f15ff"
+              "_uid": "be298989-40b9-49e6-b38b-2beb33029b2e"
             },
             {
               "name": "slider",
               "value": "slider",
-              "_uid": "32c42be9-1e09-4be9-9e2a-73782bd5b73d"
+              "_uid": "a91a4e5a-7b3b-4499-98e8-37bfd1f0d294"
             }
           ],
           "required": false
@@ -4680,32 +4746,32 @@
             {
               "name": "smallest",
               "value": "smallest",
-              "_uid": "d5d8beb4-7193-4ff7-a670-f6a132626f28"
+              "_uid": "2a1ca3d7-82a9-4987-aa86-47843555f35f"
             },
             {
               "name": "default",
               "value": "default",
-              "_uid": "3fd68c4d-3fef-4bad-8082-0982853ae742"
+              "_uid": "515787f3-b85d-4605-8761-2441d0af89f6"
             },
             {
               "name": "medium",
               "value": "medium",
-              "_uid": "bbe5e710-7f98-4a9a-be3b-6ff50ba03ffe"
+              "_uid": "172b05c6-3306-40b9-bf44-9a04ad018c11"
             },
             {
               "name": "large",
               "value": "large",
-              "_uid": "5a13c596-1b6c-4492-9ca0-7ea378986a5c"
+              "_uid": "e9a41b71-fd24-435e-9b32-514e07287fe3"
             },
             {
               "name": "largest",
               "value": "largest",
-              "_uid": "599416d9-3cf7-410d-a1d3-266698b68ee2"
+              "_uid": "ee08cad5-8d58-40f6-955c-de96dad02522"
             },
             {
               "name": "full",
               "value": "full",
-              "_uid": "999e7d79-b0b3-4d67-9247-fa2dba6ac268"
+              "_uid": "d5120e48-883d-48a9-9c4d-b0d8d09c7549"
             }
           ],
           "required": false
@@ -4719,10 +4785,9 @@
           "restrict_type": "groups",
           "restrict_components": true,
           "component_group_whitelist": [
-            "49893402-aedf-41f3-a426-c27970d9e5d8",
-            "f9f06873-428d-45c4-a1eb-6cef84c23069"
+            "ab810e22-a464-4876-9f50-9a126b0cbb16"
           ],
-          "description": "Abstracts a blog post concept into JSON schema",
+          "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         },
         "buttons": {
@@ -4746,9 +4811,9 @@
     {
       "name": "seo",
       "display_name": "Seo",
-      "created_at": "2026-01-09T11:19:05.834Z",
-      "updated_at": "2026-01-09T11:19:05.834Z",
-      "id": 223,
+      "created_at": "2026-01-15T14:47:13.037Z",
+      "updated_at": "2026-01-15T14:47:13.037Z",
+      "id": 308,
       "schema": {
         "title": {
           "id": 0,
@@ -4788,6 +4853,18 @@
           ],
           "description": "Ein Bild, das in den Suchergebnissen oder sozialen Medien als Vorschaubild verwendet wird.",
           "required": false
+        },
+        "cardImage": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "CardImage",
+          "key": "cardImage",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Ein Bild, das speziell für die Darstellung in sozialen Medien verwendet wird, wenn die Seite geteilt wird.",
+          "required": false
         }
       },
       "is_nestable": true,
@@ -4796,11 +4873,310 @@
       "icon": "block-wallet"
     },
     {
+      "name": "blog-head",
+      "display_name": "Blog Head",
+      "created_at": "2026-01-15T14:47:13.038Z",
+      "updated_at": "2026-01-15T14:47:13.038Z",
+      "id": 311,
+      "schema": {
+        "date": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Date",
+          "key": "date",
+          "type": "datetime",
+          "disable_time": true,
+          "description": "Datum der Veröffentlichung des Blogbeitrags",
+          "required": false
+        },
+        "tags": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Tags",
+          "key": "tags",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "tags"
+          ]
+        },
+        "headline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Headline",
+          "key": "headline",
+          "type": "markdown",
+          "description": "Headline des Blogbeitrags",
+          "required": false
+        },
+        "image": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Image",
+          "key": "image",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "Hauptbild des Blogbeitrags",
+          "required": false
+        },
+        "alt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Alt",
+          "key": "alt",
+          "type": "text",
+          "description": "Alternativtext für das Bild des Blogbeitrags",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Blog Head",
+      "color": "#05566a",
+      "icon": "block-wallet"
+    },
+    {
+      "name": "blog-author",
+      "display_name": "Blog Author",
+      "created_at": "2026-01-15T14:47:13.040Z",
+      "updated_at": "2026-01-15T14:47:13.040Z",
+      "id": 313,
+      "schema": {
+        "name": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Name",
+          "key": "name",
+          "type": "text",
+          "description": "Name des Autors oder der Autorin",
+          "required": false
+        },
+        "byline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Byline",
+          "key": "byline",
+          "type": "text",
+          "description": "Kurze Beschreibung oder Titel des Autors oder der Autorin",
+          "required": false
+        },
+        "tab-d4303276-c78b-4f86-ab6a-a2acd5e06d88": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Image",
+          "key": "tab-d4303276-c78b-4f86-ab6a-a2acd5e06d88",
+          "keys": [
+            "image_src",
+            "image_alt",
+            "image_fullWidth",
+            "image_aspectRatio"
+          ],
+          "type": "tab",
+          "description": "Bild des Autors oder der Autorin",
+          "required": false
+        },
+        "image_src": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Src",
+          "key": "image_src",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "URL of the image to display",
+          "required": false
+        },
+        "image_alt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Alt",
+          "key": "image_alt",
+          "type": "text",
+          "description": "Alt text of the image",
+          "required": false
+        },
+        "image_fullWidth": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "FullWidth",
+          "key": "image_fullWidth",
+          "type": "boolean",
+          "description": "Image uses all the horizontal space vailable",
+          "required": false
+        },
+        "image_aspectRatio": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "AspectRatio",
+          "key": "image_aspectRatio",
+          "type": "option",
+          "default_value": "square",
+          "description": "Aspect Ratio of the Images",
+          "options": [
+            {
+              "name": "wide",
+              "value": "wide",
+              "_uid": "c0e66dd4-3b92-4ae0-a354-70b6841af6da"
+            },
+            {
+              "name": "square",
+              "value": "square",
+              "_uid": "9786db59-ae05-4df8-bfdc-7116b3a777ed"
+            },
+            {
+              "name": "vertical",
+              "value": "vertical",
+              "_uid": "a20e6601-328d-4e4d-bacb-3d861b4a94ee"
+            }
+          ],
+          "required": false
+        },
+        "links": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Links",
+          "key": "links",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "links"
+          ]
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Blog Author",
+      "color": "#05566a",
+      "icon": "block-wallet"
+    },
+    {
+      "name": "socialSharing",
+      "display_name": "SocialSharing",
+      "created_at": "2026-01-15T14:47:13.040Z",
+      "updated_at": "2026-01-15T14:47:13.040Z",
+      "id": 314,
+      "schema": {
+        "icon": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Icon",
+          "key": "icon",
+          "type": "custom",
+          "field_type": "storyblok-icon-sprite-picker-field-plugin",
+          "options": [
+            {
+              "name": "allowedIcons",
+              "_uid": "f07e8fbc-a09b-4803-a7c0-015473fffc61"
+            }
+          ],
+          "description": "Das Icon für den Social Link",
+          "required": false
+        },
+        "url": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Url",
+          "key": "url",
+          "type": "multilink",
+          "allow_target_blank": true,
+          "email_link_type": true,
+          "asset_link_type": true,
+          "show_anchor": true,
+          "description": "Die URL zum Teilen des Blogbeitrags",
+          "required": false
+        },
+        "title": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Title",
+          "key": "title",
+          "type": "text",
+          "description": "Dem Benutzer angezeigter Name des Links",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "SocialSharing",
+      "color": "#05566a",
+      "icon": "block-wallet"
+    },
+    {
+      "name": "blog-aside",
+      "display_name": "Blog Aside",
+      "created_at": "2026-01-15T14:47:13.040Z",
+      "updated_at": "2026-01-15T14:47:13.040Z",
+      "id": 315,
+      "schema": {
+        "author": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Author",
+          "key": "author",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "blog-author"
+          ],
+          "maximum": 1,
+          "minimum": 0
+        },
+        "socialSharing": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SocialSharing",
+          "key": "socialSharing",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "socialSharing"
+          ],
+          "description": "Link zum Teilen des Blogbeitrags"
+        },
+        "readingTime": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ReadingTime",
+          "key": "readingTime",
+          "type": "text",
+          "description": "Lesezeit des Blogbeitrags",
+          "required": false
+        },
+        "date": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Date",
+          "key": "date",
+          "type": "datetime",
+          "disable_time": true,
+          "description": "Datum der Veröffentlichung des Blogbeitrags",
+          "required": false
+        },
+        "className": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ClassName",
+          "key": "className",
+          "type": "text",
+          "description": "Zusätzliche CSS-Klasse(n) für das Blog Aside Element",
+          "required": false
+        }
+      },
+      "is_nestable": true,
+      "real_name": "Blog Aside",
+      "color": "#05566a",
+      "icon": "block-wallet"
+    },
+    {
       "name": "categories",
       "display_name": "Categories",
-      "created_at": "2026-01-09T11:19:05.857Z",
-      "updated_at": "2026-01-09T11:19:05.857Z",
-      "id": 450,
+      "created_at": "2026-01-15T14:47:13.062Z",
+      "updated_at": "2026-01-15T14:47:13.062Z",
+      "id": 620,
       "schema": {
         "label": {
           "id": 0,
@@ -4820,9 +5196,9 @@
     {
       "name": "dates",
       "display_name": "Dates",
-      "created_at": "2026-01-09T11:19:05.858Z",
-      "updated_at": "2026-01-09T11:19:05.858Z",
-      "id": 451,
+      "created_at": "2026-01-15T14:47:13.063Z",
+      "updated_at": "2026-01-15T14:47:13.063Z",
+      "id": 621,
       "schema": {
         "date": {
           "id": 0,
@@ -4895,9 +5271,9 @@
     {
       "name": "locations",
       "display_name": "Locations",
-      "created_at": "2026-01-09T11:19:05.858Z",
-      "updated_at": "2026-01-09T11:19:05.858Z",
-      "id": 453,
+      "created_at": "2026-01-15T14:47:13.063Z",
+      "updated_at": "2026-01-15T14:47:13.063Z",
+      "id": 623,
       "schema": {
         "dates": {
           "id": 0,
@@ -4933,12 +5309,12 @@
             {
               "name": "spacious",
               "value": "spacious",
-              "_uid": "38f59063-de72-4c1b-9a5e-4ab7eec4daf1"
+              "_uid": "110b93c8-9157-40df-babc-79b6da47cb2a"
             },
             {
               "name": "compact",
               "value": "compact",
-              "_uid": "6f783aa8-ae70-489b-ace4-4ce042d08d4c"
+              "_uid": "9c5557b2-8a80-4400-9fd5-87694341473e"
             }
           ],
           "required": false
@@ -4973,9 +5349,9 @@
     {
       "name": "categoryCheckboxes",
       "display_name": "CategoryCheckboxes",
-      "created_at": "2026-01-09T11:19:05.862Z",
-      "updated_at": "2026-01-09T11:19:05.862Z",
-      "id": 457,
+      "created_at": "2026-01-15T14:47:13.065Z",
+      "updated_at": "2026-01-15T14:47:13.065Z",
+      "id": 627,
       "schema": {
         "entry": {
           "id": 0,
@@ -4995,19 +5371,19 @@
     {
       "name": "event-filter",
       "display_name": "Event Filter",
-      "created_at": "2026-01-09T11:19:05.862Z",
-      "updated_at": "2026-01-09T11:19:05.862Z",
-      "id": 458,
+      "created_at": "2026-01-15T14:47:13.066Z",
+      "updated_at": "2026-01-15T14:47:13.066Z",
+      "id": 628,
       "schema": {
-        "tab-6c71ce1d-b96a-4c5b-b24b-f047455f3d6d": {
+        "tab-c39008e6-5283-479a-bdb7-58d4a687106a": {
           "id": 0,
           "pos": 0,
           "display_name": "DatePicker",
-          "key": "tab-6c71ce1d-b96a-4c5b-b24b-f047455f3d6d",
+          "key": "tab-c39008e6-5283-479a-bdb7-58d4a687106a",
           "keys": [
             "datePicker_title",
-            "datePicker_tab-f302c615-eb42-472b-b861-63c85f95dfe7",
-            "datePicker_tab-779c2b4d-d54d-43c3-b572-d7cac892b6fd",
+            "datePicker_tab-e923cddf-868d-4fed-8d94-49d708720368",
+            "datePicker_tab-b4351e65-3f99-40aa-a145-a4eb0ef35146",
             "datePicker_toggle"
           ],
           "type": "tab",
@@ -5023,11 +5399,11 @@
           "description": "Title for the date picker",
           "required": false
         },
-        "datePicker_tab-f302c615-eb42-472b-b861-63c85f95dfe7": {
+        "datePicker_tab-e923cddf-868d-4fed-8d94-49d708720368": {
           "id": 0,
           "pos": 0,
           "display_name": "DateFromInput",
-          "key": "datePicker_tab-f302c615-eb42-472b-b861-63c85f95dfe7",
+          "key": "datePicker_tab-e923cddf-868d-4fed-8d94-49d708720368",
           "keys": [
             "dateFromInput_label",
             "dateFromInput_placeholder"
@@ -5057,11 +5433,11 @@
           ],
           "required": false
         },
-        "datePicker_tab-779c2b4d-d54d-43c3-b572-d7cac892b6fd": {
+        "datePicker_tab-b4351e65-3f99-40aa-a145-a4eb0ef35146": {
           "id": 0,
           "pos": 0,
           "display_name": "DateToInput",
-          "key": "datePicker_tab-779c2b4d-d54d-43c3-b572-d7cac892b6fd",
+          "key": "datePicker_tab-b4351e65-3f99-40aa-a145-a4eb0ef35146",
           "keys": [
             "dateToInput_label",
             "dateToInput_placeholder"
@@ -5101,11 +5477,11 @@
           "description": "Toggle to enable or disable the date picker",
           "required": false
         },
-        "tab-5a7efc60-3e29-4467-8f36-a094659eb933": {
+        "tab-8fc9beff-c335-4f87-b580-d25e80f05e9f": {
           "id": 0,
           "pos": 0,
           "display_name": "Categories",
-          "key": "tab-5a7efc60-3e29-4467-8f36-a094659eb933",
+          "key": "tab-8fc9beff-c335-4f87-b580-d25e80f05e9f",
           "keys": [
             "categories_title",
             "categories_categoryCheckboxes",
@@ -5146,11 +5522,11 @@
           "description": "Toggle to enable or disable the category filter",
           "required": false
         },
-        "tab-b7fa016c-d310-48d6-8cce-7bd7f25059f0": {
+        "tab-72f12cb9-5804-4674-bdc2-234fc10f134d": {
           "id": 0,
           "pos": 0,
           "display_name": "ApplyButton",
-          "key": "tab-b7fa016c-d310-48d6-8cce-7bd7f25059f0",
+          "key": "tab-72f12cb9-5804-4674-bdc2-234fc10f134d",
           "keys": [
             "applyButton_label",
             "applyButton_onClick"
@@ -5177,11 +5553,11 @@
           "description": "Function to call on button click",
           "required": false
         },
-        "tab-d5f86fa0-f7fd-4f0b-9edf-640605cfc371": {
+        "tab-e3d635b9-49a8-4718-b473-774e91c2184c": {
           "id": 0,
           "pos": 0,
           "display_name": "ResetButton",
-          "key": "tab-d5f86fa0-f7fd-4f0b-9edf-640605cfc371",
+          "key": "tab-e3d635b9-49a8-4718-b473-774e91c2184c",
           "keys": [
             "resetButton_label",
             "resetButton_onClick"
@@ -5217,9 +5593,9 @@
     {
       "name": "headline",
       "display_name": "Headline",
-      "created_at": "2026-01-09T11:19:05.885Z",
-      "updated_at": "2026-01-09T11:19:05.885Z",
-      "id": 679,
+      "created_at": "2026-01-15T14:47:13.087Z",
+      "updated_at": "2026-01-15T14:47:13.087Z",
+      "id": 934,
       "schema": {
         "text": {
           "id": 0,
@@ -5239,6 +5615,15 @@
           "description": "Ein optionaler Untertitel, der unter dem Haupttext angezeigt wird",
           "required": false
         },
+        "switchOrder": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SwitchOrder",
+          "key": "switchOrder",
+          "type": "boolean",
+          "description": "Ob der Untertitel vor dem Haupttext angezeigt werden soll",
+          "required": false
+        },
         "align": {
           "id": 0,
           "pos": 0,
@@ -5250,17 +5635,54 @@
             {
               "name": "left",
               "value": "left",
-              "_uid": "6fcc97c0-b86a-4673-8bbd-8366aa4fd379"
+              "_uid": "7e7360ce-13dc-479d-a3ca-7c6559e30bcc"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "45290c36-133f-4c93-95a0-5538096e924e"
+              "_uid": "ff6b324b-cd1c-46f6-902c-0f4dac99f08d"
             },
             {
               "name": "right",
               "value": "right",
-              "_uid": "5d26bfc2-e203-4339-95b2-98490248df24"
+              "_uid": "efa47d68-b784-4a23-ab20-4065db116fb0"
+            }
+          ],
+          "required": false
+        },
+        "level": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Level",
+          "key": "level",
+          "type": "option",
+          "default_value": "h2",
+          "description": "Das Level der Überschrift, z.B. H1, H2, H3 usw.",
+          "options": [
+            {
+              "name": "h1",
+              "value": "h1",
+              "_uid": "a35f055b-34b2-41bd-844b-e15db02f73f8"
+            },
+            {
+              "name": "h2",
+              "value": "h2",
+              "_uid": "5d2f7dcd-3a94-4011-bff7-0d8b00484bcd"
+            },
+            {
+              "name": "h3",
+              "value": "h3",
+              "_uid": "57bdc6e4-caa4-4317-b1d5-7c6d662a104d"
+            },
+            {
+              "name": "h4",
+              "value": "h4",
+              "_uid": "d1556e47-d0f0-4671-91fa-62c68f22c153"
+            },
+            {
+              "name": "p",
+              "value": "p",
+              "_uid": "cb48df3b-ac86-40ed-a269-05028ce92249"
             }
           ],
           "required": false
@@ -5277,27 +5699,27 @@
             {
               "name": "h1",
               "value": "h1",
-              "_uid": "07ddf59b-02ab-4b64-a5c2-8a5efc6b226a"
+              "_uid": "a7363475-b944-414d-bbd8-81191448f20c"
             },
             {
               "name": "h2",
               "value": "h2",
-              "_uid": "0714be63-da83-4efb-8e0d-e54b17adebdd"
+              "_uid": "7ca10187-a7fc-4763-9f4e-71b0ab123a8b"
             },
             {
               "name": "h3",
               "value": "h3",
-              "_uid": "18926a9d-a687-42ea-8f5b-d43b6777b611"
+              "_uid": "c05a1ea3-789b-4cfd-9bb2-26b6a24de7c2"
             },
             {
               "name": "h4",
               "value": "h4",
-              "_uid": "6ef27d9a-9181-416b-b2dd-c58dca2866fe"
+              "_uid": "632e9862-ebdf-48ee-8994-00d7da7b21e0"
             },
             {
               "name": "p",
               "value": "p",
-              "_uid": "bc5c6eff-741a-494a-b4fb-b331a61d11ad"
+              "_uid": "0090ccbf-937f-4d31-957c-b4ff393a362a"
             }
           ],
           "required": false
@@ -5314,19 +5736,37 @@
             {
               "name": "minimum",
               "value": "minimum",
-              "_uid": "6b6245db-21bd-4938-84fe-0a281bed4a79"
+              "_uid": "ed5b5f02-c90a-4092-b1c2-3942abb0a523"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "bb840115-d49d-4e91-bd45-6c28fd2b56db"
+              "_uid": "f1d7fae3-e8a6-419c-95b4-71cacd25a826"
             },
             {
               "name": "large",
               "value": "large",
-              "_uid": "d1a24bac-dddb-4a10-819b-d8e20936beb1"
+              "_uid": "c0b991e4-2846-4650-b888-bcb1af6f9307"
             }
           ],
+          "required": false
+        },
+        "className": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ClassName",
+          "key": "className",
+          "type": "text",
+          "description": "Zusätzliche CSS-Klasse(n) für die Überschrift, um das Styling anzupassen",
+          "required": false
+        },
+        "id": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Id",
+          "key": "id",
+          "type": "text",
+          "description": "Eine eindeutige ID für die Überschrift, die für Ankerlinks oder CSS verwendet werden kann",
           "required": false
         }
       },
@@ -5338,9 +5778,9 @@
     {
       "name": "search-bar",
       "display_name": "Search Bar",
-      "created_at": "2026-01-09T11:19:05.886Z",
-      "updated_at": "2026-01-09T11:19:05.886Z",
-      "id": 680,
+      "created_at": "2026-01-15T14:47:13.088Z",
+      "updated_at": "2026-01-15T14:47:13.088Z",
+      "id": 935,
       "schema": {
         "placeholder": {
           "id": 0,
@@ -5396,9 +5836,9 @@
     {
       "name": "search-filter",
       "display_name": "Search Filter",
-      "created_at": "2026-01-09T11:19:05.887Z",
-      "updated_at": "2026-01-09T11:19:05.887Z",
-      "id": 682,
+      "created_at": "2026-01-15T14:47:13.089Z",
+      "updated_at": "2026-01-15T14:47:13.089Z",
+      "id": 937,
       "schema": {
         "title": {
           "id": 0,
@@ -5430,9 +5870,9 @@
     {
       "name": "matches",
       "display_name": "Matches",
-      "created_at": "2026-01-09T11:19:05.888Z",
-      "updated_at": "2026-01-09T11:19:05.888Z",
-      "id": 683,
+      "created_at": "2026-01-15T14:47:13.090Z",
+      "updated_at": "2026-01-15T14:47:13.090Z",
+      "id": 938,
       "schema": {
         "title": {
           "id": 0,
@@ -5470,9 +5910,9 @@
     {
       "name": "searchResults",
       "display_name": "SearchResults",
-      "created_at": "2026-01-09T11:19:05.888Z",
-      "updated_at": "2026-01-09T11:19:05.888Z",
-      "id": 684,
+      "created_at": "2026-01-15T14:47:13.090Z",
+      "updated_at": "2026-01-15T14:47:13.090Z",
+      "id": 939,
       "schema": {
         "url": {
           "id": 0,
@@ -5504,17 +5944,17 @@
             {
               "name": "none",
               "value": "none",
-              "_uid": "0a8fc529-b41a-4f69-884a-2585ba1a1441"
+              "_uid": "e78e7725-937e-49bb-a9d5-e8ecacc45c03"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "e22e661e-5c54-4fc5-8309-b7eb0627e1a4"
+              "_uid": "e7a578fa-9b2f-48d2-b223-c89ca221d6f2"
             },
             {
               "name": "large",
               "value": "large",
-              "_uid": "b04660e6-6c3a-47b2-910a-c01b9380070d"
+              "_uid": "ac00d4e4-3b16-4d87-bd49-1ae64e36688d"
             }
           ],
           "required": false
@@ -5569,9 +6009,9 @@
     {
       "name": "items",
       "display_name": "Items",
-      "created_at": "2026-01-09T11:19:05.891Z",
-      "updated_at": "2026-01-09T11:19:05.891Z",
-      "id": 686,
+      "created_at": "2026-01-15T14:47:13.092Z",
+      "updated_at": "2026-01-15T14:47:13.092Z",
+      "id": 941,
       "schema": {
         "url": {
           "id": 0,
@@ -5610,9 +6050,9 @@
     {
       "name": "navItems",
       "display_name": "NavItems",
-      "created_at": "2026-01-09T11:19:05.891Z",
-      "updated_at": "2026-01-09T11:19:05.891Z",
-      "id": 687,
+      "created_at": "2026-01-15T14:47:13.092Z",
+      "updated_at": "2026-01-15T14:47:13.092Z",
+      "id": 942,
       "schema": {
         "url": {
           "id": 0,
@@ -5663,15 +6103,15 @@
     {
       "name": "header",
       "display_name": "Header",
-      "created_at": "2026-01-09T11:19:05.891Z",
-      "updated_at": "2026-01-09T11:19:05.891Z",
-      "id": 688,
+      "created_at": "2026-01-15T14:47:13.092Z",
+      "updated_at": "2026-01-15T14:47:13.092Z",
+      "id": 943,
       "schema": {
-        "tab-c11b3c5e-3c91-4cfb-a0fc-5cc49107d44b": {
+        "tab-daf30bf5-ac37-48d9-bf2f-54b532150b00": {
           "id": 0,
           "pos": 0,
           "display_name": "Logo",
-          "key": "tab-c11b3c5e-3c91-4cfb-a0fc-5cc49107d44b",
+          "key": "tab-daf30bf5-ac37-48d9-bf2f-54b532150b00",
           "keys": [
             "logo_src",
             "logo_srcInverted",
@@ -5748,6 +6188,42 @@
           "description": "Height of the picture",
           "required": false
         },
+        "flyoutInverted": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "FlyoutInverted",
+          "key": "flyoutInverted",
+          "type": "boolean",
+          "description": "Ob das in mobilen Darstellungen verwendete Flyout-Menü invertiert dargestellt werden soll.",
+          "required": false
+        },
+        "dropdownInverted": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "DropdownInverted",
+          "key": "dropdownInverted",
+          "type": "boolean",
+          "description": "Ob die Untermenüs auf Desktop invertiert dargestellt werden sollen.",
+          "required": false
+        },
+        "floating": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Floating",
+          "key": "floating",
+          "type": "boolean",
+          "description": "Ob der Header in einer schwebenden Position dargestellt werden soll, die beim Scrollen sichtbar bleibt.",
+          "required": false
+        },
+        "inverted": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Inverted",
+          "key": "inverted",
+          "type": "boolean",
+          "description": "Ob der Header invertiert dargestellt werden soll.",
+          "required": false
+        },
         "navItems": {
           "id": 0,
           "pos": 0,
@@ -5769,15 +6245,15 @@
     {
       "name": "footer",
       "display_name": "Footer",
-      "created_at": "2026-01-09T11:19:05.896Z",
-      "updated_at": "2026-01-09T11:19:05.896Z",
-      "id": 691,
+      "created_at": "2026-01-15T14:47:13.094Z",
+      "updated_at": "2026-01-15T14:47:13.094Z",
+      "id": 946,
       "schema": {
-        "tab-d153a268-25b7-4e96-b7ab-6f68a018e12c": {
+        "tab-9ea67b23-0c0a-4343-b092-3a3a028e4de1": {
           "id": 0,
           "pos": 0,
           "display_name": "Logo",
-          "key": "tab-d153a268-25b7-4e96-b7ab-6f68a018e12c",
+          "key": "tab-9ea67b23-0c0a-4343-b092-3a3a028e4de1",
           "keys": [
             "logo_src",
             "logo_srcInverted",
@@ -5864,6 +6340,15 @@
           "description": "Ein kurzer Zusatztext oder Slogan, der im Footer angezeigt wird.",
           "required": false
         },
+        "inverted": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Inverted",
+          "key": "inverted",
+          "type": "boolean",
+          "description": "Ob der Footer invertiert dargestellt werden soll.",
+          "required": false
+        },
         "navItems": {
           "id": 0,
           "pos": 0,
@@ -5883,101 +6368,12 @@
       "icon": "block-wallet"
     },
     {
-      "name": "blog-post",
-      "display_name": "Blog Post",
-      "created_at": "2026-01-09T11:19:05.834Z",
-      "updated_at": "2026-01-09T11:19:05.834Z",
-      "is_root": true,
-      "id": 224,
-      "schema": {
-        "head": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Head",
-          "key": "head",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "blog-head"
-          ],
-          "maximum": 1,
-          "minimum": 0
-        },
-        "aside": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Aside",
-          "key": "aside",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "blog-aside"
-          ],
-          "maximum": 1,
-          "minimum": 0
-        },
-        "content": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Content",
-          "key": "content",
-          "type": "markdown",
-          "description": "Body text for the blog post, overwrites sections if present",
-          "required": false
-        },
-        "section": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Section",
-          "key": "section",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "section"
-          ]
-        },
-        "cta": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Cta",
-          "key": "cta",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "cta"
-          ],
-          "maximum": 1,
-          "minimum": 0
-        },
-        "seo": {
-          "id": 0,
-          "pos": 0,
-          "display_name": "Seo",
-          "key": "seo",
-          "type": "bloks",
-          "restrict_type": "",
-          "restrict_components": true,
-          "component_whitelist": [
-            "seo"
-          ],
-          "maximum": 1,
-          "minimum": 0
-        }
-      },
-      "is_nestable": false,
-      "real_name": "Blog Post"
-    },
-    {
       "name": "blog-overview",
       "display_name": "Blog Overview",
-      "created_at": "2026-01-09T11:19:05.856Z",
-      "updated_at": "2026-01-09T11:19:05.856Z",
+      "created_at": "2026-01-15T14:47:13.037Z",
+      "updated_at": "2026-01-15T14:47:13.037Z",
       "is_root": true,
-      "id": 449,
+      "id": 309,
       "schema": {
         "section": {
           "id": 0,
@@ -6092,12 +6488,101 @@
       "real_name": "Blog Overview"
     },
     {
+      "name": "blog-post",
+      "display_name": "Blog Post",
+      "created_at": "2026-01-15T14:47:13.062Z",
+      "updated_at": "2026-01-15T14:47:13.062Z",
+      "is_root": true,
+      "id": 619,
+      "schema": {
+        "head": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Head",
+          "key": "head",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "blog-head"
+          ],
+          "maximum": 1,
+          "minimum": 0
+        },
+        "aside": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Aside",
+          "key": "aside",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "blog-aside"
+          ],
+          "maximum": 1,
+          "minimum": 0
+        },
+        "content": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Content",
+          "key": "content",
+          "type": "markdown",
+          "description": "Body text for the blog post, overwrites sections if present",
+          "required": false
+        },
+        "section": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Section",
+          "key": "section",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "section"
+          ]
+        },
+        "cta": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Cta",
+          "key": "cta",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "cta"
+          ],
+          "maximum": 1,
+          "minimum": 0
+        },
+        "seo": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Seo",
+          "key": "seo",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "seo"
+          ],
+          "maximum": 1,
+          "minimum": 0
+        }
+      },
+      "is_nestable": false,
+      "real_name": "Blog Post"
+    },
+    {
       "name": "event-detail",
       "display_name": "Event Detail",
-      "created_at": "2026-01-09T11:19:05.858Z",
-      "updated_at": "2026-01-09T11:19:05.858Z",
+      "created_at": "2026-01-15T14:47:13.063Z",
+      "updated_at": "2026-01-15T14:47:13.063Z",
       "is_root": true,
-      "id": 456,
+      "id": 626,
       "schema": {
         "title": {
           "id": 0,
@@ -6175,11 +6660,11 @@
             "images"
           ]
         },
-        "tab-81e9acfa-bd1a-4869-b06d-85973a457c0b": {
+        "tab-008caa33-14df-401f-ad48-e6a83bcf300e": {
           "id": 0,
           "pos": 0,
           "display_name": "Button",
-          "key": "tab-81e9acfa-bd1a-4869-b06d-85973a457c0b",
+          "key": "tab-008caa33-14df-401f-ad48-e6a83bcf300e",
           "keys": [
             "button_label",
             "button_url"
@@ -6217,10 +6702,10 @@
     {
       "name": "event-list",
       "display_name": "Event List",
-      "created_at": "2026-01-09T11:19:05.862Z",
-      "updated_at": "2026-01-09T11:19:05.862Z",
+      "created_at": "2026-01-15T14:47:13.066Z",
+      "updated_at": "2026-01-15T14:47:13.066Z",
       "is_root": true,
-      "id": 461,
+      "id": 631,
       "schema": {
         "filter": {
           "id": 0,
@@ -6257,10 +6742,10 @@
     {
       "name": "page",
       "display_name": "Page",
-      "created_at": "2026-01-09T11:19:05.884Z",
-      "updated_at": "2026-01-09T11:19:05.884Z",
+      "created_at": "2026-01-15T14:47:13.087Z",
+      "updated_at": "2026-01-15T14:47:13.087Z",
       "is_root": true,
-      "id": 678,
+      "id": 933,
       "schema": {
         "section": {
           "id": 0,
@@ -6274,11 +6759,11 @@
             "section"
           ]
         },
-        "tab-ca2a6f45-475d-4072-921f-c724bc159836": {
+        "tab-19b9bc1d-7fe8-4949-a340-3260c16b6ee6": {
           "id": 0,
           "pos": 0,
           "display_name": "Header",
-          "key": "tab-ca2a6f45-475d-4072-921f-c724bc159836",
+          "key": "tab-19b9bc1d-7fe8-4949-a340-3260c16b6ee6",
           "keys": [
             "header_floating",
             "header_inverted"
@@ -6305,11 +6790,11 @@
           "description": "Toggle default inverted header behaviour set in global settings",
           "required": false
         },
-        "tab-911c78b4-1ab8-428a-80af-0bfcd8aca5b2": {
+        "tab-ec027649-f8a1-4353-a6db-3e5a21ceb915": {
           "id": 0,
           "pos": 0,
           "display_name": "Footer",
-          "key": "tab-911c78b4-1ab8-428a-80af-0bfcd8aca5b2",
+          "key": "tab-ec027649-f8a1-4353-a6db-3e5a21ceb915",
           "keys": [
             "footer_inverted"
           ],
@@ -6347,10 +6832,10 @@
     {
       "name": "search",
       "display_name": "Search",
-      "created_at": "2026-01-09T11:19:05.888Z",
-      "updated_at": "2026-01-09T11:19:05.888Z",
+      "created_at": "2026-01-15T14:47:13.090Z",
+      "updated_at": "2026-01-15T14:47:13.090Z",
       "is_root": true,
-      "id": 685,
+      "id": 940,
       "schema": {
         "headline": {
           "id": 0,
@@ -6416,10 +6901,10 @@
     {
       "name": "settings",
       "display_name": "Settings",
-      "created_at": "2026-01-09T11:19:05.896Z",
-      "updated_at": "2026-01-09T11:19:05.896Z",
+      "created_at": "2026-01-15T14:47:13.094Z",
+      "updated_at": "2026-01-15T14:47:13.094Z",
       "is_root": true,
-      "id": 693,
+      "id": 948,
       "schema": {
         "header": {
           "id": 0,
@@ -6471,54 +6956,19 @@
           "type": "text",
           "description": "Content of the icon sprite for this project",
           "required": false
+        },
+        "token": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Token",
+          "key": "token",
+          "type": "text",
+          "description": "CSS custom property overrides to be included in the global styles",
+          "required": false
         }
       },
       "is_nestable": false,
       "real_name": "Settings"
-    },
-    {
-      "name": "global",
-      "display_name": "Global",
-      "created_at": "2026-01-09T11:24:08.458Z",
-      "updated_at": "2026-01-09T11:24:08.458Z",
-      "id": 0,
-      "schema": {
-        "global": {
-          "id": 0,
-          "pos": 0,
-          "type": "bloks",
-          "restrict_type": "groups",
-          "restrict_components": true,
-          "component_group_whitelist": [
-            "49893402-aedf-41f3-a426-c27970d9e5d8"
-          ]
-        }
-      },
-      "is_root": true,
-      "is_nestable": false,
-      "real_name": "Global"
-    },
-    {
-      "name": "global_reference",
-      "display_name": "Global Reference",
-      "created_at": "2026-01-09T11:24:08.458Z",
-      "updated_at": "2026-01-09T11:24:08.458Z",
-      "id": 0,
-      "schema": {
-        "reference": {
-          "type": "options",
-          "pos": 0,
-          "is_reference_type": true,
-          "source": "internal_stories",
-          "entry_appearance": "card",
-          "allow_advanced_search": true,
-          "folder_slug": "global/"
-        }
-      },
-      "is_nestable": true,
-      "real_name": "Global Rereference",
-      "component_group_uuid": "f9f06873-428d-45c4-a1eb-6cef84c23069",
-      "component_group_name": "Global"
     }
   ]
 }
