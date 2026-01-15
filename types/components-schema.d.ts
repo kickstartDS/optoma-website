@@ -5,6 +5,7 @@ export interface BlogAsideStoryblok {
   socialSharing?: SocialSharingStoryblok[];
   readingTime?: string;
   date?: string;
+  className?: string;
   _uid: string;
   component: "blog-aside";
 }
@@ -105,6 +106,7 @@ export interface BlogTeaserStoryblok {
   author_name?: string;
   author_title?: string;
   author_image?: AssetStoryblok;
+  className?: string;
   _uid: string;
   component: "blog-teaser";
 }
@@ -167,13 +169,18 @@ export interface CtaStoryblok {
   headline?: string;
   sub?: string;
   text?: string;
+  highlightText?: boolean;
+  colorNeutral?: boolean;
   buttons?: ButtonsStoryblok[];
+  backgroundColor?: string;
+  backgroundImage?: AssetStoryblok;
   image_src?: AssetStoryblok;
   image_padding?: boolean;
   image_alt?: string;
   image_align?: "" | "center" | "top" | "bottom";
   order_mobileImageLast?: boolean;
   order_desktopImageLast?: boolean;
+  textAlign?: "" | "left" | "center";
   align?: "" | "center" | "top" | "bottom";
   padding?: boolean;
   _uid: string;
@@ -193,8 +200,9 @@ export interface DatesStoryblok {
 
 export interface DividerStoryblok {
   variant?: "" | "default" | "accent";
-  _uid: string;
+  className?: string;
   component: "divider";
+  _uid: string;
 }
 
 export interface DownloadStoryblok {
@@ -230,8 +238,8 @@ export interface EventDetailStoryblok {
 
 export interface EventFilterStoryblok {
   datePicker_title?: string;
-  "datePicker_tab-f302c615-eb42-472b-b861-63c85f95dfe7"?: unknown;
-  "datePicker_tab-779c2b4d-d54d-43c3-b572-d7cac892b6fd"?: unknown;
+  "datePicker_tab-e923cddf-868d-4fed-8d94-49d708720368"?: unknown;
+  "datePicker_tab-b4351e65-3f99-40aa-a145-a4eb0ef35146"?: unknown;
   datePicker_toggle?: boolean;
   categories_title?: string;
   categories_categoryCheckboxes?: CategoryCheckboxesStoryblok[];
@@ -317,6 +325,7 @@ export interface FooterStoryblok {
   logo_width?: string;
   logo_height?: string;
   byline?: string;
+  inverted?: boolean;
   navItems?: NavItemsStoryblok[];
   _uid: string;
   component: "footer";
@@ -332,7 +341,21 @@ export interface GalleryStoryblok {
 }
 
 export interface GlobalStoryblok {
-  global?: (InfoTableStoryblok | SplitEvenStoryblok | SplitWeightedStoryblok)[];
+  global?: (
+    | CtaStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeroStoryblok
+    | ImageTextStoryblok
+    | InfoTableStoryblok
+    | LogosStoryblok
+    | SplitEvenStoryblok
+    | SplitWeightedStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
+  )[];
   _uid: string;
   component: "global";
   uuid?: string;
@@ -351,6 +374,10 @@ export interface HeaderStoryblok {
   logo_homepageHref?: MultilinkStoryblok;
   logo_width?: string;
   logo_height?: string;
+  flyoutInverted?: boolean;
+  dropdownInverted?: boolean;
+  floating?: boolean;
+  inverted?: boolean;
   navItems?: NavItemsStoryblok[];
   _uid: string;
   component: "header";
@@ -359,9 +386,13 @@ export interface HeaderStoryblok {
 export interface HeadlineStoryblok {
   text?: string;
   sub?: string;
+  switchOrder?: boolean;
   align?: "" | "left" | "center" | "right";
+  level?: "" | "h1" | "h2" | "h3" | "h4" | "p";
   style?: "" | "h1" | "h2" | "h3" | "h4" | "p";
   spaceAfter?: "" | "minimum" | "small" | "large";
+  className?: string;
+  id?: string;
   _uid: string;
   component: "headline";
 }
@@ -370,15 +401,21 @@ export interface HeroStoryblok {
   headline?: string;
   sub?: string;
   text?: string;
+  highlightText?: boolean;
+  colorNeutral?: boolean;
+  height?: "" | "small" | "default" | "fullImage" | "fullScreen";
+  textbox?: boolean;
   invertText?: boolean;
   buttons?: ButtonsStoryblok[];
   skipButton?: boolean;
+  overlay?: boolean;
   image_srcMobile?: AssetStoryblok;
   image_srcTablet?: AssetStoryblok;
   image_srcDesktop?: AssetStoryblok;
   image_src?: AssetStoryblok;
   image_indent?: "" | "none" | "left" | "right";
   image_alt?: string;
+  textPosition?: "" | "center" | "below" | "offset" | "left" | "right" | "corner" | "bottom";
   _uid: string;
   component: "hero";
 }
@@ -390,8 +427,10 @@ export interface HtmlStoryblok {
   consentButtonLabel?: string;
   consentBackgroundImage?: AssetStoryblok;
   consentAspectRatio?: "" | "VALUE_16_9" | "VALUE_16_10" | "VALUE_4_3" | "VALUE_1_1";
-  _uid: string;
+  inverted?: boolean;
+  className?: string;
   component: "html";
+  _uid: string;
 }
 
 export interface ImagesStoryblok {
@@ -404,14 +443,17 @@ export interface ImagesStoryblok {
 
 export interface ImageStoryStoryblok {
   headline?: string;
+  largeHeadline?: boolean;
   sub?: string;
   text?: string;
   layout?: "" | "textLeft" | "imageLeft";
+  padding?: boolean;
   buttons?: ButtonsStoryblok[];
   image_src?: AssetStoryblok;
   image_aspectRatio?: "" | "unset" | "square" | "wide" | "landscape";
   image_alt?: string;
   image_vAlign?: "" | "center" | "top" | "bottom";
+  textAlign?: "" | "left" | "center";
   _uid: string;
   component: "image-story";
 }
@@ -486,6 +528,7 @@ export interface LogoStoryblok {
 export interface LogosStoryblok {
   tagline?: string;
   logo?: LogoStoryblok[];
+  align?: "" | "left" | "center";
   logosPerRow?: string;
   cta_toggle?: boolean;
   cta_text?: string;
@@ -600,7 +643,22 @@ export interface SectionStoryblok {
   content_gutter?: "" | "large" | "default" | "small" | "none";
   content_mode?: "" | "default" | "tile" | "list" | "slider";
   content_tileWidth?: "" | "smallest" | "default" | "medium" | "large" | "largest" | "full";
-  components?: (InfoTableStoryblok | SplitEvenStoryblok | SplitWeightedStoryblok | GlobalReferenceStoryblok)[];
+  components?: (
+    | CtaStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeroStoryblok
+    | ImageTextStoryblok
+    | InfoTableStoryblok
+    | LogosStoryblok
+    | SplitEvenStoryblok
+    | SplitWeightedStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
+    | GlobalReferenceStoryblok
+  )[];
   buttons?: ButtonsStoryblok[];
   _uid: string;
   component: "section";
@@ -611,6 +669,7 @@ export interface SeoStoryblok {
   description?: string;
   keywords?: string;
   image?: AssetStoryblok;
+  cardImage?: AssetStoryblok;
   _uid: string;
   component: "seo";
 }
@@ -620,6 +679,7 @@ export interface SettingsStoryblok {
   footer?: FooterStoryblok[];
   seo?: SeoStoryblok[];
   iconSprite?: string;
+  token?: string;
   _uid: string;
   component: "settings";
 }
@@ -629,8 +689,25 @@ export interface SliderStoryblok {
   nav?: boolean;
   teaseNeighbours?: boolean;
   equalHeight?: boolean;
+  gap?: string;
   arrows?: boolean;
   variant?: "" | "slider" | "carousel";
+  className?: string;
+  components?: (
+    | CtaStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeroStoryblok
+    | ImageTextStoryblok
+    | InfoTableStoryblok
+    | LogosStoryblok
+    | SplitEvenStoryblok
+    | SplitWeightedStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
+  )[];
   _uid: string;
   component: "slider";
 }
@@ -653,25 +730,15 @@ export interface SplitEvenStoryblok {
     | BlogTeaserStoryblok
     | BusinessCardStoryblok
     | ContentNavStoryblok
-    | CtaStoryblok
     | DividerStoryblok
     | DownloadsStoryblok
     | EventLatestTeaserStoryblok
     | EventListTeaserStoryblok
     | FaqStoryblok
-    | FeaturesStoryblok
-    | GalleryStoryblok
-    | HeroStoryblok
     | HtmlStoryblok
     | ImageStoryStoryblok
-    | ImageTextStoryblok
-    | LogosStoryblok
     | MosaicStoryblok
     | SliderStoryblok
-    | StatsStoryblok
-    | TeaserCardStoryblok
-    | TestimonialsStoryblok
-    | TextStoryblok
     | VideoCurtainStoryblok
   )[];
   secondComponents?: never[];
@@ -753,6 +820,7 @@ export interface TestimonialsStoryblok {
 export interface TextStoryblok {
   text?: string;
   layout?: "" | "singleColumn" | "multiColumn";
+  align?: "" | "left" | "center";
   highlightText?: boolean;
   _uid: string;
   component: "text";
@@ -769,6 +837,7 @@ export interface TileStoryblok {
   button_url?: MultilinkStoryblok;
   backgroundColor?: string;
   backgroundImage?: AssetStoryblok;
+  textColor?: string;
   _uid: string;
   component: "tile";
 }
