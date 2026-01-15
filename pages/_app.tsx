@@ -64,8 +64,8 @@ export default function App({
   const { settings, story, blurHashes, language } = pageProps;
   const headerProps = settings?.header ? unflatten(settings?.header) : {};
   const footerProps = settings?.footer ? unflatten(settings?.footer) : {};
-  const token = settings?.token || "";
   const storyProps = story?.content ? unflatten(story?.content) : {};
+  const token = storyProps?.token || settings?.token || "";
   const router = useRouter();
 
   const invertHeader = storyProps?.header?.inverted

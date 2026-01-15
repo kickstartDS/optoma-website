@@ -1201,7 +1201,7 @@
       "display_name": "Content Nav",
       "description": null,
       "created_at": "2026-01-15T14:54:16.289Z",
-      "updated_at": "2026-01-15T15:13:57.421Z",
+      "updated_at": "2026-01-15T15:29:19.363Z",
       "id": 134345753767000,
       "schema": {
         "tab-2a4940ab-4312-4117-87d0-86f47e99ef91": {
@@ -1221,13 +1221,16 @@
           "pos": 0,
           "display_name": "Src",
           "key": "image_src",
-          "type": "multilink",
+          "type": "asset",
           "allow_target_blank": true,
           "email_link_type": true,
           "asset_link_type": true,
           "show_anchor": true,
           "description": "URL of the image to display in the content nav.",
-          "required": false
+          "required": false,
+          "filetypes": [
+            "images"
+          ]
         },
         "image_alt": {
           "id": 0,
@@ -5508,7 +5511,7 @@
       "display_name": "Page",
       "description": null,
       "created_at": "2026-01-15T14:50:37.456Z",
-      "updated_at": "2026-01-15T14:52:02.743Z",
+      "updated_at": "2026-01-15T15:38:24.086Z",
       "id": 134344857426949,
       "schema": {
         "section": {
@@ -5588,6 +5591,11 @@
           ],
           "maximum": 1,
           "minimum": 0
+        },
+        "token": {
+          "type": "text",
+          "pos": 7,
+          "id": "wUXYcQYsTr-PYkPNk2aAVQ"
         }
       },
       "image": null,
