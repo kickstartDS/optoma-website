@@ -26,7 +26,7 @@ const EventDetail: React.FC<PageProps> = ({ blok }) => {
     } = blok;
 
     return (
-      <main {...storyblokEditable(blok)}>
+      <main {...storyblokEditable(blok)} data-pagefind-body>
         <Section width="narrow" spaceAfter="none">
           <EventHeader title={title} categories={categories} intro={intro} />
         </Section>

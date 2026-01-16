@@ -27,7 +27,7 @@ const BlogPost: React.FC<PageProps> = ({ blok }) => {
     const { cta, aside, head, content } = blok;
 
     return (
-      <main {...storyblokEditable(blok)}>
+      <main {...storyblokEditable(blok)} data-pagefind-body>
         <Section width="wide" content={{ mode: "list" }}>
           <SplitWeighted
             main={
