@@ -6,7 +6,7 @@ import {
   StoryblokComponent,
 } from "@storyblok/react";
 import { unflatten } from "@/helpers/unflatten";
-import { SectionContextDefault } from "@kickstartds/ds-agency-premium/section";
+import { Section } from "@kickstartds/ds-agency-premium/section";
 import { Slider } from "@kickstartds/ds-agency-premium/slider";
 import editablePage from "./Page";
 import { ImageAutoSizeProvider } from "./ImageAutoSizeProvider";
@@ -129,7 +129,7 @@ export const components = {
       )
     )
   ),
-  section: editable(SectionContextDefault, "components"),
+  section: editable(Section, "components"),
   "business-card": editable(
     dynamic(() =>
       import("@kickstartds/ds-agency-premium/business-card").then(
