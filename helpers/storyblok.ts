@@ -327,7 +327,6 @@ export async function fetchPageProps(
     fetchStory(slug, true, previewStoryblokApi),
     fetchStories({ content_type: "settings" }, false, previewStoryblokApi),
   ]);
-  console.log("Page data received", JSON.stringify(pageData, null, 2));
   return { pageData, settingsData };
 }
 
