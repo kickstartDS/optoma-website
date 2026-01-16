@@ -711,6 +711,7 @@ export const PrompterComponent = forwardRef<
       })
         .then((response) => {
           response.json().then((json) => {
+            console.log("Prompter raw response", response, json);
             const pageProps = processResponse(JSON.parse(json.content));
             setGeneratedContent(pageProps);
 
