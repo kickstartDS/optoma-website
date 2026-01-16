@@ -271,6 +271,7 @@ const processPage = (page: PageProps): Record<string, any> => {
 
   for (const section of page.section || []) {
     (section as SectionProps).aiDraft = true;
+    (section as SectionProps).component = "section";
   }
 
   return page as Record<string, any>;
@@ -653,8 +654,10 @@ export const PrompterComponent = forwardRef<
       return prompt;
     };
 
+    const prompterHost = "https://demo.ruhmesmeile.com";
+
     useEffect(() => {
-      fetch("https://www.ruhmesmeile.com/api/ideas")
+      fetch(`${prompterHost}/api/ideas`)
         .then((response) => {
           response.json().then((json) => {
             setIdeas(json.response.data.ideas);
@@ -698,7 +701,7 @@ export const PrompterComponent = forwardRef<
         storyUid
       );
       setLoading(true);
-      fetch("https://www.ruhmesmeile.com/api/content", {
+      fetch(`${prompterHost}/api/content`, {
         method: "POST",
         body: JSON.stringify({
           system: systemPrompt,
@@ -714,6 +717,8 @@ export const PrompterComponent = forwardRef<
             const storyblokProps = processPage(structuredClone(pageProps));
             setStoryblokContent(storyblokProps);
 
+            console.log("Prompter response", json, pageProps, storyblokProps);
+
             setLoading(false);
           });
         })
@@ -728,7 +733,7 @@ export const PrompterComponent = forwardRef<
 
       const { uid: prompterUid } = JSON.parse(blokMetaString);
 
-      fetch("https://www.ruhmesmeile.com/api/import", {
+      fetch(`${prompterHost}/api/import`, {
         method: "POST",
         body: JSON.stringify({
           storyUid,
