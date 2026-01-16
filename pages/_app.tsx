@@ -118,7 +118,12 @@ export default function App({
                   pageSeo={story?.content.seo}
                   fallbackName={story?.name}
                 />
-                {token && <style data-tokens>{token}</style>}
+                {token && (
+                  <style
+                    data-tokens
+                    dangerouslySetInnerHTML={{ __html: token }}
+                  ></style>
+                )}
                 {headerProps && (
                   <Header
                     logo={{}}
