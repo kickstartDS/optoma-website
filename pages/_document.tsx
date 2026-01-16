@@ -27,6 +27,60 @@ class KsDocument extends Document<any> {
   render() {
     const { pageProps } = this.props;
 
+    const appliedToken =
+      pageProps?.story?.content.token || pageProps?.settings?.token || "";
+
+    let displayFontFamilyUrl;
+    let copyFontFamilyUrl;
+    let interfaceFontFamilyUrl;
+    let monoFontFamilyUrl;
+    if (appliedToken) {
+      const displayFontFamilyName = appliedToken.match(
+        /ks-brand-font-family-display: ([a-zA-Z0-9-_,]+)/
+      )?.[1];
+      if (
+        displayFontFamilyName &&
+        !displayFontFamilyName.includes(",") &&
+        !displayFontFamilyName.includes('"')
+      ) {
+        const params = new URLSearchParams({ family: displayFontFamilyName });
+        displayFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
+      }
+      const copyFontFamilyName = appliedToken.match(
+        /ks-brand-font-family-copy: ([a-zA-Z0-9-_,]+)/
+      )?.[1];
+      if (
+        copyFontFamilyName &&
+        !copyFontFamilyName.includes(",") &&
+        !copyFontFamilyName.includes('"')
+      ) {
+        const params = new URLSearchParams({ family: copyFontFamilyName });
+        copyFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
+      }
+      const interfaceFontFamilyName = appliedToken.match(
+        /ks-brand-font-family-interface: ([a-zA-Z0-9-_,]+)/
+      )?.[1];
+      if (
+        interfaceFontFamilyName &&
+        !interfaceFontFamilyName.includes(",") &&
+        !interfaceFontFamilyName.includes('"')
+      ) {
+        const params = new URLSearchParams({ family: interfaceFontFamilyName });
+        interfaceFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
+      }
+      const monoFontFamilyName = appliedToken.match(
+        /ks-brand-font-family-mono: ([a-zA-Z0-9-_,]+)/
+      )?.[1];
+      if (
+        monoFontFamilyName &&
+        !monoFontFamilyName.includes(",") &&
+        !monoFontFamilyName.includes('"')
+      ) {
+        const params = new URLSearchParams({ family: monoFontFamilyName });
+        monoFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
+      }
+    }
+
     return (
       <Html
         className={pageProps?.fontClassNames}
@@ -34,6 +88,18 @@ class KsDocument extends Document<any> {
       >
         <Head />
         <body>
+          {displayFontFamilyUrl && (
+            <link href={displayFontFamilyUrl} rel="stylesheet" />
+          )}
+          {copyFontFamilyUrl && (
+            <link href={copyFontFamilyUrl} rel="stylesheet" />
+          )}
+          {interfaceFontFamilyUrl && (
+            <link href={interfaceFontFamilyUrl} rel="stylesheet" />
+          )}
+          {monoFontFamilyUrl && (
+            <link href={monoFontFamilyUrl} rel="stylesheet" />
+          )}
           <Main />
           <NextScript />
         </body>
