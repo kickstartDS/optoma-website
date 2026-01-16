@@ -133,7 +133,7 @@ export default function App({
                   />
                 )}
                 {breadcrumbItems && breadcrumbItems.length > 1 && (
-                  <Section width="max" spaceAfter="none" spaceBefore="none">
+                  <Section width="wide" spaceAfter="none" spaceBefore="none">
                     <Breadcrumb pages={breadcrumbItems} />
                     <JsonLd<BreadcrumbList>
                       item={{
