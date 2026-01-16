@@ -5,30 +5,35 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-import type { BusinessCardProps } from "@kickstartds/ds-agency-premium/business-card";
-import type { ContentNavProps } from "@kickstartds/ds-agency-premium/content-nav";
-import type { CtaProps } from "@kickstartds/ds-agency-premium/cta";
-import type { DividerProps } from "@kickstartds/ds-agency-premium/divider";
-import type { DownloadsProps } from "@kickstartds/ds-agency-premium/downloads";
-import type { FaqProps } from "@kickstartds/ds-agency-premium/faq";
-import type { FeaturesProps } from "@kickstartds/ds-agency-premium/features";
-import type { GalleryProps } from "@kickstartds/ds-agency-premium/gallery";
-import type { HeroProps } from "@kickstartds/ds-agency-premium/hero";
-import type { HtmlProps } from "@kickstartds/ds-agency-premium/html";
-import type { ImageStoryProps } from "@kickstartds/ds-agency-premium/image-story";
-import type { ImageTextProps } from "@kickstartds/ds-agency-premium/image-text";
-import type { LogosProps } from "@kickstartds/ds-agency-premium/logos";
-import type { MosaicProps } from "@kickstartds/ds-agency-premium/mosaic";
-import type { SliderProps } from "@kickstartds/ds-agency-premium/slider";
-import type { SplitEvenProps } from "@kickstartds/ds-agency-premium/split-even";
-import type { SplitWeightedProps } from "@kickstartds/ds-agency-premium/split-weighted";
-import type { StatsProps } from "@kickstartds/ds-agency-premium/stats";
-import type { TeaserCardProps } from "@kickstartds/ds-agency-premium/teaser-card";
-import type { TestimonialsProps } from "@kickstartds/ds-agency-premium/testimonials";
-import type { TextProps } from "@kickstartds/ds-agency-premium/text";
-import type { VideoCurtainProps } from "@kickstartds/ds-agency-premium/video-curtain";
-import type { InfoTableProps } from "../info-table/InfoTableProps";
-import type { ButtonProps } from "@kickstartds/ds-agency-premium/button";
+import type {BlogTeaserProps} from "@kickstartds/ds-agency-premium/blog-teaser";
+import type {BusinessCardProps} from "@kickstartds/ds-agency-premium/business-card";
+import type {ContactProps} from "@kickstartds/ds-agency-premium/contact";
+import type {ContentNavProps} from "@kickstartds/ds-agency-premium/content-nav";
+import type {CtaProps} from "@kickstartds/ds-agency-premium/cta";
+import type {DividerProps} from "@kickstartds/ds-agency-premium/divider";
+import type {DownloadsProps} from "@kickstartds/ds-agency-premium/downloads";
+import type {EventLatestTeaserProps} from "@kickstartds/ds-agency-premium/event-latest-teaser";
+import type {EventListTeaserProps} from "@kickstartds/ds-agency-premium/event-list-teaser";
+import type {FaqProps} from "@kickstartds/ds-agency-premium/faq";
+import type {FeaturesProps} from "@kickstartds/ds-agency-premium/features";
+import type {GalleryProps} from "@kickstartds/ds-agency-premium/gallery";
+import type {HeroProps} from "@kickstartds/ds-agency-premium/hero";
+import type {HtmlProps} from "@kickstartds/ds-agency-premium/html";
+import type {ImageStoryProps} from "@kickstartds/ds-agency-premium/image-story";
+import type {ImageTextProps} from "@kickstartds/ds-agency-premium/image-text";
+import type {LogosProps} from "@kickstartds/ds-agency-premium/logos";
+import type {MosaicProps} from "@kickstartds/ds-agency-premium/mosaic";
+import type {SliderProps} from "@kickstartds/ds-agency-premium/slider";
+import type {SplitEvenProps} from "@kickstartds/ds-agency-premium/split-even";
+import type {SplitWeightedProps} from "@kickstartds/ds-agency-premium/split-weighted";
+import type {StatsProps} from "@kickstartds/ds-agency-premium/stats";
+import type {TeaserCardProps} from "@kickstartds/ds-agency-premium/teaser-card";
+import type {TestimonialsProps} from "@kickstartds/ds-agency-premium/testimonials";
+import type {TextProps} from "@kickstartds/ds-agency-premium/text";
+import type {VideoCurtainProps} from "@kickstartds/ds-agency-premium/video-curtain";
+import type {InfoTableProps} from "../info-table/InfoTableProps";
+import type {PrompterProps} from "../prompter/PrompterProps";
+import type {ButtonProps} from "@kickstartds/ds-agency-premium/button";
 
 /**
  * Width of section to use
@@ -45,12 +50,7 @@ export type Style1 = "default" | "accent" | "bold";
 /**
  * Color of background
  */
-export type Style2 =
-  | "none"
-  | "to-default"
-  | "to-accent"
-  | "to-bold"
-  | "to-inverted";
+export type Style2 = "none" | "to-default" | "to-accent" | "to-bold" | "to-inverted";
 /**
  * Background image for the whole section
  */
@@ -122,22 +122,20 @@ export type Mode = "default" | "tile" | "list" | "slider";
 /**
  * Set min-width for the tiles in the grid
  */
-export type TileWidth =
-  | "smallest"
-  | "default"
-  | "medium"
-  | "large"
-  | "largest"
-  | "full";
+export type TileWidth = "smallest" | "default" | "medium" | "large" | "largest" | "full";
 /**
  * Allowed components for content
  */
 export type Content = (
+  | BlogTeaserProps
   | BusinessCardProps
+  | ContactProps
   | ContentNavProps
   | CtaProps
   | DividerProps
   | DownloadsProps
+  | EventLatestTeaserProps
+  | EventListTeaserProps
   | FaqProps
   | FeaturesProps
   | GalleryProps
@@ -156,11 +154,16 @@ export type Content = (
   | TextProps
   | VideoCurtainProps
   | InfoTableProps
+  | PrompterProps
 )[];
 /**
  * Buttons of the Button Group
  */
 export type Buttons = ButtonProps[];
+/**
+ * If true, the section is marked as an AI-generated draft
+ */
+export type AIDraft = boolean;
 
 /**
  * Component used to layout components into pages
@@ -194,4 +197,5 @@ export interface SectionProps {
   };
   components?: Content;
   buttons?: Buttons;
+  aiDraft?: AIDraft;
 }

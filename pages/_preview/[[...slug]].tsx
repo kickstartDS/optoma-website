@@ -24,7 +24,7 @@ const Page: NextPage<PageProps> = ({ story: initialStory }) => {
     resolveRelations: resolvableRelations.join(","),
   });
 
-  if (story && story.content) storyProcessing(story.content);
+  if (story && story.content) storyProcessing(story.content, true);
 
   return story ? (
     <StoryblokComponent

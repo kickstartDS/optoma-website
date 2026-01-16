@@ -31,7 +31,7 @@ export type UserPrompt = string;
 export type SystemPrompt = string;
 
 /**
- * Component used to create new website content using Prompter prompts
+ * Component used to create new website content using AI prompts
  */
 export interface PrompterProps {
   sections?: SectionCount;

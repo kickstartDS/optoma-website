@@ -8,6 +8,12 @@
     {
       "type": "object",
       "properties": {
+        "aiDraft": {
+          "type": "boolean",
+          "title": "AI Draft?",
+          "description": "If true, the section is marked as an AI-generated draft",
+          "default": false
+        },
         "components": {
           "type": "array",
           "title": "Content",
