@@ -126,10 +126,13 @@ export default function App({
                 )}
                 {headerProps && (
                   <Header
-                    logo={{}}
                     {...headerProps}
                     inverted={invertHeader}
                     floating={floatHeader}
+                    logo={{
+                      ...headerProps?.logo,
+                      src: storyProps?.header?.logo || headerProps?.logo?.src,
+                    }}
                   />
                 )}
                 {breadcrumbItems && breadcrumbItems.length > 1 && (
