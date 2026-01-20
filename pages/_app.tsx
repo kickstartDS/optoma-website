@@ -158,9 +158,12 @@ export default function App({
                 <Component {...pageProps} />
                 {footerProps && (
                   <Footer
-                    logo={{}}
                     {...footerProps}
                     inverted={invertFooter || false}
+                    logo={{
+                      ...footerProps?.logo,
+                      src: storyProps?.footer?.logo || footerProps?.logo?.src,
+                    }}
                   />
                 )}
               </ImageRatioProviders>
