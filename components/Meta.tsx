@@ -47,7 +47,7 @@ export default function Meta({
       <style>{`body { display: block !important }`}</style>
       <script
         defer
-        src={`https://${process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN}`}
+        src={`https://${process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN}/script.js`}
         data-website-id={process.env.NEXT_PUBLIC_ANALYTICS_SITE_ID}
         data-do-not-track="true"
       ></script>
