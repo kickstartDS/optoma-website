@@ -9,6 +9,10 @@ module.exports = {
     additionalSitemaps: [
       `${process.env.NEXT_PUBLIC_SITE_URL}/server-sitemap.xml`,
     ],
+    transformRobotsTxt: async () => {
+      return `User-agent: *
+Disallow: /`;
+    },
   },
   transform: async () => {
     return null;
