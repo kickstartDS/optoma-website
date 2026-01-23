@@ -137,6 +137,13 @@ export const components = {
       )
     )
   ),
+  button: editable(
+    dynamic(() =>
+      import("@kickstartds/ds-agency-premium/button").then(
+        (mod) => mod.Button
+      )
+    )
+  ),
   contact: editable(
     dynamic(() =>
       import("@kickstartds/ds-agency-premium/contact").then(
