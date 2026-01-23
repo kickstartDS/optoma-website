@@ -1,0 +1,26 @@
+{
+  "name": "design-system-component-builder-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "design-system-component-builder": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "design-system",
+    "component-builder",
+    "kickstartds"
+  ],
+  "author": "kickstartDS",
+  "license": "MIT",
+  "description": "MCP server providing instructions and templates for building Design System components following kickstartDS patterns",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.3"
+  }
+}
