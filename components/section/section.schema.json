@@ -25,6 +25,9 @@
               },
               {
                 "$ref": "http://cms.mydesignsystem.com/prompter.schema.json"
+              },
+              {
+                "$ref": "http://cms.mydesignsystem.com/timeline.schema.json"
               }
             ]
           }

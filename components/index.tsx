@@ -139,9 +139,7 @@ export const components = {
   ),
   button: editable(
     dynamic(() =>
-      import("@kickstartds/ds-agency-premium/button").then(
-        (mod) => mod.Button
-      )
+      import("@kickstartds/ds-agency-premium/button").then((mod) => mod.Button)
     )
   ),
   contact: editable(
@@ -276,6 +274,13 @@ export const components = {
     dynamic(() =>
       import("./info-table/InfoTableComponent").then(
         (mod) => mod.InfoTableContextDefault
+      )
+    )
+  ),
+  timeline: editable(
+    dynamic(() =>
+      import("./timeline/TimelineComponent").then(
+        (mod) => mod.TimelineContextDefault
       )
     )
   ),
