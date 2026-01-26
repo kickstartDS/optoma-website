@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "Design System Storybook MCP": {
+      "url": "http://localhost:6006/mcp",
+      "type": "http"
+    },
+    "Design System Design Tokens MCP": {
+      "command": "node",
+      "args": [
+        "/home/julrich/Projects/kickstartDS/code/ds-agency-premium-mcp-demo/design-tokens-mcp/index.js"
+      ]
+    },
+    "Design System Component Builder MCP": {
+      "command": "node",
+      "args": [
+        "/home/julrich/Projects/kickstartDS/code/ds-agency-premium-mcp-demo/component-implementation-mcp/src/index.js"
+      ]
+    }
+  },
+  "inputs": []
+}
