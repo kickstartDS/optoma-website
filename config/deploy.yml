@@ -24,6 +24,7 @@ proxy:
     - <%= ENV["NEXT_PUBLIC_SECONDARY_PUBLIC_SITE_DOMAIN"] %>
   # Proxy connects to your container on port 80 by default.
   app_port: 3030
+  response_timeout: 120
   healthcheck:
     path: /api/up
 
