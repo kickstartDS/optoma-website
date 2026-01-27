@@ -30,6 +30,13 @@ import { TeaserCard } from "@kickstartds/ds-agency-premium/teaser-card";
 import { Testimonials } from "@kickstartds/ds-agency-premium/testimonials";
 import { Text } from "@kickstartds/ds-agency-premium/text";
 import { Hero } from "@kickstartds/ds-agency-premium/hero";
+import { Gallery } from "@kickstartds/ds-agency-premium/gallery";
+import { ImageStory } from "@kickstartds/ds-agency-premium/image-story";
+import { ImageText } from "@kickstartds/ds-agency-premium/image-text";
+import { Logos } from "@kickstartds/ds-agency-premium/logos";
+import { Mosaic } from "@kickstartds/ds-agency-premium/mosaic";
+import { Slider } from "@kickstartds/ds-agency-premium/slider";
+import { VideoCurtain } from "@kickstartds/ds-agency-premium/video-curtain";
 
 import pageSchema from "@kickstartds/ds-agency-premium/page/page.schema.dereffed.json";
 import { PrompterProps } from "./PrompterProps";
@@ -37,6 +44,7 @@ import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
 import { fetchStory, initStoryblok } from "@/helpers/storyblok";
 import { unflatten } from "@/helpers/unflatten";
 import { SectionProps } from "../section/SectionProps";
+
 import PrompterBadge from "./prompter-badge/PrompterBadge";
 import PrompterButton from "./prompter-button/PrompterButton";
 import PrompterSection from "./prompter-section/PrompterSection";
@@ -66,30 +74,30 @@ const unsupportedKeywords = [
 ];
 
 const propertiesToDrop = [
-  "backgroundColor",
-  "spotlight",
-  "headerSpacing",
-  "switchOrder",
-  "align",
-  "textAlign",
-  "colorNeutral",
-  "target",
-  "contentAlign",
-  "textColor",
-  "highlightText",
-  "fullWidth",
-  "padding",
-  "mobileImageLast",
-  "desktopImageLast",
-  "overlay",
-  "indent",
-  "imageRatio",
-  "image",
-  "width",
-  "inverted",
-  "spaceBefore",
-  "spaceAfter",
-  "height",
+  // "backgroundColor",
+  // "spotlight",
+  // "headerSpacing",
+  // "switchOrder",
+  // "align",
+  // "textAlign",
+  // "colorNeutral",
+  // "target",
+  // "contentAlign",
+  // "textColor",
+  // "highlightText",
+  // "fullWidth",
+  // "padding",
+  // "mobileImageLast",
+  // "desktopImageLast",
+  // "overlay",
+  // "indent",
+  // "imageRatio",
+  // "image",
+  // "width",
+  // "inverted",
+  // "spaceBefore",
+  // "spaceAfter",
+  // "height",
 ];
 
 const components = [
@@ -99,30 +107,28 @@ const components = [
   "cta",
   "faq",
   "features",
-  // "gallery",
+  "gallery",
   "stats",
   "teaser-card",
   "testimonials",
   "text",
-  // "image-story",
-  // "image-text",
-  // "logos",
+  "image-story",
+  "image-text",
+  "logos",
   "hero",
-  // "mosaic",
-  // "slider",
-  // "video-curtain",
+  "mosaic",
+  "slider",
+  "video-curtain",
 ];
 
 const subComponentMap = {
   faq: "questions",
   features: "feature",
-  // gallery: Gallery,
+  gallery: "images",
   stats: "stat",
   testimonials: "testimonial",
-  // logos: Logos,
-  // mosaic: Mosaic,
-  // slider: Slider,
-  // "video-curtain": VideoCurtain,
+  logos: "logo",
+  mosaic: "tile",
 } as const;
 
 type SubComponentMapKeys = keyof typeof subComponentMap;
@@ -136,18 +142,18 @@ const componentMap = {
   cta: Cta,
   faq: Faq,
   features: Features,
-  // gallery: Gallery,
+  gallery: Gallery,
   stats: Stats,
   "teaser-card": TeaserCard,
   testimonials: Testimonials,
   text: Text,
-  // "image-story": ImageStory,
-  // "image-text": ImageText,
-  // logos: Logos,
+  "image-story": ImageStory,
+  "image-text": ImageText,
+  logos: Logos,
   hero: Hero,
-  // mosaic: Mosaic,
-  // slider: Slider,
-  // "video-curtain": VideoCurtain,
+  mosaic: Mosaic,
+  slider: Slider,
+  "video-curtain": VideoCurtain,
 } as const;
 
 type ComponentMapKeys = keyof typeof componentMap;
@@ -165,20 +171,23 @@ const schemaMap = {
   questions: {},
   feature: {},
   features: {},
-  // gallery: {},
+  gallery: {},
+  images: {},
   stat: {},
   stats: {},
   "teaser-card": {},
   testimonial: {},
   testimonials: {},
   text: {},
-  // "image-story": {},
-  // "image-text": {},
-  // logos: {},
+  "image-story": {},
+  "image-text": {},
+  logo: {},
+  logos: {},
   hero: {},
-  // mosaic: {},
-  // slider: {},
-  // "video-curtain": {},
+  tile: {},
+  mosaic: {},
+  slider: {},
+  "video-curtain": {},
 } as const;
 
 type SchemaMapKeys = keyof typeof schemaMap;
@@ -560,7 +569,7 @@ export const PrompterComponent = forwardRef<
 
       const countDepth: schemaTraverse.Callback = (_schema, jsonPtr) => {
         maxDepth = Math.max(jsonPtr.split("/properties/").length, maxDepth);
-        if (jsonPtr.split("/properties/").length > 6) {
+        if (jsonPtr.split("/properties/").length > 9) {
           console.log("Max depth exceeded:", jsonPtr);
         }
       };
@@ -603,9 +612,9 @@ export const PrompterComponent = forwardRef<
         schemaTraverse(clonedSchema, fn);
       });
 
-      if (allProperties.size > 100) {
+      if (allProperties.size > 5000) {
         console.log(
-          "Need to reduce properties (<100 allowed), got:",
+          "Need to reduce properties (<5000 allowed), got:",
           allProperties.size,
           allProperties
         );
@@ -654,7 +663,8 @@ export const PrompterComponent = forwardRef<
       return prompt;
     };
 
-    const prompterHost = "https://demo.ruhmesmeile.com";
+    const prompterHost = "https://localhost:3010";
+    // const prompterHost = "https://demo.ruhmesmeile.com";
 
     useEffect(() => {
       fetch(`${prompterHost}/api/ideas`)
@@ -897,3 +907,5 @@ PrompterComponent.displayName = "Prompter Component";
 // - add hints for removed fields to description, if applicable (e.g. `format: markdown` -> "this typically can include markdown formatting", `default` -> "..., typically set to 'value'")
 // - collect used / removed fields, to clean up stories from API to use for additional context
 // - merge result back to defaults of component
+// - relatedStories initially, after import into Storyblok, is set to `blocks`, but should be `references`
+// - aiDraft not rendered in frontend

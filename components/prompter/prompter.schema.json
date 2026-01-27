@@ -39,7 +39,7 @@
       "title": "System Prompt",
       "description": "System-level instructions for content generation",
       "type": "string",
-      "default": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured."
+      "default": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured. For images you use placehold.co. The format reads as follows: https://placehold.co/1200x600?text=Dynamic+Web+Evolution, where after the domain you follow up with the dimensions (width x height) and then the text parameter to specify the text shown on the placeholder image. As the text, use a description for a good fitting image, that should be shown here. It should theoretically work as the alt text for the image. Never append or use any other parameters of path segments when constructing such image URLs"
     }
   },
   "additionalProperties": false
