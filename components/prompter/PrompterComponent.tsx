@@ -663,8 +663,8 @@ export const PrompterComponent = forwardRef<
       return prompt;
     };
 
-    const prompterHost = "https://localhost:3010";
-    // const prompterHost = "https://demo.ruhmesmeile.com";
+    // const prompterHost = "https://localhost:3010";
+    const prompterHost = "https://demo.ruhmesmeile.com";
 
     useEffect(() => {
       fetch(`${prompterHost}/api/ideas`)
