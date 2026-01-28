@@ -13,6 +13,7 @@ import {
 } from "@/helpers/storyblok";
 import { fontClassNamesPreview } from "@/helpers/fonts";
 import { locale } from "@/components";
+import { HeadlineLevelProvider } from "@/components/headline/HeadlineLevelContext";
 
 type PageProps = ISbStory["data"] & {
   settings?: ISbStoryData["content"];
@@ -27,10 +28,12 @@ const Page: NextPage<PageProps> = ({ story: initialStory }) => {
   if (story && story.content) storyProcessing(story.content, true);
 
   return story ? (
-    <StoryblokComponent
-      blok={story.content}
-      data-font-class-names={fontClassNamesPreview}
-    />
+    <HeadlineLevelProvider>
+      <StoryblokComponent
+        blok={story.content}
+        data-font-class-names={fontClassNamesPreview}
+      />
+    </HeadlineLevelProvider>
   ) : null;
 };
 
