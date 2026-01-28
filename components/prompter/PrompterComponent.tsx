@@ -10,18 +10,23 @@ import {
   useRef,
   useState,
 } from "react";
+import { ThreeDots } from "react-loader-spinner";
 import { traverse as objectTraverse } from "object-traversal";
+import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
 import { defaultObjectForSchema } from "@kickstartds/cambria";
 import { JSONSchema } from "json-schema-typed/draft-07";
 import schemaTraverse from "json-schema-traverse";
 import merge from "deepmerge";
-import { ThreeDots } from "react-loader-spinner";
+
+import { fetchStory, initStoryblok } from "@/helpers/storyblok";
+import { unflatten } from "@/helpers/unflatten";
+import { SectionProps } from "@/components/section/SectionProps";
 
 import pageSchema from "@kickstartds/ds-agency-premium/page/page.schema.dereffed.json";
 
 import { Section } from "@kickstartds/ds-agency-premium/section";
-// import { SplitEven } from "@kickstartds/ds-agency-premium/content-nav";
-// import { SplitWeighted } from "@kickstartds/ds-agency-premium/content-nav";
+import { SplitEven } from "@kickstartds/ds-agency-premium/split-even";
+import { SplitWeighted } from "@kickstartds/ds-agency-premium/split-weighted";
 
 import { BlogTeaser } from "@kickstartds/ds-agency-premium/blog-teaser";
 import { BusinessCard } from "@kickstartds/ds-agency-premium/business-card";
@@ -50,11 +55,6 @@ import { Text } from "@kickstartds/ds-agency-premium/text";
 import { VideoCurtain } from "@kickstartds/ds-agency-premium/video-curtain";
 
 import { InfoTable } from "../info-table/InfoTableComponent";
-
-import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
-import { fetchStory, initStoryblok } from "@/helpers/storyblok";
-import { unflatten } from "@/helpers/unflatten";
-import { SectionProps } from "../section/SectionProps";
 
 import PrompterBadge from "./prompter-badge/PrompterBadge";
 import PrompterButton from "./prompter-button/PrompterButton";
@@ -87,8 +87,9 @@ const unsupportedKeywords = [
 ];
 
 const propertiesToDrop = [
-  // "backgroundColor",
-  // "spotlight",
+  "backgroundColor",
+  "backgroundImage",
+  "spotlight",
   // "headerSpacing",
   // "switchOrder",
   // "align",
@@ -96,7 +97,7 @@ const propertiesToDrop = [
   // "colorNeutral",
   // "target",
   // "contentAlign",
-  // "textColor",
+  "textColor",
   // "highlightText",
   // "fullWidth",
   // "padding",
@@ -136,8 +137,8 @@ const components = [
   "page",
   "section",
   "slider",
-  // "split-even",
-  // "split-weighted",
+  "split-even",
+  "split-weighted",
   "stats",
   "teaser-card",
   "testimonials",
@@ -183,8 +184,8 @@ const componentMap = {
   logos: Logos,
   mosaic: Mosaic,
   slider: Slider,
-  // "split-even": SplitEven,
-  // "split-weighted": SplitWeighted,
+  "split-even": SplitEven,
+  "split-weighted": SplitWeighted,
   stats: Stats,
   "teaser-card": TeaserCard,
   testimonials: Testimonials,
@@ -226,8 +227,8 @@ const schemaMap = {
   questions: {},
   section: {},
   slider: {},
-  // "split-even": {},
-  // "split-weighted": {},
+  "split-even": {},
+  "split-weighted": {},
   stat: {},
   stats: {},
   "teaser-card": {},
