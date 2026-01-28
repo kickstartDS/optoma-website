@@ -12,34 +12,45 @@ import {
 } from "react";
 import { traverse as objectTraverse } from "object-traversal";
 import { defaultObjectForSchema } from "@kickstartds/cambria";
-import { PrompterSelectField } from "./prompter-select-field/PrompterSelectField";
 import { JSONSchema } from "json-schema-typed/draft-07";
 import schemaTraverse from "json-schema-traverse";
 import merge from "deepmerge";
 import { ThreeDots } from "react-loader-spinner";
 
-import { Section } from "@kickstartds/ds-agency-premium/section";
-import { Faq } from "@kickstartds/ds-agency-premium/faq";
+import pageSchema from "@kickstartds/ds-agency-premium/page/page.schema.dereffed.json";
 
-import { PageProps } from "@kickstartds/ds-agency-premium/page";
+import { Section } from "@kickstartds/ds-agency-premium/section";
+// import { SplitEven } from "@kickstartds/ds-agency-premium/content-nav";
+// import { SplitWeighted } from "@kickstartds/ds-agency-premium/content-nav";
+
+import { BlogTeaser } from "@kickstartds/ds-agency-premium/blog-teaser";
+import { BusinessCard } from "@kickstartds/ds-agency-premium/business-card";
 import { Contact } from "@kickstartds/ds-agency-premium/contact";
+import { ContentNav } from "@kickstartds/ds-agency-premium/content-nav";
 import { Cta } from "@kickstartds/ds-agency-premium/cta";
+import { Divider } from "@kickstartds/ds-agency-premium/divider";
+import { Downloads } from "@kickstartds/ds-agency-premium/downloads";
+import { EventLatestTeaser } from "@kickstartds/ds-agency-premium/event-latest-teaser";
+import { EventListTeaser } from "@kickstartds/ds-agency-premium/event-list-teaser";
+import { Faq } from "@kickstartds/ds-agency-premium/faq";
 import { Features } from "@kickstartds/ds-agency-premium/features";
-import { Stats } from "@kickstartds/ds-agency-premium/stats";
-import { TeaserCard } from "@kickstartds/ds-agency-premium/teaser-card";
-import { Testimonials } from "@kickstartds/ds-agency-premium/testimonials";
-import { Text } from "@kickstartds/ds-agency-premium/text";
-import { Hero } from "@kickstartds/ds-agency-premium/hero";
 import { Gallery } from "@kickstartds/ds-agency-premium/gallery";
+import { Headline } from "@kickstartds/ds-agency-premium/headline";
+import { Hero } from "@kickstartds/ds-agency-premium/hero";
 import { ImageStory } from "@kickstartds/ds-agency-premium/image-story";
 import { ImageText } from "@kickstartds/ds-agency-premium/image-text";
 import { Logos } from "@kickstartds/ds-agency-premium/logos";
 import { Mosaic } from "@kickstartds/ds-agency-premium/mosaic";
+import { PageProps } from "@kickstartds/ds-agency-premium/page";
 import { Slider } from "@kickstartds/ds-agency-premium/slider";
+import { Stats } from "@kickstartds/ds-agency-premium/stats";
+import { TeaserCard } from "@kickstartds/ds-agency-premium/teaser-card";
+import { Testimonials } from "@kickstartds/ds-agency-premium/testimonials";
+import { Text } from "@kickstartds/ds-agency-premium/text";
 import { VideoCurtain } from "@kickstartds/ds-agency-premium/video-curtain";
 
-import pageSchema from "@kickstartds/ds-agency-premium/page/page.schema.dereffed.json";
-import { PrompterProps } from "./PrompterProps";
+import { InfoTable } from "../info-table/InfoTableComponent";
+
 import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
 import { fetchStory, initStoryblok } from "@/helpers/storyblok";
 import { unflatten } from "@/helpers/unflatten";
@@ -51,6 +62,8 @@ import PrompterSection from "./prompter-section/PrompterSection";
 import PrompterSectionInput from "./prompter-section-input/PrompterSectionInput";
 import PrompterSelectionDisplay from "./prompter-selection-display/PrompterSelectionDisplay";
 import PrompterSubmittedText from "./prompter-submitted-text/PrompterSubmittedText";
+import { PrompterSelectField } from "./prompter-select-field/PrompterSelectField";
+import { PrompterProps } from "./PrompterProps";
 
 type Idea = {
   id: string;
@@ -101,34 +114,46 @@ const propertiesToDrop = [
 ];
 
 const components = [
-  "page",
-  "section",
+  "blog-teaser",
+  "business-card",
   "contact",
+  "content-nav",
   "cta",
+  "divider",
+  "downloads",
+  "event-latest-teaser",
+  "event-list-teaser",
   "faq",
   "features",
   "gallery",
+  "headline",
+  "hero",
+  "image-story",
+  "image-text",
+  "info-table",
+  "logos",
+  "mosaic",
+  "page",
+  "section",
+  "slider",
+  // "split-even",
+  // "split-weighted",
   "stats",
   "teaser-card",
   "testimonials",
   "text",
-  "image-story",
-  "image-text",
-  "logos",
-  "hero",
-  "mosaic",
-  "slider",
   "video-curtain",
 ];
 
 const subComponentMap = {
+  downloads: "download",
   faq: "questions",
   features: "feature",
   gallery: "images",
-  stats: "stat",
-  testimonials: "testimonial",
   logos: "logo",
   mosaic: "tile",
+  stats: "stat",
+  testimonials: "testimonial",
 } as const;
 
 type SubComponentMapKeys = keyof typeof subComponentMap;
@@ -138,21 +163,32 @@ function isSubComponentMapKey(key: string): key is SubComponentMapKeys {
 }
 
 const componentMap = {
+  "blog-teaser": BlogTeaser,
+  "business-card": BusinessCard,
   contact: Contact,
+  "content-nav": ContentNav,
   cta: Cta,
+  divider: Divider,
+  downloads: Downloads,
+  "event-latest-teaser": EventLatestTeaser,
+  "event-list-teaser": EventListTeaser,
   faq: Faq,
   features: Features,
   gallery: Gallery,
+  headline: Headline,
+  hero: Hero,
+  "image-story": ImageStory,
+  "image-text": ImageText,
+  "info-table": InfoTable,
+  logos: Logos,
+  mosaic: Mosaic,
+  slider: Slider,
+  // "split-even": SplitEven,
+  // "split-weighted": SplitWeighted,
   stats: Stats,
   "teaser-card": TeaserCard,
   testimonials: Testimonials,
   text: Text,
-  "image-story": ImageStory,
-  "image-text": ImageText,
-  logos: Logos,
-  hero: Hero,
-  mosaic: Mosaic,
-  slider: Slider,
   "video-curtain": VideoCurtain,
 } as const;
 
@@ -163,30 +199,42 @@ function isComponentMapKey(key: string): key is ComponentMapKeys {
 }
 
 const schemaMap = {
-  page: {},
-  section: {},
+  "blog-teaser": {},
+  "business-card": {},
   contact: {},
+  "content-nav": {},
   cta: {},
+  divider: {},
+  download: {},
+  downloads: {},
+  "event-latest-teaser": {},
+  "event-list-teaser": {},
   faq: {},
-  questions: {},
   feature: {},
   features: {},
   gallery: {},
+  headline: {},
+  hero: {},
+  "image-story": {},
+  "image-text": {},
   images: {},
+  "info-table": {},
+  logo: {},
+  logos: {},
+  mosaic: {},
+  page: {},
+  questions: {},
+  section: {},
+  slider: {},
+  // "split-even": {},
+  // "split-weighted": {},
   stat: {},
   stats: {},
   "teaser-card": {},
   testimonial: {},
   testimonials: {},
   text: {},
-  "image-story": {},
-  "image-text": {},
-  logo: {},
-  logos: {},
-  hero: {},
   tile: {},
-  mosaic: {},
-  slider: {},
   "video-curtain": {},
 } as const;
 
@@ -259,20 +307,7 @@ const processPage = (page: PageProps): Record<string, any> => {
       if (typeof value === "object" && value.type) {
         value.component = value.type;
 
-        for (const prop of Object.keys(value)) {
-          if (
-            !value[prop].type &&
-            typeof value[prop] === "object" &&
-            !Array.isArray(value[prop])
-          ) {
-            for (const nestedProp of Object.keys(value[prop])) {
-              value[`${prop}_${nestedProp}`] = structuredClone(
-                value[prop][nestedProp]
-              );
-            }
-            delete value[prop];
-          }
-        }
+        flattenNestedObjects(value);
       }
     },
     { traversalType: "breadth-first" }
@@ -281,6 +316,7 @@ const processPage = (page: PageProps): Record<string, any> => {
   for (const section of page.section || []) {
     (section as SectionProps).aiDraft = true;
     (section as SectionProps).component = "section";
+    flattenNestedObjects(section);
   }
 
   return page as Record<string, any>;
@@ -579,7 +615,7 @@ export const PrompterComponent = forwardRef<
 
       delete clonedSchema.properties.header;
       delete clonedSchema.properties.footer;
-      delete clonedSchema.properties.section.items.properties.content; // TODO check this, could possibly be improved by better Prompter guidance for those types of values
+      // delete clonedSchema.properties.section.items.properties.content; // TODO check this, could possibly be improved by better Prompter guidance for those types of values
 
       clonedSchema.properties.section.minItems = sections;
       clonedSchema.properties.section.maxItems = sections;
@@ -663,8 +699,8 @@ export const PrompterComponent = forwardRef<
       return prompt;
     };
 
-    // const prompterHost = "https://localhost:3010";
-    const prompterHost = "https://demo.ruhmesmeile.com";
+    const prompterHost = "https://localhost:3010";
+    // const prompterHost = "https://demo.ruhmesmeile.com";
 
     useEffect(() => {
       fetch(`${prompterHost}/api/ideas`)
@@ -743,6 +779,8 @@ export const PrompterComponent = forwardRef<
         throw new Error("Could not find blok meta for prompter");
 
       const { uid: prompterUid } = JSON.parse(blokMetaString);
+
+      console.log("Submitting story", storyblokContent);
 
       fetch(`${prompterHost}/api/import`, {
         method: "POST",
@@ -902,6 +940,22 @@ export const PrompterComponent = forwardRef<
 );
 PrompterComponent.displayName = "Prompter Component";
 
+function flattenNestedObjects(value: any) {
+  for (const prop of Object.keys(value)) {
+    if (
+      !value[prop].type &&
+      typeof value[prop] === "object" &&
+      !Array.isArray(value[prop])
+    ) {
+      for (const nestedProp of Object.keys(value[prop])) {
+        value[`${prop}_${nestedProp}`] = structuredClone(
+          value[prop][nestedProp]
+        );
+      }
+      delete value[prop];
+    }
+  }
+}
 // TODO:
 //
 // - add hints for removed fields to description, if applicable (e.g. `format: markdown` -> "this typically can include markdown formatting", `default` -> "..., typically set to 'value'")
