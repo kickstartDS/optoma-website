@@ -989,11 +989,164 @@
       "component_group_name": "Components"
     },
     {
+      "name": "button",
+      "display_name": "Button",
+      "description": null,
+      "created_at": "2026-01-23T11:51:54.641Z",
+      "updated_at": "2026-01-23T11:52:27.060Z",
+      "id": 137132091980278,
+      "schema": {
+        "label": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Label",
+          "key": "label",
+          "type": "text",
+          "description": "Text content to display inside the button",
+          "required": true
+        },
+        "url": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Url",
+          "key": "url",
+          "type": "multilink",
+          "allow_target_blank": true,
+          "email_link_type": true,
+          "asset_link_type": true,
+          "show_anchor": true,
+          "description": "The URL to link to when the button is clicked",
+          "required": false
+        },
+        "variant": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Variant",
+          "key": "variant",
+          "type": "option",
+          "default_value": "secondary",
+          "description": "Variant of button to be used",
+          "options": [
+            {
+              "name": "primary",
+              "value": "primary",
+              "_uid": "36710a79-f702-41f1-88b1-32d2c4d6e3a8"
+            },
+            {
+              "name": "secondary",
+              "value": "secondary",
+              "_uid": "e25b2507-2731-41fa-ae3d-fa276e6ab70e"
+            },
+            {
+              "name": "tertiary",
+              "value": "tertiary",
+              "_uid": "6460db61-aa3b-41ae-95f4-c14f20277ac7"
+            }
+          ],
+          "required": false
+        },
+        "icon": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Icon",
+          "key": "icon",
+          "type": "custom",
+          "field_type": "storyblok-icon-sprite-picker-field-plugin",
+          "options": [
+            {
+              "name": "allowedIcons",
+              "_uid": "244020d6-6c17-4e88-a8e2-fc0a90139a6b"
+            }
+          ],
+          "description": "Choose an icon",
+          "required": false
+        },
+        "size": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Size",
+          "key": "size",
+          "type": "option",
+          "default_value": "medium",
+          "description": "Size of button to use",
+          "options": [
+            {
+              "name": "small",
+              "value": "small",
+              "_uid": "3e459d11-bcb2-4bd7-aa6b-390c45918891"
+            },
+            {
+              "name": "medium",
+              "value": "medium",
+              "_uid": "08a7c7d9-a26b-4783-ac44-95534ef01142"
+            },
+            {
+              "name": "large",
+              "value": "large",
+              "_uid": "5ee4957d-922e-4430-8a70-8c4d011f39c8"
+            }
+          ],
+          "required": false
+        },
+        "disabled": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Disabled",
+          "key": "disabled",
+          "type": "boolean",
+          "description": "Whether the button should be disabled",
+          "required": false
+        },
+        "type": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Type",
+          "key": "type",
+          "type": "option",
+          "description": "Button Type",
+          "options": [
+            {
+              "name": "button",
+              "value": "button",
+              "_uid": "a100fa58-d1e4-4257-bfa0-5c97bfab1a06"
+            },
+            {
+              "name": "submit",
+              "value": "submit",
+              "_uid": "a09fcf08-4d31-41c8-83e4-26a0a4c90298"
+            },
+            {
+              "name": "reset",
+              "value": "reset",
+              "_uid": "1e655760-4e00-4e0e-b36e-46130d9ade20"
+            }
+          ],
+          "required": false
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "Button",
+      "component_group_uuid": "b2d71812-e4b5-4525-9832-549eb8322725",
+      "color": null,
+      "icon": null,
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {},
+      "component_group_name": "Components"
+    },
+    {
       "name": "buttons",
       "display_name": "Buttons",
       "description": null,
       "created_at": "2026-01-15T14:53:53.357Z",
-      "updated_at": "2026-01-15T14:53:53.357Z",
+      "updated_at": "2026-01-23T11:48:06.793Z",
       "id": 134345659837506,
       "schema": {
         "label": {
@@ -1305,7 +1458,7 @@
       "display_name": "Cta",
       "description": null,
       "created_at": "2026-01-15T14:53:57.186Z",
-      "updated_at": "2026-01-15T14:53:57.186Z",
+      "updated_at": "2026-01-21T09:25:38.287Z",
       "id": 134345675529292,
       "schema": {
         "headline": {
@@ -1549,6 +1702,11 @@
           "type": "boolean",
           "description": "Innenabstand des Call-to-Action Elements",
           "required": false
+        },
+        "inverted": {
+          "type": "boolean",
+          "pos": 19,
+          "id": "qmXcFoUnQ0a4waZbmUjZnQ"
         }
       },
       "image": null,
@@ -1729,6 +1887,49 @@
       "all_presets": [],
       "preset_id": null,
       "real_name": "Dates",
+      "component_group_uuid": null,
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {}
+    },
+    {
+      "name": "descriptionItems",
+      "display_name": "DescriptionItems",
+      "description": null,
+      "created_at": "2026-01-26T14:53:10.123Z",
+      "updated_at": "2026-01-26T14:53:10.123Z",
+      "id": 138238321153940,
+      "schema": {
+        "number": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Number",
+          "key": "number",
+          "type": "number",
+          "description": "Step Number",
+          "required": false
+        },
+        "text": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Text",
+          "key": "text",
+          "type": "text",
+          "description": "Step Text",
+          "required": false
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "DescriptionItems",
       "component_group_uuid": null,
       "color": "#05566a",
       "icon": "block-wallet",
@@ -1974,6 +2175,184 @@
       ],
       "preset_id": null,
       "real_name": "Downloads",
+      "component_group_uuid": "b2d71812-e4b5-4525-9832-549eb8322725",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {},
+      "component_group_name": "Components"
+    },
+    {
+      "name": "energy-calculator",
+      "display_name": "Energy Calculator",
+      "description": null,
+      "created_at": "2026-01-26T14:42:57.817Z",
+      "updated_at": "2026-01-26T14:44:23.811Z",
+      "id": 138235813148448,
+      "schema": {
+        "energyType": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "EnergyType",
+          "key": "energyType",
+          "type": "option",
+          "default_value": "electricity",
+          "description": "Type of energy to calculate",
+          "options": [
+            {
+              "name": "electricity",
+              "value": "electricity",
+              "_uid": "db920ca2-85fd-4a41-bfd8-faa261d05b2f"
+            },
+            {
+              "name": "gas",
+              "value": "gas",
+              "_uid": "65bb5d5d-8537-4201-80f8-f300e141cc2e"
+            }
+          ],
+          "required": false
+        },
+        "postalCode": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "PostalCode",
+          "key": "postalCode",
+          "type": "text",
+          "description": "User's postal code",
+          "required": false
+        },
+        "householdSize": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HouseholdSize",
+          "key": "householdSize",
+          "type": "number",
+          "default_value": 1,
+          "description": "Number of people in household",
+          "required": false
+        },
+        "annualConsumption": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "AnnualConsumption",
+          "key": "annualConsumption",
+          "type": "number",
+          "default_value": 1000,
+          "description": "Annual energy consumption in kWh",
+          "required": false
+        },
+        "submitLabel": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "SubmitLabel",
+          "key": "submitLabel",
+          "type": "text",
+          "default_value": "Jetzt Angebot einholen",
+          "description": "Label for the submit button",
+          "required": false
+        },
+        "headlineText": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HeadlineText",
+          "key": "headlineText",
+          "type": "text",
+          "default_value": "Für welche Energieart interessierst du dich?",
+          "description": "Main headline text",
+          "required": false
+        },
+        "electricityLabel": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ElectricityLabel",
+          "key": "electricityLabel",
+          "type": "text",
+          "default_value": "ÖKOSTROM",
+          "description": "Label for electricity option",
+          "required": false
+        },
+        "gasLabel": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "GasLabel",
+          "key": "gasLabel",
+          "type": "text",
+          "default_value": "ERDGAS",
+          "description": "Label for gas option",
+          "required": false
+        },
+        "postalCodeLabel": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "PostalCodeLabel",
+          "key": "postalCodeLabel",
+          "type": "text",
+          "default_value": "DEINE POSTLEITZAHL",
+          "description": "Label for postal code field",
+          "required": false
+        },
+        "householdSizeLabel": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "HouseholdSizeLabel",
+          "key": "householdSizeLabel",
+          "type": "text",
+          "default_value": "PERSONEN IM HAUSHALT",
+          "description": "Label for household size field",
+          "required": false
+        },
+        "consumptionLabel": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "ConsumptionLabel",
+          "key": "consumptionLabel",
+          "type": "text",
+          "default_value": "DEIN JAHRESVERBRAUCH IN KWH",
+          "description": "Label for consumption field",
+          "required": false
+        },
+        "descriptionHeadline": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "DescriptionHeadline",
+          "key": "descriptionHeadline",
+          "type": "text",
+          "default_value": "Energie von sparstrom. In nur 4 Minuten wechseln!",
+          "description": "Headline for the description section",
+          "required": false
+        },
+        "descriptionItems": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "DescriptionItems",
+          "key": "descriptionItems",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "descriptionItems"
+          ]
+        },
+        "onSubmit": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "OnSubmit",
+          "key": "onSubmit",
+          "type": "text",
+          "description": "JavaScript function name for form submission",
+          "required": false
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "Energy Calculator",
       "component_group_uuid": "b2d71812-e4b5-4525-9832-549eb8322725",
       "color": "#05566a",
       "icon": "block-wallet",
@@ -3667,7 +4046,7 @@
       "display_name": "Headline",
       "description": null,
       "created_at": "2026-01-15T14:54:37.395Z",
-      "updated_at": "2026-01-15T14:54:37.395Z",
+      "updated_at": "2026-01-23T11:49:29.077Z",
       "id": 134345840221297,
       "schema": {
         "text": {
@@ -3676,8 +4055,8 @@
           "display_name": "Text",
           "key": "text",
           "type": "markdown",
-          "description": "Der Haupttext der Überschrift",
-          "required": false
+          "description": "Text content of headline",
+          "required": true
         },
         "sub": {
           "id": 0,
@@ -3685,7 +4064,7 @@
           "display_name": "Sub",
           "key": "sub",
           "type": "markdown",
-          "description": "Ein optionaler Untertitel, der unter dem Haupttext angezeigt wird",
+          "description": "Subheadline content",
           "required": false
         },
         "switchOrder": {
@@ -3694,7 +4073,7 @@
           "display_name": "SwitchOrder",
           "key": "switchOrder",
           "type": "boolean",
-          "description": "Ob der Untertitel vor dem Haupttext angezeigt werden soll",
+          "description": "Switch order of headline and subheadline",
           "required": false
         },
         "align": {
@@ -3703,22 +4082,22 @@
           "display_name": "Align",
           "key": "align",
           "type": "option",
-          "description": "Die Ausrichtung des Textes, z.B. links, zentriert oder rechts",
+          "description": "Section alignment",
           "options": [
             {
               "name": "left",
               "value": "left",
-              "_uid": "7e7360ce-13dc-479d-a3ca-7c6559e30bcc"
+              "_uid": "922332ee-d340-4c7c-868b-f75052d60c7c"
             },
             {
               "name": "center",
               "value": "center",
-              "_uid": "ff6b324b-cd1c-46f6-902c-0f4dac99f08d"
+              "_uid": "4d2518ae-adbd-460b-8270-e7ad595cef38"
             },
             {
               "name": "right",
               "value": "right",
-              "_uid": "efa47d68-b784-4a23-ab20-4065db116fb0"
+              "_uid": "84e0dfcc-2794-4a91-b0d7-76f2039db4cd"
             }
           ],
           "required": false
@@ -3730,32 +4109,32 @@
           "key": "level",
           "type": "option",
           "default_value": "h2",
-          "description": "Das Level der Überschrift, z.B. H1, H2, H3 usw.",
+          "description": "Level of headline to use",
           "options": [
             {
               "name": "h1",
               "value": "h1",
-              "_uid": "a35f055b-34b2-41bd-844b-e15db02f73f8"
+              "_uid": "e9bceb06-036f-45a9-a464-663bcf06e565"
             },
             {
               "name": "h2",
               "value": "h2",
-              "_uid": "5d2f7dcd-3a94-4011-bff7-0d8b00484bcd"
+              "_uid": "9bad7f6d-15ac-4842-bfa5-b60958c5db06"
             },
             {
               "name": "h3",
               "value": "h3",
-              "_uid": "57bdc6e4-caa4-4317-b1d5-7c6d662a104d"
+              "_uid": "b155d942-4342-41e8-b4dc-05a610f0968f"
             },
             {
               "name": "h4",
               "value": "h4",
-              "_uid": "d1556e47-d0f0-4671-91fa-62c68f22c153"
+              "_uid": "bc8e3145-7e98-4d1e-bcd0-10c40fadebcf"
             },
             {
               "name": "p",
               "value": "p",
-              "_uid": "cb48df3b-ac86-40ed-a269-05028ce92249"
+              "_uid": "d5dfed38-4376-41b3-a563-4353652557c5"
             }
           ],
           "required": false
@@ -3767,32 +4146,32 @@
           "key": "style",
           "type": "option",
           "default_value": "h2",
-          "description": "Anzeige der Überschrift wie z.B. eine H1, H2, H3 usw",
+          "description": "Style of headline to show",
           "options": [
             {
               "name": "h1",
               "value": "h1",
-              "_uid": "a7363475-b944-414d-bbd8-81191448f20c"
+              "_uid": "8d1dff55-7ea3-4316-87b8-240b49715434"
             },
             {
               "name": "h2",
               "value": "h2",
-              "_uid": "7ca10187-a7fc-4763-9f4e-71b0ab123a8b"
+              "_uid": "849421ba-933b-4a41-b8f9-3e47d8f4fa1b"
             },
             {
               "name": "h3",
               "value": "h3",
-              "_uid": "c05a1ea3-789b-4cfd-9bb2-26b6a24de7c2"
+              "_uid": "09ebb0a1-b2dc-4793-9d77-58ace1a2578d"
             },
             {
               "name": "h4",
               "value": "h4",
-              "_uid": "632e9862-ebdf-48ee-8994-00d7da7b21e0"
+              "_uid": "98d0de01-a862-44f9-91e5-aa237e55268c"
             },
             {
               "name": "p",
               "value": "p",
-              "_uid": "0090ccbf-937f-4d31-957c-b4ff393a362a"
+              "_uid": "66eadc72-a5c0-4408-9929-84c0a37ee477"
             }
           ],
           "required": false
@@ -3804,22 +4183,22 @@
           "key": "spaceAfter",
           "type": "option",
           "default_value": "small",
-          "description": "Ob nach der Überschrift ein zusätzlicher Abstand eingefügt werden soll",
+          "description": "Whether to display space after headline",
           "options": [
             {
               "name": "minimum",
               "value": "minimum",
-              "_uid": "ed5b5f02-c90a-4092-b1c2-3942abb0a523"
+              "_uid": "3cd1d1ae-67d8-4aca-bae7-0a3c9907b2f4"
             },
             {
               "name": "small",
               "value": "small",
-              "_uid": "f1d7fae3-e8a6-419c-95b4-71cacd25a826"
+              "_uid": "dacbc722-7379-48dd-942d-d2cf2ca5d966"
             },
             {
               "name": "large",
               "value": "large",
-              "_uid": "c0b991e4-2846-4650-b888-bcb1af6f9307"
+              "_uid": "fcb69e96-ddce-4819-aa31-c6cbc51c14d7"
             }
           ],
           "required": false
@@ -3830,7 +4209,7 @@
           "display_name": "ClassName",
           "key": "className",
           "type": "text",
-          "description": "Zusätzliche CSS-Klasse(n) für die Überschrift, um das Styling anzupassen",
+          "description": "Set a custom class name",
           "required": false
         },
         "id": {
@@ -3839,7 +4218,7 @@
           "display_name": "Id",
           "key": "id",
           "type": "text",
-          "description": "Eine eindeutige ID für die Überschrift, die für Ankerlinks oder CSS verwendet werden kann",
+          "description": "Set a custom id attribute",
           "required": false
         }
       },
@@ -3915,20 +4294,21 @@
       ],
       "preset_id": null,
       "real_name": "Headline",
-      "component_group_uuid": null,
+      "component_group_uuid": "b2d71812-e4b5-4525-9832-549eb8322725",
       "color": "#05566a",
       "icon": "heading-1",
       "internal_tags_list": [],
       "internal_tag_ids": [],
       "content_type_asset_preview": null,
-      "metadata": {}
+      "metadata": {},
+      "component_group_name": "Components"
     },
     {
       "name": "hero",
       "display_name": "Hero",
       "description": null,
       "created_at": "2026-01-15T14:54:04.189Z",
-      "updated_at": "2026-01-15T14:54:04.189Z",
+      "updated_at": "2026-01-23T07:17:32.843Z",
       "id": 134345704205391,
       "schema": {
         "headline": {
@@ -4205,6 +4585,12 @@
             }
           ],
           "required": false
+        },
+        "mobileTextBelow": {
+          "type": "boolean",
+          "pos": 19,
+          "default_value": true,
+          "id": "mAV_KbwtRSS1Kyhl3FosOg"
         }
       },
       "image": null,
@@ -5511,7 +5897,7 @@
       "display_name": "Page",
       "description": null,
       "created_at": "2026-01-15T14:50:37.456Z",
-      "updated_at": "2026-01-15T20:00:16.074Z",
+      "updated_at": "2026-01-20T13:49:40.345Z",
       "id": 134344857426949,
       "schema": {
         "section": {
@@ -5535,7 +5921,8 @@
           "key": "tab-19b9bc1d-7fe8-4949-a340-3260c16b6ee6",
           "keys": [
             "header_floating",
-            "header_inverted"
+            "header_inverted",
+            "header_logo"
           ],
           "type": "tab",
           "description": "Header settings for the page",
@@ -5565,7 +5952,8 @@
           "display_name": "Footer",
           "key": "tab-ec027649-f8a1-4353-a6db-3e5a21ceb915",
           "keys": [
-            "footer_inverted"
+            "footer_inverted",
+            "footer_logo"
           ],
           "type": "tab",
           "description": "Footer settings for the page",
@@ -5598,6 +5986,22 @@
           "type": "text",
           "pos": 7,
           "id": "wUXYcQYsTr-PYkPNk2aAVQ"
+        },
+        "header_logo": {
+          "type": "asset",
+          "pos": 8,
+          "filetypes": [
+            "images"
+          ],
+          "id": "M3Ll1SDpRNyVuhRngIG9aw"
+        },
+        "footer_logo": {
+          "type": "asset",
+          "pos": 9,
+          "filetypes": [
+            "images"
+          ],
+          "id": "PFjiJI5BSfmSer-_PWba4A"
         }
       },
       "image": null,
@@ -5621,7 +6025,7 @@
       "display_name": "Prompter",
       "description": null,
       "created_at": "2026-01-15T19:46:18.127Z",
-      "updated_at": "2026-01-15T19:46:18.127Z",
+      "updated_at": "2026-01-28T11:27:13.782Z",
       "id": 134417523213033,
       "schema": {
         "sections": {
@@ -5658,19 +6062,23 @@
           "pos": 0,
           "display_name": "RelatedStories",
           "key": "relatedStories",
-          "type": "bloks",
+          "type": "options",
           "restrict_type": "",
           "restrict_components": true,
           "component_whitelist": [
             "relatedStories"
-          ]
+          ],
+          "is_reference_type": true,
+          "source": "internal_stories",
+          "entry_appearance": "card",
+          "allow_advanced_search": true
         },
         "userPrompt": {
           "id": 0,
           "pos": 0,
           "display_name": "UserPrompt",
           "key": "userPrompt",
-          "type": "text",
+          "type": "textarea",
           "description": "Custom prompt to guide content generation",
           "required": false
         },
@@ -5679,8 +6087,8 @@
           "pos": 0,
           "display_name": "SystemPrompt",
           "key": "systemPrompt",
-          "type": "text",
-          "default_value": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured.",
+          "type": "textarea",
+          "default_value": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured.\n\nSections that include multiple, different components should always be set to `mode` equals `list`, sections including multiple of the same, smaller components (like teaser cards) should always use the list `mode` of `tile`.\n\nGenerally, only use `stacked` as an option in an enum, if it's really obviously the right choice. Most of the time it's not.\n\nFor images you use placehold.co:\n- the format reads as follows: https://placehold.co/1200x600?text=Dynamic+Web+Evolution, where after the domain you follow up with the dimensions (width x height) and then the `text` parameter to specify the text shown on the placeholder image\n- as the text, use a description for a good fitting image, that should be shown here. It should theoretically work as the alt text for the image\n- if the property getting such an image URL is called `backgroundImage` or `image` inside the Hero component, add `transparent/999999` after the dimensions (e.g. https://placehold.co/1200x600/transparent/999999?text=Dynamic+Web+Evolution)\n- never append or use any other parameters of path segments than the ones described here when constructing such image URLs",
           "description": "System-level instructions for content generation",
           "required": false
         }
@@ -6122,7 +6530,7 @@
       "display_name": "Section",
       "description": null,
       "created_at": "2026-01-15T14:54:29.304Z",
-      "updated_at": "2026-01-15T19:58:02.646Z",
+      "updated_at": "2026-01-20T10:51:17.451Z",
       "id": 134345807084646,
       "schema": {
         "width": {
@@ -6232,22 +6640,22 @@
             },
             {
               "name": "to-default",
-              "value": "to_default",
+              "value": "to-default",
               "_uid": "9fffdac4-62c2-4796-a7c6-b84f6463caab"
             },
             {
               "name": "to-accent",
-              "value": "to_accent",
+              "value": "to-accent",
               "_uid": "57c11b20-0f6a-475b-918d-9aa6d8fc1988"
             },
             {
               "name": "to-bold",
-              "value": "to_bold",
+              "value": "to-bold",
               "_uid": "47de1611-44b4-46da-9e76-25bfb55e26ed"
             },
             {
               "name": "to-inverted",
-              "value": "to_inverted",
+              "value": "to-inverted",
               "_uid": "63814274-5c28-4055-93db-8de452bcb9d3"
             }
           ],
@@ -7201,7 +7609,7 @@
       "display_name": "Split Even",
       "description": null,
       "created_at": "2026-01-15T14:54:27.195Z",
-      "updated_at": "2026-01-15T15:16:15.721Z",
+      "updated_at": "2026-01-19T14:44:43.874Z",
       "id": 134345798437987,
       "schema": {
         "contentMinWidth": {
@@ -7400,6 +7808,93 @@
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false,
           "component_group_denylist": []
+        },
+        "tab-f5a2706c-f1f5-41f7-881e-30dd0436fcb9": {
+          "display_name": "First Layout",
+          "keys": [
+            "firstLayout_layout",
+            "firstLayout_stretchVertically"
+          ],
+          "pos": 0,
+          "type": "tab",
+          "id": "9aJwbPH1QfeIHjDdBDb8uQ"
+        },
+        "tab-49324b80-4cdf-44fc-9b8b-faf5fd30e9f1": {
+          "display_name": "Second Layout",
+          "keys": [
+            "secondLayout_layout",
+            "secondLayout_stretchVertically"
+          ],
+          "pos": 0,
+          "type": "tab",
+          "id": "STJLgEzfRPybi_r1_TDp8Q"
+        },
+        "firstLayout_layout": {
+          "type": "option",
+          "pos": 10,
+          "id": "iaVqN2EjQvmAl0oCAjimVw",
+          "use_uuid": true,
+          "options": [
+            {
+              "_uid": "498121dc-6bcd-4679-a9c9-0227d2619fff",
+              "name": "Small Tiles",
+              "value": "smallTiles"
+            },
+            {
+              "_uid": "e8219ce7-f309-4f82-98f9-1649a4fe716f",
+              "value": "largeTiles",
+              "name": "Large Tiles"
+            },
+            {
+              "_uid": "417236f8-f790-4c8b-bc47-9af822de429f",
+              "value": "list",
+              "name": "List"
+            }
+          ],
+          "default_value": "list",
+          "display_name": "Layout"
+        },
+        "firstLayout_stretchVertically": {
+          "type": "boolean",
+          "pos": 11,
+          "id": "aZVKnyxxTJqKmAcW7lJcfQ",
+          "display_name": "Stretch Vertically"
+        },
+        "secondLayout_layout": {
+          "type": "option",
+          "pos": 12,
+          "use_uuid": true,
+          "display_name": "Layout",
+          "options": [
+            {
+              "_uid": "5fa7e675-58bd-4340-8881-85b77978069f",
+              "name": "Small Tiles",
+              "value": "smallTiles"
+            },
+            {
+              "_uid": "3800baf5-620c-40a1-86fc-9b2a74d425bd",
+              "value": "largeTiles",
+              "name": "Large Tiles"
+            },
+            {
+              "_uid": "0659080d-6e14-466c-b4b6-358fd271ee07",
+              "value": "list",
+              "name": "List"
+            }
+          ],
+          "default_value": "list",
+          "id": "n1UmOhnEQayiG91HuoT2tw"
+        },
+        "secondLayout_stretchVertically": {
+          "type": "boolean",
+          "pos": 13,
+          "display_name": "Stretch Vertically",
+          "id": "4W4qNnFkQTSAj8_BalUsQQ"
+        },
+        "stretchContent": {
+          "type": "boolean",
+          "pos": 14,
+          "id": "6HPYM_iaTCKZ8x2hHhaa6A"
         }
       },
       "image": null,
@@ -7443,7 +7938,7 @@
       "display_name": "Split Weighted",
       "description": null,
       "created_at": "2026-01-15T14:54:28.189Z",
-      "updated_at": "2026-01-15T15:16:32.577Z",
+      "updated_at": "2026-01-19T14:52:07.212Z",
       "id": 134345802517604,
       "schema": {
         "verticalGutter": {
@@ -7549,7 +8044,9 @@
           "key": "tab-676845d5-c523-4ef2-b606-6a4e1c2a9569",
           "keys": [
             "mainLayout_gutter",
-            "mainLayout_minWidth"
+            "mainLayout_minWidth",
+            "mainLayout_stretchVertically",
+            "mainLayout_layout"
           ],
           "type": "tab",
           "description": "Main Layout",
@@ -7621,7 +8118,9 @@
           "key": "tab-ca1421d0-03ba-4dac-945d-182b1f65e4ae",
           "keys": [
             "asideLayout_gutter",
-            "asideLayout_minWidth"
+            "asideLayout_minWidth",
+            "asideLayout_stretchVertically",
+            "asideLayout_layout"
           ],
           "type": "tab",
           "description": "Layout settings for the aside section of the split layout",
@@ -7776,6 +8275,67 @@
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false,
           "component_group_denylist": []
+        },
+        "mainLayout_stretchVertically": {
+          "type": "boolean",
+          "pos": 14,
+          "display_name": "Stretch Vertically",
+          "id": "hcrnvzbbTn2IHNm2uQRAWw"
+        },
+        "mainLayout_layout": {
+          "type": "option",
+          "pos": 15,
+          "use_uuid": true,
+          "options": [
+            {
+              "_uid": "64f3a606-4ec6-4f9f-a7d5-0266a20a3db6",
+              "name": "Small Tiles",
+              "value": "smallTiles"
+            },
+            {
+              "_uid": "02b96e23-64a5-4a47-9ea0-ef216b21026c",
+              "value": "largeTiles",
+              "name": "Large Tiles"
+            },
+            {
+              "_uid": "0b459c26-31f1-448f-a5a6-9742bfa2d4f1",
+              "value": "list",
+              "name": "List"
+            }
+          ],
+          "default_value": "list",
+          "id": "mUIrkTSLSleQavIKTwdYKA"
+        },
+        "asideLayout_stretchVertically": {
+          "type": "boolean",
+          "pos": 16,
+          "display_name": "Stretch Vertically",
+          "id": "tou6gzLbSjuInB_quAbEaw"
+        },
+        "asideLayout_layout": {
+          "type": "option",
+          "pos": 17,
+          "display_name": "Layout",
+          "use_uuid": true,
+          "options": [
+            {
+              "_uid": "2c8f7af2-8b44-466e-868a-69a3dba76ed4",
+              "name": "Small Tiles",
+              "value": "smallTiles"
+            },
+            {
+              "_uid": "8231885c-3e94-4633-8e26-28a033cc74b9",
+              "value": "largeTiles",
+              "name": "Large Tiles"
+            },
+            {
+              "_uid": "0df22131-ada9-4a15-88ab-42657fc7f54a",
+              "value": "list",
+              "name": "List"
+            }
+          ],
+          "default_value": "list",
+          "id": "pxh34Qx6ThGznT00LYoBgA"
         }
       },
       "image": null,
@@ -7887,7 +8447,7 @@
       "display_name": "Stats",
       "description": null,
       "created_at": "2026-01-15T14:54:08.181Z",
-      "updated_at": "2026-01-15T14:54:08.181Z",
+      "updated_at": "2026-01-22T13:23:14.356Z",
       "id": 134345720556626,
       "schema": {
         "stat": {
@@ -7901,6 +8461,26 @@
           "component_whitelist": [
             "stat"
           ]
+        },
+        "align": {
+          "type": "option",
+          "pos": 1,
+          "options": [
+            {
+              "_uid": "771f11dc-c8e0-4f33-88b0-0497de17d01b",
+              "name": "center",
+              "value": "center"
+            },
+            {
+              "_uid": "83764029-bbb1-4ae4-a8d2-d02d04c70f5c",
+              "value": "left",
+              "name": "left"
+            }
+          ],
+          "default_value": "center",
+          "description": "Alignment of the stats content",
+          "id": "xtKp7zNfQwOZ04tjlTu3UQ",
+          "use_uuid": true
         }
       },
       "image": null,
@@ -7978,7 +8558,7 @@
       "display_name": "Teaser Card",
       "description": null,
       "created_at": "2026-01-15T14:54:09.183Z",
-      "updated_at": "2026-01-15T14:54:09.183Z",
+      "updated_at": "2026-01-19T14:48:31.382Z",
       "id": 134345724664915,
       "schema": {
         "headline": {
@@ -8026,6 +8606,11 @@
               "name": "row",
               "value": "row",
               "_uid": "cc3eeb81-11df-4dcd-9761-625fb12f647a"
+            },
+            {
+              "_uid": "42bf4a7e-5be9-4c64-b120-95c7e55e9c6c",
+              "value": "compact",
+              "name": "compact"
             }
           ],
           "required": false
@@ -8721,6 +9306,130 @@
       "all_presets": [],
       "preset_id": null,
       "real_name": "Tile",
+      "component_group_uuid": null,
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {}
+    },
+    {
+      "name": "timeline",
+      "display_name": "Timeline",
+      "description": null,
+      "created_at": "2026-01-26T17:49:14.447Z",
+      "updated_at": "2026-01-26T17:49:14.447Z",
+      "id": 138281592630564,
+      "schema": {
+        "timelineItems": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TimelineItems",
+          "key": "timelineItems",
+          "type": "bloks",
+          "restrict_type": "",
+          "restrict_components": true,
+          "component_whitelist": [
+            "timelineItems"
+          ]
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "Timeline",
+      "component_group_uuid": "b2d71812-e4b5-4525-9832-549eb8322725",
+      "color": "#05566a",
+      "icon": "block-wallet",
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null,
+      "metadata": {},
+      "component_group_name": "Components"
+    },
+    {
+      "name": "timelineItems",
+      "display_name": "TimelineItems",
+      "description": null,
+      "created_at": "2026-01-26T17:49:13.715Z",
+      "updated_at": "2026-01-26T17:49:13.715Z",
+      "id": 138281589636386,
+      "schema": {
+        "year": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Year",
+          "key": "year",
+          "type": "text",
+          "description": "The year or date for this timeline entry",
+          "required": false
+        },
+        "textLeft": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TextLeft",
+          "key": "textLeft",
+          "type": "markdown",
+          "description": "Text content displayed on the left side of the timeline",
+          "required": false
+        },
+        "textRight": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "TextRight",
+          "key": "textRight",
+          "type": "markdown",
+          "description": "Text content displayed on the right side of the timeline",
+          "required": false
+        },
+        "tab-2c22c96e-d997-46d0-9906-969381a54c31": {
+          "id": "LCLJbtmXRtCZBpaTgaVMMQ",
+          "pos": 0,
+          "display_name": "Image",
+          "key": "tab-2c22c96e-d997-46d0-9906-969381a54c31",
+          "keys": [
+            "image_src",
+            "image_alt"
+          ],
+          "type": "tab",
+          "description": "Optional image for this timeline entry",
+          "required": false
+        },
+        "image_src": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Src",
+          "key": "image_src",
+          "type": "asset",
+          "filetypes": [
+            "images"
+          ],
+          "description": "URL of the image",
+          "required": false
+        },
+        "image_alt": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Alt",
+          "key": "image_alt",
+          "type": "text",
+          "description": "Alternative text for the image",
+          "required": false
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": false,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "TimelineItems",
       "component_group_uuid": null,
       "color": "#05566a",
       "icon": "block-wallet",
