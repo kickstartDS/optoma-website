@@ -132,9 +132,8 @@ const components = [
   "mosaic",
   "page",
   "section",
-  "slider",
-  // "split-even",
-  // "split-weighted",
+  "split-even",
+  "split-weighted",
   "stats",
   "teaser-card",
   "testimonials",
@@ -411,6 +410,7 @@ export const PrompterComponent = forwardRef<
     const schema = useMemo(() => {
       const allProperties: Set<string> = new Set();
       let maxDepth = 0;
+      let enumValueCount = 0;
 
       const collectSchemas: schemaTraverse.Callback = (schema) => {
         if (
@@ -603,6 +603,15 @@ export const PrompterComponent = forwardRef<
         }
       };
 
+      const countEnums: schemaTraverse.Callback = (schema, jsonPtr) => {
+        if (schema.enum) {
+          enumValueCount += schema.enum.length;
+          if (enumValueCount > 1000) {
+            console.log("Max enum count exceeded:", jsonPtr, enumValueCount);
+          }
+        }
+      };
+
       schemaTraverse(pageSchema, collectSchemas);
       const clonedSchema = structuredClone(pageSchema);
 
@@ -637,6 +646,7 @@ export const PrompterComponent = forwardRef<
         makeRequired,
         collectProperties,
         countDepth,
+        countEnums,
       ].forEach((fn) => {
         schemaTraverse(clonedSchema, fn);
       });
@@ -646,6 +656,15 @@ export const PrompterComponent = forwardRef<
           "Need to reduce properties (<5000 allowed), got:",
           allProperties.size,
           allProperties
+        );
+      }
+
+      console.log("ENUMVALUECOUNT", enumValueCount);
+
+      if (enumValueCount > 1000) {
+        console.log(
+          "Need to reduce enum count (<1000 allowed), got:",
+          enumValueCount
         );
       }
 
