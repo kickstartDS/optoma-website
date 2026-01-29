@@ -35,8 +35,6 @@ import { ContentNav } from "@kickstartds/ds-agency-premium/content-nav";
 import { Cta } from "@kickstartds/ds-agency-premium/cta";
 import { Divider } from "@kickstartds/ds-agency-premium/divider";
 import { Downloads } from "@kickstartds/ds-agency-premium/downloads";
-import { EventLatestTeaser } from "@kickstartds/ds-agency-premium/event-latest-teaser";
-import { EventListTeaser } from "@kickstartds/ds-agency-premium/event-list-teaser";
 import { Faq } from "@kickstartds/ds-agency-premium/faq";
 import { Features } from "@kickstartds/ds-agency-premium/features";
 import { Gallery } from "@kickstartds/ds-agency-premium/gallery";
@@ -135,8 +133,8 @@ const components = [
   "page",
   "section",
   "slider",
-  "split-even",
-  "split-weighted",
+  // "split-even",
+  // "split-weighted",
   "stats",
   "teaser-card",
   "testimonials",
