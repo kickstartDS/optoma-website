@@ -90,6 +90,7 @@ const propertiesToDrop = [
   "backgroundColor",
   "backgroundImage",
   "spotlight",
+  "displayMode",
   // "headerSpacing",
   // "switchOrder",
   // "align",
