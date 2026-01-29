@@ -76,7 +76,7 @@ Custom components live in `components/{name}/`:
 
 ### Token Architecture (3 layers)
 
-1. **Branding** (`--ks-brand-*`): Core values in [token/branding-token.css](token/branding-token.css)
+1. **Branding** (`--ks-brand-*`): Core values in [token/branding-tokens.css](token/branding-token.css)
 2. **Semantic** (`--ks-*`): Purpose-based tokens in `token/*.scss`
 3. **Component** (`--dsa-*`): Component-specific customizations
 
