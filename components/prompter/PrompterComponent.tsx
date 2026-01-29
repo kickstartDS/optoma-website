@@ -659,8 +659,6 @@ export const PrompterComponent = forwardRef<
         );
       }
 
-      console.log("ENUMVALUECOUNT", enumValueCount);
-
       if (enumValueCount > 1000) {
         console.log(
           "Need to reduce enum count (<1000 allowed), got:",
