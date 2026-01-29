@@ -700,11 +700,8 @@ export const PrompterComponent = forwardRef<
       return prompt;
     };
 
-    const prompterHost = "https://localhost:3010";
-    // const prompterHost = "https://demo.ruhmesmeile.com";
-
     useEffect(() => {
-      fetch(`${prompterHost}/api/ideas`)
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/ideas`)
         .then((response) => {
           response.json().then((json) => {
             setIdeas(json.response.data.ideas);
@@ -748,7 +745,7 @@ export const PrompterComponent = forwardRef<
         storyUid
       );
       setLoading(true);
-      fetch(`${prompterHost}/api/content`, {
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/content`, {
         method: "POST",
         body: JSON.stringify({
           system: systemPrompt,
@@ -783,7 +780,7 @@ export const PrompterComponent = forwardRef<
 
       console.log("Submitting story", storyblokContent);
 
-      fetch(`${prompterHost}/api/import`, {
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/import`, {
         method: "POST",
         body: JSON.stringify({
           storyUid,
