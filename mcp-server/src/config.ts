@@ -1,0 +1,171 @@
+import { z } from "zod";
+
+/**
+ * Configuration for the Storyblok MCP Server
+ */
+export interface StoryblokConfig {
+  apiToken: string;
+  oauthToken: string;
+  spaceId: string;
+  openAiApiKey?: string;
+  baseUrl?: string;
+}
+
+/**
+ * Validate and parse configuration from environment variables
+ */
+export function loadConfig(): StoryblokConfig {
+  const apiToken = process.env.STORYBLOK_API_TOKEN;
+  const oauthToken = process.env.STORYBLOK_OAUTH_TOKEN;
+  const spaceId = process.env.STORYBLOK_SPACE_ID;
+  const openAiApiKey = process.env.OPENAI_API_KEY;
+  const baseUrl =
+    process.env.STORYBLOK_API_BASE_URL || "https://api.storyblok.com/v1";
+
+  const errors: string[] = [];
+
+  if (!apiToken) {
+    errors.push("STORYBLOK_API_TOKEN is required");
+  }
+  if (!oauthToken) {
+    errors.push("STORYBLOK_OAUTH_TOKEN is required");
+  }
+  if (!spaceId) {
+    errors.push("STORYBLOK_SPACE_ID is required");
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Configuration errors:\n${errors.join("\n")}`);
+  }
+
+  return {
+    apiToken: apiToken!,
+    oauthToken: oauthToken!,
+    spaceId: spaceId!,
+    openAiApiKey,
+    baseUrl,
+  };
+}
+
+/**
+ * Zod schemas for tool input validation
+ */
+export const schemas = {
+  generateContent: z.object({
+    system: z.string().describe("System prompt for the AI model"),
+    prompt: z
+      .string()
+      .describe("User prompt describing what content to generate"),
+    schema: z
+      .object({
+        name: z.string(),
+        strict: z.boolean().optional(),
+        schema: z.record(z.unknown()),
+      })
+      .describe("JSON schema for structured output"),
+  }),
+
+  importContent: z.object({
+    storyUid: z.string().describe("The UID of the story to update"),
+    prompterUid: z
+      .string()
+      .describe("The UID of the prompter component to replace"),
+    page: z
+      .object({
+        content: z.object({
+          section: z.array(z.record(z.unknown())),
+        }),
+      })
+      .describe("Page content with sections to import"),
+  }),
+
+  listStories: z.object({
+    startsWith: z.string().optional().describe("Filter stories by slug prefix"),
+    contentType: z
+      .string()
+      .optional()
+      .describe("Filter by content type (e.g., 'page', 'blog-post')"),
+    page: z
+      .number()
+      .optional()
+      .default(1)
+      .describe("Page number for pagination"),
+    perPage: z
+      .number()
+      .optional()
+      .default(25)
+      .describe("Number of stories per page"),
+  }),
+
+  getStory: z.object({
+    identifier: z.string().describe("Story slug, ID, or UUID"),
+    findBy: z
+      .enum(["slug", "id", "uuid"])
+      .optional()
+      .default("slug")
+      .describe("How to find the story"),
+    version: z
+      .enum(["draft", "published"])
+      .optional()
+      .default("published")
+      .describe("Content version"),
+  }),
+
+  createStory: z.object({
+    name: z.string().describe("Story name"),
+    slug: z.string().describe("URL slug for the story"),
+    parentId: z.number().optional().describe("Parent folder ID"),
+    content: z.record(z.unknown()).describe("Story content object"),
+    isFolder: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Create as folder"),
+  }),
+
+  updateStory: z.object({
+    storyId: z.number().describe("Story ID to update"),
+    content: z.record(z.unknown()).optional().describe("Updated content"),
+    name: z.string().optional().describe("Updated name"),
+    slug: z.string().optional().describe("Updated slug"),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Publish after update"),
+  }),
+
+  deleteStory: z.object({
+    storyId: z.number().describe("Story ID to delete"),
+  }),
+
+  listComponents: z.object({}),
+
+  getComponent: z.object({
+    componentName: z.string().describe("Name of the component to retrieve"),
+  }),
+
+  listAssets: z.object({
+    page: z.number().optional().default(1).describe("Page number"),
+    perPage: z.number().optional().default(25).describe("Assets per page"),
+    search: z.string().optional().describe("Search term for filtering"),
+    inFolder: z.number().optional().describe("Filter by folder ID"),
+  }),
+
+  searchContent: z.object({
+    query: z.string().describe("Search query"),
+    contentType: z.string().optional().describe("Filter by content type"),
+  }),
+};
+
+export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
+export type ImportContentInput = z.infer<typeof schemas.importContent>;
+export type ListStoriesInput = z.infer<typeof schemas.listStories>;
+export type GetStoryInput = z.infer<typeof schemas.getStory>;
+export type CreateStoryInput = z.infer<typeof schemas.createStory>;
+export type UpdateStoryInput = z.infer<typeof schemas.updateStory>;
+export type DeleteStoryInput = z.infer<typeof schemas.deleteStory>;
+export type ListComponentsInput = z.infer<typeof schemas.listComponents>;
+export type GetComponentInput = z.infer<typeof schemas.getComponent>;
+export type ListAssetsInput = z.infer<typeof schemas.listAssets>;
+export type SearchContentInput = z.infer<typeof schemas.searchContent>;
