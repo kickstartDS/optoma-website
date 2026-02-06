@@ -65,12 +65,34 @@ export const getStaticProps = (async ({ params }) => {
       blurHashes[imageUrl] ||= cache.getSync(imageUrl) || null;
     }
 
+    const settingsStory = settingsData.stories.reduce(
+      (closest, story) => {
+        if (
+          slug?.startsWith(story.full_slug.split("/").slice(0, -2).join("/")) &&
+          story.full_slug.split("/").length >
+            closest.full_slug.split("/").length
+        ) {
+          return story;
+        }
+        return closest;
+      },
+      settingsData.stories.reduce(
+        (shortest, story) => {
+          return story.full_slug.split("/").length <
+            shortest.full_slug.split("/").length
+            ? story
+            : shortest;
+        },
+        { full_slug: "" } as ISbStoryData
+      )
+    );
+
     return {
       props: {
         ...pageData,
         blurHashes,
         fontClassNames,
-        settings: settingsData.stories[0]?.content || null,
+        settings: settingsStory.content || null,
         key: pageData.story.id,
         language: locale,
       },
