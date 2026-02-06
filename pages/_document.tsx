@@ -36,7 +36,7 @@ class KsDocument extends Document<any> {
     let monoFontFamilyUrl;
     if (appliedToken) {
       const displayFontFamilyName = appliedToken.match(
-        /ks-brand-font-family-display: "([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"/
+        /ks-brand-font-family-display: "?([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"?/
       )?.[1];
       if (
         displayFontFamilyName &&
@@ -47,7 +47,7 @@ class KsDocument extends Document<any> {
         displayFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
       }
       const copyFontFamilyName = appliedToken.match(
-        /ks-brand-font-family-copy: "([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"/
+        /ks-brand-font-family-copy: "?([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"?/
       )?.[1];
       if (
         copyFontFamilyName &&
@@ -58,7 +58,7 @@ class KsDocument extends Document<any> {
         copyFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
       }
       const interfaceFontFamilyName = appliedToken.match(
-        /ks-brand-font-family-interface: "([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"/
+        /ks-brand-font-family-interface: "?([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"?/
       )?.[1];
       if (
         interfaceFontFamilyName &&
@@ -69,7 +69,7 @@ class KsDocument extends Document<any> {
         interfaceFontFamilyUrl = "https://fonts.googleapis.com/css2?" + params;
       }
       const monoFontFamilyName = appliedToken.match(
-        /ks-brand-font-family-mono: "([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"/
+        /ks-brand-font-family-mono: "?([a-zA-Z0-9_,]+( [a-zA-Z0-9_,]+)*)"?/
       )?.[1];
       if (
         monoFontFamilyName &&
@@ -81,9 +81,15 @@ class KsDocument extends Document<any> {
       }
     }
 
+    const fontsWereApplied =
+      displayFontFamilyUrl ||
+      copyFontFamilyUrl ||
+      interfaceFontFamilyUrl ||
+      monoFontFamilyUrl;
+
     return (
       <Html
-        className={pageProps?.fontClassNames}
+        className={!fontsWereApplied ? pageProps?.fontClassNames : ""}
         lang={pageProps?.language || "en"}
       >
         <Head />
