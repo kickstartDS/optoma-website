@@ -52,19 +52,18 @@ export default async function handler(
 
   const slug = slugParts.join("/");
 
-  // Always fetch from the local Next.js HTTP server directly (port 3000)
-  // to avoid SSL issues with the local-ssl-proxy self-signed certificate.
-  const baseUrl = `http://localhost:${process.env.PORT || 3000}`;
-
   try {
     // Fetch the rendered HTML page from our own Next.js server
-    const response = await fetch(`${baseUrl}/${slug}`, {
-      headers: {
-        Accept: "text/html",
-        // Pass through cookies for preview mode support
-        Cookie: req.headers.cookie || "",
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/${slug}`,
+      {
+        headers: {
+          Accept: "text/html",
+          // Pass through cookies for preview mode support
+          Cookie: req.headers.cookie || "",
+        },
+      }
+    );
 
     if (!response.ok) {
       return res
