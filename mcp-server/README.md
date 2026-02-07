@@ -268,6 +268,16 @@ Error codes:
 - `OPENAI_API_ERROR` - OpenAI API errors
 - `NOT_FOUND` - Resource not found
 
+## n8n Integration
+
+For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/).
+
+It provides the same `generate_content` and `import_content` capabilities as n8n workflow nodes, enabling pipelines like:
+
+- **Webhook → Generate → Import → Slack** — trigger content generation from external events
+- **Schedule → Batch Generate → Import** — automated recurring content creation
+- **Manual trigger → Generate hero/FAQ/features → Import as draft** — one-click content scaffolding
+
 ## License
 
 MIT OR Apache-2.0
