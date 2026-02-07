@@ -85,7 +85,7 @@ describe("Generate Content", () => {
         ],
       });
 
-      const result = await generateStructuredContent(client, {
+      const result = await generateStructuredContent(client as any, {
         system: "You are a content writer.",
         prompt: "Create a hero section",
         schema: {
@@ -121,7 +121,7 @@ describe("Generate Content", () => {
       });
 
       await expect(
-        generateStructuredContent(client, {
+        generateStructuredContent(client as any, {
           system: "test",
           prompt: "test",
           schema: { name: "test", schema: { type: "object" } },
@@ -136,7 +136,7 @@ describe("Generate Content", () => {
       });
 
       await expect(
-        generateStructuredContent(client, {
+        generateStructuredContent(client as any, {
           system: "test",
           prompt: "test",
           schema: { name: "test", schema: { type: "object" } },
@@ -168,7 +168,7 @@ describe("Generate Content", () => {
         ],
       });
 
-      const result = await generateStructuredContent(client, {
+      const result = await generateStructuredContent(client as any, {
         system: "test",
         prompt: "generate custom content",
         schema: { name: "custom", strict: true, schema: customSchema },

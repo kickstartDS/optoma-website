@@ -210,13 +210,24 @@ mcp-server/
 ├── src/
 │   ├── index.ts      # Main server with tool handlers
 │   ├── config.ts     # Configuration and Zod schemas
-│   ├── services.ts   # Storyblok and OpenAI service classes
+│   ├── services.ts   # Storyblok and OpenAI service classes (delegates to shared lib)
 │   └── errors.ts     # Error types and handling
 ├── package.json
 ├── tsconfig.json
 ├── Dockerfile
 └── README.md
 ```
+
+Core Storyblok and OpenAI logic lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, and structured content generation. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+
+### Key Dependencies
+
+| Package                           | Version   | Purpose                                     |
+| --------------------------------- | --------- | ------------------------------------------- |
+| `@modelcontextprotocol/sdk`       | `^1.0.0`  | MCP protocol implementation                 |
+| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI service functions |
+| `openai`                          | `^6.18.0` | OpenAI API client                           |
+| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management API client             |
 
 ### Building
 

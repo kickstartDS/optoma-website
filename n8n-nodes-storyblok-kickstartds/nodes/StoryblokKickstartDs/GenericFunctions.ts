@@ -1,41 +1,41 @@
-import { IExecuteFunctions, NodeApiError } from "n8n-workflow";
-import StoryblokClient from "storyblok-js-client";
-import { OpenAI } from "openai";
-
-// ─── Storyblok helpers ────────────────────────────────────────────────
-
-export interface StoryblokCredentials {
-  spaceId: string;
-  apiToken: string;
-  oauthToken: string;
-}
-
 /**
- * Build a Storyblok Management API client from n8n credentials.
- */
-export function getStoryblokManagementClient(
-  credentials: StoryblokCredentials
-): StoryblokClient {
-  return new StoryblokClient({ oauthToken: credentials.oauthToken });
-}
-
-/**
- * Fetch a story via the Management API (includes drafts).
- */
-export async function getStoryManagement(
-  client: StoryblokClient,
-  spaceId: string,
-  storyId: string
-): Promise<Record<string, any>> {
-  const response = await client.get(`spaces/${spaceId}/stories/${storyId}`);
-  return (response as any).data.story;
-}
-
-/**
- * Import content into a Storyblok story by replacing a prompter component
- * with new section content.
+ * Generic helper functions for the Storyblok kickstartDS n8n node.
  *
- * Mirrors the logic in mcp-server/src/services.ts → StoryblokService.importContent
+ * Core Storyblok and OpenAI logic is delegated to `@kickstartds/storyblok-services`.
+ * This file re-exports the shared functions and adds n8n-specific concerns
+ * (credential types, preset schema loading).
+ */
+import {
+  createStoryblokClient,
+  getStoryManagement,
+  importByPrompterReplacement,
+  importAtPosition,
+  createOpenAiClient,
+  generateStructuredContent,
+  type StoryblokCredentials,
+  type OpenAiCredentials,
+} from "@kickstartds/storyblok-services";
+import type StoryblokClient from "storyblok-js-client";
+
+// ─── Re-exports from shared library ──────────────────────────────────
+// These are re-exported so the node and tests can import from one place.
+
+export {
+  createStoryblokClient as getStoryblokManagementClient,
+  getStoryManagement,
+  generateStructuredContent,
+  type StoryblokCredentials,
+  type OpenAiCredentials,
+};
+
+export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";
+
+// ─── n8n-facing wrappers ─────────────────────────────────────────────
+// These preserve the original function signatures used by the node.
+
+/**
+ * Import content by replacing a prompter component.
+ * Delegates to `@kickstartds/storyblok-services`.
  */
 export async function importContentIntoStory(
   client: StoryblokClient,
@@ -45,51 +45,17 @@ export async function importContentIntoStory(
   sections: Record<string, unknown>[],
   publish: boolean
 ): Promise<Record<string, any>> {
-  // 1. Fetch the current story
-  const story = await getStoryManagement(client, spaceId, storyUid);
-
-  // 2. Locate the prompter component by UID
-  const sectionArray: Record<string, unknown>[] | undefined =
-    story.content?.section;
-
-  if (!sectionArray || !Array.isArray(sectionArray)) {
-    throw new Error(
-      `Story ${storyUid} does not have a "section" array in its content.`
-    );
-  }
-
-  const prompterIndex = sectionArray.findIndex(
-    (s: Record<string, unknown>) => s._uid === prompterUid
-  );
-
-  if (prompterIndex === -1) {
-    const availableUids = sectionArray
-      .map((s) => `${s.component}:${s._uid}`)
-      .join(", ");
-    throw new Error(
-      `Prompter component with UID "${prompterUid}" not found in story. ` +
-        `Available section UIDs: ${availableUids}`
-    );
-  }
-
-  // 3. Replace the prompter with the new sections
-  sectionArray.splice(prompterIndex, 1, ...sections);
-
-  // 4. Save the story
-  const response = await client.put(`spaces/${spaceId}/stories/${storyUid}`, {
-    story: story as any,
-    publish: publish ? 1 : 0,
+  return importByPrompterReplacement(client, spaceId, {
+    storyUid,
+    prompterUid,
+    sections,
+    publish,
   });
-
-  return (response as any).data.story;
 }
 
 /**
- * Insert content into a Storyblok story at a specific position
- * (without requiring a prompter component).
- *
- * @param position - 0-based index where sections are inserted.
- *   Use -1 or "end" semantics to append at the end.
+ * Insert content at a specific position (no prompter needed).
+ * Delegates to `@kickstartds/storyblok-services`.
  */
 export async function insertContentAtPosition(
   client: StoryblokClient,
@@ -99,89 +65,12 @@ export async function insertContentAtPosition(
   sections: Record<string, unknown>[],
   publish: boolean
 ): Promise<Record<string, any>> {
-  // 1. Fetch the current story
-  const story = await getStoryManagement(client, spaceId, storyUid);
-
-  // 2. Ensure section array exists
-  if (!story.content) {
-    story.content = { component: "page" };
-  }
-  if (!Array.isArray(story.content.section)) {
-    story.content.section = [];
-  }
-
-  const sectionArray: Record<string, unknown>[] = story.content.section;
-
-  // 3. Clamp position to valid range
-  const insertAt =
-    position < 0
-      ? Math.max(0, sectionArray.length + 1 + position) // -1 → end
-      : Math.min(position, sectionArray.length); // cap at length
-
-  // 4. Insert sections (no deletion)
-  sectionArray.splice(insertAt, 0, ...sections);
-
-  // 5. Save the story
-  const response = await client.put(`spaces/${spaceId}/stories/${storyUid}`, {
-    story: story as any,
-    publish: publish ? 1 : 0,
+  return importAtPosition(client, spaceId, {
+    storyUid,
+    position,
+    sections,
+    publish,
   });
-
-  return (response as any).data.story;
-}
-
-// ─── OpenAI helpers ───────────────────────────────────────────────────
-
-export interface OpenAiCredentials {
-  apiKey: string;
-}
-
-/**
- * Build an OpenAI client from n8n credentials.
- */
-export function getOpenAiClient(credentials: OpenAiCredentials): OpenAI {
-  return new OpenAI({ apiKey: credentials.apiKey });
-}
-
-/**
- * Generate structured content via OpenAI with JSON‑schema response_format.
- *
- * Mirrors mcp-server/src/services.ts → ContentGenerationService.generateContent
- */
-export async function generateStructuredContent(
-  client: OpenAI,
-  options: {
-    system: string;
-    prompt: string;
-    schema: {
-      name: string;
-      strict?: boolean;
-      schema: Record<string, unknown>;
-    };
-    model: string;
-  }
-): Promise<Record<string, unknown>> {
-  const result = await client.chat.completions.create({
-    messages: [
-      { role: "system", content: options.system },
-      { role: "user", content: options.prompt },
-    ],
-    response_format: {
-      type: "json_schema",
-      json_schema: options.schema,
-    },
-    model: options.model,
-  });
-
-  const content = result.choices[0]?.message?.content;
-
-  if (!content) {
-    throw new Error(
-      "OpenAI returned an empty response – no content generated."
-    );
-  }
-
-  return JSON.parse(content);
 }
 
 // ─── Preset schemas ───────────────────────────────────────────────────

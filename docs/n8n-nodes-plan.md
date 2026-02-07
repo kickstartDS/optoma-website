@@ -17,7 +17,7 @@ The MCP server currently bundles both the business logic (in `StoryblokService` 
 | **A) Extract shared service library** — Move `services.ts`, `config.ts`, `errors.ts` into a shared npm package consumed by both the MCP server and the n8n nodes. | Single source of truth; bug fixes propagate automatically. | Requires refactoring MCP server to depend on the library; more upfront work. |
 | **B) Re-implement logic directly in n8n nodes** — Copy the relevant API calls into the n8n node execute functions.                                                | Faster to ship; fully decoupled.                           | Logic duplication; divergence risk over time.                                |
 
-**Decision:** Went with **Approach B** — logic is re-implemented directly in `GenericFunctions.ts`. Services are kept thin enough that extraction into a shared package (Approach A) remains viable in Milestone 6.
+**Decision:** Initially went with **Approach B** for fast delivery (Milestones 1–5). In Milestone 6, extracted the shared library (**Approach A**) — `@kickstartds/storyblok-services` — now consumed by the MCP server, n8n nodes, and Next.js API routes. All three consumers delegate core Storyblok and OpenAI logic to the shared package.
 
 ### 2. Authentication & Credentials
 
@@ -178,23 +178,89 @@ The package follows the [n8n community node structure](https://docs.n8n.io/integ
   - Verify installation via n8n community nodes UI
 - [ ] Submit to n8n community nodes directory (optional)
 
-### Milestone 6 (Future): Shared Service Library
+### Milestone 6: Shared Service Library ✅
 
-> **Goal:** Reduce duplication by extracting shared logic into a common package.
+> **Goal:** Reduce duplication by extracting shared logic into a common package consumed by MCP server, n8n nodes, and Next.js API routes.
 
-- [ ] Create `@kickstartds/storyblok-services` package
-  - Extract `StoryblokService` and `ContentGenerationService` from MCP server
-  - Extract Zod schemas and TypeScript types
-  - Publish as internal or scoped npm package
-- [ ] Refactor MCP server to consume shared package
-- [ ] Refactor n8n nodes to consume shared package
+- [x] Create `@kickstartds/storyblok-services` package (`shared/storyblok-services/`)
+  - Pure functions for Storyblok API: `createStoryblokClient`, `getStoryManagement`, `saveStory`, `importByPrompterReplacement`, `importAtPosition`
+  - Pure functions for OpenAI API: `createOpenAiClient`, `generateStructuredContent`
+  - Shared types: `StoryblokCredentials`, `OpenAiCredentials`, `PageContent`, `GenerateContentOptions`, `ImportByPrompterOptions`, `ImportAtPositionOptions`
+  - Typed error classes: `ServiceError`, `StoryblokApiError`, `OpenAiApiError`, `PrompterNotFoundError`, `ContentGenerationError`
+  - Dual ESM + CJS build (serves ESM consumers like MCP server and CJS consumers like n8n nodes)
+  - 21 unit tests (15 Storyblok + 6 OpenAI), all passing
+- [x] Refactor MCP server to consume shared package
+  - `StoryblokService` delegates to shared `createStoryblokClient`, `getStoryManagement`, `saveStory`, `importByPrompterReplacement`, `importAtPosition`
+  - `ContentGenerationService` delegates to shared `generateStructuredContent`
+  - MCP-specific methods (ideas, list/create/delete stories, components, assets, search) remain inline
+- [x] Refactor n8n nodes to consume shared package
+  - `GenericFunctions.ts` reduced from ~250 lines to ~100 lines of re-exports and thin wrappers
+  - Re-exports shared types and functions under n8n-facing names (e.g. `getStoryblokManagementClient` → `createStoryblokClient`)
+  - Only `PRESET_SCHEMAS` (n8n-specific, loaded from local JSON files) remains original code
+  - All 20 tests still passing
+- [x] Refactor Next.js API routes to consume shared package
+  - `pages/api/content/index.ts` — uses `createOpenAiClient` + `generateStructuredContent` (replaces inline `openai` import and raw API calls)
+  - `pages/api/import/index.ts` — uses `createStoryblokClient` + `importByPrompterReplacement` (replaces inline `StoryblokClient` instantiation and manual story manipulation)
+  - Added proper `ServiceError` handling in both routes
+- [x] Upgrade all dependencies to latest major versions
+  - `openai` `^4.0.0` → `^6.18.0` across shared lib, MCP server, n8n nodes, and root project
+  - `storyblok-js-client` `^6.0.0` → `^7.2.3` across shared lib, MCP server, n8n nodes
+  - MCP server now type-checks with **0 errors** (was 3 pre-existing errors with v6)
+  - Removed `as any` casts from API routes (root project bundler resolves single copy)
 - [ ] Add additional n8n nodes for other MCP tools (list_stories, search_content, etc.)
+
+#### Shared Library File Structure
+
+```
+shared/storyblok-services/
+├── package.json           # @kickstartds/storyblok-services v1.0.0
+├── tsconfig.json          # Type-checking config
+├── tsconfig.esm.json      # ESM build → dist/esm/
+├── tsconfig.cjs.json      # CJS build → dist/cjs/
+├── jest.config.js
+├── src/
+│   ├── index.ts           # Barrel export
+│   ├── types.ts           # Types & error classes
+│   ├── storyblok.ts       # Storyblok API functions
+│   └── openai.ts          # OpenAI API functions
+└── test/
+    ├── storyblok.test.ts  # 15 tests
+    └── openai.test.ts     # 6 tests
+```
+
+#### Cross-Module Type Note
+
+Sub-packages with their own `node_modules` (MCP server, n8n nodes) still maintain separate copies of `openai` and `storyblok-js-client`, causing TypeScript's private-property type mismatch across duplicate declarations. This requires `as any` casts when passing clients to shared library functions — specifically in `mcp-server/src/services.ts` (for the OpenAI client) and in the n8n test files (for mock clients). The n8n production code in `GenericFunctions.ts` does not need casts. The Next.js API routes also do **not** need casts because the bundler resolves all imports through the root `node_modules`.
+
+#### Dependency Versions
+
+All packages are aligned on the latest major versions:
+
+| Dependency            | Version   | Notes                                                                                                                                                                                                                                            |
+| --------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `openai`              | `^6.18.0` | Upgraded from `^4.0.0` — same API surface for `chat.completions.create`                                                                                                                                                                          |
+| `storyblok-js-client` | `^7.2.3`  | Upgraded from `^6.0.0` — breaking changes only affect `SbHelpers` (removed) and `RichTextResolver` (deprecated), neither of which are used. v7 also made request params optional, fixing a pre-existing `delete()` type error in the MCP server. |
+
+The root project's `openai` was also updated from `^6.16.0` to `^6.18.0` for consistency.
 
 ---
 
 ## Actual File Structure
 
 ```
+shared/storyblok-services/              # Shared service library (Milestone 6)
+├── package.json                        # @kickstartds/storyblok-services
+├── tsconfig.json / tsconfig.esm.json / tsconfig.cjs.json
+├── jest.config.js
+├── src/
+│   ├── index.ts                        # Barrel export
+│   ├── types.ts                        # Types & error classes
+│   ├── storyblok.ts                    # Storyblok API functions
+│   └── openai.ts                       # OpenAI API functions
+└── test/
+    ├── storyblok.test.ts               # 15 tests
+    └── openai.test.ts                  # 6 tests
+
 n8n-nodes-storyblok-kickstartds/
 ├── package.json
 ├── package-lock.json
@@ -211,7 +277,7 @@ n8n-nodes-storyblok-kickstartds/
 │       ├── StoryblokKickstartDs.node.ts        # Single node with resource/operation pattern
 │       ├── StoryblokKickstartDs.node.json       # Codex file (search metadata)
 │       ├── storyblokKickstartDs.svg             # Node icon
-│       ├── GenericFunctions.ts                  # Shared API helpers (Storyblok + OpenAI clients)
+│       ├── GenericFunctions.ts                  # Re-exports from shared lib + PRESET_SCHEMAS
 │       ├── descriptions/
 │       │   ├── GenerateContentDescription.ts    # Parameter definitions for Generate operation
 │       │   └── ImportContentDescription.ts      # Parameter definitions for Import operation (with placement modes)

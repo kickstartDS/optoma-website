@@ -250,9 +250,19 @@ n8n start
 
 ## Related
 
+- [Shared Service Library](../shared/storyblok-services/) — `@kickstartds/storyblok-services` — shared Storyblok + OpenAI logic consumed by this package, the MCP server, and the Next.js API routes
 - [Storyblok MCP Server](../mcp-server/) — The MCP server that this n8n node is based on
 - [kickstartDS Design System](https://www.kickstartds.com/) — The component library powering the content schemas
 - [n8n Community Nodes docs](https://docs.n8n.io/integrations/community-nodes/) — How to install and use community nodes
+
+## Key Dependencies
+
+| Package                           | Version   | Purpose                                     |
+| --------------------------------- | --------- | ------------------------------------------- |
+| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI service functions |
+| `openai`                          | `^6.18.0` | OpenAI API client                           |
+| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management API client             |
+| `n8n-workflow`                    | `^1.0.0`  | n8n workflow types                          |
 
 ## License
 

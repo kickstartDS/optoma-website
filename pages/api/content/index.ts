@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import { OpenAI } from "openai";
+import {
+  createOpenAiClient,
+  generateStructuredContent,
+  ServiceError,
+} from "@kickstartds/storyblok-services";
 
 class ApplicationError extends Error {
   constructor(message: string, public data: unknown = {}) {
@@ -39,13 +43,9 @@ export default async function handler(
   const openAiKey = process.env.NEXT_OPENAI_API_KEY;
 
   try {
-    // if (req.method === "OPTIONS") {
-    //   return new Response("ok", { headers: corsHeaders });
-    // }
-
     if (!openAiKey) {
       throw new ApplicationError(
-        "Missing environment variable NEXT_OPEN_AI_KEY"
+        "Missing environment variable NEXT_OPENAI_API_KEY"
       );
     }
 
@@ -55,41 +55,37 @@ export default async function handler(
     if (!prompt) throw new UserError("prompt is required");
     if (!schema) throw new UserError("schema is required");
 
-    const client = new OpenAI({ apiKey: openAiKey });
-    console.log("before result");
-    const result = await client.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: system,
-        },
-        { role: "user", content: prompt },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: schema,
-      },
-      model: "gpt-4o-2024-08-06",
+    const client = createOpenAiClient({ apiKey: openAiKey });
+    const result = await generateStructuredContent(client, {
+      system,
+      prompt,
+      schema,
     });
-    console.log("after result", JSON.stringify(result));
 
-    res.status(200).send({ content: result.choices[0].message.content });
+    res.status(200).send({ content: JSON.stringify(result) });
   } catch (err: unknown) {
     if (err instanceof UserError) {
       console.warn("UserError", err);
 
-      res.status(500).send({
+      res.status(400).send({
         error: err.message,
         data: err.data,
       });
+    } else if (err instanceof ServiceError) {
+      console.error(`ServiceError [${err.code}]: ${err.message}`);
+      res.status(500).send({
+        error: err.message,
+      });
     } else if (err instanceof ApplicationError) {
       console.error(`${err.message}: ${JSON.stringify(err.data)}`);
+      res.status(500).send({
+        error: err.message,
+      });
     } else {
       console.error(err);
+      res.status(500).send({
+        error: "There was an error processing your request",
+      });
     }
-
-    res.status(500).send({
-      error: "There was an error processing your request",
-    });
   }
 }

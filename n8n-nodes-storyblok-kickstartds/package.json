@@ -44,8 +44,9 @@
     ]
   },
   "dependencies": {
-    "openai": "^4.0.0",
-    "storyblok-js-client": "^6.0.0"
+    "@kickstartds/storyblok-services": "file:../shared/storyblok-services",
+    "openai": "^6.18.0",
+    "storyblok-js-client": "^7.2.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

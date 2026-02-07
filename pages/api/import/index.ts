@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import StoryblokClient from "storyblok-js-client";
 import Cors from "cors";
+import {
+  createStoryblokClient,
+  importByPrompterReplacement,
+  ServiceError,
+} from "@kickstartds/storyblok-services";
 
 const cors = Cors({
   methods: ["POST"],
@@ -39,31 +43,38 @@ export default async function handler(
         return res.status(400).send({ error: "prompterUid is required" });
       if (!page) return res.status(400).send({ error: "page is required" });
 
-      const Storyblok = new StoryblokClient({
-        oauthToken: process.env.NEXT_STORYBLOK_OAUTH_TOKEN,
+      const spaceId = process.env.NEXT_STORYBLOK_SPACE_ID;
+      const oauthToken = process.env.NEXT_STORYBLOK_OAUTH_TOKEN;
+
+      if (!spaceId || !oauthToken) {
+        return res.status(500).send({
+          error:
+            "Missing Storyblok environment variables (NEXT_STORYBLOK_SPACE_ID, NEXT_STORYBLOK_OAUTH_TOKEN)",
+        });
+      }
+
+      const client = createStoryblokClient({
+        spaceId,
+        apiToken: "",
+        oauthToken,
       });
 
-      const storyResponse = await Storyblok.get(
-        `spaces/${process.env.NEXT_STORYBLOK_SPACE_ID}/stories/${storyUid}`
-      );
-      const story = storyResponse.data.story;
+      const story = await importByPrompterReplacement(client, spaceId, {
+        storyUid,
+        prompterUid,
+        sections: page.content.section,
+        publish: false,
+      });
 
-      const prompterIndex = story.content.section.findIndex(
-        (section: any) => section._uid === prompterUid
-      );
-      story.content.section.splice(prompterIndex, 1, ...page.content.section);
-
-      const response = await Storyblok.put(
-        `spaces/${process.env.NEXT_STORYBLOK_SPACE_ID}/stories/${storyUid}`,
-        {
-          story,
-          publish: 0, // TODO TBD
-        }
-      );
-
-      res.status(200).send({ response });
+      res.status(200).send({ response: { data: { story } } });
     } catch (err) {
-      res.status(500).send({ error: "failed", err });
+      if (err instanceof ServiceError) {
+        console.error(`ServiceError [${err.code}]: ${err.message}`);
+        res.status(500).send({ error: err.message });
+      } else {
+        console.error(err);
+        res.status(500).send({ error: "failed", err });
+      }
     }
   } else {
     return res.status(405).send({ error: "method not allowed" });

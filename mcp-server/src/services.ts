@@ -1,9 +1,20 @@
 import StoryblokClient from "storyblok-js-client";
 import { OpenAI } from "openai";
 import { StoryblokConfig } from "./config.js";
+import {
+  createStoryblokClient,
+  getStoryManagement as sharedGetStoryManagement,
+  saveStory,
+  importByPrompterReplacement,
+  importAtPosition,
+  generateStructuredContent,
+} from "@kickstartds/storyblok-services";
 
 /**
- * Wrapper class for Storyblok API operations
+ * Wrapper class for Storyblok API operations.
+ *
+ * Core import/generation logic is delegated to `@kickstartds/storyblok-services`.
+ * MCP-specific methods (CRUD stories, components, assets, search) remain here.
  */
 export class StoryblokService {
   private managementClient: StoryblokClient;
@@ -13,8 +24,9 @@ export class StoryblokService {
   constructor(config: StoryblokConfig) {
     this.spaceId = config.spaceId;
 
-    // Management API client (for write operations)
-    this.managementClient = new StoryblokClient({
+    // Management API client via shared library
+    this.managementClient = createStoryblokClient({
+      spaceId: config.spaceId,
       oauthToken: config.oauthToken,
     });
 
@@ -92,13 +104,15 @@ export class StoryblokService {
   }
 
   /**
-   * Get a story via the management API (includes drafts)
+   * Get a story via the management API (includes drafts).
+   * Delegates to `@kickstartds/storyblok-services`.
    */
   async getStoryManagement(storyId: number | string): Promise<unknown> {
-    const response = await this.managementClient.get(
-      `spaces/${this.spaceId}/stories/${storyId}`
+    return sharedGetStoryManagement(
+      this.managementClient,
+      this.spaceId,
+      String(storyId)
     );
-    return response.data.story;
   }
 
   /**
@@ -124,9 +138,9 @@ export class StoryblokService {
 
     const response = await this.managementClient.post(
       `spaces/${this.spaceId}/stories/`,
-      { story }
+      { story } as any
     );
-    return response.data.story;
+    return (response as any).data.story;
   }
 
   /**
@@ -142,8 +156,11 @@ export class StoryblokService {
     publish: boolean = false
   ): Promise<unknown> {
     // First, get the current story
-    const currentStory = await this.getStoryManagement(storyId);
-    const story = currentStory as Record<string, unknown>;
+    const currentStory = (await this.getStoryManagement(storyId)) as Record<
+      string,
+      unknown
+    >;
+    const story = currentStory;
 
     // Merge updates
     if (updates.content) {
@@ -156,14 +173,13 @@ export class StoryblokService {
       story.slug = updates.slug;
     }
 
-    const response = await this.managementClient.put(
-      `spaces/${this.spaceId}/stories/${storyId}`,
-      {
-        story,
-        publish: publish ? 1 : 0,
-      }
+    return saveStory(
+      this.managementClient,
+      this.spaceId,
+      String(storyId),
+      story as Record<string, any>,
+      publish
     );
-    return response.data.story;
   }
 
   /**
@@ -176,7 +192,8 @@ export class StoryblokService {
   }
 
   /**
-   * Import content by replacing a prompter component with generated sections
+   * Import content by replacing a prompter component with generated sections.
+   * Delegates to `@kickstartds/storyblok-services`.
    */
   async importContent(options: {
     storyUid: string;
@@ -187,40 +204,33 @@ export class StoryblokService {
       };
     };
   }): Promise<unknown> {
-    // Get the current story
-    const storyResponse = await this.managementClient.get(
-      `spaces/${this.spaceId}/stories/${options.storyUid}`
-    );
-    const story = storyResponse.data.story;
+    return importByPrompterReplacement(this.managementClient, this.spaceId, {
+      storyUid: options.storyUid,
+      prompterUid: options.prompterUid,
+      sections: options.page.content.section,
+    });
+  }
 
-    // Find the prompter component and replace it with the new sections
-    const prompterIndex = story.content.section?.findIndex(
-      (section: Record<string, unknown>) => section._uid === options.prompterUid
-    );
-
-    if (prompterIndex === undefined || prompterIndex === -1) {
-      throw new Error(
-        `Prompter component with UID ${options.prompterUid} not found`
-      );
-    }
-
-    // Replace the prompter with the new sections
-    story.content.section.splice(
-      prompterIndex,
-      1,
-      ...options.page.content.section
-    );
-
-    // Update the story (save as draft)
-    const response = await this.managementClient.put(
-      `spaces/${this.spaceId}/stories/${options.storyUid}`,
-      {
-        story,
-        publish: 0,
-      }
-    );
-
-    return response.data.story;
+  /**
+   * Import content at a specific position (without a prompter).
+   * Delegates to `@kickstartds/storyblok-services`.
+   */
+  async importContentAtPosition(options: {
+    storyUid: string;
+    position: number;
+    page: {
+      content: {
+        section: Record<string, unknown>[];
+      };
+    };
+    publish?: boolean;
+  }): Promise<unknown> {
+    return importAtPosition(this.managementClient, this.spaceId, {
+      storyUid: options.storyUid,
+      position: options.position,
+      sections: options.page.content.section,
+      publish: options.publish,
+    });
   }
 
   /**
@@ -298,7 +308,8 @@ export class StoryblokService {
 }
 
 /**
- * Service for AI content generation using OpenAI
+ * Service for AI content generation using OpenAI.
+ * Delegates to `@kickstartds/storyblok-services`.
  */
 export class ContentGenerationService {
   private client: OpenAI | null = null;
@@ -317,7 +328,8 @@ export class ContentGenerationService {
   }
 
   /**
-   * Generate content using OpenAI with structured output
+   * Generate content using OpenAI with structured output.
+   * Delegates to `@kickstartds/storyblok-services`.
    */
   async generateContent(options: {
     system: string;
@@ -334,24 +346,6 @@ export class ContentGenerationService {
       );
     }
 
-    const result = await this.client.chat.completions.create({
-      messages: [
-        { role: "system", content: options.system },
-        { role: "user", content: options.prompt },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: options.schema,
-      },
-      model: "gpt-4o-2024-08-06",
-    });
-
-    const content = result.choices[0]?.message?.content;
-
-    if (!content) {
-      throw new Error("No content generated from OpenAI");
-    }
-
-    return JSON.parse(content);
+    return generateStructuredContent(this.client as any, options);
   }
 }
