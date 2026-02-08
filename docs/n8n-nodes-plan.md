@@ -10,7 +10,7 @@ This plan covers adding two custom n8n community nodes that mirror the `generate
 
 ### 1. Architecture: Reuse vs. Rewrite
 
-The MCP server currently bundles both the business logic (in `StoryblokService` and `ContentGenerationService`) and the MCP transport layer (stdio). Two approaches exist:
+The MCP server currently bundles both the business logic (in `StoryblokService` and `ContentGenerationService`) and the MCP transport layer (stdio for local use, Streamable HTTP for cloud deployment). Two approaches exist:
 
 | Approach                                                                                                                                                          | Pros                                                       | Cons                                                                         |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------- |

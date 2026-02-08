@@ -94,13 +94,13 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 
 ### With Docker
 
-Build the Docker image:
+Build the Docker image (from the repository root):
 
 ```bash
-docker build -t storyblok-mcp-server .
+docker build -t storyblok-mcp-server -f mcp-server/Dockerfile .
 ```
 
-Run with environment variables:
+Run locally in **stdio** mode (default):
 
 ```bash
 docker run -i \
@@ -110,6 +110,66 @@ docker run -i \
   -e OPENAI_API_KEY=sk-your-key \
   storyblok-mcp-server
 ```
+
+Run in **HTTP** mode (for cloud / remote access):
+
+```bash
+docker run -p 8080:8080 \
+  -e MCP_TRANSPORT=http \
+  -e MCP_PORT=8080 \
+  -e STORYBLOK_API_TOKEN=your-token \
+  -e STORYBLOK_OAUTH_TOKEN=your-oauth-token \
+  -e STORYBLOK_SPACE_ID=123456 \
+  -e OPENAI_API_KEY=sk-your-key \
+  storyblok-mcp-server
+```
+
+The server will be available at `http://localhost:8080/mcp` with a health check at `/health`.
+
+### Cloud Deployment with Kamal
+
+The MCP server includes a [Kamal](https://kamal-deploy.org/) configuration for deploying to the same server as the main site.
+
+#### Prerequisites
+
+- Kamal 2 installed (`gem install kamal`)
+- A Docker registry (Docker Hub, GHCR, etc.)
+- SSH access to the target server
+- A subdomain pointed at your server (e.g., `mcp.your-domain.com`)
+
+#### Environment Variables
+
+Set these in your shell or CI environment before deploying:
+
+| Variable                  | Description                                 |
+| ------------------------- | ------------------------------------------- |
+| `DOCKER_USERNAME`         | Docker registry username                    |
+| `KAMAL_REGISTRY_PASSWORD` | Docker registry password / access token     |
+| `DOCKER_MCP_IMAGE_NAME`   | Image name (e.g., `youruser/storyblok-mcp`) |
+| `HOSTING_SERVER_IP`       | IP of the target server (same as main site) |
+| `MCP_PUBLIC_DOMAIN`       | Public domain for the MCP server            |
+| `STORYBLOK_API_TOKEN`     | Storyblok Preview API token                 |
+| `STORYBLOK_OAUTH_TOKEN`   | Storyblok Management API OAuth token        |
+| `STORYBLOK_SPACE_ID`      | Storyblok space ID                          |
+| `OPENAI_API_KEY`          | OpenAI API key (optional)                   |
+
+#### Deploy
+
+```bash
+cd mcp-server
+kamal setup    # First-time setup
+kamal deploy   # Subsequent deployments
+```
+
+#### Connecting Remote Clients
+
+Once deployed, configure your MCP client to use the Streamable HTTP endpoint:
+
+```
+https://mcp.your-domain.com/mcp
+```
+
+For Claude Desktop with a remote MCP server, use an MCP client that supports the Streamable HTTP transport, pointing to the URL above.
 
 ### Direct Execution
 
@@ -208,10 +268,14 @@ The server also exposes MCP resources:
 ```
 mcp-server/
 ├── src/
-│   ├── index.ts      # Main server with tool handlers
+│   ├── index.ts      # Main server with tool handlers (stdio + HTTP transport)
 │   ├── config.ts     # Configuration and Zod schemas
 │   ├── services.ts   # Storyblok and OpenAI service classes (delegates to shared lib)
 │   └── errors.ts     # Error types and handling
+├── config/
+│   └── deploy.yml    # Kamal deployment configuration
+├── .kamal/
+│   └── secrets       # Kamal secrets (reads from environment)
 ├── package.json
 ├── tsconfig.json
 ├── Dockerfile
@@ -249,12 +313,14 @@ npm run dev  # Watch mode
 
 ## Environment Variables
 
-| Variable                | Required | Description                            |
-| ----------------------- | -------- | -------------------------------------- |
-| `STORYBLOK_API_TOKEN`   | Yes      | Preview API token for content delivery |
-| `STORYBLOK_OAUTH_TOKEN` | Yes      | Management API OAuth token             |
-| `STORYBLOK_SPACE_ID`    | Yes      | Your Storyblok space ID                |
-| `OPENAI_API_KEY`        | No       | OpenAI API key for content generation  |
+| Variable                | Required | Description                                           |
+| ----------------------- | -------- | ----------------------------------------------------- |
+| `STORYBLOK_API_TOKEN`   | Yes      | Preview API token for content delivery                |
+| `STORYBLOK_OAUTH_TOKEN` | Yes      | Management API OAuth token                            |
+| `STORYBLOK_SPACE_ID`    | Yes      | Your Storyblok space ID                               |
+| `OPENAI_API_KEY`        | No       | OpenAI API key for content generation                 |
+| `MCP_TRANSPORT`         | No       | Transport mode: `stdio` (default) or `http`           |
+| `MCP_PORT`              | No       | HTTP port when using `http` transport (default: 8080) |
 
 ## Error Handling
 

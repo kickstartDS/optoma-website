@@ -4,11 +4,11 @@ Shared Storyblok CMS and OpenAI content generation services for the kickstartDS 
 
 This package provides pure, framework-agnostic functions consumed by three different runtimes:
 
-| Consumer                                            | Module format | Description                                     |
-| --------------------------------------------------- | ------------- | ----------------------------------------------- |
-| [MCP Server](../../mcp-server/)                     | ESM           | Model Context Protocol server for AI assistants |
-| [n8n Nodes](../../n8n-nodes-storyblok-kickstartds/) | CJS           | n8n community nodes for workflow automation     |
-| [Next.js API Routes](../../pages/api/)              | ESM (bundled) | REST endpoints for the Storyblok starter site   |
+| Consumer                                            | Module format | Description                                                               |
+| --------------------------------------------------- | ------------- | ------------------------------------------------------------------------- |
+| [MCP Server](../../mcp-server/)                     | ESM           | Model Context Protocol server for AI assistants (stdio + Streamable HTTP) |
+| [n8n Nodes](../../n8n-nodes-storyblok-kickstartds/) | CJS           | n8n community nodes for workflow automation                               |
+| [Next.js API Routes](../../pages/api/)              | ESM (bundled) | REST endpoints for the Storyblok starter site                             |
 
 ## API
 

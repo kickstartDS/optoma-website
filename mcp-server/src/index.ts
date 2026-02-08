@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
+import { createServer } from "node:http";
+import { randomUUID } from "node:crypto";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -707,19 +711,163 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
 /**
  * Main entry point
+ *
+ * Supports two transport modes:
+ * - stdio (default): For local usage with Claude Desktop, etc.
+ * - http: For cloud deployment via Streamable HTTP (set MCP_TRANSPORT=http)
  */
 async function main() {
-  const transport = new StdioServerTransport();
+  const transportMode = process.env.MCP_TRANSPORT || "stdio";
 
-  console.error("Starting Storyblok MCP Server...");
-  console.error(
-    `OpenAI integration: ${
-      contentService.isConfigured() ? "enabled" : "disabled"
-    }`
-  );
+  if (transportMode === "http") {
+    const PORT = parseInt(process.env.MCP_PORT || "8080", 10);
+    const transports: Record<string, StreamableHTTPServerTransport> = {};
 
-  await server.connect(transport);
-  console.error("Storyblok MCP Server running on stdio");
+    const httpServer = createServer(async (req, res) => {
+      const url = new URL(req.url || "/", `http://${req.headers.host}`);
+
+      // Health check endpoint for Kamal / load balancer probes
+      if (url.pathname === "/health") {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ status: "ok" }));
+        return;
+      }
+
+      // Only handle /mcp path
+      if (url.pathname !== "/mcp") {
+        res.writeHead(404).end("Not found");
+        return;
+      }
+
+      // CORS headers for remote clients
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, DELETE, OPTIONS"
+      );
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, mcp-session-id, Last-Event-ID, mcp-protocol-version"
+      );
+      res.setHeader(
+        "Access-Control-Expose-Headers",
+        "mcp-session-id, mcp-protocol-version"
+      );
+
+      if (req.method === "OPTIONS") {
+        res.writeHead(204).end();
+        return;
+      }
+
+      try {
+        // Parse the request body for POST
+        let body: unknown;
+        if (req.method === "POST") {
+          const chunks: Buffer[] = [];
+          for await (const chunk of req) {
+            chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+          }
+          body = JSON.parse(Buffer.concat(chunks).toString());
+        }
+
+        const sessionId = req.headers["mcp-session-id"] as string | undefined;
+        let transport: StreamableHTTPServerTransport;
+
+        if (sessionId && transports[sessionId]) {
+          // Reuse existing transport for this session
+          transport = transports[sessionId];
+        } else if (
+          !sessionId &&
+          req.method === "POST" &&
+          isInitializeRequest(body)
+        ) {
+          // New session initialization
+          transport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: () => randomUUID(),
+            onsessioninitialized: (id) => {
+              transports[id] = transport;
+              console.error(`Session initialized: ${id}`);
+            },
+          });
+
+          transport.onclose = () => {
+            const sid = transport.sessionId;
+            if (sid && transports[sid]) {
+              delete transports[sid];
+              console.error(`Session closed: ${sid}`);
+            }
+          };
+
+          // Connect a fresh MCP server instance to this transport
+          await server.connect(transport);
+        } else {
+          // Invalid request — no session and not an init request
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({
+              jsonrpc: "2.0",
+              error: { code: -32000, message: "Bad Request: No valid session" },
+              id: null,
+            })
+          );
+          return;
+        }
+
+        await transport.handleRequest(req, res, body);
+      } catch (error) {
+        console.error("Error handling MCP request:", error);
+        if (!res.headersSent) {
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({
+              jsonrpc: "2.0",
+              error: { code: -32603, message: "Internal server error" },
+              id: null,
+            })
+          );
+        }
+      }
+    });
+
+    httpServer.listen(PORT, () => {
+      console.error(
+        `Storyblok MCP Server (Streamable HTTP) listening on port ${PORT}`
+      );
+      console.error(`Endpoint: http://0.0.0.0:${PORT}/mcp`);
+      console.error(`Health check: http://0.0.0.0:${PORT}/health`);
+      console.error(
+        `OpenAI integration: ${
+          contentService.isConfigured() ? "enabled" : "disabled"
+        }`
+      );
+    });
+
+    // Graceful shutdown
+    process.on("SIGINT", async () => {
+      console.error("Shutting down...");
+      for (const sessionId of Object.keys(transports)) {
+        try {
+          await transports[sessionId].close();
+          delete transports[sessionId];
+        } catch {}
+      }
+      httpServer.close();
+      process.exit(0);
+    });
+  } else {
+    // Default: stdio transport for local usage
+    const transport = new StdioServerTransport();
+
+    console.error("Starting Storyblok MCP Server...");
+    console.error(
+      `OpenAI integration: ${
+        contentService.isConfigured() ? "enabled" : "disabled"
+      }`
+    );
+
+    await server.connect(transport);
+    console.error("Storyblok MCP Server running on stdio");
+  }
 }
 
 main().catch((error) => {

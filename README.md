@@ -107,6 +107,19 @@ From now on your build process in Netlify should be automatically triggered, dep
 // TODO mention next local steps still needed (like `npm run generate-content-types`)
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/kickstartDS/storyblok-starter-premium)
 
+## MCP Server (AI Integration)
+
+The project includes a **Storyblok MCP server** ([mcp-server/](mcp-server/)) that exposes CMS tools (content CRUD, AI generation, component introspection) to AI assistants via the [Model Context Protocol](https://modelcontextprotocol.io/).
+
+- **Local usage**: Run via stdio for Claude Desktop — `cd mcp-server && npm start`
+- **Cloud deployment**: Deploy via Kamal with Streamable HTTP transport — `cd mcp-server && kamal deploy`
+  - Deploys to the same server as the main site under a separate subdomain
+  - Endpoint: `https://mcp.your-domain.com/mcp`
+
+See [mcp-server/README.md](mcp-server/README.md) for full setup and deployment instructions.
+
+For event-driven automation (without an LLM), see the companion [n8n community nodes](n8n-nodes-storyblok-kickstartds/).
+
 ## Local Development
 
 ### Setup

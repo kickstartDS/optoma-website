@@ -251,7 +251,7 @@ n8n start
 ## Related
 
 - [Shared Service Library](../shared/storyblok-services/) — `@kickstartds/storyblok-services` — shared Storyblok + OpenAI logic consumed by this package, the MCP server, and the Next.js API routes
-- [Storyblok MCP Server](../mcp-server/) — The MCP server that this n8n node is based on
+- [Storyblok MCP Server](../mcp-server/) — The MCP server that this n8n node is based on (deployable to the cloud via Kamal with Streamable HTTP transport)
 - [kickstartDS Design System](https://www.kickstartds.com/) — The component library powering the content schemas
 - [n8n Community Nodes docs](https://docs.n8n.io/integrations/community-nodes/) — How to install and use community nodes
 

@@ -15,6 +15,18 @@
       "args": [
         "/home/julrich/Projects/kickstartDS/code/ds-agency-premium-mcp-demo/component-implementation-mcp/src/index.js"
       ]
+    },
+    "ruhmesmeile Storyblok Starter MCP": {
+      "command": "node",
+      "args": [
+        "/home/julrich/Projects/kickstartDS/code/storyblok-starter-demo/mcp-server/dist/index.js"
+      ],
+      "env": {
+        "STORYBLOK_API_TOKEN": "ADDYOURS",
+        "STORYBLOK_OAUTH_TOKEN": "ADDYOURS",
+        "STORYBLOK_SPACE_ID": "ADDYOURS",
+        "OPENAI_API_KEY": "ADDYOURS"
+      }
     }
   },
   "inputs": []

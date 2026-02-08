@@ -120,12 +120,37 @@ Required in `.env.local`:
 - `NEXT_STORYBLOK_OAUTH_TOKEN` - Management API token
 - `NEXT_STORYBLOK_SPACE_ID` - Space ID (without #)
 
+## MCP Server
+
+The project includes a Storyblok MCP server ([mcp-server/](mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
+
+### Transport Modes
+
+- **stdio** (default): For local usage with Claude Desktop — `npm start`
+- **http**: For cloud deployment via Streamable HTTP — `MCP_TRANSPORT=http npm start`
+  - Exposes `/mcp` (Streamable HTTP endpoint) and `/health` (health check)
+  - Port configured via `MCP_PORT` (default: 8080)
+
+### Cloud Deployment
+
+The MCP server has its own Kamal config at [mcp-server/config/deploy.yml](mcp-server/config/deploy.yml) and deploys to the same server as the main site under a separate subdomain.
+
+```bash
+cd mcp-server
+kamal setup    # First-time
+kamal deploy   # Subsequent
+```
+
+Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOSTING_SERVER_IP`, `STORYBLOK_API_TOKEN`, `STORYBLOK_OAUTH_TOKEN`, `STORYBLOK_SPACE_ID`, `OPENAI_API_KEY`.
+
 ## Important Files
 
 - [cms/components.123456.json](cms/components.123456.json) - Storyblok component definitions
 - [cms/presets.123456.json](cms/presets.123456.json) - Component presets
 - [helpers/storyblok.ts](helpers/storyblok.ts) - Storyblok API utilities and story transformations
 - [scripts/prepareProject.js](scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
+- [mcp-server/config/deploy.yml](mcp-server/config/deploy.yml) - Kamal deployment config for the MCP server
+- [config/deploy.yml](config/deploy.yml) - Kamal deployment config for the main Next.js site
 
 ## Common Patterns
 
