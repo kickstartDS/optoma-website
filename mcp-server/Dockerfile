@@ -25,8 +25,10 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy shared dependency
+# Copy shared dependency and install its production dependencies
 COPY --from=builder /app/shared/storyblok-services /app/shared/storyblok-services
+WORKDIR /app/shared/storyblok-services
+RUN npm install --omit=dev
 
 # Copy package files and install production dependencies only
 WORKDIR /app/mcp-server
