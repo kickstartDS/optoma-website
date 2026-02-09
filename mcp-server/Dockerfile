@@ -29,6 +29,7 @@ WORKDIR /app
 COPY --from=builder /app/shared/storyblok-services /app/shared/storyblok-services
 
 # Copy package files and install production dependencies only
+WORKDIR /app/mcp-server
 COPY mcp-server/package.json ./
 RUN npm install --omit=dev
 
