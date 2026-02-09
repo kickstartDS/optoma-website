@@ -30,7 +30,8 @@ n8n uses a Credentials system. We implemented two custom credential types:
 
 `generate_content` takes a full JSON Schema as input to drive OpenAI's structured output mode. The implementation offers:
 
-- **Preset schemas** (dropdown) for 9 common kickstartDS component types: Hero, FAQ, Testimonials, Features, CTA, Text, Blog Teaser, Stats, Image + Text.
+- **Auto (Design System)** mode (default) — dynamically derives OpenAI-compatible schemas from the bundled Design System page schema via `prepareSchemaForOpenAi()` / `getComponentPresetSchema()`. Supports single-component generation (`componentType`) and full-page generation (`sectionCount`). Returns both Design System–shaped props and Storyblok-ready content.
+- **Preset schemas** (dropdown) for 9 common kickstartDS component types: Hero, FAQ, Testimonials, Features, CTA, Text, Blog Teaser, Stats, Image + Text. Kept for backward compatibility.
 - **Custom JSON** mode for raw JSON Schema input with a custom name field.
 - All schemas enforce `additionalProperties: false` and proper `required` arrays for OpenAI strict mode.
 
@@ -185,18 +186,27 @@ The package follows the [n8n community node structure](https://docs.n8n.io/integ
 - [x] Create `@kickstartds/storyblok-services` package (`shared/storyblok-services/`)
   - Pure functions for Storyblok API: `createStoryblokClient`, `getStoryManagement`, `saveStory`, `importByPrompterReplacement`, `importAtPosition`
   - Pure functions for OpenAI API: `createOpenAiClient`, `generateStructuredContent`
-  - Shared types: `StoryblokCredentials`, `OpenAiCredentials`, `PageContent`, `GenerateContentOptions`, `ImportByPrompterOptions`, `ImportAtPositionOptions`
+  - Schema preparation for OpenAI: `prepareSchemaForOpenAi`, `getComponentPresetSchema`, `listAvailableComponents`, `getSchemaName` (13 transformation passes)
+  - Content transformation: `processOpenAiResponse` (OpenAI → Design System), `processForStoryblok` (Design System → Storyblok), `flattenNestedObjects`, `unflattenNestedObjects`
+  - End-to-end pipeline: `generateAndPrepareContent` (prompt → schema → generation → post-processing → Storyblok flattening)
+  - Shared types: `StoryblokCredentials`, `OpenAiCredentials`, `PageContent`, `GenerateContentOptions`, `ImportByPrompterOptions`, `ImportAtPositionOptions`, `PrepareSchemaOptions`, `OpenAiSchemaEnvelope`, `PreparedSchema`, `TransformedContent`, `GenerateAndPrepareOptions`, `GenerateAndPrepareResult`
   - Typed error classes: `ServiceError`, `StoryblokApiError`, `OpenAiApiError`, `PrompterNotFoundError`, `ContentGenerationError`
   - Dual ESM + CJS build (serves ESM consumers like MCP server and CJS consumers like n8n nodes)
   - 21 unit tests (15 Storyblok + 6 OpenAI), all passing
 - [x] Refactor MCP server to consume shared package
   - `StoryblokService` delegates to shared `createStoryblokClient`, `getStoryManagement`, `saveStory`, `importByPrompterReplacement`, `importAtPosition`
-  - `ContentGenerationService` delegates to shared `generateStructuredContent`
+  - `ContentGenerationService` delegates to shared `generateStructuredContent`, `prepareSchemaForOpenAi`, `getComponentPresetSchema`, `processOpenAiResponse`, `processForStoryblok`, and `generateAndPrepareContent`
+  - `generate_content` tool supports auto-schema derivation via `componentType` and `sectionCount` parameters
+  - Import tools automatically run `processForStoryblok()` with `skipTransform` escape hatch
   - MCP-specific methods (ideas, list/create/delete stories, components, assets, search) remain inline
 - [x] Refactor n8n nodes to consume shared package
   - `GenericFunctions.ts` reduced from ~250 lines to ~100 lines of re-exports and thin wrappers
   - Re-exports shared types and functions under n8n-facing names (e.g. `getStoryblokManagementClient` → `createStoryblokClient`)
-  - Only `PRESET_SCHEMAS` (n8n-specific, loaded from local JSON files) remains original code
+  - Added "Auto (Design System)" schema mode that uses `prepareSchemaForOpenAi()` / `getComponentPresetSchema()` from shared lib
+  - Auto mode returns `{ designSystemProps, storyblokContent, rawResponse }` — both DS-shaped and Storyblok-ready output
+  - Import operation automatically runs `processForStoryblok()` with `skipTransform` escape hatch
+  - `PRESET_SCHEMAS` (n8n-specific, loaded from local JSON files) retained for backward compatibility
+  - Bundled `page.schema.dereffed.json` added to `schemas/` directory for auto mode
   - All 20 tests still passing
 - [x] Refactor Next.js API routes to consume shared package
   - `pages/api/content/index.ts` — uses `createOpenAiClient` + `generateStructuredContent` (replaces inline `openai` import and raw API calls)
@@ -222,7 +232,10 @@ shared/storyblok-services/
 │   ├── index.ts           # Barrel export
 │   ├── types.ts           # Types & error classes
 │   ├── storyblok.ts       # Storyblok API functions
-│   └── openai.ts          # OpenAI API functions
+│   ├── openai.ts          # OpenAI API functions
+│   ├── schema.ts          # Schema preparation for OpenAI structured output (13 passes)
+│   ├── transform.ts       # Content transformation (OpenAI ↔ DS ↔ Storyblok)
+│   └── pipeline.ts        # High-level end-to-end orchestrator
 └── test/
     ├── storyblok.test.ts  # 15 tests
     └── openai.test.ts     # 6 tests
@@ -256,7 +269,10 @@ shared/storyblok-services/              # Shared service library (Milestone 6)
 │   ├── index.ts                        # Barrel export
 │   ├── types.ts                        # Types & error classes
 │   ├── storyblok.ts                    # Storyblok API functions
-│   └── openai.ts                       # OpenAI API functions
+│   ├── openai.ts                       # OpenAI API functions
+│   ├── schema.ts                       # Schema preparation for OpenAI (13 passes)
+│   ├── transform.ts                    # Content transformation (OpenAI ↔ DS ↔ Storyblok)
+│   └── pipeline.ts                     # High-level end-to-end orchestrator
 └── test/
     ├── storyblok.test.ts               # 15 tests
     └── openai.test.ts                  # 6 tests
@@ -279,9 +295,10 @@ n8n-nodes-storyblok-kickstartds/
 │       ├── storyblokKickstartDs.svg             # Node icon
 │       ├── GenericFunctions.ts                  # Re-exports from shared lib + PRESET_SCHEMAS
 │       ├── descriptions/
-│       │   ├── GenerateContentDescription.ts    # Parameter definitions for Generate operation
-│       │   └── ImportContentDescription.ts      # Parameter definitions for Import operation (with placement modes)
+│       │   ├── GenerateContentDescription.ts    # Parameter definitions for Generate (incl. Auto mode)
+│       │   └── ImportContentDescription.ts      # Parameter definitions for Import (incl. skipTransform)
 │       └── schemas/
+│           ├── page.schema.dereffed.json         # Bundled DS page schema for auto-schema mode
 │           ├── hero.schema.json
 │           ├── faq.schema.json
 │           ├── testimonials.schema.json

@@ -124,6 +124,8 @@ Required in `.env.local`:
 
 The project includes a Storyblok MCP server ([mcp-server/](mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
 
+The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System page schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
+
 ### Transport Modes
 
 - **stdio** (default): For local usage with Claude Desktop — `npm start`
@@ -151,6 +153,9 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [scripts/prepareProject.js](scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
 - [mcp-server/config/deploy.yml](mcp-server/config/deploy.yml) - Kamal deployment config for the MCP server
 - [config/deploy.yml](config/deploy.yml) - Kamal deployment config for the main Next.js site
+- [shared/storyblok-services/src/schema.ts](shared/storyblok-services/src/schema.ts) - Schema preparation for OpenAI structured output (13 transformation passes)
+- [shared/storyblok-services/src/transform.ts](shared/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
+- [shared/storyblok-services/src/pipeline.ts](shared/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
 
 ## Common Patterns
 

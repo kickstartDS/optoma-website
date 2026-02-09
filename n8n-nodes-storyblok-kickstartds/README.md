@@ -4,10 +4,10 @@ n8n community node package for **Storyblok CMS** with **kickstartDS Design Syste
 
 This package provides two operations as a single n8n node:
 
-| Operation            | Description                                                                                              |
-| -------------------- | -------------------------------------------------------------------------------------------------------- |
-| **Generate Content** | Generate structured content via OpenAI GPT-4 using JSON Schema (preset or custom)                        |
-| **Import Content**   | Import generated content into a Storyblok story — replace a prompter component or insert at any position |
+| Operation            | Description                                                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Generate Content** | Generate structured content via OpenAI GPT-4 using JSON Schema — auto-derived from the Design System, preset, or custom                      |
+| **Import Content**   | Import generated content into a Storyblok story — replace a prompter component or insert at any position, with automatic Storyblok transform |
 
 Together they enable fully automated content pipelines: trigger → generate → import → publish/notify.
 
@@ -68,13 +68,31 @@ Generate structured content using OpenAI with JSON Schema constraints.
 | -------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------- |
 | **System Prompt**    | String | ✅          | Sets the AI's persona, tone, and domain knowledge                                           |
 | **Prompt**           | String | ✅          | Describes what content to generate                                                          |
-| **Schema Mode**      | Select | ✅          | `Preset` (built-in component schemas) or `Custom JSON Schema`                               |
+| **Schema Mode**      | Select | ✅          | `Auto (Design System)` (default), `Preset`, or `Custom JSON Schema`                         |
+| **Component Type**   | Select | When Auto   | Component to generate (e.g. Hero, FAQ, Features). Omit for full-page generation             |
+| **Section Count**    | Number | When Auto   | Number of sections to generate (default: 3, for full-page mode)                             |
 | **Component Schema** | Select | When Preset | Choose from: Hero, FAQ, Testimonials, Features, CTA, Text, Blog Teaser, Stats, Image + Text |
 | **Schema Name**      | String | When Custom | Identifier for the custom schema                                                            |
 | **JSON Schema**      | JSON   | When Custom | Full JSON Schema object for structured output                                               |
 | **Model**            | Select | ✅          | OpenAI model: `gpt-4o-2024-08-06` (default), `gpt-4o-mini`, `gpt-4-turbo`                   |
 
-**Output:**
+**Output (Auto mode):**
+
+```json
+{
+  "designSystemProps": { "headline": "...", "sub": "...", "text": "..." },
+  "storyblokContent": { "component": "hero", "headline": "...", "sub": "...", "text": "..." },
+  "rawResponse": { ... },
+  "_meta": {
+    "model": "gpt-4o-2024-08-06",
+    "schemaMode": "auto",
+    "schemaName": "page_schema",
+    "timestamp": "2026-02-07T10:00:00.000Z"
+  }
+}
+```
+
+**Output (Preset / Custom mode):**
 
 ```json
 {
@@ -95,15 +113,16 @@ Import generated content into a Storyblok story. Two placement modes are availab
 - **Replace Prompter Component** — finds a prompter component by its `_uid` and replaces it with the new sections
 - **Insert at Position** — inserts sections at a specific position (beginning, end, or index) without removing existing content
 
-| Parameter                  | Type    | Required                       | Description                                                            |
-| -------------------------- | ------- | ------------------------------ | ---------------------------------------------------------------------- |
-| **Story UID**              | String  | ✅                             | Numeric ID of the Storyblok story to update                            |
-| **Placement Mode**         | Select  | ✅                             | `Replace Prompter Component` or `Insert at Position`                   |
-| **Prompter Component UID** | String  | When mode = Replace Prompter   | `_uid` of the prompter component to replace                            |
-| **Insert Position**        | Select  | When mode = Insert at Position | `Beginning`, `End`, or `Specific Index`                                |
-| **Index**                  | Number  | When position = Specific Index | Zero-based index where sections should be inserted (clamped to bounds) |
-| **Page Content**           | JSON    | ✅                             | Object with `{ content: { section: [...] } }` structure                |
-| **Publish Immediately**    | Boolean | No                             | If true, publishes the story; if false (default), saves as draft       |
+| Parameter                  | Type    | Required                       | Description                                                                     |
+| -------------------------- | ------- | ------------------------------ | ------------------------------------------------------------------------------- |
+| **Story UID**              | String  | ✅                             | Numeric ID of the Storyblok story to update                                     |
+| **Placement Mode**         | Select  | ✅                             | `Replace Prompter Component` or `Insert at Position`                            |
+| **Prompter Component UID** | String  | When mode = Replace Prompter   | `_uid` of the prompter component to replace                                     |
+| **Insert Position**        | Select  | When mode = Insert at Position | `Beginning`, `End`, or `Specific Index`                                         |
+| **Index**                  | Number  | When position = Specific Index | Zero-based index where sections should be inserted (clamped to bounds)          |
+| **Page Content**           | JSON    | ✅                             | Object with `{ content: { section: [...] } }` structure                         |
+| **Skip Transform**         | Boolean | No                             | Skip automatic Storyblok flattening (for pre-formatted content). Default: false |
+| **Publish Immediately**    | Boolean | No                             | If true, publishes the story; if false (default), saves as draft                |
 
 **Output (Replace Prompter mode):**
 
@@ -143,7 +162,7 @@ Import generated content into a Storyblok story. Two placement modes are availab
 
 ## Preset Component Schemas
 
-The following kickstartDS component schemas are built in:
+The following kickstartDS component schemas are built in for the **Preset** schema mode. For most use cases, the **Auto (Design System)** mode is recommended instead — it dynamically derives schemas from the full Design System page schema, supporting all components and producing both Design System–shaped and Storyblok-ready output automatically.
 
 | Preset           | Key Fields                                                               |
 | ---------------- | ------------------------------------------------------------------------ |
@@ -250,7 +269,7 @@ n8n start
 
 ## Related
 
-- [Shared Service Library](../shared/storyblok-services/) — `@kickstartds/storyblok-services` — shared Storyblok + OpenAI logic consumed by this package, the MCP server, and the Next.js API routes
+- [Shared Service Library](../shared/storyblok-services/) — `@kickstartds/storyblok-services` — shared Storyblok, OpenAI, schema preparation, and content transformation logic consumed by this package, the MCP server, and the Next.js API routes
 - [Storyblok MCP Server](../mcp-server/) — The MCP server that this n8n node is based on (deployable to the cloud via Kamal with Streamable HTTP transport)
 - [kickstartDS Design System](https://www.kickstartds.com/) — The component library powering the content schemas
 - [n8n Community Nodes docs](https://docs.n8n.io/integrations/community-nodes/) — How to install and use community nodes

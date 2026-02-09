@@ -111,6 +111,14 @@ From now on your build process in Netlify should be automatically triggered, dep
 
 The project includes a **Storyblok MCP server** ([mcp-server/](mcp-server/)) that exposes CMS tools (content CRUD, AI generation, component introspection) to AI assistants via the [Model Context Protocol](https://modelcontextprotocol.io/).
 
+Key capabilities:
+
+- **Auto-schema derivation**: The `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System page schema — no manual schema authoring needed
+- **Automatic transforms**: Import tools automatically convert Design System props into Storyblok's flat `key_subKey` format
+- **Full pipeline**: End-to-end content generation from prompt → schema preparation → OpenAI generation → post-processing → Storyblok import
+
+Transport modes:
+
 - **Local usage**: Run via stdio for Claude Desktop — `cd mcp-server && npm start`
 - **Cloud deployment**: Deploy via Kamal with Streamable HTTP transport — `cd mcp-server && kamal deploy`
   - Deploys to the same server as the main site under a separate subdomain
@@ -118,7 +126,7 @@ The project includes a **Storyblok MCP server** ([mcp-server/](mcp-server/)) tha
 
 See [mcp-server/README.md](mcp-server/README.md) for full setup and deployment instructions.
 
-For event-driven automation (without an LLM), see the companion [n8n community nodes](n8n-nodes-storyblok-kickstartds/).
+For event-driven automation (without an LLM), see the companion [n8n community nodes](n8n-nodes-storyblok-kickstartds/), which offer the same auto-schema and auto-transform capabilities as n8n workflow nodes.
 
 ## Local Development
 

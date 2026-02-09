@@ -1,4 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import StoryblokClient from "storyblok-js-client";
 import { OpenAI } from "openai";
 import { StoryblokConfig } from "./config.js";
@@ -9,7 +12,23 @@ import {
   importByPrompterReplacement,
   importAtPosition,
   generateStructuredContent,
+  prepareSchemaForOpenAi,
+  getComponentPresetSchema,
+  listAvailableComponents,
+  processOpenAiResponse,
+  processForStoryblok,
+  generateAndPrepareContent,
+  type PrepareSchemaOptions,
 } from "@kickstartds/storyblok-services";
+
+// Load the dereferenced page schema once at module load
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PAGE_SCHEMA: Record<string, any> = JSON.parse(
+  readFileSync(
+    join(__dirname, "..", "schemas", "page.schema.dereffed.json"),
+    "utf-8"
+  )
+);
 
 /**
  * Wrapper class for Storyblok API operations.
@@ -194,6 +213,7 @@ export class StoryblokService {
 
   /**
    * Import content by replacing a prompter component with generated sections.
+   * Automatically transforms content for Storyblok compatibility unless skipped.
    * Delegates to `@kickstartds/storyblok-services`.
    */
   async importContent(options: {
@@ -204,16 +224,23 @@ export class StoryblokService {
         section: Record<string, unknown>[];
       };
     };
+    skipTransform?: boolean;
   }): Promise<unknown> {
+    let sections = options.page.content.section;
+    if (!options.skipTransform) {
+      const transformed = processForStoryblok({ section: sections });
+      sections = transformed.section;
+    }
     return importByPrompterReplacement(this.managementClient, this.spaceId, {
       storyUid: options.storyUid,
       prompterUid: options.prompterUid,
-      sections: options.page.content.section,
+      sections,
     });
   }
 
   /**
    * Import content at a specific position (without a prompter).
+   * Automatically transforms content for Storyblok compatibility unless skipped.
    * Delegates to `@kickstartds/storyblok-services`.
    */
   async importContentAtPosition(options: {
@@ -225,11 +252,17 @@ export class StoryblokService {
       };
     };
     publish?: boolean;
+    skipTransform?: boolean;
   }): Promise<unknown> {
+    let sections = options.page.content.section;
+    if (!options.skipTransform) {
+      const transformed = processForStoryblok({ section: sections });
+      sections = transformed.section;
+    }
     return importAtPosition(this.managementClient, this.spaceId, {
       storyUid: options.storyUid,
       position: options.position,
-      sections: options.page.content.section,
+      sections,
       publish: options.publish,
     });
   }
@@ -395,6 +428,54 @@ export class ContentGenerationService {
     }
 
     return generateStructuredContent(this.client as any, options);
+  }
+
+  /**
+   * Generate content with automatic schema preparation and response processing.
+   *
+   * When a `pageSchema` is provided (the dereffed Design System schema), the
+   * full pipeline runs:
+   *   schema prep → OpenAI call → response post-processing → Storyblok flatten
+   *
+   * This is the recommended method for MCP tool callers who want a simple
+   * "give me content" experience without dealing with schemas.
+   */
+  async generateWithSchema(options: {
+    system: string;
+    prompt: string;
+    componentType?: string;
+    sectionCount?: number;
+  }): Promise<{
+    designSystemProps: Record<string, any>;
+    storyblokContent: Record<string, any>;
+    rawResponse: Record<string, any>;
+  }> {
+    if (!this.client) {
+      throw new Error(
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+      );
+    }
+
+    const schemaOptions: PrepareSchemaOptions = {};
+    if (options.sectionCount) {
+      schemaOptions.sections = options.sectionCount;
+    }
+    if (options.componentType) {
+      schemaOptions.allowedComponents = [options.componentType, "section"];
+    }
+
+    const result = await generateAndPrepareContent(this.client as any, {
+      system: options.system,
+      prompt: options.prompt,
+      pageSchema: PAGE_SCHEMA,
+      schemaOptions,
+    });
+
+    return {
+      designSystemProps: result.designSystemProps,
+      storyblokContent: result.storyblokContent,
+      rawResponse: result.rawResponse,
+    };
   }
 }
 

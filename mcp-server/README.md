@@ -17,10 +17,11 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### AI Content Generation
 
-| Tool               | Description                                     |
-| ------------------ | ----------------------------------------------- |
-| `generate_content` | Generate structured content using OpenAI GPT-4  |
-| `import_content`   | Import generated content into a Storyblok story |
+| Tool                         | Description                                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation from the Design System       |
+| `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform |
+| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform                    |
 
 ### Component & Asset Management
 
@@ -209,7 +210,47 @@ npm start
 }
 ```
 
-### Generate a hero section
+### Generate a hero section (auto-schema mode)
+
+When `componentType` is provided, the schema is automatically derived from the kickstartDS Design System page schema — no manual schema needed:
+
+```json
+{
+  "tool": "generate_content",
+  "arguments": {
+    "system": "You are a content writer for a digital agency website. Create engaging, professional content.",
+    "prompt": "Create a hero section for a landing page about AI-powered content generation",
+    "componentType": "hero"
+  }
+}
+```
+
+The response includes both Design System–shaped props and Storyblok-ready content:
+
+```json
+{
+  "designSystemProps": { "headline": "...", "sub": "...", "text": "..." },
+  "storyblokContent": { "component": "hero", "headline": "...", "sub": "...", "text": "..." },
+  "rawResponse": { ... }
+}
+```
+
+### Generate a full page (auto-schema, multi-section)
+
+```json
+{
+  "tool": "generate_content",
+  "arguments": {
+    "system": "You are a content writer for a digital agency website.",
+    "prompt": "Create a landing page about sustainable energy solutions",
+    "sectionCount": 4
+  }
+}
+```
+
+### Generate with a custom schema
+
+You can still provide a manual JSON Schema for full control:
 
 ```json
 {
@@ -272,6 +313,8 @@ mcp-server/
 │   ├── config.ts     # Configuration and Zod schemas
 │   ├── services.ts   # Storyblok and OpenAI service classes (delegates to shared lib)
 │   └── errors.ts     # Error types and handling
+├── schemas/
+│   └── page.schema.dereffed.json  # Bundled Design System page schema for auto-schema mode
 ├── config/
 │   └── deploy.yml    # Kamal deployment configuration
 ├── .kamal/
@@ -282,7 +325,7 @@ mcp-server/
 └── README.md
 ```
 
-Core Storyblok and OpenAI logic lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, and structured content generation. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), and the high-level pipeline (`generateAndPrepareContent`). MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 
@@ -349,7 +392,7 @@ Error codes:
 
 For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/).
 
-It provides the same `generate_content` and `import_content` capabilities as n8n workflow nodes, enabling pipelines like:
+It provides the same `generate_content` (with auto-schema derivation) and `import_content` (with automatic Storyblok transform) capabilities as n8n workflow nodes, enabling pipelines like:
 
 - **Webhook → Generate → Import → Slack** — trigger content generation from external events
 - **Schedule → Batch Generate → Import** — automated recurring content creation

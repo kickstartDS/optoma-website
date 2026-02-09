@@ -160,4 +160,20 @@ export const importContentFields: INodeProperties[] = [
       },
     },
   },
+
+  // ── Skip transform toggle ────────────────────────────────────────
+  {
+    displayName: "Skip Auto-Transform",
+    name: "skipTransform",
+    type: "boolean",
+    default: false,
+    description:
+      "Skip automatic content flattening for Storyblok. Enable this if the content is already in Storyblok-compatible format (e.g. from the Auto schema mode which flattens automatically).",
+    displayOptions: {
+      show: {
+        resource: ["aiContent"],
+        operation: ["import"],
+      },
+    },
+  },
 ];

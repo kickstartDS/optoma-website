@@ -62,7 +62,20 @@ export const schemas = {
         strict: z.boolean().optional(),
         schema: z.record(z.unknown()),
       })
-      .describe("JSON schema for structured output"),
+      .optional()
+      .describe(
+        "JSON schema for structured output. Optional when componentType or sectionCount is provided."
+      ),
+    componentType: z
+      .string()
+      .optional()
+      .describe(
+        "Component type to generate (e.g. 'hero', 'faq'). When provided, schema is auto-derived."
+      ),
+    sectionCount: z
+      .number()
+      .optional()
+      .describe("Number of sections to generate for full-page generation."),
   }),
 
   importContent: z.object({
@@ -77,6 +90,13 @@ export const schemas = {
         }),
       })
       .describe("Page content with sections to import"),
+    skipTransform: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Skip automatic content flattening for Storyblok (default: false)"
+      ),
   }),
 
   importContentAtPosition: z.object({
@@ -97,6 +117,13 @@ export const schemas = {
       .default(false)
       .describe(
         "Publish the story immediately after importing (default: false)"
+      ),
+    skipTransform: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Skip automatic content flattening for Storyblok (default: false)"
       ),
   }),
 

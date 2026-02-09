@@ -52,6 +52,12 @@ export const generateContentFields: INodeProperties[] = [
     type: "options",
     options: [
       {
+        name: "Auto (Design System)",
+        value: "auto",
+        description:
+          "Automatically derive the schema from the kickstartDS Design System. Handles schema preparation, response post-processing, and Storyblok flattening.",
+      },
+      {
         name: "Preset (kickstartDS Component)",
         value: "preset",
         description:
@@ -63,13 +69,47 @@ export const generateContentFields: INodeProperties[] = [
         description: "Provide your own JSON Schema for structured output",
       },
     ],
-    default: "preset",
+    default: "auto",
     description:
-      "How to provide the JSON Schema that controls the AI output structure",
+      "How to provide the JSON Schema that controls the AI output structure. Auto mode is recommended — it handles everything automatically.",
     displayOptions: {
       show: {
         resource: ["aiContent"],
         operation: ["generate"],
+      },
+    },
+  },
+
+  // ── Auto mode: component type ─────────────────────────────────────
+  {
+    displayName: "Component Type",
+    name: "autoComponentType",
+    type: "string",
+    default: "",
+    description:
+      'Component type to generate (e.g. "hero", "faq", "testimonials"). Leave empty to generate a full page with multiple sections.',
+    placeholder: "hero",
+    displayOptions: {
+      show: {
+        resource: ["aiContent"],
+        operation: ["generate"],
+        schemaMode: ["auto"],
+      },
+    },
+  },
+  {
+    displayName: "Section Count",
+    name: "autoSectionCount",
+    type: "number",
+    default: 1,
+    typeOptions: { minValue: 1, maxValue: 10 },
+    description:
+      "Number of sections to generate. Only used for full-page generation (when Component Type is empty).",
+    displayOptions: {
+      show: {
+        resource: ["aiContent"],
+        operation: ["generate"],
+        schemaMode: ["auto"],
       },
     },
   },

@@ -14,13 +14,16 @@ import { ThreeDots } from "react-loader-spinner";
 import { traverse as objectTraverse } from "object-traversal";
 import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
 import { defaultObjectForSchema } from "@kickstartds/cambria";
-import { JSONSchema } from "json-schema-typed/draft-07";
-import schemaTraverse from "json-schema-traverse";
 import merge from "deepmerge";
 
 import { fetchStory, initStoryblok } from "@/helpers/storyblok";
 import { unflatten } from "@/helpers/unflatten";
-import { SectionProps } from "@/components/section/SectionProps";
+
+import {
+  prepareSchemaForOpenAi,
+  processOpenAiResponse,
+  processForStoryblok,
+} from "@kickstartds/storyblok-services";
 
 import pageSchema from "@kickstartds/ds-agency-premium/page/page.schema.dereffed.json";
 
@@ -68,96 +71,6 @@ type Idea = {
   name: string;
 };
 
-function getSchemaName(schemaId: string): string {
-  return (schemaId && schemaId.split("/").pop()?.split(".").shift()) || "";
-}
-
-const unsupportedKeywords = [
-  "format",
-  "minItems",
-  "maxItems",
-  "minimum",
-  "maximum",
-  "examples",
-  "default",
-  "$id",
-  "$schema",
-];
-
-const propertiesToDrop = [
-  "backgroundColor",
-  "backgroundImage",
-  "spotlight",
-  // "headerSpacing",
-  // "switchOrder",
-  // "align",
-  // "textAlign",
-  // "colorNeutral",
-  // "target",
-  // "contentAlign",
-  "textColor",
-  // "highlightText",
-  // "fullWidth",
-  // "padding",
-  // "mobileImageLast",
-  // "desktopImageLast",
-  // "overlay",
-  // "indent",
-  // "imageRatio",
-  // "image",
-  // "width",
-  // "inverted",
-  // "spaceBefore",
-  // "spaceAfter",
-  // "height",
-];
-
-const components = [
-  "blog-teaser",
-  "business-card",
-  "contact",
-  "content-nav",
-  "cta",
-  "divider",
-  "downloads",
-  "faq",
-  "features",
-  "gallery",
-  "headline",
-  "hero",
-  "image-story",
-  "image-text",
-  "info-table",
-  "logos",
-  "mosaic",
-  "page",
-  "section",
-  "split-even",
-  "split-weighted",
-  "stats",
-  "teaser-card",
-  "testimonials",
-  "text",
-  "video-curtain",
-];
-
-const subComponentMap = {
-  downloads: "download",
-  faq: "questions",
-  features: "feature",
-  gallery: "images",
-  logos: "logo",
-  mosaic: "tile",
-  stats: "stat",
-  testimonials: "testimonial",
-} as const;
-
-type SubComponentMapKeys = keyof typeof subComponentMap;
-
-function isSubComponentMapKey(key: string): key is SubComponentMapKeys {
-  return key in subComponentMap;
-}
-
 const componentMap = {
   "blog-teaser": BlogTeaser,
   "business-card": BusinessCard,
@@ -191,128 +104,6 @@ type ComponentMapKeys = keyof typeof componentMap;
 function isComponentMapKey(key: string): key is ComponentMapKeys {
   return key in componentMap;
 }
-
-const schemaMap = {
-  "blog-teaser": {},
-  "business-card": {},
-  contact: {},
-  "content-nav": {},
-  cta: {},
-  divider: {},
-  download: {},
-  downloads: {},
-  faq: {},
-  feature: {},
-  features: {},
-  gallery: {},
-  headline: {},
-  hero: {},
-  "image-story": {},
-  "image-text": {},
-  images: {},
-  "info-table": {},
-  logo: {},
-  logos: {},
-  mosaic: {},
-  page: {},
-  questions: {},
-  section: {},
-  slider: {},
-  "split-even": {},
-  "split-weighted": {},
-  stat: {},
-  stats: {},
-  "teaser-card": {},
-  testimonial: {},
-  testimonials: {},
-  text: {},
-  tile: {},
-  "video-curtain": {},
-} as const;
-
-type SchemaMapKeys = keyof typeof schemaMap;
-
-function isSchemaMapKey(key: string): key is SchemaMapKeys {
-  return key in schemaMap;
-}
-
-// TODO type this, might involve pre-processing the schema to generate types in filesystem using `json-schema-to-typescript`
-const processResponse = (response: Record<string, any>): PageProps => {
-  objectTraverse(
-    response,
-    ({ value }) => {
-      if (typeof value === "object" && !Array.isArray(value)) {
-        const typePropKey = Object.keys(value).find((key) =>
-          key.startsWith("type__")
-        );
-
-        if (typePropKey) {
-          const type = typePropKey.split("type__")[1];
-          if (!isSchemaMapKey(type)) throw new Error(`Unknown type: ${type}`);
-          const schema = schemaMap[type];
-
-          if (schema) {
-            const defaults = defaultObjectForSchema(
-              schema as JSONSchema.Object
-            ) as Record<string, any>;
-
-            delete value[typePropKey];
-            value.type = type;
-            value.component = type;
-
-            for (const prop of Object.keys(defaults)) {
-              value[prop] = value[prop]
-                ? typeof value[prop] === "object" && !Array.isArray(value[prop])
-                  ? merge(value[prop], defaults[prop])
-                  : value[prop]
-                : defaults[prop];
-            }
-          }
-        }
-      }
-    },
-    { traversalType: "breadth-first" }
-  );
-
-  return response as PageProps;
-};
-
-/*
-
-Compare flatten to this one from Starter `prepareProject.js`:
-
-      traverse(preset.preset, ({ parent, key, value }) => {
-        if (typeof value === "object" && isNaN(key) && !Array.isArray(value)) {
-          for (const [propKey, propValue] of Object.entries(value)) {
-            parent[`${key}_${propKey}`] = propValue;
-          }
-          delete parent[key];
-        }
-      });
-
-*/
-
-const processPage = (page: PageProps): Record<string, any> => {
-  objectTraverse(
-    page,
-    ({ value }) => {
-      if (typeof value === "object" && value.type) {
-        value.component = value.type;
-
-        flattenNestedObjects(value);
-      }
-    },
-    { traversalType: "breadth-first" }
-  );
-
-  for (const section of page.section || []) {
-    (section as SectionProps).aiDraft = true;
-    (section as SectionProps).component = "section";
-    flattenNestedObjects(section);
-  }
-
-  return page as Record<string, any>;
-};
 
 // TODO handle `type` in props, currently just gets passed through
 const Page: FC<PropsWithChildren<PageProps>> = ({ section }) => {
@@ -407,269 +198,18 @@ export const PrompterComponent = forwardRef<
     const [storyblokContent, setStoryblokContent] =
       useState<Record<string, any>>(null);
 
-    const schema = useMemo(() => {
-      const allProperties: Set<string> = new Set();
-      let maxDepth = 0;
-      let enumValueCount = 0;
-
-      const collectSchemas: schemaTraverse.Callback = (schema) => {
-        if (
-          schema.properties &&
-          schema.properties.type &&
-          schema.properties.type.const
-        ) {
-          schemaMap[schema.properties.type.const] = structuredClone(schema);
-        }
-      };
-
-      const addTypeConsts: schemaTraverse.Callback = (schema) => {
-        if (schema && schema.anyOf) {
-          schema.anyOf.forEach((component) => {
-            if (component.$id) {
-              const componentName = getSchemaName(component.$id);
-              if (
-                components.includes(componentName) &&
-                !component.properties.type
-              ) {
-                component.properties.type = {
-                  const: componentName,
-                };
-              }
-            }
-          });
-        }
-      };
-
-      const filterComponents: schemaTraverse.Callback = (schema) => {
-        if (schema && schema.anyOf) {
-          schema.anyOf = schema.anyOf.filter((component) => {
-            return (
-              component.properties.type &&
-              component.properties.type.const &&
-              components.includes(component.properties.type.const)
-            );
-          });
-        }
-      };
-
-      const deleteConsts: schemaTraverse.Callback = (
-        schema,
-        jsonPtr,
-        _rootSchema,
-        _parentJsonPtr,
-        parentKeyword,
-        parentSchema
-      ) => {
-        if (schema.const && parentKeyword === "properties") {
-          const propName = jsonPtr.split("/").pop();
-
-          if (propName === "type") {
-            const type = { properties: {} };
-            type.properties[`type__${schema.const}`] = {
-              type: "string",
-              title: "Type of component",
-              description: `A field always being set to the value '${schema.const}'`,
-            };
-            parentSchema.properties = {
-              ...type.properties,
-              ...parentSchema.properties,
-            };
-          }
-
-          delete parentSchema.properties[propName];
-        }
-      };
-
-      const removeImageFormatProperties: schemaTraverse.Callback = (
-        schema,
-        _jsonPtr,
-        _rootSchema,
-        _parentJsonPtr,
-        _parentKeyword,
-        parentSchema,
-        keyIndex
-      ) => {
-        if (
-          (schema.format === "image" || schema.format === "video") &&
-          keyIndex &&
-          parentSchema &&
-          parentSchema.properties &&
-          parentSchema.properties[keyIndex]
-        ) {
-          delete schema.format;
-          // delete parentSchema.properties[keyIndex];
-        }
-      };
-
-      const removeIconProperties: schemaTraverse.Callback = (
-        _schema,
-        _jsonPtr,
-        _rootSchema,
-        _parentJsonPtr,
-        _parentKeyword,
-        parentSchema,
-        keyIndex
-      ) => {
-        if (
-          keyIndex === "icon" &&
-          parentSchema &&
-          parentSchema.properties &&
-          parentSchema.properties[keyIndex]
-        ) {
-          delete parentSchema.properties[keyIndex];
-        }
-      };
-
-      const removeUnsupportedProperties: schemaTraverse.Callback = (
-        _schema,
-        _jsonPtr,
-        _rootSchema,
-        _parentJsonPtr,
-        _parentKeyword,
-        parentSchema,
-        keyIndex
-      ) => {
-        if (
-          keyIndex &&
-          typeof keyIndex === "string" &&
-          propertiesToDrop.includes(keyIndex) &&
-          parentSchema &&
-          parentSchema.properties &&
-          parentSchema.properties[keyIndex]
-        ) {
-          delete parentSchema.properties[keyIndex];
-        }
-      };
-
-      const removeUnsupportedKeywords: schemaTraverse.Callback = (schema) => {
-        for (const key of unsupportedKeywords) {
-          if (schema.hasOwnProperty(key)) delete schema[key];
-        }
-      };
-
-      const removeEmptyObjects: schemaTraverse.Callback = (
-        schema,
-        _jsonPtr,
-        _rootSchema,
-        _parentJsonPtr,
-        _parentKeyword,
-        parentSchema,
-        keyIndex
-      ) => {
-        if (
-          schema.type === "object" &&
-          !Object.keys(schema.properties).length &&
-          keyIndex &&
-          parentSchema &&
-          parentSchema.properties &&
-          parentSchema.properties[keyIndex]
-        ) {
-          delete parentSchema.properties[keyIndex];
-        }
-      };
-
-      const denyAdditionalProperties: schemaTraverse.Callback = (schema) => {
-        if (schema.type === "object") {
-          schema.additionalProperties = false;
-        }
-      };
-
-      const makeRequired: schemaTraverse.Callback = (schema) => {
-        if (schema.type === "object") {
-          schema.required = Object.keys(schema.properties);
-        }
-      };
-
-      const collectProperties: schemaTraverse.Callback = (
-        _schema,
-        jsonPtr,
-        _rootSchema,
-        _parentJsonPtr,
-        parentKeyword
-      ) => {
-        if (
-          jsonPtr &&
-          parentKeyword === "properties" &&
-          !allProperties.has(jsonPtr)
-        ) {
-          allProperties.add(jsonPtr);
-        }
-      };
-
-      const countDepth: schemaTraverse.Callback = (_schema, jsonPtr) => {
-        maxDepth = Math.max(jsonPtr.split("/properties/").length, maxDepth);
-        if (jsonPtr.split("/properties/").length > 9) {
-          console.log("Max depth exceeded:", jsonPtr);
-        }
-      };
-
-      const countEnums: schemaTraverse.Callback = (schema, jsonPtr) => {
-        if (schema.enum) {
-          enumValueCount += schema.enum.length;
-          if (enumValueCount > 1000) {
-            console.log("Max enum count exceeded:", jsonPtr, enumValueCount);
-          }
-        }
-      };
-
-      schemaTraverse(pageSchema, collectSchemas);
-      const clonedSchema = structuredClone(pageSchema);
-
-      delete clonedSchema.properties.header;
-      delete clonedSchema.properties.footer;
-      // delete clonedSchema.properties.section.items.properties.content; // TODO check this, could possibly be improved by better Prompter guidance for those types of values
-
-      clonedSchema.properties.section.minItems = sections;
-      clonedSchema.properties.section.maxItems = sections;
-
-      for (const componentSchema of clonedSchema.properties.section.items
-        .properties.components.items.anyOf) {
-        const componentName = getSchemaName(componentSchema.$id);
-        const arrayKey = subComponentMap[componentName];
-        if (Object.keys(subComponentMap).includes(componentName)) {
-          componentSchema.properties[arrayKey].items.properties.type = {
-            const: arrayKey,
-          };
-        }
-      }
-
-      [
-        addTypeConsts,
-        filterComponents,
-        deleteConsts,
-        removeImageFormatProperties,
-        removeIconProperties,
-        removeUnsupportedProperties,
-        removeUnsupportedKeywords,
-        removeEmptyObjects,
-        denyAdditionalProperties,
-        makeRequired,
-        collectProperties,
-        countDepth,
-        countEnums,
-      ].forEach((fn) => {
-        schemaTraverse(clonedSchema, fn);
+    const { schema, schemaMap } = useMemo(() => {
+      const prepared = prepareSchemaForOpenAi(pageSchema, {
+        sections,
       });
 
-      if (allProperties.size > 5000) {
-        console.log(
-          "Need to reduce properties (<5000 allowed), got:",
-          allProperties.size,
-          allProperties
-        );
-      }
-
-      if (enumValueCount > 1000) {
-        console.log(
-          "Need to reduce enum count (<1000 allowed), got:",
-          enumValueCount
-        );
+      if (prepared.validation.warnings.length > 0) {
+        console.log("Schema warnings:", prepared.validation.warnings);
       }
 
       return {
-        name: "page_response",
-        strict: true,
-        schema: clonedSchema,
+        schema: prepared.envelope,
+        schemaMap: prepared.schemaMap,
       };
     }, [sections]);
 
@@ -765,10 +305,17 @@ export const PrompterComponent = forwardRef<
         .then((response) => {
           response.json().then((json) => {
             console.log("Prompter raw response", response, json);
-            const pageProps = processResponse(JSON.parse(json.content));
+            const pageProps = processOpenAiResponse(
+              JSON.parse(json.content),
+              schemaMap,
+              defaultObjectForSchema,
+              merge
+            );
             setGeneratedContent(pageProps);
 
-            const storyblokProps = processPage(structuredClone(pageProps));
+            const storyblokProps = processForStoryblok(
+              structuredClone(pageProps)
+            );
             setStoryblokContent(storyblokProps);
 
             console.log("Prompter response", json, pageProps, storyblokProps);
@@ -947,22 +494,6 @@ export const PrompterComponent = forwardRef<
 );
 PrompterComponent.displayName = "Prompter Component";
 
-function flattenNestedObjects(value: any) {
-  for (const prop of Object.keys(value)) {
-    if (
-      !value[prop].type &&
-      typeof value[prop] === "object" &&
-      !Array.isArray(value[prop])
-    ) {
-      for (const nestedProp of Object.keys(value[prop])) {
-        value[`${prop}_${nestedProp}`] = structuredClone(
-          value[prop][nestedProp]
-        );
-      }
-      delete value[prop];
-    }
-  }
-}
 // TODO:
 //
 // - add hints for removed fields to description, if applicable (e.g. `format: markdown` -> "this typically can include markdown formatting", `default` -> "..., typically set to 'value'")

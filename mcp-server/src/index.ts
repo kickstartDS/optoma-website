@@ -78,6 +78,16 @@ Use this tool to generate page content, section content, or any other structured
 that follows a JSON schema. The generated content will match the schema used by
 the kickstartDS Design System components.
 
+You can either:
+- Provide a custom JSON schema via the 'schema' parameter (advanced), OR
+- Let the tool auto-derive the schema by providing 'componentType' and/or 'sectionCount'
+
+When using auto-derived schemas, the tool automatically:
+1. Prepares the Design System schema for OpenAI compatibility
+2. Generates content via OpenAI
+3. Post-processes the response back to Design System format
+4. Flattens the content for Storyblok import
+
 Example use cases:
 - Generate a hero section with headline, text, and CTA
 - Create a features section with multiple feature items
@@ -97,7 +107,8 @@ Example use cases:
           },
           schema: {
             type: "object",
-            description: "JSON schema for structured output",
+            description:
+              "JSON schema for structured output. Optional when componentType or sectionCount is provided — the schema will be auto-derived from the Design System.",
             properties: {
               name: { type: "string" },
               strict: { type: "boolean" },
@@ -105,8 +116,18 @@ Example use cases:
             },
             required: ["name", "schema"],
           },
+          componentType: {
+            type: "string",
+            description:
+              "Component type to generate (e.g. 'hero', 'faq', 'testimonials'). When provided, the schema is auto-derived and the response is automatically post-processed.",
+          },
+          sectionCount: {
+            type: "number",
+            description:
+              "Number of sections to generate (for full-page generation). Defaults to 1 when componentType is used.",
+          },
         },
-        required: ["system", "prompt", "schema"],
+        required: ["system", "prompt"],
       },
     },
     {
@@ -134,7 +155,8 @@ The tool:
           },
           page: {
             type: "object",
-            description: "Page content with sections to import",
+            description:
+              "Page content with sections to import. Content is automatically flattened for Storyblok unless skipTransform is true.",
             properties: {
               content: {
                 type: "object",
@@ -148,6 +170,11 @@ The tool:
               },
             },
             required: ["content"],
+          },
+          skipTransform: {
+            type: "boolean",
+            description:
+              "Skip automatic content flattening for Storyblok. Set to true if content is already in Storyblok format (default: false).",
           },
         },
         required: ["storyUid", "prompterUid", "page"],
@@ -181,12 +208,17 @@ Position semantics:
             type: "array",
             items: { type: "object" },
             description:
-              "Array of section objects to insert at the given position",
+              "Array of section objects to insert at the given position. Content is automatically flattened for Storyblok unless skipTransform is true.",
           },
           publish: {
             type: "boolean",
             description:
               "Publish the story immediately after importing (default: false)",
+          },
+          skipTransform: {
+            type: "boolean",
+            description:
+              "Skip automatic content flattening for Storyblok. Set to true if content is already in Storyblok format (default: false).",
           },
         },
         required: ["storyUid", "position", "sections"],
@@ -508,7 +540,36 @@ Useful for finding specific text, topics, or references.`,
             );
           }
           const validated = schemas.generateContent.parse(args);
-          const result = await contentService.generateContent(validated);
+
+          // If componentType or sectionCount is provided, use auto-schema pipeline
+          if (validated.componentType || validated.sectionCount) {
+            const result = await contentService.generateWithSchema({
+              system: validated.system,
+              prompt: validated.prompt,
+              componentType: validated.componentType,
+              sectionCount: validated.sectionCount,
+            });
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+            };
+          }
+
+          // Otherwise, use explicit schema (legacy/custom mode)
+          if (!validated.schema) {
+            throw new ConfigurationError(
+              "Either 'schema' or 'componentType'/'sectionCount' must be provided."
+            );
+          }
+          const result = await contentService.generateContent({
+            system: validated.system,
+            prompt: validated.prompt,
+            schema: validated.schema,
+          });
           return {
             content: [
               {
@@ -521,7 +582,10 @@ Useful for finding specific text, topics, or references.`,
 
         case "import_content": {
           const validated = schemas.importContent.parse(args);
-          const result = await storyblokService.importContent(validated);
+          const result = await storyblokService.importContent({
+            ...validated,
+            skipTransform: validated.skipTransform,
+          });
           return {
             content: [
               {
@@ -547,6 +611,7 @@ Useful for finding specific text, topics, or references.`,
             position: validated.position,
             page: { content: { section: validated.sections } },
             publish: validated.publish,
+            skipTransform: validated.skipTransform,
           });
           return {
             content: [

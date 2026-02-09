@@ -3,7 +3,7 @@
  *
  * Core Storyblok and OpenAI logic is delegated to `@kickstartds/storyblok-services`.
  * This file re-exports the shared functions and adds n8n-specific concerns
- * (credential types, preset schema loading).
+ * (credential types, preset schema loading, content transforms).
  */
 import {
   createStoryblokClient,
@@ -12,8 +12,15 @@ import {
   importAtPosition,
   createOpenAiClient,
   generateStructuredContent,
+  prepareSchemaForOpenAi,
+  getComponentPresetSchema,
+  listAvailableComponents,
+  processOpenAiResponse,
+  processForStoryblok,
+  generateAndPrepareContent,
   type StoryblokCredentials,
   type OpenAiCredentials,
+  type PrepareSchemaOptions,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
 
@@ -24,8 +31,15 @@ export {
   createStoryblokClient as getStoryblokManagementClient,
   getStoryManagement,
   generateStructuredContent,
+  prepareSchemaForOpenAi,
+  getComponentPresetSchema,
+  listAvailableComponents,
+  processOpenAiResponse,
+  processForStoryblok,
+  generateAndPrepareContent,
   type StoryblokCredentials,
   type OpenAiCredentials,
+  type PrepareSchemaOptions,
 };
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";
@@ -73,7 +87,10 @@ export async function insertContentAtPosition(
   });
 }
 
-// ─── Preset schemas ───────────────────────────────────────────────────
+// ─── Preset schemas (legacy, kept for backward compatibility) ─────────
+// These static imports are retained so existing preset-based workflows
+// continue to work. New "auto" mode uses the shared lib's schema
+// preparation instead.
 
 import heroSchema from "./schemas/hero.schema.json";
 import faqSchema from "./schemas/faq.schema.json";

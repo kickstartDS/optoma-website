@@ -35,6 +35,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "json-schema-traverse": "^1.0.0",
+    "object-traversal": "^1.0.1",
     "openai": "^6.18.0",
     "storyblok-js-client": "^7.2.3"
   },

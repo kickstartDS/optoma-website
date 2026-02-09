@@ -1,6 +1,6 @@
 # @kickstartds/storyblok-services
 
-Shared Storyblok CMS and OpenAI content generation services for the kickstartDS starter project.
+Shared Storyblok CMS, OpenAI content generation, and Design System schema services for the kickstartDS starter project.
 
 This package provides pure, framework-agnostic functions consumed by three different runtimes:
 
@@ -46,6 +46,66 @@ import {
 | `createOpenAiClient(credentials)`            | Create an OpenAI client                                                     |
 | `generateStructuredContent(client, options)` | Generate JSON content via structured output (JSON Schema `response_format`) |
 
+### Schema Preparation
+
+Transforms kickstartDS Design System JSON Schemas into a format compatible with OpenAI's structured output (`response_format: json_schema`). Handles 13 transformation passes including `const` → discriminator replacement, unsupported keyword removal, and strict-mode enforcement.
+
+```typescript
+import {
+  prepareSchemaForOpenAi,
+  getComponentPresetSchema,
+  listAvailableComponents,
+  getSchemaName,
+  SUPPORTED_COMPONENTS,
+  SUB_COMPONENT_MAP,
+  UNSUPPORTED_KEYWORDS,
+  DEFAULT_PROPERTIES_TO_DROP,
+} from "@kickstartds/storyblok-services";
+```
+
+| Export                                                | Description                                                                                                                                 |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prepareSchemaForOpenAi(pageSchema, options?)`        | Takes a dereffed page schema + options (`{ sections?, allowedComponents?, propertiesToDrop? }`) and returns an OpenAI-ready schema envelope |
+| `getComponentPresetSchema(pageSchema, componentName)` | Returns a single-component OpenAI-ready schema (replaces hand-written JSON presets)                                                         |
+| `listAvailableComponents()`                           | Returns the list of supported component names                                                                                               |
+| `getSchemaName()`                                     | Returns the schema name string for the OpenAI envelope                                                                                      |
+| `SUPPORTED_COMPONENTS`                                | Array of component type names the pipeline supports                                                                                         |
+| `SUB_COMPONENT_MAP`                                   | Map of parent component type → sub-component array key (e.g. `downloads` → `download`)                                                      |
+| `UNSUPPORTED_KEYWORDS`                                | JSON Schema keywords stripped for OpenAI compatibility                                                                                      |
+| `DEFAULT_PROPERTIES_TO_DROP`                          | Properties removed by default (icons, layout props, etc.)                                                                                   |
+
+### Content Transformation
+
+Handles two directions of transformation between OpenAI output, Design System props, and Storyblok content:
+
+```typescript
+import {
+  processOpenAiResponse,
+  processForStoryblok,
+  flattenNestedObjects,
+  unflattenNestedObjects,
+} from "@kickstartds/storyblok-services";
+```
+
+| Function                                                         | Description                                                                                                         |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `processOpenAiResponse(response, schemaMap?, defaults?, merge?)` | Reverses `type__X` → `type: X` mangling, merges component defaults. Returns Design System–shaped props              |
+| `processForStoryblok(page)`                                      | Flattens nested objects to `key_subKey`, sets `type` → `component`, adds `aiDraft: true`. Returns Storyblok content |
+| `flattenNestedObjects(obj)`                                      | Utility: flattens one level of nested objects using `_` separator                                                   |
+| `unflattenNestedObjects(obj)`                                    | Reverse utility: `key_subKey` → `{ key: { subKey } }`                                                               |
+
+### Pipeline (High-Level Orchestrator)
+
+End-to-end content generation pipeline for consumers who don't need fine-grained control:
+
+```typescript
+import { generateAndPrepareContent } from "@kickstartds/storyblok-services";
+```
+
+| Function                                     | Description                                                                                                                                                                            |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema }` |
+
 ### Error Classes
 
 | Class                    | Code                       | Description                                         |
@@ -60,13 +120,47 @@ import {
 
 ```typescript
 import type {
+  // Core types
   StoryblokCredentials,
   OpenAiCredentials,
   GenerateContentOptions,
   ImportByPrompterOptions,
   ImportAtPositionOptions,
   PageContent,
+  // Schema types
+  PrepareSchemaOptions,
+  OpenAiSchemaEnvelope,
+  SchemaValidation,
+  PreparedSchema,
+  // Transform types
+  TransformedContent,
+  // Pipeline types
+  GenerateAndPrepareOptions,
+  GenerateAndPrepareResult,
 } from "@kickstartds/storyblok-services";
+```
+
+## File Structure
+
+```
+shared/storyblok-services/
+├── package.json           # @kickstartds/storyblok-services v1.0.0
+├── tsconfig.json          # Type-checking config
+├── tsconfig.esm.json      # ESM build → dist/esm/
+├── tsconfig.cjs.json      # CJS build → dist/cjs/
+├── jest.config.js
+├── README.md
+├── src/
+│   ├── index.ts           # Barrel export
+│   ├── types.ts           # Types & error classes
+│   ├── storyblok.ts       # Storyblok API functions
+│   ├── openai.ts          # OpenAI API functions
+│   ├── schema.ts          # Schema preparation for OpenAI structured output
+│   ├── transform.ts       # Content transformation (OpenAI ↔ DS ↔ Storyblok)
+│   └── pipeline.ts        # High-level orchestrator
+└── test/
+    ├── storyblok.test.ts  # 15 tests
+    └── openai.test.ts     # 6 tests
 ```
 
 ## Build
@@ -83,10 +177,12 @@ npm test             # Run 21 unit tests
 
 ## Dependencies
 
-| Package               | Version   | Purpose                         |
-| --------------------- | --------- | ------------------------------- |
-| `openai`              | `^6.18.0` | OpenAI API client               |
-| `storyblok-js-client` | `^7.2.3`  | Storyblok Management API client |
+| Package                | Version   | Purpose                                               |
+| ---------------------- | --------- | ----------------------------------------------------- |
+| `openai`               | `^6.18.0` | OpenAI API client                                     |
+| `storyblok-js-client`  | `^7.2.3`  | Storyblok Management API client                       |
+| `json-schema-traverse` | `^1.0.0`  | Traverses JSON Schema trees for transformation passes |
+| `object-traversal`     | `^1.0.1`  | Deep object traversal for content post-processing     |
 
 ## Cross-Module Type Note
 

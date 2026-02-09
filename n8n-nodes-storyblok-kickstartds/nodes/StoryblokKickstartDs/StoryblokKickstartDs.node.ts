@@ -14,12 +14,25 @@ import {
   getStoryblokManagementClient,
   getOpenAiClient,
   generateStructuredContent,
+  generateAndPrepareContent,
+  processForStoryblok,
   importContentIntoStory,
   insertContentAtPosition,
   PRESET_SCHEMAS,
   StoryblokCredentials,
   OpenAiCredentials,
 } from "./GenericFunctions";
+
+import * as path from "path";
+import * as fs from "fs";
+
+// Load the dereferenced page schema once
+const PAGE_SCHEMA: Record<string, any> = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, "schemas", "page.schema.dereffed.json"),
+    "utf-8"
+  )
+);
 
 export class StoryblokKickstartDs implements INodeType {
   description: INodeTypeDescription = {
@@ -165,7 +178,55 @@ async function executeGenerate(
   const schemaMode = this.getNodeParameter("schemaMode", itemIndex) as string;
   const model = this.getNodeParameter("model", itemIndex) as string;
 
-  // 3. Resolve schema
+  // 3. Auto mode — uses shared library's full pipeline
+  if (schemaMode === "auto") {
+    const componentType = this.getNodeParameter(
+      "autoComponentType",
+      itemIndex,
+      ""
+    ) as string;
+    const sectionCount = this.getNodeParameter(
+      "autoSectionCount",
+      itemIndex,
+      1
+    ) as number;
+
+    try {
+      const result = await generateAndPrepareContent(client, {
+        system,
+        prompt,
+        pageSchema: PAGE_SCHEMA,
+        schemaOptions: {
+          ...(componentType
+            ? { allowedComponents: [componentType, "section"] }
+            : {}),
+          ...(sectionCount ? { sections: sectionCount } : {}),
+        },
+        model,
+      });
+
+      return {
+        generatedContent: result.storyblokContent,
+        designSystemProps: result.designSystemProps,
+        rawResponse: result.rawResponse,
+        _meta: {
+          model,
+          schemaMode: "auto",
+          componentType: componentType || "full-page",
+          sectionCount,
+          timestamp: new Date().toISOString(),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new NodeApiError(this.getNode(), { message } as any, {
+        message: `Auto schema generation failed: ${message}`,
+        itemIndex,
+      });
+    }
+  }
+
+  // 4. Resolve schema (preset or custom mode)
   let schema: {
     name: string;
     strict?: boolean;
@@ -215,7 +276,7 @@ async function executeGenerate(
     schema = { name: customSchemaName, strict: true, schema: parsedSchema };
   }
 
-  // 4. Call OpenAI
+  // 5. Call OpenAI
   try {
     const result = await generateStructuredContent(client, {
       system,
@@ -303,6 +364,18 @@ async function executeImport(
       "Page content has no sections to import. Provide at least one section object.",
       { itemIndex }
     );
+  }
+
+  // 3b. Auto-flatten for Storyblok unless content was generated in auto mode
+  const skipTransform = this.getNodeParameter(
+    "skipTransform",
+    itemIndex,
+    false
+  ) as boolean;
+
+  if (!skipTransform) {
+    const flattened = processForStoryblok(page);
+    page = flattened as typeof page;
   }
 
   // 4. Import into Storyblok

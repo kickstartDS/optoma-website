@@ -34,3 +34,37 @@ export {
 
 // ─── OpenAI services ─────────────────────────────────────────────────
 export { createOpenAiClient, generateStructuredContent } from "./openai.js";
+
+// ─── Schema preparation ──────────────────────────────────────────────
+export {
+  prepareSchemaForOpenAi,
+  getComponentPresetSchema,
+  listAvailableComponents,
+  getSchemaName,
+  UNSUPPORTED_KEYWORDS,
+  DEFAULT_PROPERTIES_TO_DROP,
+  SUPPORTED_COMPONENTS,
+  SUB_COMPONENT_MAP,
+} from "./schema.js";
+export type {
+  PrepareSchemaOptions,
+  OpenAiSchemaEnvelope,
+  SchemaValidation,
+  PreparedSchema,
+} from "./schema.js";
+
+// ─── Content transformation ──────────────────────────────────────────
+export {
+  processOpenAiResponse,
+  processForStoryblok,
+  flattenNestedObjects,
+  unflattenNestedObjects,
+} from "./transform.js";
+export type { TransformedContent } from "./transform.js";
+
+// ─── Pipeline (high-level orchestrator) ──────────────────────────────
+export { generateAndPrepareContent } from "./pipeline.js";
+export type {
+  GenerateAndPrepareOptions,
+  GenerateAndPrepareResult,
+} from "./pipeline.js";
