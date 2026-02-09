@@ -31,7 +31,7 @@ builder:
   arch: amd64
   # Build context is the repo root so the shared/ dependency is available
   context: ../
-  dockerfile: mcp-server/Dockerfile
+  dockerfile: Dockerfile
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
