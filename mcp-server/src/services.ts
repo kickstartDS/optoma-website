@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import StoryblokClient from "storyblok-js-client";
 import { OpenAI } from "openai";
 import { StoryblokConfig } from "./config.js";
@@ -305,6 +306,53 @@ export class StoryblokService {
       total: response.total,
     };
   }
+
+  /**
+   * Create a new page pre-populated with section content.
+   *
+   * This is a convenience method that:
+   * 1. Auto-generates `_uid` fields for every nested component that lacks one
+   * 2. Wraps the sections in a standard `page` component envelope
+   * 3. Creates the story in Storyblok
+   * 4. Optionally publishes it
+   */
+  async createPageWithContent(options: {
+    name: string;
+    slug: string;
+    parentId?: number;
+    sections: Record<string, unknown>[];
+    publish?: boolean;
+  }): Promise<unknown> {
+    // Recursively inject _uid where missing
+    const sections = options.sections.map((s) => ensureUids(s)) as Record<
+      string,
+      unknown
+    >[];
+
+    const content: Record<string, unknown> = {
+      component: "page",
+      _uid: randomUUID(),
+      section: sections,
+    };
+
+    // Create the story
+    const story = await this.createStory({
+      name: options.name,
+      slug: options.slug,
+      parentId: options.parentId,
+      content,
+    });
+
+    // Optionally publish
+    if (options.publish) {
+      const storyId = (story as Record<string, any>).id;
+      if (storyId) {
+        return this.updateStory(storyId, {}, true);
+      }
+    }
+
+    return story;
+  }
 }
 
 /**
@@ -348,4 +396,35 @@ export class ContentGenerationService {
 
     return generateStructuredContent(this.client as any, options);
   }
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Recursively walk a Storyblok component tree and add a `_uid` (UUID v4)
+ * to every object that has a `component` key but is missing `_uid`.
+ * Arrays are traversed element-by-element.
+ */
+function ensureUids<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((item) => ensureUids(item)) as unknown as T;
+  }
+
+  if (value !== null && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+
+    // If it looks like a component block, ensure _uid
+    if (obj.component && !obj._uid) {
+      obj._uid = randomUUID();
+    }
+
+    // Recurse into all values
+    for (const key of Object.keys(obj)) {
+      obj[key] = ensureUids(obj[key]);
+    }
+
+    return obj as T;
+  }
+
+  return value;
 }

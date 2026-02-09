@@ -154,6 +154,87 @@ The tool:
       },
     },
     {
+      name: "import_content_at_position",
+      description: `Import content into an existing Storyblok story at a specific position.
+
+Inserts section content at a given index in the story's section array without
+removing any existing content. This is useful for adding new sections to an
+existing page without replacing anything.
+
+Position semantics:
+- 0 = insert at the beginning
+- -1 = append at the end
+- Any other number = insert at that index (clamped to bounds)`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          storyUid: {
+            type: "string",
+            description: "The UID (or numeric ID) of the story to update",
+          },
+          position: {
+            type: "number",
+            description:
+              "Zero-based insertion index. 0 = beginning, -1 = end, any other value is clamped to bounds",
+          },
+          sections: {
+            type: "array",
+            items: { type: "object" },
+            description:
+              "Array of section objects to insert at the given position",
+          },
+          publish: {
+            type: "boolean",
+            description:
+              "Publish the story immediately after importing (default: false)",
+          },
+        },
+        required: ["storyUid", "position", "sections"],
+      },
+    },
+    {
+      name: "create_page_with_content",
+      description: `Create a new page in Storyblok pre-populated with section content.
+
+This is the recommended way to create a brand new page with AI-generated or
+pre-built content. It handles all the boilerplate:
+1. Auto-generates _uid fields for every nested component that is missing one
+2. Wraps sections in a standard "page" component envelope
+3. Creates the story in Storyblok
+4. Optionally publishes it
+
+Use this instead of create_story when you have section content ready to go.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            description: "Display name for the page",
+          },
+          slug: {
+            type: "string",
+            description: "URL slug for the page",
+          },
+          parentId: {
+            type: "number",
+            description: "Parent folder ID (for nested content)",
+          },
+          sections: {
+            type: "array",
+            items: { type: "object" },
+            description:
+              "Array of section objects to populate the page with. Missing _uid fields will be auto-generated.",
+          },
+          publish: {
+            type: "boolean",
+            description:
+              "Publish the page immediately after creation (default: false)",
+          },
+        },
+        required: ["name", "slug", "sections"],
+      },
+    },
+    {
       name: "get_ideas",
       description: `Fetch ideas from the Storyblok space.
 
@@ -449,6 +530,57 @@ Useful for finding specific text, topics, or references.`,
                   {
                     success: true,
                     message: "Content imported successfully",
+                    story: result,
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "import_content_at_position": {
+          const validated = schemas.importContentAtPosition.parse(args);
+          const result = await storyblokService.importContentAtPosition({
+            storyUid: validated.storyUid,
+            position: validated.position,
+            page: { content: { section: validated.sections } },
+            publish: validated.publish,
+          });
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    message: `Content imported at position ${validated.position}`,
+                    story: result,
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "create_page_with_content": {
+          const validated = schemas.createPageWithContent.parse(args);
+          const result = await storyblokService.createPageWithContent(
+            validated
+          );
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    message: validated.publish
+                      ? "Page created and published"
+                      : "Page created (draft)",
                     story: result,
                   },
                   null,

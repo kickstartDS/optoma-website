@@ -79,6 +79,46 @@ export const schemas = {
       .describe("Page content with sections to import"),
   }),
 
+  importContentAtPosition: z.object({
+    storyUid: z
+      .string()
+      .describe("The UID (or numeric ID) of the story to update"),
+    position: z
+      .number()
+      .describe(
+        "Zero-based insertion index. 0 = beginning, -1 = end, any other value is clamped to bounds"
+      ),
+    sections: z
+      .array(z.record(z.unknown()))
+      .describe("Array of section objects to insert at the given position"),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Publish the story immediately after importing (default: false)"
+      ),
+  }),
+
+  createPageWithContent: z.object({
+    name: z.string().describe("Display name for the page"),
+    slug: z.string().describe("URL slug for the page"),
+    parentId: z
+      .number()
+      .optional()
+      .describe("Parent folder ID (for nested content)"),
+    sections: z
+      .array(z.record(z.unknown()))
+      .describe(
+        "Array of section objects to populate the page with. Missing _uid fields will be auto-generated."
+      ),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Publish the page immediately after creation (default: false)"),
+  }),
+
   listStories: z.object({
     startsWith: z.string().optional().describe("Filter stories by slug prefix"),
     contentType: z
@@ -160,6 +200,12 @@ export const schemas = {
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
 export type ImportContentInput = z.infer<typeof schemas.importContent>;
+export type ImportContentAtPositionInput = z.infer<
+  typeof schemas.importContentAtPosition
+>;
+export type CreatePageWithContentInput = z.infer<
+  typeof schemas.createPageWithContent
+>;
 export type ListStoriesInput = z.infer<typeof schemas.listStories>;
 export type GetStoryInput = z.infer<typeof schemas.getStory>;
 export type CreateStoryInput = z.infer<typeof schemas.createStory>;
