@@ -2,7 +2,7 @@ const cspHeader = `
     default-src 'self';
     connect-src 'self' https://api.storyblok.com https://*.${process.env.NEXT_PUBLIC_PRIMARY_PUBLIC_SITE_DOMAIN};
     script-src 'self' 'unsafe-eval' 'unsafe-inline' https://app.storyblok.com https://*.${process.env.NEXT_PUBLIC_PRIMARY_PUBLIC_SITE_DOMAIN} https://journeyengine.production.wlp.cloud;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://journeyengine.production.wlp.cloud;
     frame-src 'self' https://youtube.com https://www.youtube.com https://player.vimeo.com *.google.com;
     img-src 'self' blob: data: https://a.storyblok.com https://placehold.co;
     media-src 'self' blob: data: https://a.storyblok.com;
