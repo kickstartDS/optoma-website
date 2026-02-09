@@ -1,5 +1,5 @@
 # Name of your application. Used to uniquely configure containers.
-service: mcp-server
+service: ruhmesmeile-storyblok-mcp
 
 # Name of the container image.
 image: <%= ENV["DOCKER_MCP_IMAGE_NAME"] %>
