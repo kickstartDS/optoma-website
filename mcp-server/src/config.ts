@@ -223,6 +223,16 @@ export const schemas = {
     query: z.string().describe("Search query"),
     contentType: z.string().optional().describe("Filter by content type"),
   }),
+
+  scrapeUrl: z.object({
+    url: z.string().url().describe("The URL to fetch and convert to Markdown"),
+    selector: z
+      .string()
+      .optional()
+      .describe(
+        "Optional CSS selector to extract a specific part of the page (e.g. 'main', 'article', '.content'). Defaults to 'main' if present, otherwise full body."
+      ),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -242,3 +252,4 @@ export type ListComponentsInput = z.infer<typeof schemas.listComponents>;
 export type GetComponentInput = z.infer<typeof schemas.getComponent>;
 export type ListAssetsInput = z.infer<typeof schemas.listAssets>;
 export type SearchContentInput = z.infer<typeof schemas.searchContent>;
+export type ScrapeUrlInput = z.infer<typeof schemas.scrapeUrl>;

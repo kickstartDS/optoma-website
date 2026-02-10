@@ -23,6 +23,12 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 | `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform |
 | `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform                    |
 
+### Web Scraping
+
+| Tool         | Description                                                                        |
+| ------------ | ---------------------------------------------------------------------------------- |
+| `scrape_url` | Fetch a web page and convert it to clean Markdown, preserving images with alt text |
+
 ### Component & Asset Management
 
 | Tool              | Description                                  |
@@ -295,6 +301,41 @@ You can still provide a manual JSON Schema for full control:
 }
 ```
 
+### Scrape a web page to Markdown
+
+Fetch any public URL and get clean Markdown output — useful as a preparation step before generating new Storyblok content from existing web pages:
+
+```json
+{
+  "tool": "scrape_url",
+  "arguments": {
+    "url": "https://example.com/blog/interesting-article"
+  }
+}
+```
+
+The response includes the page title, source URL, and Markdown with images preserved:
+
+```json
+{
+  "url": "https://example.com/blog/interesting-article",
+  "title": "An Interesting Article",
+  "markdown": "# An Interesting Article\n\n![Hero image](https://example.com/images/hero.jpg)\n\nLorem ipsum..."
+}
+```
+
+You can also target a specific part of the page using a CSS selector:
+
+```json
+{
+  "tool": "scrape_url",
+  "arguments": {
+    "url": "https://example.com/blog/interesting-article",
+    "selector": "article"
+  }
+}
+```
+
 ## Resources
 
 The server also exposes MCP resources:
@@ -329,12 +370,13 @@ Core Storyblok and OpenAI logic — including schema preparation for OpenAI, con
 
 ### Key Dependencies
 
-| Package                           | Version   | Purpose                                     |
-| --------------------------------- | --------- | ------------------------------------------- |
-| `@modelcontextprotocol/sdk`       | `^1.0.0`  | MCP protocol implementation                 |
-| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI service functions |
-| `openai`                          | `^6.18.0` | OpenAI API client                           |
-| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management API client             |
+| Package                           | Version   | Purpose                                      |
+| --------------------------------- | --------- | -------------------------------------------- |
+| `@modelcontextprotocol/sdk`       | `^1.0.0`  | MCP protocol implementation                  |
+| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI service functions  |
+| `openai`                          | `^6.18.0` | OpenAI API client                            |
+| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management API client              |
+| `turndown`                        | `^7.2.0`  | HTML-to-Markdown conversion for web scraping |
 
 ### Building
 
@@ -478,7 +520,7 @@ curl -s -X POST https://YOUR_DOMAIN/mcp \
   }'
 ```
 
-You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `list_components`, `get_component`, `generate_content`, etc.
+You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, etc.
 
 ### 4. Call a tool
 

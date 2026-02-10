@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import TurndownService from "turndown";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -476,6 +477,138 @@ export class ContentGenerationService {
       storyblokContent: result.storyblokContent,
       rawResponse: result.rawResponse,
     };
+  }
+}
+
+// ─── Scraping ─────────────────────────────────────────────────────────
+
+/**
+ * Fetch a URL and convert its HTML content to Markdown using Turndown.
+ *
+ * The function:
+ * 1. Fetches the page with a browser-like User-Agent
+ * 2. Extracts content from the given CSS selector (default: <main>, falling back to <body>)
+ * 3. Converts the HTML to clean Markdown, preserving images
+ * 4. Strips scripts, styles, nav, header, footer, and SVG elements
+ */
+export async function scrapeUrl(options: {
+  url: string;
+  selector?: string;
+}): Promise<{ url: string; markdown: string; title: string }> {
+  const turndown = new TurndownService({
+    headingStyle: "atx",
+    codeBlockStyle: "fenced",
+    bulletListMarker: "-",
+  });
+
+  // Remove noisy elements
+  turndown.remove(["script", "style", "nav"] as any);
+
+  // Remove SVG elements
+  turndown.addRule("removeSvg", {
+    filter: (node) => node.tagName?.toLowerCase() === "svg",
+    replacement: () => "",
+  });
+
+  // Remove header and footer for cleaner content
+  turndown.addRule("removeHeaderFooter", {
+    filter: (node) => {
+      const tagName = node.tagName?.toLowerCase();
+      return tagName === "header" || tagName === "footer";
+    },
+    replacement: () => "",
+  });
+
+  // Better image handling — preserve alt text and resolve relative URLs
+  turndown.addRule("images", {
+    filter: "img",
+    replacement: (_content, node) => {
+      const el = node as HTMLElement;
+      const alt = el.getAttribute("alt") || "";
+      const src = el.getAttribute("src") || el.getAttribute("data-src") || "";
+      if (!src) return "";
+
+      // Resolve relative URLs to absolute
+      let absoluteSrc = src;
+      try {
+        absoluteSrc = new URL(src, options.url).href;
+      } catch {
+        // keep original src if URL parsing fails
+      }
+
+      return `![${alt}](${absoluteSrc})`;
+    },
+  });
+
+  // Fetch the page
+  const response = await fetch(options.url, {
+    headers: {
+      Accept: "text/html",
+      "User-Agent":
+        "Mozilla/5.0 (compatible; kickstartDS-MCP/1.0; +https://www.kickstartds.com)",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch URL: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const html = await response.text();
+
+  // Extract title
+  const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+  const title = titleMatch ? titleMatch[1].trim() : "";
+
+  // Extract content using the specified selector, or fall back to <main> then <body>
+  let contentHtml: string;
+  if (options.selector) {
+    // For custom selectors, use a simple tag/class/id match
+    const selectorRegex = buildSelectorRegex(options.selector);
+    const match = html.match(selectorRegex);
+    contentHtml = match ? match[1] : html;
+  } else {
+    // Default: try <main>, then fall back to full HTML
+    const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+    contentHtml = mainMatch ? mainMatch[1] : html;
+  }
+
+  const markdown = turndown.turndown(contentHtml);
+
+  // Clean up excessive blank lines
+  const cleaned = markdown.replace(/\n{3,}/g, "\n\n").trim();
+
+  return {
+    url: options.url,
+    title,
+    markdown: cleaned,
+  };
+}
+
+/**
+ * Build a simple regex to match common CSS selectors (tag, #id, .class).
+ * This avoids pulling in a full DOM parser for the selector extraction step.
+ */
+function buildSelectorRegex(selector: string): RegExp {
+  const trimmed = selector.trim();
+  if (trimmed.startsWith("#")) {
+    // ID selector
+    const id = trimmed.slice(1);
+    return new RegExp(
+      `<[a-z][a-z0-9]*[^>]*\\bid=["']${id}["'][^>]*>([\\s\\S]*?)<\\/[a-z][a-z0-9]*>`,
+      "i"
+    );
+  } else if (trimmed.startsWith(".")) {
+    // Class selector
+    const cls = trimmed.slice(1);
+    return new RegExp(
+      `<[a-z][a-z0-9]*[^>]*\\bclass=["'][^"']*\\b${cls}\\b[^"']*["'][^>]*>([\\s\\S]*?)<\\/[a-z][a-z0-9]*>`,
+      "i"
+    );
+  } else {
+    // Tag selector
+    return new RegExp(`<${trimmed}[^>]*>([\\s\\S]*?)<\\/${trimmed}>`, "i");
   }
 }
 

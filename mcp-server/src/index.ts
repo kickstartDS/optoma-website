@@ -12,7 +12,11 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 
 import { loadConfig, schemas } from "./config.js";
-import { StoryblokService, ContentGenerationService } from "./services.js";
+import {
+  StoryblokService,
+  ContentGenerationService,
+  scrapeUrl,
+} from "./services.js";
 import {
   formatErrorResponse,
   ValidationError,
@@ -516,6 +520,39 @@ Useful for finding specific text, topics, or references.`,
         required: ["query"],
       },
     },
+    {
+      name: "scrape_url",
+      description: `Fetch a web page and convert it to Markdown.
+
+Use this tool to scrape content from any public URL and get clean Markdown output.
+This is useful as a preparation step before creating new content in Storyblok —
+the extracted Markdown (including images) can be used as input for content generation.
+
+The tool:
+1. Fetches the page HTML with a browser-like User-Agent
+2. Extracts the main content area (strips nav, header, footer, scripts, styles)
+3. Converts HTML to clean Markdown using Turndown
+4. Preserves images with their alt text and absolute URLs
+5. Extracts the page title
+
+Returns the page title, source URL, and the Markdown content.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          url: {
+            type: "string",
+            description:
+              "The URL of the web page to fetch and convert to Markdown",
+          },
+          selector: {
+            type: "string",
+            description:
+              "Optional CSS selector to extract a specific part of the page (e.g. 'main', 'article', '.content'). Defaults to 'main' if present, otherwise the full page body.",
+          },
+        },
+        required: ["url"],
+      },
+    },
   ];
 
   /**
@@ -816,6 +853,19 @@ Useful for finding specific text, topics, or references.`,
             validated.query,
             validated.contentType
           );
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case "scrape_url": {
+          const validated = schemas.scrapeUrl.parse(args);
+          const result = await scrapeUrl(validated);
           return {
             content: [
               {
