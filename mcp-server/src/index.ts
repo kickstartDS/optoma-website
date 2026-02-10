@@ -43,7 +43,10 @@ let contentService: ContentGenerationService;
 try {
   const config = loadConfig();
   storyblokService = new StoryblokService(config);
-  contentService = new ContentGenerationService(config.openAiApiKey);
+  contentService = new ContentGenerationService(config.openAiApiKey, {
+    oauthToken: config.oauthToken,
+    spaceId: config.spaceId,
+  });
 } catch (error) {
   console.error("Failed to initialize services:", error);
   process.exit(1);
@@ -129,6 +132,16 @@ Example use cases:
             type: "number",
             description:
               "Number of sections to generate (for full-page generation). Defaults to 1 when componentType is used.",
+          },
+          uploadAssets: {
+            type: "boolean",
+            description:
+              "When true, images in the generated content are downloaded from their source URLs and uploaded to Storyblok as native assets. The original URLs are replaced with Storyblok CDN URLs. Default: false.",
+          },
+          assetFolderName: {
+            type: "string",
+            description:
+              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
           },
         },
         required: ["system", "prompt"],
@@ -585,6 +598,8 @@ Returns the page title, source URL, and the Markdown content.`,
               prompt: validated.prompt,
               componentType: validated.componentType,
               sectionCount: validated.sectionCount,
+              uploadAssets: validated.uploadAssets,
+              assetFolderName: validated.assetFolderName,
             });
             return {
               content: [

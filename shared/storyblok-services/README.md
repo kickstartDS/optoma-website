@@ -94,6 +94,34 @@ import {
 | `flattenNestedObjects(obj)`                                      | Utility: flattens one level of nested objects using `_` separator                                                   |
 | `unflattenNestedObjects(obj)`                                    | Reverse utility: `key_subKey` → `{ key: { subKey } }`                                                               |
 
+### Asset Management
+
+Handles downloading external images (e.g. AI-generated URLs from DALL·E), uploading them to Storyblok as native assets via the signed upload flow, and rewriting URLs in content trees.
+
+```typescript
+import {
+  uploadAndReplaceAssets,
+  findImageUrls,
+  defaultIsImageUrl,
+} from "@kickstartds/storyblok-services";
+```
+
+| Function                                           | Description                                                                                                                                       |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `uploadAndReplaceAssets(client, content, options)` | Find image URLs in a content tree, download them, upload to Storyblok, and rewrite URLs in place. Deduplicates and rate-limits automatically      |
+| `findImageUrls(content, predicate?)`               | Traverse a JSON structure and collect all string values matching image URLs                                                                       |
+| `defaultIsImageUrl(value)`                         | Default heuristic: matches `http(s)://` URLs with common image extensions (`.jpg`, `.png`, `.webp`, etc.) plus known AI image hosts (e.g. DALL·E) |
+
+**`UploadAssetsOptions`:**
+
+| Option              | Type                         | Default             | Description                                                   |
+| ------------------- | ---------------------------- | ------------------- | ------------------------------------------------------------- |
+| `spaceId`           | `string`                     | —                   | Storyblok space ID (required)                                 |
+| `assetFolderId`     | `number`                     | —                   | Upload into a specific asset folder                           |
+| `assetFolderName`   | `string`                     | —                   | Create or reuse a folder by name (ignored if `assetFolderId`) |
+| `requestsPerSecond` | `number`                     | `2`                 | Rate limit for Storyblok API requests                         |
+| `isImageUrl`        | `(value: string) => boolean` | `defaultIsImageUrl` | Custom predicate for detecting image URLs                     |
+
 ### Pipeline (High-Level Orchestrator)
 
 End-to-end content generation pipeline for consumers who don't need fine-grained control:
@@ -102,9 +130,29 @@ End-to-end content generation pipeline for consumers who don't need fine-grained
 import { generateAndPrepareContent } from "@kickstartds/storyblok-services";
 ```
 
-| Function                                     | Description                                                                                                                                                                            |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema }` |
+| Function                                     | Description                                                                                                                                                                                                                      |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening → (optional) asset upload. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema, assetsSummary? }` |
+
+The `options.uploadAssets` parameter enables automatic asset management during content generation:
+
+```typescript
+const result = await generateAndPrepareContent(openaiClient, {
+  system: "You are a content writer.",
+  prompt: "Create a hero section with a background image",
+  pageSchema: dereferencedPageSchema,
+  schemaOptions: { allowedComponents: ["hero", "section"] },
+  uploadAssets: {
+    storyblokClient, // Storyblok Management API client
+    spaceId: "123456",
+    assetFolderName: "AI Generated", // Created if it doesn't exist
+  },
+});
+
+// result.assetsSummary?.uploaded  — number of unique images uploaded
+// result.assetsSummary?.rewritten — number of URL references replaced
+// result.assetsSummary?.assets    — details of each uploaded asset
+```
 
 ### Error Classes
 
@@ -137,6 +185,10 @@ import type {
   // Pipeline types
   GenerateAndPrepareOptions,
   GenerateAndPrepareResult,
+  // Asset types
+  UploadAssetsOptions,
+  UploadAssetsSummary,
+  UploadedAsset,
 } from "@kickstartds/storyblok-services";
 ```
 
@@ -157,7 +209,8 @@ shared/storyblok-services/
 │   ├── openai.ts          # OpenAI API functions
 │   ├── schema.ts          # Schema preparation for OpenAI structured output
 │   ├── transform.ts       # Content transformation (OpenAI ↔ DS ↔ Storyblok)
-│   └── pipeline.ts        # High-level orchestrator
+│   ├── assets.ts          # Asset download, upload to Storyblok, URL rewriting
+│   └── pipeline.ts        # High-level orchestrator (incl. optional asset upload)
 └── test/
     ├── storyblok.test.ts  # 15 tests
     └── openai.test.ts     # 6 tests

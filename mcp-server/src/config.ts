@@ -76,6 +76,19 @@ export const schemas = {
       .number()
       .optional()
       .describe("Number of sections to generate for full-page generation."),
+    uploadAssets: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "When true, images in the generated content are downloaded from their source URLs and uploaded to Storyblok as native assets. The original URLs are replaced with Storyblok CDN URLs."
+      ),
+    assetFolderName: z
+      .string()
+      .optional()
+      .describe(
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+      ),
   }),
 
   importContent: z.object({

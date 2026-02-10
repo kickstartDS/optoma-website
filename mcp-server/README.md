@@ -17,11 +17,11 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### AI Content Generation
 
-| Tool                         | Description                                                                                                        |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation from the Design System       |
-| `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform |
-| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform                    |
+| Tool                         | Description                                                                                                                   |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation and automatic asset upload to Storyblok |
+| `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform            |
+| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform                               |
 
 ### Web Scraping
 
@@ -253,6 +253,50 @@ The response includes both Design System–shaped props and Storyblok-ready cont
   }
 }
 ```
+
+### Generate content with automatic asset upload
+
+When `uploadAssets` is `true`, any image URLs in the AI-generated content (e.g. DALL·E URLs) are automatically downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs:
+
+```json
+{
+  "tool": "generate_content",
+  "arguments": {
+    "system": "You are a content writer. Include relevant images.",
+    "prompt": "Create a hero section about cloud computing with a background image",
+    "componentType": "hero",
+    "uploadAssets": true,
+    "assetFolderName": "Cloud Campaign"
+  }
+}
+```
+
+The response includes an `assetsSummary` with details of each uploaded asset:
+
+```json
+{
+  "designSystemProps": { "..." },
+  "storyblokContent": { "..." },
+  "rawResponse": { "..." },
+  "assetsSummary": {
+    "uploaded": 2,
+    "rewritten": 3,
+    "assets": [
+      {
+        "id": 12345,
+        "url": "https://a.storyblok.com/f/.../image.jpg",
+        "originalUrl": "https://oaidalleapiprodscus.blob.core.windows.net/..."
+      }
+    ],
+    "assetFolderId": 67890
+  }
+}
+```
+
+| Parameter         | Type    | Default          | Description                                               |
+| ----------------- | ------- | ---------------- | --------------------------------------------------------- |
+| `uploadAssets`    | boolean | `false`          | Enable automatic asset download + upload to Storyblok     |
+| `assetFolderName` | string  | `"AI Generated"` | Storyblok asset folder name (created if it doesn't exist) |
 
 ### Generate with a custom schema
 

@@ -62,6 +62,18 @@ export {
 } from "./transform.js";
 export type { TransformedContent } from "./transform.js";
 
+// ─── Asset management ────────────────────────────────────────────────
+export {
+  uploadAndReplaceAssets,
+  findImageUrls,
+  defaultIsImageUrl,
+} from "./assets.js";
+export type {
+  UploadAssetsOptions,
+  UploadAssetsSummary,
+  UploadedAsset,
+} from "./assets.js";
+
 // ─── Pipeline (high-level orchestrator) ──────────────────────────────
 export { generateAndPrepareContent } from "./pipeline.js";
 export type {

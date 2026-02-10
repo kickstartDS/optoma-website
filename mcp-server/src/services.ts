@@ -20,6 +20,7 @@ import {
   processForStoryblok,
   generateAndPrepareContent,
   type PrepareSchemaOptions,
+  type UploadAssetsSummary,
 } from "@kickstartds/storyblok-services";
 
 // Load the dereferenced page schema once at module load
@@ -395,11 +396,16 @@ export class StoryblokService {
  */
 export class ContentGenerationService {
   private client: OpenAI | null = null;
+  private storyblokConfig?: { oauthToken: string; spaceId: string };
 
-  constructor(apiKey?: string) {
+  constructor(
+    apiKey?: string,
+    storyblokConfig?: { oauthToken: string; spaceId: string }
+  ) {
     if (apiKey) {
       this.client = new OpenAI({ apiKey });
     }
+    this.storyblokConfig = storyblokConfig;
   }
 
   /**
@@ -446,10 +452,13 @@ export class ContentGenerationService {
     prompt: string;
     componentType?: string;
     sectionCount?: number;
+    uploadAssets?: boolean;
+    assetFolderName?: string;
   }): Promise<{
     designSystemProps: Record<string, any>;
     storyblokContent: Record<string, any>;
     rawResponse: Record<string, any>;
+    assetsSummary?: UploadAssetsSummary;
   }> {
     if (!this.client) {
       throw new Error(
@@ -465,17 +474,42 @@ export class ContentGenerationService {
       schemaOptions.allowedComponents = [options.componentType, "section"];
     }
 
-    const result = await generateAndPrepareContent(this.client as any, {
+    // Build the pipeline options
+    const pipelineOptions: Parameters<typeof generateAndPrepareContent>[1] = {
       system: options.system,
       prompt: options.prompt,
       pageSchema: PAGE_SCHEMA,
       schemaOptions,
-    });
+    };
+
+    // Attach asset upload config when requested
+    if (options.uploadAssets && this.storyblokConfig) {
+      const storyblokClient = createStoryblokClient({
+        spaceId: this.storyblokConfig.spaceId,
+        oauthToken: this.storyblokConfig.oauthToken,
+      });
+      pipelineOptions.uploadAssets = {
+        storyblokClient,
+        spaceId: this.storyblokConfig.spaceId,
+        assetFolderName: options.assetFolderName || "AI Generated",
+      };
+    } else if (options.uploadAssets && !this.storyblokConfig) {
+      throw new Error(
+        "Asset upload requires Storyblok credentials. " +
+          "Ensure STORYBLOK_OAUTH_TOKEN and STORYBLOK_SPACE_ID are configured."
+      );
+    }
+
+    const result = await generateAndPrepareContent(
+      this.client as any,
+      pipelineOptions
+    );
 
     return {
       designSystemProps: result.designSystemProps,
       storyblokContent: result.storyblokContent,
       rawResponse: result.rawResponse,
+      assetsSummary: result.assetsSummary,
     };
   }
 }
