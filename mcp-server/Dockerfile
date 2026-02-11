@@ -38,6 +38,9 @@ RUN npm install --omit=dev
 # Copy built files
 COPY --from=builder /app/mcp-server/dist ./dist
 
+# Copy schemas (runtime dependency for auto-schema derivation)
+COPY mcp-server/schemas/ ./schemas/
+
 # Set environment variables (these should be overridden at runtime)
 ENV NODE_ENV=production
 ENV MCP_TRANSPORT=http
