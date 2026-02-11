@@ -43,10 +43,7 @@ let contentService: ContentGenerationService;
 try {
   const config = loadConfig();
   storyblokService = new StoryblokService(config);
-  contentService = new ContentGenerationService(config.openAiApiKey, {
-    oauthToken: config.oauthToken,
-    spaceId: config.spaceId,
-  });
+  contentService = new ContentGenerationService(config.openAiApiKey);
 } catch (error) {
   console.error("Failed to initialize services:", error);
   process.exit(1);
@@ -133,16 +130,6 @@ Example use cases:
             description:
               "Number of sections to generate (for full-page generation). Defaults to 1 when componentType is used.",
           },
-          uploadAssets: {
-            type: "boolean",
-            description:
-              "When true, images in the generated content are downloaded from their source URLs and uploaded to Storyblok as native assets. The original URLs are replaced with Storyblok CDN URLs. Default: false.",
-          },
-          assetFolderName: {
-            type: "string",
-            description:
-              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
-          },
         },
         required: ["system", "prompt"],
       },
@@ -193,6 +180,16 @@ The tool:
             description:
               "Skip automatic content flattening for Storyblok. Set to true if content is already in Storyblok format (default: false).",
           },
+          uploadAssets: {
+            type: "boolean",
+            description:
+              "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. Default: false.",
+          },
+          assetFolderName: {
+            type: "string",
+            description:
+              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
+          },
         },
         required: ["storyUid", "prompterUid", "page"],
       },
@@ -236,6 +233,16 @@ Position semantics:
             type: "boolean",
             description:
               "Skip automatic content flattening for Storyblok. Set to true if content is already in Storyblok format (default: false).",
+          },
+          uploadAssets: {
+            type: "boolean",
+            description:
+              "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. Default: false.",
+          },
+          assetFolderName: {
+            type: "string",
+            description:
+              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
           },
         },
         required: ["storyUid", "position", "sections"],
@@ -598,8 +605,6 @@ Returns the page title, source URL, and the Markdown content.`,
               prompt: validated.prompt,
               componentType: validated.componentType,
               sectionCount: validated.sectionCount,
-              uploadAssets: validated.uploadAssets,
-              assetFolderName: validated.assetFolderName,
             });
             return {
               content: [
@@ -637,6 +642,8 @@ Returns the page title, source URL, and the Markdown content.`,
           const result = await storyblokService.importContent({
             ...validated,
             skipTransform: validated.skipTransform,
+            uploadAssets: validated.uploadAssets,
+            assetFolderName: validated.assetFolderName,
           });
           return {
             content: [
@@ -664,6 +671,8 @@ Returns the page title, source URL, and the Markdown content.`,
             page: { content: { section: validated.sections } },
             publish: validated.publish,
             skipTransform: validated.skipTransform,
+            uploadAssets: validated.uploadAssets,
+            assetFolderName: validated.assetFolderName,
           });
           return {
             content: [

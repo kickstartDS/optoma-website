@@ -11,6 +11,7 @@ import type {
   ImportAtPositionOptions,
 } from "./types.js";
 import { StoryblokApiError, PrompterNotFoundError } from "./types.js";
+import { uploadAndReplaceAssets } from "./assets.js";
 
 // ─── Client factory ───────────────────────────────────────────────────
 
@@ -81,7 +82,14 @@ export async function importByPrompterReplacement(
   spaceId: string,
   options: ImportByPrompterOptions
 ): Promise<Record<string, any>> {
-  const { storyUid, prompterUid, sections, publish = false } = options;
+  const {
+    storyUid,
+    prompterUid,
+    sections,
+    publish = false,
+    uploadAssets = false,
+    assetFolderName,
+  } = options;
 
   // 1. Fetch the current story
   const story = await getStoryManagement(client, spaceId, storyUid);
@@ -105,11 +113,23 @@ export async function importByPrompterReplacement(
     throw new PrompterNotFoundError(prompterUid, availableUids);
   }
 
-  // 3. Replace the prompter with the new sections
+  // 3. Upload external images to Storyblok (if requested)
+  let assetsSummary;
+  if (uploadAssets) {
+    const wrapper = { section: sections } as Record<string, any>;
+    assetsSummary = await uploadAndReplaceAssets(client, wrapper, {
+      spaceId,
+      assetFolderName: assetFolderName || "AI Generated",
+    });
+  }
+
+  // 4. Replace the prompter with the new sections
   sectionArray.splice(prompterIndex, 1, ...sections);
 
-  // 4. Save the story
-  return saveStory(client, spaceId, storyUid, story, publish);
+  // 5. Save the story
+  const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
+
+  return assetsSummary ? { ...savedStory, assetsSummary } : savedStory;
 }
 
 /**
@@ -124,7 +144,14 @@ export async function importAtPosition(
   spaceId: string,
   options: ImportAtPositionOptions
 ): Promise<Record<string, any>> {
-  const { storyUid, position, sections, publish = false } = options;
+  const {
+    storyUid,
+    position,
+    sections,
+    publish = false,
+    uploadAssets = false,
+    assetFolderName,
+  } = options;
 
   // 1. Fetch the current story
   const story = await getStoryManagement(client, spaceId, storyUid);
@@ -139,15 +166,27 @@ export async function importAtPosition(
 
   const sectionArray: Record<string, unknown>[] = story.content.section;
 
-  // 3. Clamp position to valid range
+  // 3. Upload external images to Storyblok (if requested)
+  let assetsSummary;
+  if (uploadAssets) {
+    const wrapper = { section: sections } as Record<string, any>;
+    assetsSummary = await uploadAndReplaceAssets(client, wrapper, {
+      spaceId,
+      assetFolderName: assetFolderName || "AI Generated",
+    });
+  }
+
+  // 4. Clamp position to valid range
   const insertAt =
     position < 0
       ? Math.max(0, sectionArray.length + 1 + position) // -1 → end
       : Math.min(position, sectionArray.length); // cap at length
 
-  // 4. Insert sections (no deletion)
+  // 5. Insert sections (no deletion)
   sectionArray.splice(insertAt, 0, ...sections);
 
-  // 5. Save the story
-  return saveStory(client, spaceId, storyUid, story, publish);
+  // 6. Save the story
+  const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
+
+  return assetsSummary ? { ...savedStory, assetsSummary } : savedStory;
 }

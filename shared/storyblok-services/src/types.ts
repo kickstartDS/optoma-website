@@ -73,6 +73,17 @@ export interface ImportByPrompterOptions {
   sections: Record<string, unknown>[];
   /** Whether to publish the story immediately. @default false */
   publish?: boolean;
+  /**
+   * When `true`, image URLs in the sections are downloaded and uploaded
+   * to Storyblok as native assets before the story is saved.
+   * @default false
+   */
+  uploadAssets?: boolean;
+  /**
+   * Name of the Storyblok asset folder to upload images into.
+   * Created if it doesn't exist. @default "AI Generated"
+   */
+  assetFolderName?: string;
 }
 
 /**
@@ -92,6 +103,17 @@ export interface ImportAtPositionOptions {
   sections: Record<string, unknown>[];
   /** Whether to publish the story immediately. @default false */
   publish?: boolean;
+  /**
+   * When `true`, image URLs in the sections are downloaded and uploaded
+   * to Storyblok as native assets before the story is saved.
+   * @default false
+   */
+  uploadAssets?: boolean;
+  /**
+   * Name of the Storyblok asset folder to upload images into.
+   * Created if it doesn't exist. @default "AI Generated"
+   */
+  assetFolderName?: string;
 }
 
 // ─── Error types ──────────────────────────────────────────────────────

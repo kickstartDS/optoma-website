@@ -126,7 +126,7 @@ The project includes a Storyblok MCP server ([mcp-server/](mcp-server/)) that ex
 
 The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System page schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
 
-The `generate_content` tool also supports **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the generated content (e.g. from DALL·E or other sources) are downloaded and uploaded to Storyblok as native assets. The original URLs are replaced with Storyblok CDN URLs in both the Design System props and Storyblok content. An optional `assetFolderName` parameter controls which Storyblok asset folder images are uploaded to (defaults to "AI Generated").
+The `import_content` and `import_content_at_position` tools support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content (e.g. from DALL·E or other sources) are downloaded and uploaded to Storyblok as native assets before the story is saved. The original URLs are replaced with Storyblok CDN URLs. An optional `assetFolderName` parameter controls which Storyblok asset folder images are uploaded to (defaults to "AI Generated").
 
 ### Transport Modes
 

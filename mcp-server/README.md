@@ -17,11 +17,11 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### AI Content Generation
 
-| Tool                         | Description                                                                                                                   |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation and automatic asset upload to Storyblok |
-| `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform            |
-| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform                               |
+| Tool                         | Description                                                                                                                                  |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation                                                        |
+| `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform and optional asset upload |
+| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform and optional asset upload                    |
 
 ### Web Scraping
 
@@ -254,17 +254,17 @@ The response includes both Design System–shaped props and Storyblok-ready cont
 }
 ```
 
-### Generate content with automatic asset upload
+### Import content with automatic asset upload
 
-When `uploadAssets` is `true`, any image URLs in the AI-generated content (e.g. DALL·E URLs) are automatically downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs:
+Both `import_content` and `import_content_at_position` support automatic asset upload. When `uploadAssets` is `true`, any image URLs in the content (e.g. DALL·E URLs) are downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs before the story is saved:
 
 ```json
 {
-  "tool": "generate_content",
+  "tool": "import_content",
   "arguments": {
-    "system": "You are a content writer. Include relevant images.",
-    "prompt": "Create a hero section about cloud computing with a background image",
-    "componentType": "hero",
+    "storyId": "home",
+    "prompterUid": "abc-123",
+    "content": { "sections": [{ "component": "hero", "headline": "..." }] },
     "uploadAssets": true,
     "assetFolderName": "Cloud Campaign"
   }
@@ -275,9 +275,6 @@ The response includes an `assetsSummary` with details of each uploaded asset:
 
 ```json
 {
-  "designSystemProps": { "..." },
-  "storyblokContent": { "..." },
-  "rawResponse": { "..." },
   "assetsSummary": {
     "uploaded": 2,
     "rewritten": 3,

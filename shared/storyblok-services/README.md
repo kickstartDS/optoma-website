@@ -130,11 +130,9 @@ End-to-end content generation pipeline for consumers who don't need fine-grained
 import { generateAndPrepareContent } from "@kickstartds/storyblok-services";
 ```
 
-| Function                                     | Description                                                                                                                                                                                                                      |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening → (optional) asset upload. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema, assetsSummary? }` |
-
-The `options.uploadAssets` parameter enables automatic asset management during content generation:
+| Function                                     | Description                                                                                                                                                                            |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema }` |
 
 ```typescript
 const result = await generateAndPrepareContent(openaiClient, {
@@ -142,11 +140,21 @@ const result = await generateAndPrepareContent(openaiClient, {
   prompt: "Create a hero section with a background image",
   pageSchema: dereferencedPageSchema,
   schemaOptions: { allowedComponents: ["hero", "section"] },
-  uploadAssets: {
-    storyblokClient, // Storyblok Management API client
-    spaceId: "123456",
-    assetFolderName: "AI Generated", // Created if it doesn't exist
-  },
+});
+```
+
+### Storyblok Import with Asset Upload
+
+The import functions (`importByPrompterReplacement` and `importAtPosition`) support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content are downloaded, uploaded to Storyblok as native assets, and their URLs rewritten before the story is saved.
+
+```typescript
+const result = await importByPrompterReplacement(storyblokClient, {
+  storyId: "home",
+  prompterUid: "abc-123",
+  storyblokContent: generatedContent,
+  spaceId: "123456",
+  uploadAssets: true,
+  assetFolderName: "AI Generated", // Created if it doesn't exist
 });
 
 // result.assetsSummary?.uploaded  — number of unique images uploaded
@@ -210,7 +218,7 @@ shared/storyblok-services/
 │   ├── schema.ts          # Schema preparation for OpenAI structured output
 │   ├── transform.ts       # Content transformation (OpenAI ↔ DS ↔ Storyblok)
 │   ├── assets.ts          # Asset download, upload to Storyblok, URL rewriting
-│   └── pipeline.ts        # High-level orchestrator (incl. optional asset upload)
+│   └── pipeline.ts        # High-level orchestrator (schema prep → OpenAI → transform)
 └── test/
     ├── storyblok.test.ts  # 15 tests
     └── openai.test.ts     # 6 tests
