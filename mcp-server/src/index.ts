@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import { createServer } from "node:http";
+import { readFileSync, readdirSync } from "node:fs";
+import { join, basename, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -35,6 +38,70 @@ import {
  * - Asset management
  * - Content search
  */
+
+// Load skill files (workflow guides for AI assistants)
+interface Skill {
+  id: string;
+  name: string;
+  description: string;
+  content: string;
+}
+
+function loadSkills(): Skill[] {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  // In Docker / production: skills/ sits next to dist/ → ../skills/
+  // In local dev: skills are at ../../docs/skills/ relative to src/
+  const candidates = [
+    join(__dirname, "..", "skills"),
+    join(__dirname, "..", "..", "docs", "skills"),
+  ];
+
+  const skillsDir = candidates.find((dir) => {
+    try {
+      readdirSync(dir);
+      return true;
+    } catch {
+      return false;
+    }
+  });
+
+  if (!skillsDir) {
+    console.error(
+      `Skills directory not found (searched: ${candidates.join(
+        ", "
+      )}), skipping skill loading`
+    );
+    return [];
+  }
+
+  try {
+    const files = readdirSync(skillsDir).filter((f) => f.endsWith(".md"));
+    return files.map((file) => {
+      const content = readFileSync(join(skillsDir, file), "utf-8");
+      const id = basename(file, ".md");
+      // Extract title from first markdown heading
+      const titleMatch = content.match(/^#\s+(.+)$/m);
+      const title = titleMatch ? titleMatch[1] : id;
+      // Extract first paragraph as description
+      const descMatch = content.match(/^##\s+Wann verwenden\n\n(.+?)$/m);
+      const description = descMatch ? descMatch[1] : `Workflow guide: ${title}`;
+      return { id, name: title, description, content };
+    });
+  } catch {
+    console.error(
+      `Skills directory not found at ${skillsDir}, skipping skill loading`
+    );
+    return [];
+  }
+}
+
+const skills = loadSkills();
+console.error(
+  `Loaded ${skills.length} skill(s): ${
+    skills.map((s) => s.id).join(", ") || "none"
+  }`
+);
 
 // Initialize services
 let storyblokService: StoryblokService;
@@ -944,6 +1011,12 @@ Returns the page title, source URL, and the Markdown content.`,
           description: "Overview of all stories in the space",
           mimeType: "application/json",
         },
+        ...skills.map((skill) => ({
+          uri: `skill://${skill.id}`,
+          name: `Skill: ${skill.name}`,
+          description: skill.description,
+          mimeType: "text/markdown",
+        })),
       ],
     };
   });
@@ -981,8 +1054,25 @@ Returns the page title, source URL, and the Markdown content.`,
         };
       }
 
-      default:
+      default: {
+        // Check if it's a skill resource
+        if (uri.startsWith("skill://")) {
+          const skillId = uri.replace("skill://", "");
+          const skill = skills.find((s) => s.id === skillId);
+          if (skill) {
+            return {
+              contents: [
+                {
+                  uri,
+                  mimeType: "text/markdown",
+                  text: skill.content,
+                },
+              ],
+            };
+          }
+        }
         throw new ValidationError(`Unknown resource: ${uri}`);
+      }
     }
   });
 
