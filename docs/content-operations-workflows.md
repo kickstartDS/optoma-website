@@ -1,0 +1,337 @@
+# Content Operations – n8n Workflows mit dem Storyblok MCP Server
+
+This document describes automation workflows that editors can build using **n8n** connected to the **Storyblok MCP Server** via an MCP client node. Each workflow combines MCP tools with external n8n nodes to automate content production, quality assurance, and housekeeping.
+
+---
+
+## 🔴 Höchste Priorität: Content-Produktion automatisieren
+
+### 1. Bulk-Seiten-Generierung aus Datenquellen
+
+Ein Spreadsheet (Google Sheets, Airtable) enthält Zeilen mit Produktnamen, Beschreibungen und Bildern. n8n iteriert über jede Zeile und erstellt automatisch eine vollständige Landing Page.
+
+| Schritt           | Tool                                                | Zweck                                                  |
+| ----------------- | --------------------------------------------------- | ------------------------------------------------------ |
+| Daten holen       | _n8n Google Sheets Node_                            | Produktdaten auslesen                                  |
+| Inhalt generieren | `generate_content`                                  | KI erzeugt Sektionen (Hero, Features, CTA) pro Produkt |
+| Bilder hochladen  | `create_page_with_content` mit `uploadAssets: true` | Seite anlegen, Bilder automatisch nach Storyblok       |
+| Benachrichtigung  | _n8n Slack Node_                                    | Team über neue Seiten informieren                      |
+
+### 2. Website-Relaunch / Content-Migration
+
+Eine Liste von URLs der alten Website wird Seite für Seite gescrapt, per KI in Design-System-konforme Struktur konvertiert und als neue Storyblok-Seiten angelegt.
+
+| Schritt                 | Tool                                                | Zweck                                                      |
+| ----------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
+| URLs auflisten          | _n8n Spreadsheet / Sitemap-Parser_                  | Alle zu migrierenden Seiten sammeln                        |
+| Seite scrapen           | `scrape_url`                                        | HTML → sauberes Markdown konvertieren                      |
+| Inhalt generieren       | `generate_content`                                  | Markdown als Prompt → strukturierter Design-System-Content |
+| Seite erstellen         | `create_page_with_content` mit `uploadAssets: true` | Neue Seite in Storyblok inkl. Bilder                       |
+| Altes/Neues vergleichen | _n8n Comparison Node_                               | Diff-Report für manuelle QA                                |
+
+### 3. Blog-Autopilot aus RSS / Newsletter
+
+Externe Branchennews (RSS-Feeds, Newsletter) werden automatisch in Blogpost-Entwürfe umgewandelt – fertig zur redaktionellen Prüfung.
+
+| Schritt              | Tool                                        | Zweck                                             |
+| -------------------- | ------------------------------------------- | ------------------------------------------------- |
+| RSS lesen            | _n8n RSS Feed Node_                         | Neue Artikel erkennen                             |
+| Quelle scrapen       | `scrape_url`                                | Volltexte der Artikel extrahieren                 |
+| Blogpost generieren  | `generate_content` mit `componentType`      | KI schreibt eigenen Blogpost auf Basis der Quelle |
+| Entwurf anlegen      | `create_page_with_content` (ohne `publish`) | Draft in Storyblok, Redaktion prüft & publiziert  |
+| Team benachrichtigen | _n8n Slack/E-Mail Node_                     | „Neuer Entwurf wartet auf Review"                 |
+
+---
+
+## 🟠 Hohe Priorität: Content-Qualität & Governance
+
+### 4. Automatischer Content-Audit (Scheduled)
+
+Einmal pro Woche crawlt n8n alle Stories und prüft auf typische Probleme: fehlende Bilder, leere Alt-Texte, zu kurze Texte, verwaiste Seiten.
+
+| Schritt            | Tool                         | Zweck                                                        |
+| ------------------ | ---------------------------- | ------------------------------------------------------------ |
+| Alle Stories laden | `list_stories` (paginiert)   | Komplettes Content-Inventar erfassen                         |
+| Details pro Story  | `get_story`                  | Vollständige Inhalte inspizieren                             |
+| Schema prüfen      | `get_component`              | Erwartete Felder pro Komponente kennen                       |
+| Regeln anwenden    | _n8n Code/Function Node_     | Prüfungen: leere Felder, Alt-Texte, Textlänge, defekte Links |
+| Report erstellen   | _n8n Spreadsheet/Slack Node_ | Audit-Report ans Team senden                                 |
+
+### 5. SEO-Monitoring & -Optimierung
+
+Stories werden gegen SEO-Regeln geprüft (Meta-Titel, Description, Heading-Hierarchie, Bildoptimierung). Bei Verstößen wird automatisch ein Fix vorgeschlagen.
+
+| Schritt              | Tool                         | Zweck                                                     |
+| -------------------- | ---------------------------- | --------------------------------------------------------- |
+| Stories laden        | `list_stories` + `get_story` | Inhalte pro Seite holen                                   |
+| SEO analysieren      | _n8n Code Node_              | H1-Existenz, Meta-Länge, Alt-Texte, Keyword-Dichte prüfen |
+| Fix generieren       | `generate_content`           | KI schlägt verbesserte Meta-Texte / Headlines vor         |
+| Optional: einspielen | `update_story`               | Automatisch SEO-Fixes als Draft speichern                 |
+| Report               | _n8n E-Mail/Notion Node_     | SEO-Scorecard pro Seite                                   |
+
+### 6. Broken-Asset-Detektion
+
+Alle verwendeten Bilder in Stories werden mit der Asset-Library abgeglichen – fehlende oder verwaiste Assets werden erkannt.
+
+| Schritt       | Tool                         | Zweck                                         |
+| ------------- | ---------------------------- | --------------------------------------------- |
+| Stories laden | `list_stories` + `get_story` | Alle Bild-URLs aus Content extrahieren        |
+| Assets listen | `list_assets` (paginiert)    | Komplettes Asset-Inventar                     |
+| Abgleich      | _n8n Code Node_              | Verwaiste Assets & fehlende Referenzen finden |
+| Report        | _n8n Slack/Spreadsheet Node_ | Cleanup-Liste fürs Team                       |
+
+---
+
+## 🟡 Mittlere Priorität: Redaktionelle Workflows
+
+### 7. Competitor-Content-Monitoring
+
+Regelmäßig werden Wettbewerber-Websites gescrapt und per KI zusammengefasst – der Editor erhält Inspiration für eigene Inhalte.
+
+| Schritt                 | Tool                       | Zweck                                             |
+| ----------------------- | -------------------------- | ------------------------------------------------- |
+| Competitor-URLs scrapen | `scrape_url`               | Inhalte der Wettbewerber extrahieren              |
+| Zusammenfassen          | `generate_content`         | KI erstellt Zusammenfassung & Content-Gap-Analyse |
+| Ideen speichern         | _n8n Notion/Airtable Node_ | Themenideen im Redaktionsplan ablegen             |
+| Optional: Entwurf       | `create_page_with_content` | Direkt Gegeninhalt als Draft erzeugen             |
+
+### 8. Event-/Kampagnen-Seiten auf Knopfdruck
+
+Bei Anlage eines Events in einem externen System (Eventbrite, CRM, Kalender) wird automatisch eine Event-Seite in Storyblok erstellt.
+
+| Schritt            | Tool                                                | Zweck                                                 |
+| ------------------ | --------------------------------------------------- | ----------------------------------------------------- |
+| Event-Trigger      | _n8n Webhook / Eventbrite Node_                     | Neues Event erkannt                                   |
+| Content generieren | `generate_content`                                  | KI erzeugt Event-Seite (Hero, Programm, Speaker, CTA) |
+| Seite erstellen    | `create_page_with_content` mit `uploadAssets: true` | Event-Seite live oder als Draft                       |
+| Kalender-Link      | _n8n HTTP Node_                                     | .ics Datei generieren und als Asset hochladen         |
+
+### 9. Übersetzungs-Pipeline
+
+Bestehende Stories werden automatisch in andere Sprachen übersetzt und als neue Sprachversionen angelegt.
+
+| Schritt               | Tool                                           | Zweck                                                   |
+| --------------------- | ---------------------------------------------- | ------------------------------------------------------- |
+| Quelle laden          | `get_story`                                    | Originalinhalt holen                                    |
+| Übersetzen            | `generate_content` (Prompt: „Übersetze …")     | KI-basierte Übersetzung unter Beibehaltung der Struktur |
+| Sprachversion anlegen | `create_page_with_content` oder `update_story` | Übersetzte Version speichern                            |
+| Review-Reminder       | _n8n Slack Node_                               | Native Speaker zur Prüfung einladen                     |
+
+---
+
+## 🟢 Nice-to-have: Monitoring & Housekeeping
+
+### 10. Content-Freshness-Tracker
+
+Stories, die seit X Monaten nicht aktualisiert wurden, werden identifiziert. Optional generiert die KI Aktualisierungsvorschläge.
+
+| Schritt             | Tool                   | Zweck                                 |
+| ------------------- | ---------------------- | ------------------------------------- |
+| Alle Stories laden  | `list_stories`         | Timestamps aller Stories prüfen       |
+| Veraltete filtern   | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate       |
+| Refresh vorschlagen | `generate_content`     | KI schlägt aktualisierte Inhalte vor  |
+| Report              | _n8n E-Mail Node_      | „Diese 12 Seiten brauchen ein Update" |
+
+### 11. Content-Statistik-Dashboard
+
+Regelmäßig wird ein Snapshot erstellt: Wie viele Stories pro Typ, wie viele Assets, durchschnittliche Sektionen pro Seite etc.
+
+| Schritt             | Tool                                 | Zweck                                |
+| ------------------- | ------------------------------------ | ------------------------------------ |
+| Stories zählen      | `list_stories` (pro `contentType`)   | Content-Inventar nach Typ            |
+| Assets zählen       | `list_assets`                        | Medien-Statistiken                   |
+| Komponenten-Nutzung | `list_stories` + `get_story`         | Welche Komponenten wie oft verwendet |
+| Dashboard           | _n8n Google Sheets / Dashboard Node_ | Wöchentlicher Content-KPI-Report     |
+
+### 12. Automatische Archivierung
+
+Abgelaufene Event-Seiten oder veraltete Kampagnen-Seiten werden automatisch depubliziert oder in einen Archiv-Ordner verschoben.
+
+| Schritt           | Tool                                             | Zweck                                 |
+| ----------------- | ------------------------------------------------ | ------------------------------------- |
+| Events laden      | `list_stories` mit `contentType: 'event-detail'` | Alle Event-Seiten                     |
+| Details prüfen    | `get_story`                                      | Event-Datum auslesen                  |
+| Archivieren       | `update_story`                                   | Status ändern / in Archiv verschieben |
+| Optional: löschen | `delete_story`                                   | Endgültig entfernen                   |
+
+---
+
+## MCP-Tool-Referenz
+
+Alle im MCP Server verfügbaren Tools auf einen Blick:
+
+| Kategorie          | Tool                         | Beschreibung                                                                    |
+| ------------------ | ---------------------------- | ------------------------------------------------------------------------------- |
+| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern         |
+|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                 |
+|                    | `create_story`               | Neue Story mit Basisinhalt anlegen                                              |
+|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren         |
+|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                             |
+|                    | `delete_story`               | Story dauerhaft löschen                                                         |
+|                    | `search_content`             | Volltextsuche über alle Stories                                                 |
+|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                             |
+| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                |
+|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen |
+| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema |
+| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                     |
+|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                         |
+| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                  |
+| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                    |
+
+---
+
+## 💬 Interaktive Anwendungsfälle mit Claude Desktop
+
+Neben den automatisierten n8n-Workflows kann ein Redakteur den MCP Server auch **direkt über Claude Desktop** nutzen – im Dialog, iterativ und explorativ. Claude Desktop verbindet sich per MCP (stdio-Transport) mit dem Server und stellt alle Tools als natürlichsprachige Aktionen bereit.
+
+### Neue Seiten & Inhalte erstellen
+
+#### Komplette Seiten per Prompt generieren
+
+Der Editor beschreibt in natürlicher Sprache, welche Seite er braucht – z.B. _„Erstelle eine Landing Page für unser neues Produkt X mit Hero, Features-Sektion und FAQ"_. Claude generiert die Inhalte KI-gestützt, strukturiert sie passend zum Design System und legt die Seite direkt in Storyblok an – sofort im Visual Editor bearbeitbar.
+
+| Tool                       | Zweck                                       |
+| -------------------------- | ------------------------------------------- |
+| `generate_content`         | KI erzeugt Design-System-konforme Sektionen |
+| `create_page_with_content` | Seite wird direkt in Storyblok angelegt     |
+
+#### Einzelne Sektionen zu bestehenden Seiten hinzufügen
+
+Eine Seite existiert bereits, aber es fehlt z.B. ein Testimonial-Bereich oder eine FAQ-Sektion. Der Editor beschreibt den gewünschten Inhalt, und die neue Sektion wird an der richtigen Position eingefügt, ohne bestehende Inhalte zu verändern.
+
+| Tool                         | Zweck                                         |
+| ---------------------------- | --------------------------------------------- |
+| `get_story`                  | Bestehende Seitenstruktur laden und verstehen |
+| `generate_content`           | Neue Sektion erzeugen                         |
+| `import_content_at_position` | An gewünschter Stelle einfügen                |
+
+#### Iteratives Verfeinern im Dialog
+
+Anders als bei n8n-Workflows kann der Editor im Claude-Desktop-Gespräch **nachsteuern**: _„Mach die Hero-Headline kürzer"_, _„Tausche die Testimonials-Sektion gegen eine Stats-Sektion"_, _„Füge noch ein CTA am Ende ein"_. Claude behält den Kontext und kann mehrfach `generate_content` und `update_story` aufrufen, bis das Ergebnis stimmt.
+
+| Tool               | Zweck                           |
+| ------------------ | ------------------------------- |
+| `generate_content` | Inhalte schrittweise verfeinern |
+| `update_story`     | Änderungen als Draft speichern  |
+| `get_story`        | Zwischenstand prüfen            |
+
+### Inhalte aus externen Quellen übernehmen
+
+#### Webseiten scrapen und aufbereiten
+
+Der Editor nennt eine URL – z.B. von einer Konkurrenz-Seite, einem Artikel oder einer alten Website – und bittet Claude, den Inhalt als neue Storyblok-Seite aufzubereiten. Claude scrapt die Seite, konvertiert den Inhalt in Design-System-Komponenten und legt die Seite an.
+
+| Tool                                                | Zweck                                           |
+| --------------------------------------------------- | ----------------------------------------------- |
+| `scrape_url`                                        | Webseite → Markdown extrahieren                 |
+| `generate_content`                                  | Markdown → strukturierter Design-System-Content |
+| `create_page_with_content` mit `uploadAssets: true` | Seite inkl. Bilder in Storyblok anlegen         |
+
+#### Inhalte aus Dokumenten übernehmen
+
+Der Editor kopiert Fließtext aus einem PDF, Word-Dokument oder einer E-Mail direkt in den Claude-Desktop-Chat und bittet darum, daraus eine CMS-Seite zu machen. Claude strukturiert den Text in passende Sektionen (Hero, Text/Bild, CTA) und importiert ihn.
+
+| Tool                       | Zweck                                          |
+| -------------------------- | ---------------------------------------------- |
+| `generate_content`         | Unstrukturierten Text in Komponenten umwandeln |
+| `create_page_with_content` | Fertige Seite anlegen                          |
+
+### Bestehende Inhalte durchsuchen & verstehen
+
+#### Inhalte im Space finden und inspizieren
+
+Ein Editor fragt: _„Welche Blogposts haben wir zum Thema Nachhaltigkeit?"_ oder _„Zeig mir alle Event-Seiten"_. Claude durchsucht den Space und liefert eine übersichtliche Zusammenfassung.
+
+| Tool                       | Zweck                                     |
+| -------------------------- | ----------------------------------------- |
+| `search_content`           | Volltextsuche über alle Stories           |
+| `list_stories` mit Filtern | Nach Content-Typ oder Slug-Präfix filtern |
+| `get_story`                | Details einer gefundenen Story anzeigen   |
+
+#### Seitenstruktur verstehen
+
+_„Was steht aktuell auf der Startseite?"_ – Claude lädt die Story und beschreibt die Struktur in natürlicher Sprache: welche Sektionen es gibt, welche Komponenten verwendet werden, ob Bilder oder CTAs fehlen.
+
+| Tool            | Zweck                             |
+| --------------- | --------------------------------- |
+| `get_story`     | Vollständige Seitenstruktur laden |
+| `get_component` | Komponentenschema erklären        |
+
+### Komponenten & Schema erkunden
+
+#### Verfügbare Bausteine entdecken
+
+_„Welche Komponenten kann ich auf einer Seite verwenden?"_ – Claude listet alle verfügbaren Komponenten auf und erklärt ihre Felder und Optionen in verständlicher Sprache, ohne dass der Editor das JSON-Schema verstehen muss.
+
+| Tool              | Zweck                              |
+| ----------------- | ---------------------------------- |
+| `list_components` | Übersicht aller Komponenten        |
+| `get_component`   | Detailinfo zu einzelner Komponente |
+
+#### Komponentenvergleich und -empfehlung
+
+_„Was ist der Unterschied zwischen Hero und Image-Story?"_ oder _„Welche Komponente eignet sich am besten für Kundenzitate?"_ – Claude vergleicht die Schemas und gibt eine Empfehlung.
+
+| Tool                       | Zweck                          |
+| -------------------------- | ------------------------------ |
+| `get_component` (mehrfach) | Schemas vergleichen            |
+| `list_components`          | Gesamtübersicht für Empfehlung |
+
+### Content-Pflege im Dialog
+
+#### Seiten umschreiben oder aktualisieren
+
+_„Aktualisiere die About-Seite, wir sind jetzt 50 Mitarbeiter statt 35"_ – Claude lädt die aktuelle Seite, findet die relevante Stelle, generiert den aktualisierten Inhalt und speichert ihn.
+
+| Tool               | Zweck                             |
+| ------------------ | --------------------------------- |
+| `get_story`        | Aktuellen Inhalt laden            |
+| `generate_content` | Überarbeiteten Abschnitt erzeugen |
+| `update_story`     | Änderung speichern                |
+
+#### Tonalität oder Zielgruppe anpassen
+
+_„Schreibe die Startseite um, wir wollen jünger und lockerer klingen"_ – Claude lädt den Content, generiert eine neue Version mit angepasster Tonalität und speichert sie als Draft.
+
+| Tool               | Zweck                                         |
+| ------------------ | --------------------------------------------- |
+| `get_story`        | Originalinhalt laden                          |
+| `generate_content` | Neu formulieren mit angepasstem System-Prompt |
+| `update_story`     | Als Draft speichern                           |
+
+#### Quick-Cleanup: Alt-Texte, CTAs, Meta-Daten ergänzen
+
+_„Geh alle Seiten durch und schlage fehlende Alt-Texte vor"_ – Claude iteriert über Stories, identifiziert Lücken und generiert passende Texte. Der Editor bestätigt im Dialog, bevor gespeichert wird.
+
+| Tool               | Zweck                      |
+| ------------------ | -------------------------- |
+| `list_stories`     | Alle Seiten durchgehen     |
+| `get_story`        | Inhalte inspizieren        |
+| `generate_content` | Fehlende Texte generieren  |
+| `update_story`     | Nach Bestätigung speichern |
+
+### Ideen & Planung
+
+#### Brainstorming mit CMS-Kontext
+
+_„Wir brauchen eine neue Kampagnen-Seite zum Thema Sommerschlussverkauf. Was hast du für Ideen?"_ – Claude kennt durch `list_components` die verfügbaren Bausteine und durch `list_stories` die bestehenden Inhalte, und kann so kontextbewusste Vorschläge machen, die direkt umsetzbar sind.
+
+| Tool              | Zweck                                      |
+| ----------------- | ------------------------------------------ |
+| `list_components` | Verfügbare Bausteine für Vorschläge kennen |
+| `list_stories`    | Bestehende Inhalte als Kontext             |
+| `get_ideas`       | Vorhandene Ideen einbeziehen               |
+
+#### Von der Idee zur fertigen Seite in einem Gespräch
+
+Der Editor startet mit einer vagen Idee, Claude hilft bei der Strukturierung, generiert Inhalte Sektion für Sektion, der Editor gibt Feedback, und am Ende steht eine fertige Seite in Storyblok – alles in einer einzigen Chat-Session.
+
+| Tool                          | Zweck                                   |
+| ----------------------------- | --------------------------------------- |
+| `list_components`             | Mögliche Seitenbausteine vorschlagen    |
+| `generate_content` (iterativ) | Sektionen einzeln erzeugen und anpassen |
+| `create_page_with_content`    | Finales Ergebnis in Storyblok anlegen   |
+
+---
+
+> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **KI-Verarbeitung** (`generate_content`) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `update_story`) → **Benachrichtigung**. Die Stärke liegt darin, dass n8n diese Kette vollautomatisch oder per Trigger auslösen kann, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.
