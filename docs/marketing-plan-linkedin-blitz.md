@@ -262,7 +262,7 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 
 | Maßnahme                    | Details                                                                                           |
 | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| **Personal Branding**       | Gründer / Tech Lead posten parallel persönliche Perspektive zu jedem Thema                        |
+| **Personal Branding**       | Jonas (Tech Lead) + Daniel (Gründer/Designer) posten Di+Do persönliche Perspektive – siehe [Flankierender Plan](marketing-plan-personal-branding.md) |
 | **Engagement-Strategie**    | Erste 60 Min. nach Veröffentlichung: aktiv auf Kommentare antworten, in relevanten Gruppen teilen |
 | **Cross-Posting (gekürzt)** | Twitter/X: Hook + Link zum LinkedIn-Post; Bluesky: gleicher Ansatz                                |
 | **Community-Tagging**       | In jedem Post 2–3 relevante Personen taggen (Storyblok-Team, n8n-Community, Design-System-Leute)  |
