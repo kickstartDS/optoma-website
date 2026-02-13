@@ -128,6 +128,8 @@ The MCP server supports **auto-schema derivation**: the `generate_content` tool 
 
 The `import_content` and `import_content_at_position` tools support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content (e.g. from DALL·E or other sources) are downloaded and uploaded to Storyblok as native assets before the story is saved. The original URLs are replaced with Storyblok CDN URLs. An optional `assetFolderName` parameter controls which Storyblok asset folder images are uploaded to (defaults to "AI Generated").
 
+The `list_icons` tool returns all available icon identifiers (e.g. `arrow-right`, `star`, `email`, `phone`) that can be used in component icon fields such as hero `cta_icon`, feature `icon`, or contact-info `icon`. Always call `list_icons` before generating or importing content that includes icon fields to ensure only valid identifiers are used.
+
 ### Transport Modes
 
 - **stdio** (default): For local usage with Claude Desktop — `npm start`

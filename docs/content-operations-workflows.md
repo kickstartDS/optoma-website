@@ -176,6 +176,7 @@ Alle im MCP Server verfügbaren Tools auf einen Blick:
 | **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                     |
 |                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                         |
 | **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                  |
+| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)     |
 | **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                    |
 
 ---
@@ -276,6 +277,14 @@ _„Was ist der Unterschied zwischen Hero und Image-Story?"_ oder _„Welche Kom
 | -------------------------- | ------------------------------ |
 | `get_component` (mehrfach) | Schemas vergleichen            |
 | `list_components`          | Gesamtübersicht für Empfehlung |
+
+#### Verfügbare Icons nachschlagen
+
+_„Welche Icons kann ich im Hero-Button verwenden?"_ – Claude listet alle verfügbaren Icon-Bezeichner auf und hilft bei der Auswahl des passenden Icons für CTAs, Features oder Kontaktdaten.
+
+| Tool         | Zweck                                                     |
+| ------------ | --------------------------------------------------------- |
+| `list_icons` | Alle gültigen Icon-Bezeichner für Komponenten-Icon-Felder |
 
 ### Content-Pflege im Dialog
 

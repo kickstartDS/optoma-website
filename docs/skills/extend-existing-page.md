@@ -28,6 +28,12 @@ Der Editor hat eine bestehende Seite in Storyblok und möchte eine oder mehrere 
 - **Zweck:** Sicherstellen, dass der gewünschte Sektionstyp existiert
 - Falls der Editor unsicher ist, Optionen vorschlagen, die zur bestehenden Seite passen
 
+### Schritt 2b: Verfügbare Icons prüfen (bei Bedarf)
+
+- **Tool:** `list_icons`
+- **Wann:** Wenn die neue Sektion Icon-Felder enthält (z.B. Features mit Icons, CTA mit Icon)
+- **Zweck:** Nur gültige Icon-Bezeichner im Prompt verwenden (z.B. `star`, `arrow-right`, `phone`)
+
 ### Schritt 3: Neue Sektion(en) generieren
 
 - **Tool:** `generate_content`

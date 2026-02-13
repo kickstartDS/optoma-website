@@ -28,6 +28,12 @@ Der Editor möchte Inhalte von einer externen Webseite übernehmen – z.B. bei 
 - Z.B.: Überschrift + Bild → Hero; Aufzählung → Features oder FAQ; Fließtext → Text/Bild-Sektion
 - Dem Editor die geplante Zuordnung kurz vorstellen
 
+### Schritt 2b: Verfügbare Icons prüfen (bei Bedarf)
+
+- **Tool:** `list_icons`
+- **Wann:** Wenn die Quellseite Icons enthält oder die Zielkomponenten Icon-Felder haben (z.B. Features, CTAs)
+- **Zweck:** Nur gültige Icon-Bezeichner verwenden – die Icons der Quellseite müssen auf verfügbare Bezeichner gemappt werden
+
 ### Schritt 3: Inhalte in Design-System-Struktur umwandeln
 
 - **Tool:** `generate_content`

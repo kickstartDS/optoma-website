@@ -18,6 +18,13 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 - **Wichtig:** Die Komponentenliste bestimmt, welche `componentType`-Werte in Schritt 2 verwendet werden können. Keine Sektionstypen erfinden, die es nicht gibt!
 - Dem Editor die verfügbaren Optionen kurz zusammenfassen und fragen, welche Sektionen die Seite haben soll
 
+### Schritt 1b: Verfügbare Icons prüfen (bei Bedarf)
+
+- **Tool:** `list_icons`
+- **Wann:** Wenn die Seite Komponenten mit Icon-Feldern enthalten wird (z.B. Hero mit CTA-Icon, Features mit Icons, Kontaktdaten)
+- **Zweck:** Sicherstellen, dass nur gültige Icon-Bezeichner im generierten Inhalt verwendet werden
+- **Wichtig:** Icon-Bezeichner nicht erfinden! Nur Werte aus `list_icons` verwenden (z.B. `arrow-right`, `star`, `email`, `phone`)
+
 ### Schritt 2: Inhalte generieren
 
 - **Tool:** `generate_content`
@@ -54,6 +61,7 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 | `uploadAssets: true` vergessen | Bilder bleiben als externe URLs, brechen evtl. später                   | Immer setzen                                     |
 | `publish: true` ohne Review    | Ungeprüfter Content geht live                                           | Immer `false`, Editor entscheidet                |
 | `list_components` übersprungen | Claude generiert Sektionstypen, die es nicht gibt → Import schlägt fehl | Immer zuerst Komponenten prüfen                  |
+| Icon-Bezeichner erfunden       | Ungültige Icons werden nicht gerendert                                  | Immer `list_icons` aufrufen vor Icon-Nutzung     |
 | Slug nicht abgestimmt          | Doppelte Slugs → Storyblok-Fehler                                       | Slug mit Editor besprechen                       |
 | Zu viele Sektionen auf einmal  | Ergebnis schwer zu überblicken                                          | Bei > 5 Sektionen lieber schrittweise generieren |
 

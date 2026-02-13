@@ -103,6 +103,43 @@ console.error(
   }`
 );
 
+/**
+ * Available icon identifiers.
+ *
+ * These correspond to the keys in token/InlineIcon.tsx and can be used
+ * in any component icon field (hero cta_icon, feature icon, etc.).
+ */
+const AVAILABLE_ICONS = [
+  "arrow-left",
+  "arrow-right",
+  "chevron-down",
+  "chevron-left",
+  "chevron-right",
+  "close",
+  "search",
+  "skip-back",
+  "skip-forward",
+  "zoom",
+  "arrow-down",
+  "date",
+  "download",
+  "email",
+  "facebook",
+  "file",
+  "home",
+  "linkedin",
+  "login",
+  "map-pin",
+  "map",
+  "person",
+  "phone",
+  "star",
+  "time",
+  "twitter",
+  "upload",
+  "xing",
+];
+
 // Initialize services
 let storyblokService: StoryblokService;
 let contentService: ContentGenerationService;
@@ -640,6 +677,21 @@ Returns the page title, source URL, and the Markdown content.`,
         required: ["url"],
       },
     },
+    {
+      name: "list_icons",
+      description: `List all available icon identifiers.
+
+Returns the complete set of icon names that can be used in component icon fields
+(e.g. hero cta_icon, feature icon, contact-info icon).
+
+Use this tool before generating or importing content that includes icon fields
+to ensure only valid icon identifiers are used.`,
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
   ];
 
   /**
@@ -962,6 +1014,26 @@ Returns the page title, source URL, and the Markdown content.`,
               {
                 type: "text",
                 text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case "list_icons": {
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    icons: AVAILABLE_ICONS,
+                    count: AVAILABLE_ICONS.length,
+                    usage:
+                      "Use these identifiers for any icon field in component content (e.g. hero cta_icon, feature icon, contact-info icon).",
+                  },
+                  null,
+                  2
+                ),
               },
             ],
           };

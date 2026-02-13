@@ -38,6 +38,12 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 | `list_assets`     | List assets with pagination and search       |
 | `get_ideas`       | Fetch ideas from the Storyblok space         |
 
+### Icon Discovery
+
+| Tool         | Description                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------- |
+| `list_icons` | List all available icon identifiers for use in component icon fields (hero, features, contact, …) |
+
 ## Installation
 
 ### Prerequisites
@@ -377,6 +383,56 @@ You can also target a specific part of the page using a CSS selector:
 }
 ```
 
+### List available icons
+
+Before generating or importing content that uses icon fields (e.g. hero `cta_icon`, feature `icon`, contact-info `icon`), query the available icon identifiers:
+
+```json
+{
+  "tool": "list_icons",
+  "arguments": {}
+}
+```
+
+The response includes the full set of valid values:
+
+```json
+{
+  "icons": [
+    "arrow-left",
+    "arrow-right",
+    "chevron-down",
+    "chevron-left",
+    "chevron-right",
+    "close",
+    "search",
+    "skip-back",
+    "skip-forward",
+    "zoom",
+    "arrow-down",
+    "date",
+    "download",
+    "email",
+    "facebook",
+    "file",
+    "home",
+    "linkedin",
+    "login",
+    "map-pin",
+    "map",
+    "person",
+    "phone",
+    "star",
+    "time",
+    "twitter",
+    "upload",
+    "xing"
+  ],
+  "count": 28,
+  "usage": "Use these identifiers for any icon field in component content (e.g. hero cta_icon, feature icon, contact-info icon)."
+}
+```
+
 ## Resources
 
 The server also exposes MCP resources:
@@ -561,7 +617,7 @@ curl -s -X POST https://YOUR_DOMAIN/mcp \
   }'
 ```
 
-You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, etc.
+You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, etc.
 
 ### 4. Call a tool
 
