@@ -6,7 +6,7 @@
 | ------------------ | ------------------------------------------------------------------------- |
 | **Zweck**          | Persönliche Perspektive zur Hauptkampagne – informell, nahbar, technisch  |
 | **Frequenz**       | Dienstag + Donnerstag (zwischen den Mo/Mi/Fr-Hauptposts)                  |
-| **Laufzeit**       | 3 Wochen (12 Posts: 6× Jonas, 6× Daniel)                                 |
+| **Laufzeit**       | 3 Wochen (12 Posts: 6× Jonas, 6× Daniel)                                  |
 | **Tonalität**      | Persönlich, locker, „Aus dem Alltag eines Entwicklers/Designers"          |
 | **Format**         | Kurze Text-Posts (600–1.000 Zeichen), gelegentlich mit Screenshot/Snippet |
 | **Hashtags (fix)** | `#kickstartDS` `#MCP` + jeweiliger individueller Hashtag                  |
@@ -17,23 +17,23 @@
 
 ### Jonas – Tech Lead 🛠️
 
-| Eigenschaft       | Details                                                              |
-| ------------------ | -------------------------------------------------------------------- |
-| **MCP-Server**     | Design System Component Builder MCP                                  |
-| **Perspektive**    | „Wie baut man Komponenten, die eine KI versteht?"                    |
-| **Wiederkehrender Hashtag** | `#ComponentBuilderMCP`                                      |
-| **Tonalität**      | Entwickler spricht zu Entwicklern – Code-Snippets, technische Insights, „TIL"-Momente |
+| Eigenschaft                 | Details                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| **MCP-Server**              | Design System Component Builder MCP                                                   |
+| **Perspektive**             | „Wie baut man Komponenten, die eine KI versteht?"                                     |
+| **Wiederkehrender Hashtag** | `#ComponentBuilderMCP`                                                                |
+| **Tonalität**               | Entwickler spricht zu Entwicklern – Code-Snippets, technische Insights, „TIL"-Momente |
 
 **Jonas' roter Faden:** Das JSON-Schema als „API-Vertrag zwischen Mensch, Design System und KI". Wenn die Komponentendefinition sauber ist, kann die KI sie nutzen – ohne Training, ohne Fine-Tuning.
 
 ### Daniel – Gründer, UX & Designer 🎨
 
-| Eigenschaft       | Details                                                              |
-| ------------------ | -------------------------------------------------------------------- |
-| **MCP-Server**     | Design Tokens MCP                                                    |
-| **Perspektive**    | „Wie gibt man einer KI ein Marken-Gefühl?"                          |
-| **Wiederkehrender Hashtag** | `#DesignTokensMCP`                                          |
-| **Tonalität**      | Designer spricht zu Designern und Strategen – visuelle Beispiele, Token-Logik, Markenidentität |
+| Eigenschaft                 | Details                                                                                        |
+| --------------------------- | ---------------------------------------------------------------------------------------------- |
+| **MCP-Server**              | Design Tokens MCP                                                                              |
+| **Perspektive**             | „Wie gibt man einer KI ein Marken-Gefühl?"                                                     |
+| **Wiederkehrender Hashtag** | `#DesignTokensMCP`                                                                             |
+| **Tonalität**               | Designer spricht zu Designern und Strategen – visuelle Beispiele, Token-Logik, Markenidentität |
 
 **Daniels roter Faden:** Design Tokens sind die Sprache zwischen Marke und Maschine. Wer seine Tokens sauber hat, kann das Look & Feel per Prompt ändern – und die KI hält sich trotzdem an die Brand Guidelines.
 
@@ -181,7 +181,7 @@ Passend zur Hauptkampagne (Detail-Workflows) zeigen Jonas und Daniel jeweils kon
 
 #### Dienstag W2 (alternativ, falls Donnerstag besser passt – tauschen ok)
 
-*Hinweis: Die Reihenfolge innerhalb einer Woche (Di=Jonas, Do=Daniel) ist fix, damit das Publikum den Rhythmus lernt.*
+_Hinweis: Die Reihenfolge innerhalb einer Woche (Di=Jonas, Do=Daniel) ist fix, damit das Publikum den Rhythmus lernt._
 
 ---
 
@@ -265,17 +265,17 @@ Passend zur Hauptkampagne (Vision + CTA) reflektieren Jonas und Daniel über das
 
 Jeder Personal-Branding-Post greift das Thema des vorherigen oder folgenden Hauptposts auf – ohne ihn zu wiederholen. Stattdessen beleuchten Jonas und Daniel die **technische Tiefe dahinter**.
 
-| Hauptkampagne (Mo/Mi/Fr)                    | Jonas – Dienstag 🛠️                     | Daniel – Donnerstag 🎨                      |
-| -------------------------------------------- | ---------------------------------------- | -------------------------------------------- |
-| **Mo W1:** Bulk-Seiten-Generierung          | Warum ich einen MCP-Server gebaut habe   | Wie erklärt man einer KI „on brand"?         |
-| **Mi W1:** Live-Demo: Idee → CMS-Seite     | ↗️ Baut auf Demo auf, erklärt das „Wie"  | ↗️ Erklärt die Token-Ebene der Demo          |
-| **Fr W1:** „Dein CMS ist ein leeres Textfeld" | —                                      | —                                            |
-| **Mo W2:** Content-Migration per KI         | JSON Schema First: KI-ready by Design    | In 5 Min. ein neues Branding – live          |
-| **Mi W2:** Automatischer Content-Audit      | ↗️ Zeigt Schema-Validierung hinter Audit | ↗️ Zeigt Token-Checks im Audit               |
-| **Fr W2:** Blog-Autopilot aus RSS           | —                                        | —                                            |
-| **Mo W3:** 12 Workflows auf einer Slide     | 50 Komponenten, 0 Zeilen KI-Training     | Design Tokens = Brandsprache der KI-Ära      |
-| **Mi W3:** „Redakteur als Kurator"          | ↗️ Schließt den Tech-Bogen               | ↗️ Schließt den Design-Bogen                 |
-| **Fr W3:** Zusammenfassung + Demo-CTA       | —                                        | —                                            |
+| Hauptkampagne (Mo/Mi/Fr)                      | Jonas – Dienstag 🛠️                      | Daniel – Donnerstag 🎨                  |
+| --------------------------------------------- | ---------------------------------------- | --------------------------------------- |
+| **Mo W1:** Bulk-Seiten-Generierung            | Warum ich einen MCP-Server gebaut habe   | Wie erklärt man einer KI „on brand"?    |
+| **Mi W1:** Live-Demo: Idee → CMS-Seite        | ↗️ Baut auf Demo auf, erklärt das „Wie"  | ↗️ Erklärt die Token-Ebene der Demo     |
+| **Fr W1:** „Dein CMS ist ein leeres Textfeld" | —                                        | —                                       |
+| **Mo W2:** Content-Migration per KI           | JSON Schema First: KI-ready by Design    | In 5 Min. ein neues Branding – live     |
+| **Mi W2:** Automatischer Content-Audit        | ↗️ Zeigt Schema-Validierung hinter Audit | ↗️ Zeigt Token-Checks im Audit          |
+| **Fr W2:** Blog-Autopilot aus RSS             | —                                        | —                                       |
+| **Mo W3:** 12 Workflows auf einer Slide       | 50 Komponenten, 0 Zeilen KI-Training     | Design Tokens = Brandsprache der KI-Ära |
+| **Mi W3:** „Redakteur als Kurator"            | ↗️ Schließt den Tech-Bogen               | ↗️ Schließt den Design-Bogen            |
+| **Fr W3:** Zusammenfassung + Demo-CTA         | —                                        | —                                       |
 
 ---
 
@@ -292,14 +292,14 @@ Jeder Personal-Branding-Post greift das Thema des vorherigen oder folgenden Haup
 
 ## Post-Übersicht (kompakt)
 
-| #   | Tag           | Person    | Thema                                          |
-| --- | ------------- | --------- | ---------------------------------------------- |
-| 1   | Di, Woche 1   | 🛠️ Jonas  | Warum ich einen Component-Builder-MCP gebaut habe |
-| 2   | Do, Woche 1   | 🎨 Daniel | Wie erklärt man einer KI „on brand"?           |
-| 3   | Di, Woche 2   | 🛠️ Jonas  | JSON Schema First: KI-ready by Design          |
-| 4   | Do, Woche 2   | 🎨 Daniel | In 5 Minuten ein neues Branding – live         |
-| 5   | Di, Woche 3   | 🛠️ Jonas  | 50 Komponenten, 0 Zeilen KI-Training           |
-| 6   | Do, Woche 3   | 🎨 Daniel | Design Tokens = Brandsprache der KI-Ära        |
+| #   | Tag         | Person    | Thema                                             |
+| --- | ----------- | --------- | ------------------------------------------------- |
+| 1   | Di, Woche 1 | 🛠️ Jonas  | Warum ich einen Component-Builder-MCP gebaut habe |
+| 2   | Do, Woche 1 | 🎨 Daniel | Wie erklärt man einer KI „on brand"?              |
+| 3   | Di, Woche 2 | 🛠️ Jonas  | JSON Schema First: KI-ready by Design             |
+| 4   | Do, Woche 2 | 🎨 Daniel | In 5 Minuten ein neues Branding – live            |
+| 5   | Di, Woche 3 | 🛠️ Jonas  | 50 Komponenten, 0 Zeilen KI-Training              |
+| 6   | Do, Woche 3 | 🎨 Daniel | Design Tokens = Brandsprache der KI-Ära           |
 
 ---
 
