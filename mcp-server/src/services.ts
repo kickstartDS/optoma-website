@@ -12,6 +12,7 @@ import {
   saveStory,
   importByPrompterReplacement,
   importAtPosition,
+  uploadAndReplaceAssets,
   generateStructuredContent,
   prepareSchemaForOpenAi,
   getComponentPresetSchema,
@@ -447,6 +448,8 @@ export class StoryblokService {
     sections: Record<string, unknown>[];
     publish?: boolean;
     skipValidation?: boolean;
+    uploadAssets?: boolean;
+    assetFolderName?: string;
   }): Promise<unknown> {
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
@@ -464,6 +467,20 @@ export class StoryblokService {
       string,
       unknown
     >[];
+
+    // Upload external images to Storyblok (if requested)
+    let assetsSummary;
+    if (options.uploadAssets) {
+      const wrapper = { section: sections } as Record<string, any>;
+      assetsSummary = await uploadAndReplaceAssets(
+        this.managementClient,
+        wrapper,
+        {
+          spaceId: this.spaceId,
+          assetFolderName: options.assetFolderName || "AI Generated",
+        }
+      );
+    }
 
     const content: Record<string, unknown> = {
       component: "page",
@@ -483,11 +500,16 @@ export class StoryblokService {
     if (options.publish) {
       const storyId = (story as Record<string, any>).id;
       if (storyId) {
-        return this.updateStory(storyId, {}, true);
+        const savedStory = await this.updateStory(storyId, {}, true);
+        return assetsSummary
+          ? { ...(savedStory as Record<string, any>), assetsSummary }
+          : savedStory;
       }
     }
 
-    return story;
+    return assetsSummary
+      ? { ...(story as Record<string, any>), assetsSummary }
+      : story;
   }
 }
 

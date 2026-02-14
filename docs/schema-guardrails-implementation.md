@@ -62,3 +62,12 @@
 - [x] Update MCP server README with validation section and updated tool tables
 - [x] Update `shared-services-refactor-plan.md` file change summary
 - [x] Update `copilot-instructions.md` with validation references
+
+## Phase 8: Enforce `type` / `component` Discriminator Duality
+
+- [x] `processForStoryblok()` deletes `type` after moving to `component` (no dual discriminators)
+- [x] Section-level annotations explicitly `delete section.type` after setting `component`
+- [x] Final safety traversal strips `type` from any node that already has `component`
+- [x] `flattenNestedObjects()` also checks `!child.component` (not just `!child.type`) to protect Storyblok-format blocks
+- [x] `validateNode()` flags nodes with both `component` and `type` in Storyblok/auto format
+- [x] Updated docs: shared services README, shared-services-refactor-plan, MCP README, copilot-instructions

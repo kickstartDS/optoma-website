@@ -303,6 +303,11 @@ The tool:
             description:
               "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
           },
+          skipValidation: {
+            type: "boolean",
+            description:
+              "Skip content validation against the Design System schema (default: false)",
+          },
         },
         required: ["storyUid", "prompterUid", "page"],
       },
@@ -363,6 +368,11 @@ Position semantics:
             description:
               "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
           },
+          skipValidation: {
+            type: "boolean",
+            description:
+              "Skip content validation against the Design System schema (default: false)",
+          },
         },
         required: ["storyUid", "position", "sections"],
       },
@@ -412,6 +422,21 @@ Use this instead of create_story when you have section content ready to go.`,
             type: "boolean",
             description:
               "Publish the page immediately after creation (default: false)",
+          },
+          uploadAssets: {
+            type: "boolean",
+            description:
+              "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. Default: false.",
+          },
+          assetFolderName: {
+            type: "string",
+            description:
+              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
+          },
+          skipValidation: {
+            type: "boolean",
+            description:
+              "Skip content validation against the Design System schema (default: false)",
           },
         },
         required: ["name", "slug", "sections"],
@@ -526,6 +551,11 @@ sub-components can only appear inside their designated parent slots.`,
             type: "boolean",
             description: "Create as a folder instead of a story",
           },
+          skipValidation: {
+            type: "boolean",
+            description:
+              "Skip content validation against the Design System schema (default: false)",
+          },
         },
         required: ["name", "slug", "content"],
       },
@@ -561,6 +591,11 @@ sub-components can only appear inside their designated parent slots.`,
           publish: {
             type: "boolean",
             description: "Publish the story after updating (default: false)",
+          },
+          skipValidation: {
+            type: "boolean",
+            description:
+              "Skip content validation against the Design System schema (default: false)",
           },
         },
         required: ["storyId"],
@@ -805,6 +840,7 @@ to ensure only valid icon identifiers are used.`,
             skipTransform: validated.skipTransform,
             uploadAssets: validated.uploadAssets,
             assetFolderName: validated.assetFolderName,
+            skipValidation: validated.skipValidation,
           });
           return {
             content: [
@@ -834,6 +870,7 @@ to ensure only valid icon identifiers are used.`,
             skipTransform: validated.skipTransform,
             uploadAssets: validated.uploadAssets,
             assetFolderName: validated.assetFolderName,
+            skipValidation: validated.skipValidation,
           });
           return {
             content: [
@@ -855,9 +892,12 @@ to ensure only valid icon identifiers are used.`,
 
         case "create_page_with_content": {
           const validated = schemas.createPageWithContent.parse(args);
-          const result = await storyblokService.createPageWithContent(
-            validated
-          );
+          const result = await storyblokService.createPageWithContent({
+            ...validated,
+            skipValidation: validated.skipValidation,
+            uploadAssets: validated.uploadAssets,
+            assetFolderName: validated.assetFolderName,
+          });
           return {
             content: [
               {
@@ -922,7 +962,10 @@ to ensure only valid icon identifiers are used.`,
 
         case "create_story": {
           const validated = schemas.createStory.parse(args);
-          const result = await storyblokService.createStory(validated);
+          const result = await storyblokService.createStory({
+            ...validated,
+            skipValidation: validated.skipValidation,
+          });
           return {
             content: [
               {
@@ -950,7 +993,8 @@ to ensure only valid icon identifiers are used.`,
               name: validated.name,
               slug: validated.slug,
             },
-            validated.publish
+            validated.publish,
+            validated.skipValidation
           );
           return {
             content: [

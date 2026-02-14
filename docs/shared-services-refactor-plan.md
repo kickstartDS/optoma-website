@@ -80,12 +80,12 @@ Extracts `processResponse` (lines 240–278), `processPage` (lines 296–315), a
 
 ### Exports
 
-| Function                                      | Description                                                                                                                                                   |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `processOpenAiResponse(response, schemaMap?)` | Takes raw OpenAI output, reverses `type__X` → `type: X`, merges component defaults from schema. Returns Design System–shaped props.                           |
-| `processForStoryblok(page)`                   | Takes DS-shaped props, flattens nested objects to `key_subKey`, sets `type` → `component`, adds `aiDraft: true` on sections. Returns Storyblok-ready content. |
-| `flattenNestedObjects(obj)`                   | Utility: flattens one level of nested objects using `_` separator.                                                                                            |
-| `unflattenNestedObjects(obj)`                 | Reverse utility: `key_subKey` → `{ key: { subKey } }`.                                                                                                        |
+| Function                                      | Description                                                                                                                                                                                                                                                       |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `processOpenAiResponse(response, schemaMap?)` | Takes raw OpenAI output, reverses `type__X` → `type: X`, merges component defaults from schema. Returns Design System–shaped props.                                                                                                                               |
+| `processForStoryblok(page)`                   | Takes DS-shaped props, flattens nested objects to `key_subKey`, moves `type` → `component` (and deletes `type`), adds `aiDraft: true` on sections. A final safety pass strips `type` from any node that already has `component`. Returns Storyblok-ready content. |
+| `flattenNestedObjects(obj)`                   | Utility: flattens one level of nested objects using `_` separator. Skips objects with `type` or `component` (component blocks).                                                                                                                                   |
+| `unflattenNestedObjects(obj)`                 | Reverse utility: `key_subKey` → `{ key: { subKey } }`.                                                                                                                                                                                                            |
 
 ### Dependencies to add to `package.json`
 

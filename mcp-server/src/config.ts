@@ -125,6 +125,11 @@ export const schemas = {
       .describe(
         "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
       ),
+    skipValidation: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Skip content validation against the Design System schema"),
   }),
 
   importContentAtPosition: z.object({
@@ -166,6 +171,11 @@ export const schemas = {
       .describe(
         "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
       ),
+    skipValidation: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Skip content validation against the Design System schema"),
   }),
 
   createPageWithContent: z.object({
@@ -185,6 +195,24 @@ export const schemas = {
       .optional()
       .default(false)
       .describe("Publish the page immediately after creation (default: false)"),
+    uploadAssets: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs."
+      ),
+    assetFolderName: z
+      .string()
+      .optional()
+      .describe(
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+      ),
+    skipValidation: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Skip content validation against the Design System schema"),
   }),
 
   listStories: z.object({
@@ -229,6 +257,11 @@ export const schemas = {
       .optional()
       .default(false)
       .describe("Create as folder"),
+    skipValidation: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Skip content validation against the Design System schema"),
   }),
 
   updateStory: z.object({
@@ -241,6 +274,11 @@ export const schemas = {
       .optional()
       .default(false)
       .describe("Publish after update"),
+    skipValidation: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Skip content validation against the Design System schema"),
   }),
 
   deleteStory: z.object({

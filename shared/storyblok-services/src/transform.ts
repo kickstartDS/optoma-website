@@ -115,8 +115,12 @@ export function processOpenAiResponse(
  * that Storyblok expects.
  *
  * - Nested objects are flattened: `{ image: { src, alt } }` → `{ image_src, image_alt }`
- * - `type` values are copied to `component`
+ * - `type` (DS discriminator) is moved to `component` (Storyblok discriminator)
  * - Each section gets `aiDraft: true` and `component: "section"`
+ *
+ * After this transform every component node carries `component` as its
+ * identity field — the DS `type` field is removed so it cannot collide
+ * with user-facing `type` props in Storyblok (e.g. CTA variant).
  *
  * @param page - Design System page props (with nested objects and `type` fields).
  * @returns A new object with Storyblok-compatible flat props.
@@ -136,6 +140,7 @@ export function processForStoryblok(
         value.type
       ) {
         value.component = value.type;
+        delete value.type;
         flattenNestedObjects(value);
       }
     },
@@ -146,8 +151,27 @@ export function processForStoryblok(
   for (const section of result.section || []) {
     section.aiDraft = true;
     section.component = "section";
+    delete section.type;
     flattenNestedObjects(section);
   }
+
+  // Final safety pass: strip `type` from any node that already has
+  // `component` set — Storyblok content must never carry both.
+  objectTraverse(
+    result,
+    ({ value }) => {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value) &&
+        value.component &&
+        value.type !== undefined
+      ) {
+        delete value.type;
+      }
+    },
+    { traversalType: "breadth-first" }
+  );
 
   return result;
 }
@@ -160,8 +184,8 @@ export function processForStoryblok(
  * Transforms `{ image: { src: "x", alt: "y" } }` into
  * `{ image_src: "x", image_alt: "y" }`.
  *
- * Objects that have a `type` property are left intact (they are
- * component blocks, not nested plain objects).
+ * Objects that have a `type` or `component` property are left intact
+ * (they are component blocks, not nested plain objects).
  *
  * **Mutates** the input object in place.
  */
@@ -172,7 +196,8 @@ export function flattenNestedObjects(value: Record<string, any>): void {
       child &&
       typeof child === "object" &&
       !Array.isArray(child) &&
-      !child.type
+      !child.type &&
+      !child.component
     ) {
       for (const nestedProp of Object.keys(child)) {
         value[`${prop}_${nestedProp}`] = structuredClone(child[nestedProp]);

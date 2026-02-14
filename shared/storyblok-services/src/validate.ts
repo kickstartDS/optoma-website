@@ -236,7 +236,7 @@ function walkSchemaNode(
         const allowedTypes = new Set<string>();
 
         for (const variant of items.anyOf) {
-          const name = extractComponentName(variant);
+          const name = extractComponentName(variant, propKey);
           if (name) {
             allowedTypes.add(name);
             allKnownComponents.add(name);
@@ -251,7 +251,7 @@ function walkSchemaNode(
       }
       // ─ Case 2: single item schema (monomorphic container) ──
       else if (items.properties) {
-        const name = extractComponentName(items);
+        const name = extractComponentName(items, propKey);
         if (name) {
           const slotPath = `${contextPath}.${propKey}`;
           containerSlots.set(slotPath, new Set([name]));
@@ -279,8 +279,15 @@ function walkSchemaNode(
  * Checks in order:
  * 1. `properties.type.const` — explicit type discriminator
  * 2. `$id` — derive name via `getSchemaName()` (e.g. `hero.schema.json` → `hero`)
+ * 3. `nameHint` — the array property key from the parent schema (e.g. the
+ *    `logo` key in `logos.logo[]`).  Used for inline sub-component schemas
+ *    that have neither `type.const` nor `$id` but are still structured
+ *    objects with `properties`.
  */
-function extractComponentName(schemaNode: Record<string, any>): string | null {
+function extractComponentName(
+  schemaNode: Record<string, any>,
+  nameHint?: string
+): string | null {
   if (!schemaNode || typeof schemaNode !== "object") return null;
 
   // Check for type const
@@ -293,6 +300,11 @@ function extractComponentName(schemaNode: Record<string, any>): string | null {
     const name = getSchemaName(schemaId);
     if (name) return name;
   }
+
+  // Fallback: use the array property key as the component name when the
+  // items schema is a structured object (has `properties`) but was defined
+  // inline without its own `$id` or `type.const` discriminator.
+  if (nameHint && schemaNode.properties) return nameHint;
 
   return null;
 }
@@ -338,6 +350,12 @@ export function validateContent(
 
 /**
  * Validate an array of section objects. Convenience wrapper.
+ *
+ * Each section must either carry an explicit discriminator
+ * (`component: "section"` in Storyblok format, `type: "section"` in
+ * Design System format) or be structurally recognisable (has a
+ * `components` array).  Missing discriminators are flagged as errors in
+ * strict mode.
  */
 export function validateSections(
   sections: Record<string, any>[],
@@ -347,17 +365,61 @@ export function validateSections(
   const errors: ValidationError[] = [];
   const { strict = true, format = "auto" } = options || {};
 
-  // Each section is a container — check its child arrays
+  // Determine the primary root-array field that represents sections.
+  // Typically "section", but derived from the schema so it works for
+  // any root schema structure.
+  const sectionField = rules.rootArrayFields[0] || "section";
+
   sections.forEach((section, index) => {
-    const sectionPath = `section[${index}]`;
-    // Validate the section's contents against known container slots
+    const sectionPath = `${sectionField}[${index}]`;
+    const detectedType = getComponentType(section, format);
+
+    if (detectedType && detectedType !== sectionField) {
+      // The object claims to be a different component — that's wrong
+      // at the section level.
+      errors.push({
+        path: sectionPath,
+        component: detectedType,
+        message: `Expected a "${sectionField}" container but found component "${detectedType}".`,
+        suggestion: `Wrap "${detectedType}" inside a "${sectionField}" container with a "components" array.`,
+      });
+      return;
+    }
+
+    if (!detectedType && strict) {
+      // No discriminator — check if structurally valid (has a child
+      // array that matches a known container slot for the section type).
+      const hasChildSlot = Object.keys(section).some((key) => {
+        if (!Array.isArray(section[key])) return false;
+        return rules.containerSlots.has(`${sectionField}.${key}`);
+      });
+
+      if (!hasChildSlot) {
+        errors.push({
+          path: sectionPath,
+          component: "(unknown)",
+          message: `Section is missing a component discriminator and has no recognisable child slot.`,
+          suggestion:
+            format === "storyblok" || format === "auto"
+              ? `Add \`"component": "${sectionField}"\` to identify it as a section.`
+              : `Add \`"type": "${sectionField}"\` to identify it as a section.`,
+        });
+        return;
+      }
+      // Structurally valid — proceed with inferred type
+    }
+
+    // Validate the section's contents against known container slots.
+    // Pass the inferred section type so slot lookup works even when the
+    // discriminator is absent.
     validateContainerChildren(
       section,
       sectionPath,
       rules,
       errors,
       strict,
-      format
+      format,
+      sectionField
     );
   });
 
@@ -381,7 +443,15 @@ export function validatePageContent(
     if (Array.isArray(rootArray)) {
       rootArray.forEach((item: Record<string, any>, index: number) => {
         const path = `${rootField}[${index}]`;
-        validateContainerChildren(item, path, rules, errors, strict, format);
+        validateContainerChildren(
+          item,
+          path,
+          rules,
+          errors,
+          strict,
+          format,
+          rootField
+        );
       });
     }
   }
@@ -407,6 +477,22 @@ function validateNode(
   if (!node || typeof node !== "object" || Array.isArray(node)) return;
 
   const componentType = getComponentType(node, format);
+
+  // Flag Storyblok-format nodes that carry both `component` and `type`.
+  // In Storyblok content, `type` is reserved for user-facing variant props
+  // (e.g. CTA visual variant) — it must never act as a second discriminator.
+  if (
+    typeof node.component === "string" &&
+    typeof node.type === "string" &&
+    (format === "storyblok" || format === "auto")
+  ) {
+    errors.push({
+      path: path || "(root)",
+      component: node.component,
+      message: `Component "${node.component}" has both "component" and "type" fields. Storyblok content must only use "component" as the discriminator.`,
+      suggestion: `Remove the "type" field or run processForStoryblok() to clean it up.`,
+    });
+  }
 
   // If we know the parent slot, check that this component is allowed there
   if (parentSlotPath && componentType) {
@@ -442,8 +528,22 @@ function validateNode(
         });
       }
     } else if (!componentType && strict) {
-      // Content in a container slot but no identifiable type
-      // Skip — some items (like plain objects without type) are tolerated
+      // Content in a container slot but no identifiable component type.
+      // Every component must carry a discriminator:
+      //   - Storyblok format: `component`
+      //   - Design System format: `type`
+      const formatHint =
+        format === "storyblok"
+          ? 'a `"component"` field'
+          : format === "design-system"
+          ? 'a `"type"` field'
+          : 'a `"component"` or `"type"` field';
+      errors.push({
+        path,
+        component: "(unknown)",
+        message: `Component inside "${parentSlotPath}" is missing ${formatHint} — cannot identify its type.`,
+        suggestion: `Every component must have ${formatHint} set to one of the allowed types for this slot.`,
+      });
     }
   }
 
@@ -474,6 +574,11 @@ function validateNode(
 /**
  * Walk child arrays of a node, checking each against matching container
  * slot rules.
+ *
+ * @param inferredType - When the caller already knows the logical component
+ *   type of this node (e.g. the node is a section that was identified by
+ *   position rather than by a discriminator field), pass it here so slot
+ *   lookup still works correctly.
  */
 function validateContainerChildren(
   node: Record<string, any>,
@@ -481,9 +586,12 @@ function validateContainerChildren(
   rules: ValidationRules,
   errors: ValidationError[],
   strict: boolean,
-  format: string
+  format: string,
+  inferredType?: string
 ): void {
-  const componentType = getComponentType(node, format);
+  // Use the explicit discriminator when present, fall back to the
+  // caller-supplied inferred type (e.g. for sections without a field).
+  const componentType = getComponentType(node, format) || inferredType || null;
 
   for (const [key, value] of Object.entries(node)) {
     if (!Array.isArray(value)) continue;
@@ -501,22 +609,23 @@ function validateContainerChildren(
 
     // Also check for root-level container slots: "rootField.key"
     // (e.g. when walking a section object, key might be "components")
-    for (const rootField of rules.rootArrayFields) {
-      const rootSlot = `${rootField}.${key}`;
-      if (rules.containerSlots.has(rootSlot)) {
-        // Only match if the current node IS a root-level container
-        // (i.e. its type matches the rootField name or we're at root level)
-        const nodeType = getComponentType(node, format);
-        if (nodeType === rootField || path.startsWith(rootField)) {
-          slotPath = rootSlot;
+    if (!slotPath) {
+      for (const rootField of rules.rootArrayFields) {
+        const rootSlot = `${rootField}.${key}`;
+        if (rules.containerSlots.has(rootSlot)) {
+          // Match if the current node IS a root-level container
+          // (by discriminator, inferred type, or path position)
+          if (componentType === rootField || path.startsWith(rootField)) {
+            slotPath = rootSlot;
+          }
         }
       }
     }
 
     if (!slotPath) {
       // If we still don't have a slot, try to match against any known slot
-      // where the array key matches (fallback for Storyblok format where
-      // the section type might be expressed differently)
+      // where the array key matches (fallback for content where the parent
+      // type might be expressed differently)
       for (const [knownSlot] of rules.containerSlots) {
         const parts = knownSlot.split(".");
         if (parts.length === 2 && parts[1] === key) {

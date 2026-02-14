@@ -263,7 +263,7 @@ The response includes both Design System–shaped props and Storyblok-ready cont
 
 ### Import content with automatic asset upload
 
-Both `import_content` and `import_content_at_position` support automatic asset upload. When `uploadAssets` is `true`, any image URLs in the content (e.g. DALL·E URLs) are downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs before the story is saved:
+The `import_content`, `import_content_at_position`, and `create_page_with_content` tools all support automatic asset upload. When `uploadAssets` is `true`, any image URLs in the content (e.g. DALL·E URLs or scraped external URLs) are downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs before the story is saved:
 
 ```json
 {
@@ -447,11 +447,12 @@ All write tools (`create_story`, `update_story`, `import_content`, `import_conte
 
 ### What is validated
 
-| Check                      | Example error                                                    |
-| -------------------------- | ---------------------------------------------------------------- |
-| Unknown component types    | `"carousel" is not a known component type`                       |
-| Nesting violations         | `"hero" is not allowed inside "mosaic.tile"`                     |
-| Sub-component misplacement | `"tile" can only be used inside "mosaic.tile", not at top level` |
+| Check                      | Example error                                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------ |
+| Unknown component types    | `"carousel" is not a known component type`                                                       |
+| Nesting violations         | `"hero" is not allowed inside "mosaic.tile"`                                                     |
+| Sub-component misplacement | `"tile" can only be used inside "mosaic.tile", not at top level`                                 |
+| Dual discriminator         | `Component "hero" has both "component" and "type" — Storyblok content must only use "component"` |
 
 ### Introspection annotations
 

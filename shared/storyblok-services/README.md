@@ -87,12 +87,12 @@ import {
 } from "@kickstartds/storyblok-services";
 ```
 
-| Function                                                         | Description                                                                                                         |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `processOpenAiResponse(response, schemaMap?, defaults?, merge?)` | Reverses `type__X` → `type: X` mangling, merges component defaults. Returns Design System–shaped props              |
-| `processForStoryblok(page)`                                      | Flattens nested objects to `key_subKey`, sets `type` → `component`, adds `aiDraft: true`. Returns Storyblok content |
-| `flattenNestedObjects(obj)`                                      | Utility: flattens one level of nested objects using `_` separator                                                   |
-| `unflattenNestedObjects(obj)`                                    | Reverse utility: `key_subKey` → `{ key: { subKey } }`                                                               |
+| Function                                                         | Description                                                                                                                                                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `processOpenAiResponse(response, schemaMap?, defaults?, merge?)` | Reverses `type__X` → `type: X` mangling, merges component defaults. Returns Design System–shaped props                                                                                |
+| `processForStoryblok(page)`                                      | Flattens nested objects to `key_subKey`, moves `type` → `component` (and removes `type`), adds `aiDraft: true`. Guarantees Storyblok output never carries both `type` and `component` |
+| `flattenNestedObjects(obj)`                                      | Utility: flattens one level of nested objects using `_` separator. Skips objects with `type` or `component` (component blocks)                                                        |
+| `unflattenNestedObjects(obj)`                                    | Reverse utility: `key_subKey` → `{ key: { subKey } }`                                                                                                                                 |
 
 ### Asset Management
 
