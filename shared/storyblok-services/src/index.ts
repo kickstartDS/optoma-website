@@ -67,6 +67,8 @@ export {
   uploadAndReplaceAssets,
   findImageUrls,
   defaultIsImageUrl,
+  createAssetObject,
+  wrapAssetUrls,
 } from "./assets.js";
 export type {
   UploadAssetsOptions,

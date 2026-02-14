@@ -11,7 +11,7 @@ import type {
   ImportAtPositionOptions,
 } from "./types.js";
 import { StoryblokApiError, PrompterNotFoundError } from "./types.js";
-import { uploadAndReplaceAssets } from "./assets.js";
+import { uploadAndReplaceAssets, wrapAssetUrls } from "./assets.js";
 
 // ─── Client factory ───────────────────────────────────────────────────
 
@@ -123,10 +123,15 @@ export async function importByPrompterReplacement(
     });
   }
 
-  // 4. Replace the prompter with the new sections
+  // 4. Wrap plain URL strings in asset fields into Storyblok asset objects
+  for (const section of sections) {
+    wrapAssetUrls(section as Record<string, any>);
+  }
+
+  // 5. Replace the prompter with the new sections
   sectionArray.splice(prompterIndex, 1, ...sections);
 
-  // 5. Save the story
+  // 6. Save the story
   const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
 
   return assetsSummary ? { ...savedStory, assetsSummary } : savedStory;
@@ -176,16 +181,21 @@ export async function importAtPosition(
     });
   }
 
-  // 4. Clamp position to valid range
+  // 4. Wrap plain URL strings in asset fields into Storyblok asset objects
+  for (const section of sections) {
+    wrapAssetUrls(section as Record<string, any>);
+  }
+
+  // 5. Clamp position to valid range
   const insertAt =
     position < 0
       ? Math.max(0, sectionArray.length + 1 + position) // -1 → end
       : Math.min(position, sectionArray.length); // cap at length
 
-  // 5. Insert sections (no deletion)
+  // 6. Insert sections (no deletion)
   sectionArray.splice(insertAt, 0, ...sections);
 
-  // 6. Save the story
+  // 7. Save the story
   const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
 
   return assetsSummary ? { ...savedStory, assetsSummary } : savedStory;

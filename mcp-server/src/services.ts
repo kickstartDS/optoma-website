@@ -13,6 +13,7 @@ import {
   importByPrompterReplacement,
   importAtPosition,
   uploadAndReplaceAssets,
+  wrapAssetUrls,
   generateStructuredContent,
   prepareSchemaForOpenAi,
   getComponentPresetSchema,
@@ -480,6 +481,11 @@ export class StoryblokService {
           assetFolderName: options.assetFolderName || "AI Generated",
         }
       );
+    }
+
+    // Wrap plain URL strings in asset fields into Storyblok asset objects
+    for (const section of sections) {
+      wrapAssetUrls(section as Record<string, any>);
     }
 
     const content: Record<string, unknown> = {

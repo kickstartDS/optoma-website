@@ -84,7 +84,8 @@ export function storyProcessing(
       value &&
       typeof value === "object" &&
       value.fieldtype === "asset" &&
-      value.id === null
+      value.id === null &&
+      !value.filename
     ) {
       delete parent[key];
     }
@@ -119,7 +120,6 @@ export function storyProcessing(
       parent &&
       key &&
       value &&
-      value.id &&
       value.filename &&
       value.fieldtype === "asset"
     ) {
