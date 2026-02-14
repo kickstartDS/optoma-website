@@ -1,6 +1,21 @@
 import { z } from "zod";
 
 /**
+ * Base Zod schema for a section object.
+ *
+ * Not a full schema (that would duplicate the JSON Schema), but enough to
+ * validate the expected envelope. Deep structural validation is handled by
+ * `validateContent()` from the shared validation module.
+ */
+const sectionSchema = z
+  .object({
+    component: z.literal("section").optional(),
+    type: z.literal("section").optional(),
+    components: z.array(z.record(z.unknown())).optional(),
+  })
+  .passthrough();
+
+/**
  * Configuration for the Storyblok MCP Server
  */
 export interface StoryblokConfig {
@@ -86,7 +101,7 @@ export const schemas = {
     page: z
       .object({
         content: z.object({
-          section: z.array(z.record(z.unknown())),
+          section: z.array(sectionSchema),
         }),
       })
       .describe("Page content with sections to import"),
@@ -122,7 +137,7 @@ export const schemas = {
         "Zero-based insertion index. 0 = beginning, -1 = end, any other value is clamped to bounds"
       ),
     sections: z
-      .array(z.record(z.unknown()))
+      .array(sectionSchema)
       .describe("Array of section objects to insert at the given position"),
     publish: z
       .boolean()
@@ -161,7 +176,7 @@ export const schemas = {
       .optional()
       .describe("Parent folder ID (for nested content)"),
     sections: z
-      .array(z.record(z.unknown()))
+      .array(sectionSchema)
       .describe(
         "Array of section objects to populate the page with. Missing _uid fields will be auto-generated."
       ),

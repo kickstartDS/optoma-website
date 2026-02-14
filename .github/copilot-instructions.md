@@ -130,6 +130,8 @@ The `import_content` and `import_content_at_position` tools support **automatic 
 
 The `list_icons` tool returns all available icon identifiers (e.g. `arrow-right`, `star`, `email`, `phone`) that can be used in component icon fields such as hero `cta_icon`, feature `icon`, or contact-info `icon`. Always call `list_icons` before generating or importing content that includes icon fields to ensure only valid identifiers are used.
 
+All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content against the Design System schema before writing to Storyblok. Validation rules are derived automatically from the dereferenced page schema — no component names or nesting rules are hardcoded. Validation catches unknown component types, nesting violations, and sub-component misplacement. All validated tools accept `skipValidation: true` as an escape hatch. The `list_components` and `get_component` introspection tools annotate their output with nesting and composition rules so LLMs understand where components can be placed.
+
 ### Transport Modes
 
 - **stdio** (default): For local usage with Claude Desktop — `npm start`
@@ -160,6 +162,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [shared/storyblok-services/src/schema.ts](shared/storyblok-services/src/schema.ts) - Schema preparation for OpenAI structured output (13 transformation passes)
 - [shared/storyblok-services/src/transform.ts](shared/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
 - [shared/storyblok-services/src/pipeline.ts](shared/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
+- [shared/storyblok-services/src/validate.ts](shared/storyblok-services/src/validate.ts) - Schema-driven content validation (nesting rules, component hierarchy)
 - [shared/storyblok-services/src/assets.ts](shared/storyblok-services/src/assets.ts) - Asset download, upload to Storyblok, and URL rewriting
 
 ## Common Patterns

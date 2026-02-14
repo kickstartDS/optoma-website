@@ -270,24 +270,25 @@ The dereffed page schema (`page.schema.dereffed.json`) is the source input for a
 
 ## File Change Summary
 
-| Location                                                   | Action                              |
-| ---------------------------------------------------------- | ----------------------------------- |
-| `shared/storyblok-services/src/schema.ts`                  | **Create**                          |
-| `shared/storyblok-services/src/transform.ts`               | **Create**                          |
-| `shared/storyblok-services/src/pipeline.ts`                | **Create**                          |
-| `shared/storyblok-services/src/index.ts`                   | **Update** — re-export new modules  |
-| `shared/storyblok-services/package.json`                   | **Update** — add deps               |
-| `shared/storyblok-services/test/schema.test.ts`            | **Create**                          |
-| `shared/storyblok-services/test/transform.test.ts`         | **Create**                          |
-| `shared/storyblok-services/test/pipeline.test.ts`          | **Create**                          |
-| `mcp-server/src/index.ts`                                  | **Update** — tool defs + handlers   |
-| `mcp-server/src/services.ts`                               | **Update** — wire shared transforms |
-| `n8n-nodes/.../GenericFunctions.ts`                        | **Update** — replace static presets |
-| `n8n-nodes/.../schemas/`                                   | **Delete** — 9 JSON files           |
-| `n8n-nodes/.../descriptions/GenerateContentDescription.ts` | **Update**                          |
-| `n8n-nodes/.../descriptions/ImportContentDescription.ts`   | **Update**                          |
-| `n8n-nodes/.../StoryblokKickstartDs.node.ts`               | **Update**                          |
-| `components/prompter/PrompterComponent.tsx`                | **Update** — simplify               |
+| Location                                                   | Action                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------- |
+| `shared/storyblok-services/src/schema.ts`                  | **Create**                                              |
+| `shared/storyblok-services/src/transform.ts`               | **Create**                                              |
+| `shared/storyblok-services/src/pipeline.ts`                | **Create**                                              |
+| `shared/storyblok-services/src/validate.ts`                | **Create** — schema-driven content validation (Phase 7) |
+| `shared/storyblok-services/src/index.ts`                   | **Update** — re-export new modules                      |
+| `shared/storyblok-services/package.json`                   | **Update** — add deps                                   |
+| `shared/storyblok-services/test/schema.test.ts`            | **Create**                                              |
+| `shared/storyblok-services/test/transform.test.ts`         | **Create**                                              |
+| `shared/storyblok-services/test/pipeline.test.ts`          | **Create**                                              |
+| `mcp-server/src/index.ts`                                  | **Update** — tool defs + handlers                       |
+| `mcp-server/src/services.ts`                               | **Update** — wire shared transforms                     |
+| `n8n-nodes/.../GenericFunctions.ts`                        | **Update** — replace static presets                     |
+| `n8n-nodes/.../schemas/`                                   | **Delete** — 9 JSON files                               |
+| `n8n-nodes/.../descriptions/GenerateContentDescription.ts` | **Update**                                              |
+| `n8n-nodes/.../descriptions/ImportContentDescription.ts`   | **Update**                                              |
+| `n8n-nodes/.../StoryblokKickstartDs.node.ts`               | **Update**                                              |
+| `components/prompter/PrompterComponent.tsx`                | **Update** — simplify                                   |
 
 ---
 

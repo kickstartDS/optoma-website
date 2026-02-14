@@ -19,6 +19,7 @@ import {
   StoryblokService,
   ContentGenerationService,
   scrapeUrl,
+  PAGE_VALIDATION_RULES,
 } from "./services.js";
 import {
   formatErrorResponse,
@@ -182,9 +183,10 @@ function createMcpServer() {
       name: "generate_content",
       description: `Generate structured content using AI (OpenAI GPT-4).
 
-Use this tool to generate page content, section content, or any other structured data
-that follows a JSON schema. The generated content will match the schema used by
-the kickstartDS Design System components.
+This is the recommended way to produce content that is guaranteed to comply with
+the Design System's JSON Schema. The schema is auto-derived and enforced by
+OpenAI's structured output. Content produced by this tool can be passed directly
+to \`create_page_with_content\` or \`import_content_at_position\`.
 
 You can either:
 - Provide a custom JSON schema via the 'schema' parameter (advanced), OR
@@ -245,11 +247,18 @@ Example use cases:
 This tool replaces a prompter component in a story with new section content.
 It's used after generating content with AI to persist it into the CMS.
 
+Content is validated against the Design System's JSON Schema before import.
+Invalid component nesting (e.g. placing a sub-component directly in a
+top-level container) will be rejected with an actionable error message.
+Use \`generate_content\` to produce schema-valid content, or consult
+\`list_components\` to check the \`allowedIn\` field for each component.
+
 The tool:
-1. Fetches the current story
-2. Finds the prompter component by its UID
-3. Replaces it with the new sections
-4. Saves the story as a draft`,
+1. Validates content against the Design System schema
+2. Fetches the current story
+3. Finds the prompter component by its UID
+4. Replaces it with the new sections
+5. Saves the story as a draft`,
       inputSchema: {
         type: "object",
         properties: {
@@ -306,6 +315,12 @@ Inserts section content at a given index in the story's section array without
 removing any existing content. This is useful for adding new sections to an
 existing page without replacing anything.
 
+Content is validated against the Design System's JSON Schema before import.
+Invalid component nesting (e.g. placing a sub-component directly in a
+top-level container) will be rejected with an actionable error message.
+Use \`generate_content\` to produce schema-valid content, or consult
+\`list_components\` to check the \`allowedIn\` field for each component.
+
 Position semantics:
 - 0 = insert at the beginning
 - -1 = append at the end
@@ -358,10 +373,18 @@ Position semantics:
 
 This is the recommended way to create a brand new page with AI-generated or
 pre-built content. It handles all the boilerplate:
-1. Auto-generates _uid fields for every nested component that is missing one
-2. Wraps sections in a standard "page" component envelope
-3. Creates the story in Storyblok
-4. Optionally publishes it
+1. Validates sections against the Design System's JSON Schema
+2. Auto-generates _uid fields for every nested component that is missing one
+3. Wraps sections in a standard "page" component envelope
+4. Creates the story in Storyblok
+5. Optionally publishes it
+
+Sections are validated against the Design System's JSON Schema before saving.
+Each container slot (e.g. a section's component list) only accepts the component
+types defined by the schema. Sub-components that belong inside a parent component
+cannot be placed directly at the top level. Use \`generate_content\` to produce
+schema-valid content, or consult \`list_components\` to check the \`allowedIn\`
+field for each component.
 
 Use this instead of create_story when you have section content ready to go.`,
       inputSchema: {
@@ -475,7 +498,11 @@ Useful for inspecting existing content or getting a template structure.`,
       description: `Create a new story in Storyblok.
 
 Creates a new page, blog post, or other content type with the specified content.
-The content should match the component schema for the content type.`,
+The content should match the component schema for the content type.
+
+Content is validated against the Design System's JSON Schema before saving.
+Component nesting must comply with the schema's composition rules —
+sub-components can only appear inside their designated parent slots.`,
       inputSchema: {
         type: "object",
         properties: {
@@ -507,7 +534,11 @@ The content should match the component schema for the content type.`,
       name: "update_story",
       description: `Update an existing story in Storyblok.
 
-Modifies story content, name, or slug. Can optionally publish the changes.`,
+Modifies story content, name, or slug. Can optionally publish the changes.
+
+Content is validated against the Design System's JSON Schema before saving.
+Component nesting must comply with the schema's composition rules —
+sub-components can only appear inside their designated parent slots.`,
       inputSchema: {
         type: "object",
         properties: {
@@ -560,6 +591,12 @@ Returns all component schemas including:
 - Field definitions and types
 - Validation rules
 - Available presets
+- Nesting constraints (allowedIn, isSubComponent)
+
+Note: Not all components can be used everywhere. Check the \`allowedIn\` and
+\`isSubComponent\` fields to understand where each component can be placed.
+Sub-components can only be used inside their parent component's designated
+slot — they cannot be placed directly into a top-level container.
 
 Useful for understanding what content structures are available.`,
       inputSchema: {
@@ -577,6 +614,11 @@ Returns the full component schema including:
 - Field types (text, bloks, asset, etc.)
 - Restrictions and validations
 - Default values
+- Composition rules (where the component can be placed, child slots)
+
+Note: Components have nesting constraints defined by the Design System's JSON
+Schema. Check the \`composition_rules\` field to understand where a component
+can be placed and which sub-components it accepts.
 
 Use this to understand how to structure content for a component.`,
       inputSchema: {
@@ -952,11 +994,53 @@ to ensure only valid icon identifiers are used.`,
 
         case "list_components": {
           const result = await storyblokService.listComponents();
+
+          // Annotate each component with nesting rules from the schema
+          const annotated = (result as Array<{ name: string }>).map((comp) => {
+            const name = comp.name;
+            const slots =
+              PAGE_VALIDATION_RULES.componentToSlots.get(name) || [];
+            const isSubComponent =
+              slots.length > 0 &&
+              slots.every((s) => {
+                const parts = s.split(".");
+                return !(
+                  parts.length === 2 &&
+                  PAGE_VALIDATION_RULES.rootArrayFields.includes(parts[0])
+                );
+              });
+            const parentComponents = isSubComponent
+              ? [...new Set(slots.map((s) => s.split(".")[0]))]
+              : undefined;
+
+            const annotation: Record<string, any> = {
+              ...comp,
+              allowedIn: slots.length > 0 ? slots : undefined,
+              isSubComponent,
+            };
+
+            if (isSubComponent && parentComponents?.length) {
+              annotation.parentComponent =
+                parentComponents.length === 1
+                  ? parentComponents[0]
+                  : parentComponents;
+              annotation.note = `This component cannot be used as a direct child of a top-level container. It must be nested inside ${
+                parentComponents.length === 1
+                  ? `a '${parentComponents[0]}'`
+                  : `one of: ${parentComponents
+                      .map((p) => `'${p}'`)
+                      .join(", ")}`
+              } component.`;
+            }
+
+            return annotation;
+          });
+
           return {
             content: [
               {
                 type: "text",
-                text: JSON.stringify(result, null, 2),
+                text: JSON.stringify(annotated, null, 2),
               },
             ],
           };
@@ -967,11 +1051,53 @@ to ensure only valid icon identifiers are used.`,
           const result = await storyblokService.getComponent(
             validated.componentName
           );
+
+          // Add composition rules from the schema
+          const name = validated.componentName;
+          const slots = PAGE_VALIDATION_RULES.componentToSlots.get(name) || [];
+
+          // Find child slots this component defines
+          const childSlots: Record<
+            string,
+            { slotPath: string; allowedTypes: string[]; note: string }
+          > = {};
+          for (const [
+            slotPath,
+            allowedTypes,
+          ] of PAGE_VALIDATION_RULES.containerSlots) {
+            const parts = slotPath.split(".");
+            if (parts.length === 2 && parts[0] === name) {
+              childSlots[parts[1]] = {
+                slotPath,
+                allowedTypes: [...allowedTypes],
+                note: `Array of ${[...allowedTypes].join(
+                  "/"
+                )} sub-component(s)`,
+              };
+            }
+          }
+
+          const compositionRules = {
+            allowedIn:
+              slots.length > 0
+                ? slots
+                : ["any (no specific constraints found)"],
+            childSlots:
+              Object.keys(childSlots).length > 0 ? childSlots : undefined,
+          };
+
           return {
             content: [
               {
                 type: "text",
-                text: JSON.stringify(result, null, 2),
+                text: JSON.stringify(
+                  {
+                    composition_rules: compositionRules,
+                    schema: result,
+                  },
+                  null,
+                  2
+                ),
               },
             ],
           };

@@ -6,22 +6,23 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Content Management Tools
 
-| Tool             | Description                                                |
-| ---------------- | ---------------------------------------------------------- |
-| `list_stories`   | List stories with filtering by slug prefix or content type |
-| `get_story`      | Get a single story by slug, ID, or UUID                    |
-| `create_story`   | Create a new story with content                            |
-| `update_story`   | Update an existing story                                   |
-| `delete_story`   | Delete a story                                             |
-| `search_content` | Full-text search across stories                            |
+| Tool             | Description                                                              |
+| ---------------- | ------------------------------------------------------------------------ |
+| `list_stories`   | List stories with filtering by slug prefix or content type               |
+| `get_story`      | Get a single story by slug, ID, or UUID                                  |
+| `create_story`   | Create a new story with content (validates against Design System schema) |
+| `update_story`   | Update an existing story (validates against Design System schema)        |
+| `delete_story`   | Delete a story                                                           |
+| `search_content` | Full-text search across stories                                          |
 
 ### AI Content Generation
 
-| Tool                         | Description                                                                                                                                  |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation                                                        |
-| `import_content`             | Import generated content into a Storyblok story (replace a prompter component), with automatic Storyblok transform and optional asset upload |
-| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic Storyblok transform and optional asset upload                    |
+| Tool                         | Description                                                                                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation                                                                      |
+| `import_content`             | Import generated content into a Storyblok story (replace a prompter), with automatic transform, optional asset upload, and **schema validation**           |
+| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic transform, optional asset upload, and **schema validation**                    |
+| `create_page_with_content`   | Create a new page story with sections, auto-wrapping in page/section structure, with automatic transform, optional asset upload, and **schema validation** |
 
 ### Web Scraping
 
@@ -31,12 +32,12 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Component & Asset Management
 
-| Tool              | Description                                  |
-| ----------------- | -------------------------------------------- |
-| `list_components` | List all component schemas in the space      |
-| `get_component`   | Get detailed schema for a specific component |
-| `list_assets`     | List assets with pagination and search       |
-| `get_ideas`       | Fetch ideas from the Storyblok space         |
+| Tool              | Description                                                                       |
+| ----------------- | --------------------------------------------------------------------------------- |
+| `list_components` | List all component schemas in the space, annotated with nesting/composition rules |
+| `get_component`   | Get detailed schema for a specific component, including composition rules         |
+| `list_assets`     | List assets with pagination and search                                            |
+| `get_ideas`       | Fetch ideas from the Storyblok space                                              |
 
 ### Icon Discovery
 
@@ -440,6 +441,36 @@ The server also exposes MCP resources:
 - `storyblok://components` - All component schemas
 - `storyblok://stories` - Overview of all stories
 
+## Schema Guardrails & Content Validation
+
+All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content **before** writing to Storyblok. Validation rules are derived automatically from the dereferenced page schema — no component names or nesting rules are hardcoded.
+
+### What is validated
+
+| Check                      | Example error                                                    |
+| -------------------------- | ---------------------------------------------------------------- |
+| Unknown component types    | `"carousel" is not a known component type`                       |
+| Nesting violations         | `"hero" is not allowed inside "mosaic.tile"`                     |
+| Sub-component misplacement | `"tile" can only be used inside "mosaic.tile", not at top level` |
+
+### Introspection annotations
+
+The `list_components` and `get_component` tools annotate their output with nesting rules so LLMs can understand the component hierarchy before generating content:
+
+- **`list_components`** — each component includes `allowedIn`, `isSubComponent`, `parentComponent`, and a `note` explaining placement.
+- **`get_component`** — wraps the schema in a `composition_rules` object with `allowedIn` and `childSlots`.
+
+### Escape hatch
+
+All validated write tools accept an optional `skipValidation: true` parameter to bypass validation when needed (e.g. experimental content structures).
+
+### Validation in other consumers
+
+The same validation logic from `@kickstartds/storyblok-services` is also applied in:
+
+- **n8n community nodes** — `importContentIntoStory` and `insertContentAtPosition` validate sections before writing.
+- **Next.js API route** (`/api/import`) — validates sections before calling `importByPrompterReplacement`.
+
 ## Development
 
 ### Project Structure
@@ -463,7 +494,7 @@ mcp-server/
 └── README.md
 ```
 
-Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), and the high-level pipeline (`generateAndPrepareContent`). MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`), and the high-level pipeline (`generateAndPrepareContent`). MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 

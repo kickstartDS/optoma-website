@@ -80,3 +80,19 @@ export type {
   GenerateAndPrepareOptions,
   GenerateAndPrepareResult,
 } from "./pipeline.js";
+
+// ─── Schema validation ──────────────────────────────────────────────
+export {
+  buildValidationRules,
+  validateContent,
+  validateSections,
+  validatePageContent,
+  formatValidationErrors,
+} from "./validate.js";
+export type {
+  ValidationRules,
+  ValidationResult,
+  ValidationError,
+  ValidateContentOptions,
+  ContainerSlot,
+} from "./validate.js";

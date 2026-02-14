@@ -18,11 +18,17 @@ import {
   processOpenAiResponse,
   processForStoryblok,
   generateAndPrepareContent,
+  buildValidationRules,
+  validateSections,
+  formatValidationErrors,
   type StoryblokCredentials,
   type OpenAiCredentials,
   type PrepareSchemaOptions,
+  type ValidationRules,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
+import * as path from "path";
+import * as fs from "fs";
 
 // ─── Re-exports from shared library ──────────────────────────────────
 // These are re-exported so the node and tests can import from one place.
@@ -44,11 +50,28 @@ export {
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";
 
+// ─── Schema-driven validation rules ──────────────────────────────────
+// Load the dereferenced page schema once and build validation rules so
+// the import operation can catch structural errors before writing to CMS.
+
+const PAGE_SCHEMA: Record<string, any> = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, "schemas", "page.schema.dereffed.json"),
+    "utf-8"
+  )
+);
+
+const PAGE_VALIDATION_RULES: ValidationRules =
+  buildValidationRules(PAGE_SCHEMA);
+
+export { PAGE_VALIDATION_RULES };
+
 // ─── n8n-facing wrappers ─────────────────────────────────────────────
 // These preserve the original function signatures used by the node.
 
 /**
  * Import content by replacing a prompter component.
+ * Validates sections against the Design System schema before writing.
  * Delegates to `@kickstartds/storyblok-services`.
  */
 export async function importContentIntoStory(
@@ -57,8 +80,16 @@ export async function importContentIntoStory(
   storyUid: string,
   prompterUid: string,
   sections: Record<string, unknown>[],
-  publish: boolean
+  publish: boolean,
+  skipValidation = false
 ): Promise<Record<string, any>> {
+  if (!skipValidation) {
+    const result = validateSections(sections, PAGE_VALIDATION_RULES);
+    if (!result.valid) {
+      throw new Error(formatValidationErrors(result.errors));
+    }
+  }
+
   return importByPrompterReplacement(client, spaceId, {
     storyUid,
     prompterUid,
@@ -69,6 +100,7 @@ export async function importContentIntoStory(
 
 /**
  * Insert content at a specific position (no prompter needed).
+ * Validates sections against the Design System schema before writing.
  * Delegates to `@kickstartds/storyblok-services`.
  */
 export async function insertContentAtPosition(
@@ -77,8 +109,16 @@ export async function insertContentAtPosition(
   storyUid: string,
   position: number,
   sections: Record<string, unknown>[],
-  publish: boolean
+  publish: boolean,
+  skipValidation = false
 ): Promise<Record<string, any>> {
+  if (!skipValidation) {
+    const result = validateSections(sections, PAGE_VALIDATION_RULES);
+    if (!result.valid) {
+      throw new Error(formatValidationErrors(result.errors));
+    }
+  }
+
   return importAtPosition(client, spaceId, {
     storyUid,
     position,

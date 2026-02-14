@@ -1,0 +1,637 @@
+/**
+ * Schema-driven validation for content structures.
+ *
+ * Extracts component nesting rules from dereferenced JSON Schemas and
+ * validates content trees against those rules.
+ *
+ * **Design principle:** All knowledge comes from the schema — no component
+ * names, slot names, or hierarchy assumptions are hardcoded. This makes
+ * the module work with any kickstartDS-based Design System.
+ *
+ * Pure functions — no framework dependencies.
+ */
+
+import { getSchemaName } from "./schema.js";
+
+// ─── Types ────────────────────────────────────────────────────────────
+
+/** A container slot in the schema — an array property that holds components. */
+export interface ContainerSlot {
+  /** Dot-separated path, e.g. `"section.components"`, `"mosaic.tile"`. */
+  path: string;
+  /** The set of component type names allowed in this slot. */
+  allowedTypes: Set<string>;
+}
+
+/**
+ * Rules extracted from a dereferenced root schema.
+ *
+ * These capture the full component hierarchy — which components exist,
+ * where they can be placed, and which slots hold them.
+ */
+export interface ValidationRules {
+  /**
+   * Map from container-slot path to the set of component type names
+   * allowed in that slot.
+   *
+   * Examples:
+   * - `"section.components"` → `Set(["hero", "faq", "mosaic", …])`
+   * - `"mosaic.tile"` → `Set(["tile"])`
+   * - `"slider.components"` → `Set(["cta", "features", …])`
+   */
+  containerSlots: Map<string, Set<string>>;
+
+  /**
+   * Reverse index: for each component type, which container slot path(s)
+   * it may appear in.
+   *
+   * Example: `"tile"` → `["mosaic.tile"]`
+   */
+  componentToSlots: Map<string, string[]>;
+
+  /**
+   * Union of all component type names found anywhere in the schema.
+   */
+  allKnownComponents: Set<string>;
+
+  /**
+   * Names of the top-level array properties in the root schema that hold
+   * container structures (e.g. `["section"]`).
+   */
+  rootArrayFields: string[];
+
+  /**
+   * Maps parent component names to the property keys that hold their
+   * sub-component arrays. Derived from `containerSlots`.
+   *
+   * Example: `"mosaic"` → `"tile"`, `"downloads"` → `"download"`
+   *
+   * Only includes entries where the sub-array is *exclusive* to that parent
+   * (i.e. it's not a top-level container slot like `section.components`).
+   */
+  subComponentMap: Record<string, string>;
+}
+
+/** Describes a single validation error. */
+export interface ValidationError {
+  /** JSON-path-like location, e.g. `"section[0].components[2]"`. */
+  path: string;
+  /** The component type that caused the error. */
+  component: string;
+  /** Human-readable, actionable error message. */
+  message: string;
+  /** Optional remediation hint. */
+  suggestion?: string;
+}
+
+/** Result of validating a content tree. */
+export interface ValidationResult {
+  valid: boolean;
+  errors: ValidationError[];
+}
+
+/** Options for `validateContent()`. */
+export interface ValidateContentOptions {
+  /**
+   * When `false`, unknown component types produce warnings but are not
+   * treated as errors. Useful for forward-compatibility during schema
+   * transitions.
+   * @default true
+   */
+  strict?: boolean;
+  /**
+   * Hint about which content format the input uses.
+   * - `"storyblok"` — component type is in the `component` field.
+   * - `"design-system"` — component type is in the `type` field.
+   * - `"auto"` — try both, preferring `component`, then `type`.
+   * @default "auto"
+   */
+  format?: "storyblok" | "design-system" | "auto";
+}
+
+// ─── Phase 1: Extract Validation Rules ────────────────────────────────
+
+/**
+ * Walk a dereferenced root JSON Schema and extract component nesting rules.
+ *
+ * The function discovers the hierarchy by inspecting the schema tree — it
+ * never hardcodes component names, slot names, or structural assumptions.
+ *
+ * @param derefSchema - A fully dereferenced root JSON Schema (e.g. page,
+ *   blog-post, event-detail — any content type).
+ * @returns Validation rules describing every container slot and which
+ *   component types may appear in each.
+ */
+export function buildValidationRules(
+  derefSchema: Record<string, any>
+): ValidationRules {
+  const containerSlots = new Map<string, Set<string>>();
+  const allKnownComponents = new Set<string>();
+  const rootArrayFields: string[] = [];
+
+  // ── Discover top-level array properties that hold containers ────
+  const rootProps = derefSchema.properties || {};
+  for (const [key, value] of Object.entries<any>(rootProps)) {
+    if (
+      value &&
+      value.type === "array" &&
+      value.items &&
+      typeof value.items === "object"
+    ) {
+      // Check if items look like a component (has properties with nested arrays)
+      // or if items have a `components` property with `anyOf`
+      const itemProps = value.items.properties;
+      if (itemProps) {
+        // This top-level array holds structured objects — likely a container
+        rootArrayFields.push(key);
+
+        // Walk the items to discover container slots inside
+        walkSchemaNode(value.items, key, containerSlots, allKnownComponents);
+      }
+    }
+  }
+
+  // ── Build reverse index ─────────────────────────────────────────
+  const componentToSlots = new Map<string, string[]>();
+  for (const [slotPath, allowedTypes] of containerSlots) {
+    for (const typeName of allowedTypes) {
+      const existing = componentToSlots.get(typeName) || [];
+      existing.push(slotPath);
+      componentToSlots.set(typeName, existing);
+    }
+  }
+
+  // ── Derive sub-component map ────────────────────────────────────
+  // A sub-component is one that appears ONLY in non-root container slots.
+  // We identify root container slots as those whose path starts with a
+  // rootArrayField followed by a dot and a single property name
+  // (e.g. "section.components").
+  const subComponentMap: Record<string, string> = {};
+  for (const [slotPath, allowedTypes] of containerSlots) {
+    const parts = slotPath.split(".");
+    // Sub-component arrays are always nested inside a parent component:
+    // format is "parentComponent.arrayKey"
+    if (parts.length === 2) {
+      const [parentComponent, arrayKey] = parts;
+      // Skip the root-level container slots (e.g. "section.components")
+      if (rootArrayFields.includes(parentComponent)) {
+        continue;
+      }
+      // Only mark as sub-component if ALL types in this slot do NOT
+      // appear in any root-level container slot
+      const isExclusivelyNested = [...allowedTypes].every((typeName) => {
+        const slots = componentToSlots.get(typeName) || [];
+        return slots.every((s) => {
+          const sParts = s.split(".");
+          return !(sParts.length === 2 && rootArrayFields.includes(sParts[0]));
+        });
+      });
+      if (isExclusivelyNested && allowedTypes.size > 0) {
+        subComponentMap[parentComponent] = arrayKey;
+      }
+    }
+  }
+
+  return {
+    containerSlots,
+    componentToSlots,
+    allKnownComponents,
+    rootArrayFields,
+    subComponentMap,
+  };
+}
+
+/**
+ * Recursively walk a schema node, discovering container arrays and the
+ * component types they accept.
+ *
+ * A "container array" is an array property whose `items` contains either:
+ * - An `anyOf` array of component-like objects (polymorphic slot)
+ * - A single component-like object (monomorphic slot, e.g. `mosaic.tile`)
+ *
+ * A "component-like object" is identified by:
+ * - Having a `type` property with a `const` value, OR
+ * - Having a `$id` from which a name can be extracted via `getSchemaName()`
+ */
+function walkSchemaNode(
+  schemaNode: Record<string, any>,
+  contextPath: string,
+  containerSlots: Map<string, Set<string>>,
+  allKnownComponents: Set<string>
+): void {
+  if (!schemaNode || typeof schemaNode !== "object") return;
+
+  const properties = schemaNode.properties || {};
+
+  for (const [propKey, propValue] of Object.entries<any>(properties)) {
+    if (!propValue || typeof propValue !== "object") continue;
+
+    // Is this an array property?
+    if (propValue.type === "array" && propValue.items) {
+      const items = propValue.items;
+
+      // ─ Case 1: anyOf (polymorphic container) ───────────────
+      if (items.anyOf && Array.isArray(items.anyOf)) {
+        const slotPath = `${contextPath}.${propKey}`;
+        const allowedTypes = new Set<string>();
+
+        for (const variant of items.anyOf) {
+          const name = extractComponentName(variant);
+          if (name) {
+            allowedTypes.add(name);
+            allKnownComponents.add(name);
+            // Recurse into the variant to find nested containers
+            walkSchemaNode(variant, name, containerSlots, allKnownComponents);
+          }
+        }
+
+        if (allowedTypes.size > 0) {
+          containerSlots.set(slotPath, allowedTypes);
+        }
+      }
+      // ─ Case 2: single item schema (monomorphic container) ──
+      else if (items.properties) {
+        const name = extractComponentName(items);
+        if (name) {
+          const slotPath = `${contextPath}.${propKey}`;
+          containerSlots.set(slotPath, new Set([name]));
+          allKnownComponents.add(name);
+          // Recurse into the item schema
+          walkSchemaNode(items, name, containerSlots, allKnownComponents);
+        } else {
+          // The items don't have a component name but may contain
+          // nested container arrays — recurse anyway
+          walkSchemaNode(
+            items,
+            `${contextPath}.${propKey}`,
+            containerSlots,
+            allKnownComponents
+          );
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Extract a component type name from a schema node.
+ *
+ * Checks in order:
+ * 1. `properties.type.const` — explicit type discriminator
+ * 2. `$id` — derive name via `getSchemaName()` (e.g. `hero.schema.json` → `hero`)
+ */
+function extractComponentName(schemaNode: Record<string, any>): string | null {
+  if (!schemaNode || typeof schemaNode !== "object") return null;
+
+  // Check for type const
+  const typeConst = schemaNode.properties?.type?.const;
+  if (typeof typeConst === "string") return typeConst;
+
+  // Check for $id
+  const schemaId = schemaNode.$id;
+  if (typeof schemaId === "string") {
+    const name = getSchemaName(schemaId);
+    if (name) return name;
+  }
+
+  return null;
+}
+
+// ─── Phase 2: Content Validation ──────────────────────────────────────
+
+/**
+ * Validate a content tree against schema-derived nesting rules.
+ *
+ * Works with any content format (Design System props, Storyblok-flattened,
+ * or OpenAI `type__X` format) and any root schema structure.
+ *
+ * @param content - The content tree to validate. Can be a single object,
+ *   an array of objects, or a full page object.
+ * @param rules - Validation rules from `buildValidationRules()`.
+ * @param options - Optional configuration.
+ * @returns A `ValidationResult` with `valid: true` if no errors, or
+ *   `valid: false` with an array of actionable errors.
+ */
+export function validateContent(
+  content: Record<string, any> | Record<string, any>[],
+  rules: ValidationRules,
+  options: ValidateContentOptions = {}
+): ValidationResult {
+  const { strict = true, format = "auto" } = options;
+  const errors: ValidationError[] = [];
+
+  if (Array.isArray(content)) {
+    // Array of top-level containers (e.g. sections)
+    content.forEach((item, index) => {
+      validateNode(item, `[${index}]`, null, rules, errors, strict, format);
+    });
+  } else {
+    // Single content object — could be a full page or a single component
+    validateNode(content, "", null, rules, errors, strict, format);
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Validate an array of section objects. Convenience wrapper.
+ */
+export function validateSections(
+  sections: Record<string, any>[],
+  rules: ValidationRules,
+  options?: ValidateContentOptions
+): ValidationResult {
+  const errors: ValidationError[] = [];
+  const { strict = true, format = "auto" } = options || {};
+
+  // Each section is a container — check its child arrays
+  sections.forEach((section, index) => {
+    const sectionPath = `section[${index}]`;
+    // Validate the section's contents against known container slots
+    validateContainerChildren(
+      section,
+      sectionPath,
+      rules,
+      errors,
+      strict,
+      format
+    );
+  });
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate a full page content object. Convenience wrapper.
+ */
+export function validatePageContent(
+  pageContent: Record<string, any>,
+  rules: ValidationRules,
+  options?: ValidateContentOptions
+): ValidationResult {
+  const errors: ValidationError[] = [];
+  const { strict = true, format = "auto" } = options || {};
+
+  // Walk root array fields (e.g. "section")
+  for (const rootField of rules.rootArrayFields) {
+    const rootArray = pageContent[rootField];
+    if (Array.isArray(rootArray)) {
+      rootArray.forEach((item: Record<string, any>, index: number) => {
+        const path = `${rootField}[${index}]`;
+        validateContainerChildren(item, path, rules, errors, strict, format);
+      });
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Recursively validate a single node in the content tree.
+ *
+ * If the node is inside a known container slot, checks that its component
+ * type is allowed in that slot.
+ */
+function validateNode(
+  node: Record<string, any>,
+  path: string,
+  parentSlotPath: string | null,
+  rules: ValidationRules,
+  errors: ValidationError[],
+  strict: boolean,
+  format: string
+): void {
+  if (!node || typeof node !== "object" || Array.isArray(node)) return;
+
+  const componentType = getComponentType(node, format);
+
+  // If we know the parent slot, check that this component is allowed there
+  if (parentSlotPath && componentType) {
+    const allowedTypes = rules.containerSlots.get(parentSlotPath);
+    if (allowedTypes && !allowedTypes.has(componentType)) {
+      // Build actionable error
+      const allowedSlots = rules.componentToSlots.get(componentType);
+      const isKnown = rules.allKnownComponents.has(componentType);
+
+      if (!isKnown && strict) {
+        errors.push({
+          path,
+          component: componentType,
+          message: `Unknown component "${componentType}" is not defined in the Design System schema.`,
+          suggestion: `Known components: ${[...rules.allKnownComponents]
+            .sort()
+            .join(", ")}`,
+        });
+      } else if (isKnown) {
+        const slotsDisplay = allowedSlots?.join(", ") || "nowhere";
+        const parentName = parentSlotPath.split(".")[0];
+        errors.push({
+          path,
+          component: componentType,
+          message: `Component "${componentType}" cannot be a direct child of "${parentSlotPath}".`,
+          suggestion: allowedSlots
+            ? `"${componentType}" is allowed in: ${slotsDisplay}. ${buildNestingSuggestion(
+                componentType,
+                parentSlotPath,
+                allowedSlots
+              )}`
+            : undefined,
+        });
+      }
+    } else if (!componentType && strict) {
+      // Content in a container slot but no identifiable type
+      // Skip — some items (like plain objects without type) are tolerated
+    }
+  }
+
+  // Check if this component type is known at all (top-level check)
+  if (componentType && !parentSlotPath && strict) {
+    if (!rules.allKnownComponents.has(componentType)) {
+      // Only flag if it looks like it should be a component
+      // (has a `component` or `type` field)
+      const hasExplicitType =
+        node.component || node.type || hasTypeDiscriminator(node);
+      if (hasExplicitType) {
+        errors.push({
+          path: path || "(root)",
+          component: componentType,
+          message: `Unknown component "${componentType}" is not defined in the Design System schema.`,
+          suggestion: `Known components: ${[...rules.allKnownComponents]
+            .sort()
+            .join(", ")}`,
+        });
+      }
+    }
+  }
+
+  // Recurse into child container arrays
+  validateContainerChildren(node, path, rules, errors, strict, format);
+}
+
+/**
+ * Walk child arrays of a node, checking each against matching container
+ * slot rules.
+ */
+function validateContainerChildren(
+  node: Record<string, any>,
+  path: string,
+  rules: ValidationRules,
+  errors: ValidationError[],
+  strict: boolean,
+  format: string
+): void {
+  const componentType = getComponentType(node, format);
+
+  for (const [key, value] of Object.entries(node)) {
+    if (!Array.isArray(value)) continue;
+
+    // Determine which container slot this array corresponds to
+    let slotPath: string | null = null;
+
+    if (componentType) {
+      // This is a named component — check "componentType.key" slot
+      const candidateSlot = `${componentType}.${key}`;
+      if (rules.containerSlots.has(candidateSlot)) {
+        slotPath = candidateSlot;
+      }
+    }
+
+    // Also check for root-level container slots: "rootField.key"
+    // (e.g. when walking a section object, key might be "components")
+    for (const rootField of rules.rootArrayFields) {
+      const rootSlot = `${rootField}.${key}`;
+      if (rules.containerSlots.has(rootSlot)) {
+        // Only match if the current node IS a root-level container
+        // (i.e. its type matches the rootField name or we're at root level)
+        const nodeType = getComponentType(node, format);
+        if (nodeType === rootField || path.startsWith(rootField)) {
+          slotPath = rootSlot;
+        }
+      }
+    }
+
+    if (!slotPath) {
+      // If we still don't have a slot, try to match against any known slot
+      // where the array key matches (fallback for Storyblok format where
+      // the section type might be expressed differently)
+      for (const [knownSlot] of rules.containerSlots) {
+        const parts = knownSlot.split(".");
+        if (parts.length === 2 && parts[1] === key) {
+          const parentType = parts[0];
+          if (componentType === parentType) {
+            slotPath = knownSlot;
+            break;
+          }
+        }
+      }
+    }
+
+    // Validate each child in the array
+    value.forEach((child: any, index: number) => {
+      if (child && typeof child === "object" && !Array.isArray(child)) {
+        const childPath = `${path}.${key}[${index}]`;
+        validateNode(child, childPath, slotPath, rules, errors, strict, format);
+      }
+    });
+  }
+}
+
+// ─── Formatting ───────────────────────────────────────────────────────
+
+/**
+ * Format validation errors into a clear, LLM-friendly message.
+ */
+export function formatValidationErrors(errors: ValidationError[]): string {
+  if (errors.length === 0) return "✅ Content validation passed.";
+
+  const lines = [
+    `❌ Content validation failed (${errors.length} error${
+      errors.length === 1 ? "" : "s"
+    }):`,
+    "",
+  ];
+
+  errors.forEach((err, i) => {
+    lines.push(`${i + 1}. ${err.path}: ${err.message}`);
+    if (err.suggestion) {
+      lines.push(`   → ${err.suggestion}`);
+    }
+    lines.push("");
+  });
+
+  return lines.join("\n");
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Extract the component type name from a content node.
+ *
+ * Supports three formats:
+ * - Storyblok: `{ component: "hero" }`
+ * - Design System: `{ type: "hero" }`
+ * - OpenAI transformed: `{ type__hero: "hero" }`
+ */
+function getComponentType(
+  node: Record<string, any>,
+  format: string
+): string | null {
+  if (!node || typeof node !== "object") return null;
+
+  switch (format) {
+    case "storyblok":
+      return typeof node.component === "string" ? node.component : null;
+
+    case "design-system":
+      return typeof node.type === "string" ? node.type : null;
+
+    case "auto":
+    default: {
+      // Try Storyblok format first
+      if (typeof node.component === "string") return node.component;
+      // Then Design System format
+      if (typeof node.type === "string") return node.type;
+      // Then OpenAI type__ format
+      const typeKey = Object.keys(node).find((k) => k.startsWith("type__"));
+      if (typeKey) return typeKey.replace("type__", "");
+      return null;
+    }
+  }
+}
+
+/**
+ * Check if a node has a `type__X` discriminator key (OpenAI format).
+ */
+function hasTypeDiscriminator(node: Record<string, any>): boolean {
+  return Object.keys(node).some((k) => k.startsWith("type__"));
+}
+
+/**
+ * Build a human-readable nesting suggestion.
+ */
+function buildNestingSuggestion(
+  componentType: string,
+  currentSlot: string,
+  allowedSlots: string[]
+): string {
+  if (!allowedSlots || allowedSlots.length === 0) return "";
+
+  // Find a parent component that has a slot for this component
+  const parents = allowedSlots.map((slot) => {
+    const parts = slot.split(".");
+    return parts[0]; // parent component name
+  });
+
+  const uniqueParents = [...new Set(parents)];
+
+  if (uniqueParents.length === 1) {
+    return `Wrap it inside a "${uniqueParents[0]}" component.`;
+  }
+
+  return `Place it inside one of: ${uniqueParents
+    .map((p) => `"${p}"`)
+    .join(", ")}.`;
+}

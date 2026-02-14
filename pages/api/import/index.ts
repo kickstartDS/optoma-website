@@ -3,8 +3,32 @@ import Cors from "cors";
 import {
   createStoryblokClient,
   importByPrompterReplacement,
+  buildValidationRules,
+  validateSections,
+  formatValidationErrors,
   ServiceError,
+  type ValidationRules,
 } from "@kickstartds/storyblok-services";
+import { readFileSync } from "fs";
+import { resolve, dirname } from "path";
+
+// ─── Schema-driven validation ────────────────────────────────────────
+// Load the dereferenced page schema from the Design System package and
+// build validation rules once at module load.
+let PAGE_VALIDATION_RULES: ValidationRules | null = null;
+try {
+  const schemaPath = resolve(
+    dirname(require.resolve("@kickstartds/ds-agency-premium/package.json")),
+    "dist/components/page/page.schema.dereffed.json"
+  );
+  const pageSchema = JSON.parse(readFileSync(schemaPath, "utf-8"));
+  PAGE_VALIDATION_RULES = buildValidationRules(pageSchema);
+} catch {
+  // Schema not available — validation will be skipped gracefully
+  console.warn(
+    "Could not load page schema for import validation — validation will be skipped"
+  );
+}
 
 const cors = Cors({
   methods: ["POST"],
@@ -59,10 +83,25 @@ export default async function handler(
         oauthToken,
       });
 
+      // Validate sections against the Design System schema before writing
+      const sections = page.content.section;
+      if (PAGE_VALIDATION_RULES) {
+        const validationResult = validateSections(
+          sections,
+          PAGE_VALIDATION_RULES
+        );
+        if (!validationResult.valid) {
+          return res.status(400).send({
+            error: "Content validation failed",
+            details: formatValidationErrors(validationResult.errors),
+          });
+        }
+      }
+
       const story = await importByPrompterReplacement(client, spaceId, {
         storyUid,
         prompterUid,
-        sections: page.content.section,
+        sections,
         publish: false,
       });
 

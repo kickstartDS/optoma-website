@@ -57,6 +57,10 @@ export const DEFAULT_PROPERTIES_TO_DROP = [
 
 /**
  * Component names that are available for AI content generation.
+ *
+ * @deprecated Use `buildValidationRules(schema).allKnownComponents` from
+ *   `./validate.js` instead. This hardcoded list will be removed in a future
+ *   major version.
  */
 export const SUPPORTED_COMPONENTS = [
   "blog-teaser",
@@ -90,6 +94,10 @@ export const SUPPORTED_COMPONENTS = [
 /**
  * Maps parent component names to the property key that holds their
  * sub-component arrays (e.g. `downloads` → `download`).
+ *
+ * @deprecated Use `buildValidationRules(schema).subComponentMap` from
+ *   `./validate.js` instead. This hardcoded map will be removed in a future
+ *   major version.
  */
 export const SUB_COMPONENT_MAP: Record<string, string> = {
   downloads: "download",
@@ -123,7 +131,8 @@ export interface PrepareSchemaOptions {
   sections?: number;
   /**
    * Whitelist of component names to include.
-   * Defaults to `SUPPORTED_COMPONENTS`.
+   * Defaults to `SUPPORTED_COMPONENTS` (or `validationRules.allKnownComponents`
+   * when validation rules are provided).
    */
   allowedComponents?: string[];
   /**
@@ -131,6 +140,16 @@ export interface PrepareSchemaOptions {
    * Defaults to `DEFAULT_PROPERTIES_TO_DROP`.
    */
   propertiesToDrop?: string[];
+  /**
+   * Schema-derived validation rules from `buildValidationRules()`.
+   * When provided, `allKnownComponents` is used as the default component
+   * list and `subComponentMap` is used instead of the hardcoded
+   * `SUB_COMPONENT_MAP`.
+   */
+  validationRules?: {
+    allKnownComponents: Set<string>;
+    subComponentMap: Record<string, string>;
+  };
 }
 
 /** The OpenAI-compatible schema envelope. */
@@ -181,9 +200,20 @@ export function prepareSchemaForOpenAi(
 ): PreparedSchema {
   const {
     sections,
-    allowedComponents = SUPPORTED_COMPONENTS as unknown as string[],
     propertiesToDrop = DEFAULT_PROPERTIES_TO_DROP as unknown as string[],
+    validationRules,
   } = options;
+
+  // Use schema-derived component list when available, fall back to hardcoded
+  const defaultComponents: string[] = validationRules
+    ? [...validationRules.allKnownComponents]
+    : (SUPPORTED_COMPONENTS as unknown as string[]);
+  const allowedComponents = options.allowedComponents || defaultComponents;
+
+  // Use schema-derived sub-component map when available
+  const subComponentMap: Record<string, string> = validationRules
+    ? validationRules.subComponentMap
+    : SUB_COMPONENT_MAP;
 
   // Mutable map that gets populated during traversal
   const schemaMap: Record<string, Record<string, any>> = {};
@@ -226,7 +256,7 @@ export function prepareSchemaForOpenAi(
   if (sectionItems && sectionItems.anyOf) {
     for (const componentSchema of sectionItems.anyOf) {
       const componentName = getSchemaName(componentSchema.$id);
-      const arrayKey = SUB_COMPONENT_MAP[componentName];
+      const arrayKey = subComponentMap[componentName];
       if (
         arrayKey &&
         componentSchema.properties?.[arrayKey]?.items?.properties

@@ -19,7 +19,12 @@ import {
   processOpenAiResponse,
   processForStoryblok,
   generateAndPrepareContent,
+  buildValidationRules,
+  validateSections,
+  validatePageContent,
+  formatValidationErrors,
   type PrepareSchemaOptions,
+  type ValidationRules,
 } from "@kickstartds/storyblok-services";
 
 // Load the dereferenced page schema once at module load
@@ -30,6 +35,24 @@ const PAGE_SCHEMA: Record<string, any> = JSON.parse(
     "utf-8"
   )
 );
+
+// Build validation rules from the page schema at startup
+const PAGE_VALIDATION_RULES: ValidationRules =
+  buildValidationRules(PAGE_SCHEMA);
+
+/**
+ * Check whether a content object has any of the root array fields defined
+ * by the schema (e.g. `section`), indicating it's a page-like structure
+ * that can be validated.
+ */
+function rules_rootMatchesSchema(content: Record<string, any>): boolean {
+  return PAGE_VALIDATION_RULES.rootArrayFields.some((field) =>
+    Array.isArray(content[field])
+  );
+}
+
+/** Export validation rules so introspection tools can use them. */
+export { PAGE_VALIDATION_RULES, PAGE_SCHEMA };
 
 /**
  * Wrapper class for Storyblok API operations.
@@ -145,7 +168,24 @@ export class StoryblokService {
     parentId?: number;
     content: Record<string, unknown>;
     isFolder?: boolean;
+    skipValidation?: boolean;
   }): Promise<unknown> {
+    // Validate content against the Design System schema if applicable
+    if (!options.skipValidation && !options.isFolder) {
+      const content = options.content as Record<string, any>;
+      const contentType = content.component || content.type;
+      // Only validate content types that match known root schemas
+      if (contentType === "page" || rules_rootMatchesSchema(content)) {
+        const validationResult = validatePageContent(
+          content,
+          PAGE_VALIDATION_RULES
+        );
+        if (!validationResult.valid) {
+          throw new Error(formatValidationErrors(validationResult.errors));
+        }
+      }
+    }
+
     const story: Record<string, unknown> = {
       name: options.name,
       slug: options.slug,
@@ -174,8 +214,24 @@ export class StoryblokService {
       name?: string;
       slug?: string;
     },
-    publish: boolean = false
+    publish: boolean = false,
+    skipValidation: boolean = false
   ): Promise<unknown> {
+    // Validate updated content against the Design System schema if applicable
+    if (!skipValidation && updates.content) {
+      const content = updates.content as Record<string, any>;
+      const contentType = content.component || content.type;
+      if (contentType === "page" || rules_rootMatchesSchema(content)) {
+        const validationResult = validatePageContent(
+          content,
+          PAGE_VALIDATION_RULES
+        );
+        if (!validationResult.valid) {
+          throw new Error(formatValidationErrors(validationResult.errors));
+        }
+      }
+    }
+
     // First, get the current story
     const currentStory = (await this.getStoryManagement(storyId)) as Record<
       string,
@@ -226,10 +282,23 @@ export class StoryblokService {
       };
     };
     skipTransform?: boolean;
+    skipValidation?: boolean;
     uploadAssets?: boolean;
     assetFolderName?: string;
   }): Promise<unknown> {
     let sections = options.page.content.section;
+
+    // Validate sections against the Design System schema
+    if (!options.skipValidation) {
+      const validationResult = validateSections(
+        sections as Record<string, any>[],
+        PAGE_VALIDATION_RULES
+      );
+      if (!validationResult.valid) {
+        throw new Error(formatValidationErrors(validationResult.errors));
+      }
+    }
+
     if (!options.skipTransform) {
       const transformed = processForStoryblok({ section: sections });
       sections = transformed.section;
@@ -258,10 +327,23 @@ export class StoryblokService {
     };
     publish?: boolean;
     skipTransform?: boolean;
+    skipValidation?: boolean;
     uploadAssets?: boolean;
     assetFolderName?: string;
   }): Promise<unknown> {
     let sections = options.page.content.section;
+
+    // Validate sections against the Design System schema
+    if (!options.skipValidation) {
+      const validationResult = validateSections(
+        sections as Record<string, any>[],
+        PAGE_VALIDATION_RULES
+      );
+      if (!validationResult.valid) {
+        throw new Error(formatValidationErrors(validationResult.errors));
+      }
+    }
+
     if (!options.skipTransform) {
       const transformed = processForStoryblok({ section: sections });
       sections = transformed.section;
@@ -364,7 +446,19 @@ export class StoryblokService {
     parentId?: number;
     sections: Record<string, unknown>[];
     publish?: boolean;
+    skipValidation?: boolean;
   }): Promise<unknown> {
+    // Validate sections against the Design System schema
+    if (!options.skipValidation) {
+      const validationResult = validateSections(
+        options.sections as Record<string, any>[],
+        PAGE_VALIDATION_RULES
+      );
+      if (!validationResult.valid) {
+        throw new Error(formatValidationErrors(validationResult.errors));
+      }
+    }
+
     // Recursively inject _uid where missing
     const sections = options.sections.map((s) => ensureUids(s)) as Record<
       string,

@@ -219,6 +219,17 @@ The package follows the [n8n community node structure](https://docs.n8n.io/integ
   - Removed `as any` casts from API routes (root project bundler resolves single copy)
 - [ ] Add additional n8n nodes for other MCP tools (list_stories, search_content, etc.)
 
+### Milestone 7: Schema Guardrails Integration ✅
+
+> **Goal:** Validate content against the Design System schema before writing to Storyblok, catching structural errors (unknown components, nesting violations, sub-component misplacement) early.
+
+- [x] Import `buildValidationRules`, `validateSections`, `formatValidationErrors` from `@kickstartds/storyblok-services`
+- [x] Load `PAGE_VALIDATION_RULES` at module level in `GenericFunctions.ts` (same pattern as MCP server)
+- [x] Add validation to `importContentIntoStory` wrapper (before `importByPrompterReplacement`)
+- [x] Add validation to `insertContentAtPosition` wrapper (before `importAtPosition`)
+- [x] Both wrappers accept `skipValidation` parameter (default: `false`)
+- [x] Verify TypeScript compilation
+
 #### Shared Library File Structure
 
 ```
@@ -272,6 +283,7 @@ shared/storyblok-services/              # Shared service library (Milestone 6)
 │   ├── openai.ts                       # OpenAI API functions
 │   ├── schema.ts                       # Schema preparation for OpenAI (13 passes)
 │   ├── transform.ts                    # Content transformation (OpenAI ↔ DS ↔ Storyblok)
+│   ├── validate.ts                     # Schema-driven content validation (Milestone 7)
 │   └── pipeline.ts                     # High-level end-to-end orchestrator
 └── test/
     ├── storyblok.test.ts               # 15 tests
