@@ -731,12 +731,15 @@ the extracted Markdown (including images) can be used as input for content gener
 
 The tool:
 1. Fetches the page HTML with a browser-like User-Agent
-2. Extracts the main content area (strips nav, header, footer, scripts, styles)
-3. Converts HTML to clean Markdown using Turndown
-4. Preserves images with their alt text and absolute URLs
-5. Extracts the page title
+2. Parses into a full DOM via JSDOM
+3. Runs @mozilla/readability to isolate the main article content
+   (falls back to CSS-selector / <main> / <body> if Readability returns nothing)
+4. Converts the readable HTML to clean Markdown using Turndown
+5. Extracts images from <img>, <picture>/<source>, CSS background-image,
+   lazy-loading data attributes, and Open Graph / meta tags
 
-Returns the page title, source URL, and the Markdown content.`,
+Returns the page title, source URL, Markdown content, and a structured images
+array with src, alt, and context (content / background / meta / picture-source).`,
       inputSchema: {
         type: "object",
         properties: {

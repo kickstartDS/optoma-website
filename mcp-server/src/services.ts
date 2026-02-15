@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 import TurndownService from "turndown";
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -612,19 +614,167 @@ export class ContentGenerationService {
 
 // ─── Scraping ─────────────────────────────────────────────────────────
 
+/** Describes an image discovered during scraping. */
+interface ScrapedImage {
+  src: string;
+  alt: string;
+  /** Where the image was found: 'content', 'background', 'meta', 'picture-source'. */
+  context: string;
+}
+
 /**
- * Fetch a URL and convert its HTML content to Markdown using Turndown.
+ * Fetch a URL and convert its HTML content to Markdown.
  *
  * The function:
- * 1. Fetches the page with a browser-like User-Agent
- * 2. Extracts content from the given CSS selector (default: <main>, falling back to <body>)
- * 3. Converts the HTML to clean Markdown, preserving images
- * 4. Strips scripts, styles, nav, header, footer, and SVG elements
+ * 1. Fetches the page HTML with a browser-like User-Agent
+ * 2. Parses it into a full DOM with JSDOM
+ * 3. Runs @mozilla/readability to extract the main article content
+ *    (falls back to a CSS-selector or <main>/<body> if Readability returns nothing)
+ * 4. Converts the readable HTML to clean Markdown using Turndown
+ * 5. Extracts images from <img>, <picture>/<source>, CSS background-image,
+ *    lazy-loading data attributes, and Open Graph / meta tags
+ * 6. Returns the title, Markdown, and a structured images array
  */
 export async function scrapeUrl(options: {
   url: string;
   selector?: string;
-}): Promise<{ url: string; markdown: string; title: string }> {
+}): Promise<{
+  url: string;
+  markdown: string;
+  title: string;
+  images: ScrapedImage[];
+}> {
+  // ── 1. Fetch ──────────────────────────────────────────────────────────
+  const response = await fetch(options.url, {
+    headers: {
+      Accept: "text/html",
+      "User-Agent":
+        "Mozilla/5.0 (compatible; kickstartDS-MCP/1.0; +https://www.kickstartds.com)",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch URL: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const html = await response.text();
+
+  // ── 2. Parse into DOM ─────────────────────────────────────────────────
+  const dom = new JSDOM(html, { url: options.url });
+  const document = dom.window.document;
+
+  // Extract title from the DOM (more reliable than regex)
+  const title = document.querySelector("title")?.textContent?.trim() ?? "";
+
+  // ── 3. Collect images BEFORE Readability mutates the DOM ──────────────
+  const images: ScrapedImage[] = [];
+  const seenSrcs = new Set<string>();
+
+  const resolveUrl = (raw: string): string => {
+    try {
+      return new URL(raw, options.url).href;
+    } catch {
+      return raw;
+    }
+  };
+
+  const addImage = (src: string, alt: string, context: string) => {
+    if (!src || src.startsWith("data:")) return;
+    const resolved = resolveUrl(src);
+    if (seenSrcs.has(resolved)) return;
+    seenSrcs.add(resolved);
+    images.push({ src: resolved, alt, context });
+  };
+
+  // (a) Open Graph & meta images — always available regardless of Readability
+  for (const meta of document.querySelectorAll(
+    'meta[property="og:image"], meta[name="twitter:image"], meta[name="twitter:image:src"]'
+  )) {
+    const content = meta.getAttribute("content");
+    if (content) addImage(content, title, "meta");
+  }
+
+  // Helper: extract images from a DOM subtree
+  const collectImagesFromElement = (root: Element | Document) => {
+    // (b) <img> tags — including lazy-load data attributes
+    for (const img of root.querySelectorAll("img")) {
+      const alt = img.getAttribute("alt") || "";
+      const src =
+        img.getAttribute("src") ||
+        img.getAttribute("data-src") ||
+        img.getAttribute("data-lazy") ||
+        img.getAttribute("data-original") ||
+        img.getAttribute("data-lazy-src") ||
+        "";
+      addImage(src, alt, "content");
+
+      // Also check srcset for higher-res versions
+      const srcset =
+        img.getAttribute("srcset") || img.getAttribute("data-srcset") || "";
+      const best = pickBestFromSrcset(srcset);
+      if (best) addImage(best, alt, "content");
+    }
+
+    // (c) <picture> / <source> elements
+    for (const source of root.querySelectorAll("picture source")) {
+      const srcset = source.getAttribute("srcset") || "";
+      const best = pickBestFromSrcset(srcset);
+      if (best) {
+        const picture = source.closest("picture");
+        const alt = picture?.querySelector("img")?.getAttribute("alt") || "";
+        addImage(best, alt, "picture-source");
+      }
+    }
+
+    // (d) CSS background-image in inline styles
+    for (const el of root.querySelectorAll("[style]")) {
+      const style = el.getAttribute("style") || "";
+      const bgMatches = style.matchAll(
+        /background(?:-image)?\s*:[^;]*url\(\s*["']?([^"')]+)["']?\s*\)/gi
+      );
+      for (const m of bgMatches) {
+        addImage(m[1], "", "background");
+      }
+    }
+  };
+
+  // Collect from the full document first (catches everything)
+  collectImagesFromElement(document);
+
+  // ── 4. Extract readable content ───────────────────────────────────────
+  let contentHtml: string;
+
+  if (options.selector) {
+    // User-specified CSS selector — use the real DOM instead of regex
+    const selected = document.querySelector(options.selector);
+    contentHtml = selected
+      ? selected.innerHTML
+      : document.body?.innerHTML ?? html;
+  } else {
+    // Try Readability first — produces clean, article-focused content
+    // Clone the document because Readability mutates it in place
+    const clone = new JSDOM(html, { url: options.url });
+    const reader = new Readability(clone.window.document);
+    const article = reader.parse();
+
+    if (article && article.content) {
+      contentHtml = article.content;
+      // Readability may extract a better title
+    } else {
+      // Fallback: <main>, then <body>
+      const main = document.querySelector("main");
+      contentHtml = main ? main.innerHTML : document.body?.innerHTML ?? html;
+    }
+  }
+
+  // Also collect images specifically from the extracted content
+  // (they'll deduplicate via seenSrcs)
+  const contentDom = new JSDOM(contentHtml, { url: options.url });
+  collectImagesFromElement(contentDom.window.document);
+
+  // ── 5. Convert to Markdown ────────────────────────────────────────────
   const turndown = new TurndownService({
     headingStyle: "atx",
     codeBlockStyle: "fenced",
@@ -649,60 +799,68 @@ export async function scrapeUrl(options: {
     replacement: () => "",
   });
 
-  // Better image handling — preserve alt text and resolve relative URLs
+  // Image handling — preserve alt text, resolve relative URLs,
+  // and check lazy-load data attributes
   turndown.addRule("images", {
     filter: "img",
     replacement: (_content, node) => {
       const el = node as HTMLElement;
       const alt = el.getAttribute("alt") || "";
-      const src = el.getAttribute("src") || el.getAttribute("data-src") || "";
+      const src =
+        el.getAttribute("src") ||
+        el.getAttribute("data-src") ||
+        el.getAttribute("data-lazy") ||
+        el.getAttribute("data-original") ||
+        el.getAttribute("data-lazy-src") ||
+        "";
       if (!src) return "";
+      return `![${alt}](${resolveUrl(src)})`;
+    },
+  });
 
-      // Resolve relative URLs to absolute
-      let absoluteSrc = src;
-      try {
-        absoluteSrc = new URL(src, options.url).href;
-      } catch {
-        // keep original src if URL parsing fails
+  // <picture>: render the best <source> as an image in Markdown
+  turndown.addRule("picture", {
+    filter: (node) => {
+      return (
+        node.tagName?.toLowerCase() === "picture" &&
+        node.querySelectorAll("source").length > 0
+      );
+    },
+    replacement: (_content, node) => {
+      const el = node as HTMLElement;
+      const img = el.querySelector("img");
+      const alt = img?.getAttribute("alt") || "";
+
+      // Try to get the best source from <source> elements
+      for (const source of el.querySelectorAll("source")) {
+        const srcset = source.getAttribute("srcset") || "";
+        const best = pickBestFromSrcset(srcset);
+        if (best) return `![${alt}](${resolveUrl(best)})`;
       }
 
-      return `![${alt}](${absoluteSrc})`;
+      // Fallback to <img>
+      const src =
+        img?.getAttribute("src") || img?.getAttribute("data-src") || "";
+      if (src) return `![${alt}](${resolveUrl(src)})`;
+      return "";
     },
   });
 
-  // Fetch the page
-  const response = await fetch(options.url, {
-    headers: {
-      Accept: "text/html",
-      "User-Agent":
-        "Mozilla/5.0 (compatible; kickstartDS-MCP/1.0; +https://www.kickstartds.com)",
+  // Elements with background images — emit as Markdown image
+  turndown.addRule("backgroundImages", {
+    filter: (node) => {
+      const style = node.getAttribute?.("style") || "";
+      return /background(?:-image)?\s*:[^;]*url\(/i.test(style);
+    },
+    replacement: (content, node) => {
+      const style = (node as HTMLElement).getAttribute("style") || "";
+      const match = style.match(
+        /background(?:-image)?\s*:[^;]*url\(\s*["']?([^"')]+)["']?\s*\)/i
+      );
+      const bgImage = match ? `\n\n![](${resolveUrl(match[1])})\n\n` : "";
+      return bgImage + content;
     },
   });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch URL: ${response.status} ${response.statusText}`
-    );
-  }
-
-  const html = await response.text();
-
-  // Extract title
-  const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
-  const title = titleMatch ? titleMatch[1].trim() : "";
-
-  // Extract content using the specified selector, or fall back to <main> then <body>
-  let contentHtml: string;
-  if (options.selector) {
-    // For custom selectors, use a simple tag/class/id match
-    const selectorRegex = buildSelectorRegex(options.selector);
-    const match = html.match(selectorRegex);
-    contentHtml = match ? match[1] : html;
-  } else {
-    // Default: try <main>, then fall back to full HTML
-    const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
-    contentHtml = mainMatch ? mainMatch[1] : html;
-  }
 
   const markdown = turndown.turndown(contentHtml);
 
@@ -713,33 +871,44 @@ export async function scrapeUrl(options: {
     url: options.url,
     title,
     markdown: cleaned,
+    images,
   };
 }
 
 /**
- * Build a simple regex to match common CSS selectors (tag, #id, .class).
- * This avoids pulling in a full DOM parser for the selector extraction step.
+ * Pick the highest-resolution image URL from a `srcset` attribute value.
+ * Handles both width descriptors (`480w`) and pixel-density descriptors (`2x`).
+ * Returns `undefined` if srcset is empty or unparseable.
  */
-function buildSelectorRegex(selector: string): RegExp {
-  const trimmed = selector.trim();
-  if (trimmed.startsWith("#")) {
-    // ID selector
-    const id = trimmed.slice(1);
-    return new RegExp(
-      `<[a-z][a-z0-9]*[^>]*\\bid=["']${id}["'][^>]*>([\\s\\S]*?)<\\/[a-z][a-z0-9]*>`,
-      "i"
-    );
-  } else if (trimmed.startsWith(".")) {
-    // Class selector
-    const cls = trimmed.slice(1);
-    return new RegExp(
-      `<[a-z][a-z0-9]*[^>]*\\bclass=["'][^"']*\\b${cls}\\b[^"']*["'][^>]*>([\\s\\S]*?)<\\/[a-z][a-z0-9]*>`,
-      "i"
-    );
-  } else {
-    // Tag selector
-    return new RegExp(`<${trimmed}[^>]*>([\\s\\S]*?)<\\/${trimmed}>`, "i");
+function pickBestFromSrcset(srcset: string): string | undefined {
+  if (!srcset.trim()) return undefined;
+
+  let bestUrl: string | undefined;
+  let bestValue = 0;
+
+  for (const candidate of srcset.split(",")) {
+    const parts = candidate.trim().split(/\s+/);
+    if (parts.length < 1) continue;
+    const url = parts[0];
+    const descriptor = parts[1] || "1x";
+
+    let value: number;
+    if (descriptor.endsWith("w")) {
+      value = parseInt(descriptor, 10) || 0;
+    } else if (descriptor.endsWith("x")) {
+      // Treat pixel density as a much smaller number to prefer `w` descriptors
+      value = parseFloat(descriptor) || 1;
+    } else {
+      value = 0;
+    }
+
+    if (value > bestValue || !bestUrl) {
+      bestValue = value;
+      bestUrl = url;
+    }
   }
+
+  return bestUrl;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────
