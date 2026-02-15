@@ -92,6 +92,29 @@ const AI_IMAGE_HOSTS = [
 ];
 
 /**
+ * Storyblok image service suffix pattern.
+ *
+ * Storyblok's image service appends `/m/{options}` to asset URLs for
+ * on-the-fly resizing and filtering, e.g.:
+ * - `.../image.png/m/1024x1024`
+ * - `.../photo.jpg/m/800x0/filters:quality(80)`
+ * - `.../hero.webp/m/smart`
+ *
+ * This suffix must be stripped before checking file extensions (detection)
+ * and before downloading (to fetch the original full-resolution asset).
+ */
+const STORYBLOK_IMAGE_SERVICE_SUFFIX = /\/m\/.*$/;
+
+/**
+ * Strip the Storyblok image service suffix (`/m/...`) from a URL, if present.
+ *
+ * Returns the original URL unchanged when there is no image service suffix.
+ */
+export function stripStoryblokImageService(url: string): string {
+  return url.replace(STORYBLOK_IMAGE_SERVICE_SUFFIX, "");
+}
+
+/**
  * Default heuristic for detecting image URLs in content.
  *
  * Matches:
@@ -103,9 +126,9 @@ export function defaultIsImageUrl(value: string): boolean {
   if (!value.startsWith("http://") && !value.startsWith("https://"))
     return false;
 
-  // Check for file extension
+  // Check for file extension (strip Storyblok image service suffix first)
   try {
-    const url = new URL(value);
+    const url = new URL(stripStoryblokImageService(value));
     if (IMAGE_EXTENSIONS.test(url.pathname)) return true;
 
     // Check for AI image hosts (DALL·E etc.)
@@ -175,7 +198,9 @@ function createThrottle(requestsPerSecond: number) {
 async function downloadImage(
   url: string
 ): Promise<{ buffer: Buffer; filename: string; contentType: string }> {
-  const response = await fetch(url);
+  // Strip Storyblok image service suffix to download the original asset
+  const downloadUrl = stripStoryblokImageService(url);
+  const response = await fetch(downloadUrl);
 
   if (!response.ok) {
     throw new StoryblokApiError(
@@ -188,10 +213,10 @@ async function downloadImage(
   const arrayBuffer = await response.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  // Derive a filename from the URL
+  // Derive a filename from the URL (use the stripped URL for correct path segments)
   let filename: string;
   try {
-    const parsed = new URL(url);
+    const parsed = new URL(downloadUrl);
     const pathSegments = parsed.pathname.split("/").filter(Boolean);
     const lastSegment = pathSegments[pathSegments.length - 1] || "image";
 
@@ -347,14 +372,23 @@ export async function uploadAndReplaceAssets(
     return { uploaded: 0, rewritten: 0, assets: [], assetFolderId };
   }
 
-  // 2. Deduplicate by URL
-  const uniqueUrls = [...new Set(references.map((r) => r.url))];
+  // 2. Deduplicate by canonical URL (strip image service suffixes so that
+  //    e.g. "image.png" and "image.png/m/1024x1024" resolve to one upload)
+  const canonicalMap = new Map<string, string>(); // canonical → first raw URL
+  for (const ref of references) {
+    const canonical = stripStoryblokImageService(ref.url);
+    if (!canonicalMap.has(canonical)) {
+      canonicalMap.set(canonical, ref.url);
+    }
+  }
+  const uniqueUrls = [...canonicalMap.values()];
 
   // 3. Download + upload each unique URL (rate-limited)
   const throttle = createThrottle(requestsPerSecond);
-  const urlMap = new Map<string, UploadedAsset>();
+  const urlMap = new Map<string, UploadedAsset>(); // canonical → asset
 
   for (const url of uniqueUrls) {
+    const canonical = stripStoryblokImageService(url);
     const asset = await throttle(async () => {
       const file = await downloadImage(url);
       const uploaded = await uploadToStoryblok(
@@ -369,13 +403,13 @@ export async function uploadAndReplaceAssets(
         originalUrl: url,
       };
     });
-    urlMap.set(url, asset);
+    urlMap.set(canonical, asset);
   }
 
   // 4. Rewrite all references with full Storyblok asset objects
   let rewritten = 0;
   for (const ref of references) {
-    const asset = urlMap.get(ref.url);
+    const asset = urlMap.get(stripStoryblokImageService(ref.url));
     if (asset) {
       ref.parent[ref.key] = createAssetObject(asset.url, asset.id);
       rewritten++;

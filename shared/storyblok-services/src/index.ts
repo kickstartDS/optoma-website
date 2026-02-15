@@ -67,6 +67,7 @@ export {
   uploadAndReplaceAssets,
   findImageUrls,
   defaultIsImageUrl,
+  stripStoryblokImageService,
   createAssetObject,
   wrapAssetUrls,
 } from "./assets.js";
