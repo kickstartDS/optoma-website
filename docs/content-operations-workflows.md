@@ -10,12 +10,13 @@ This document describes automation workflows that editors can build using **n8n*
 
 Ein Spreadsheet (Google Sheets, Airtable) enthält Zeilen mit Produktnamen, Beschreibungen und Bildern. n8n iteriert über jede Zeile und erstellt automatisch eine vollständige Landing Page.
 
-| Schritt           | Tool                                                | Zweck                                                  |
-| ----------------- | --------------------------------------------------- | ------------------------------------------------------ |
-| Daten holen       | _n8n Google Sheets Node_                            | Produktdaten auslesen                                  |
-| Inhalt generieren | `generate_content`                                  | KI erzeugt Sektionen (Hero, Features, CTA) pro Produkt |
-| Bilder hochladen  | `create_page_with_content` mit `uploadAssets: true` | Seite anlegen, Bilder automatisch nach Storyblok       |
-| Benachrichtigung  | _n8n Slack Node_                                    | Team über neue Seiten informieren                      |
+| Schritt              | Tool                                                | Zweck                                                    |
+| -------------------- | --------------------------------------------------- | -------------------------------------------------------- |
+| Daten holen          | _n8n Google Sheets Node_                            | Produktdaten auslesen                                    |
+| Muster analysieren   | `analyze_content_patterns`                          | Bestehende Seitenstrukturen und Komponentennutzung lesen |
+| Sektionen generieren | `generate_section` (pro Sektion)                    | KI erzeugt Sektionen (Hero, Features, CTA) pro Produkt   |
+| Bilder hochladen     | `create_page_with_content` mit `uploadAssets: true` | Seite anlegen, Bilder automatisch nach Storyblok         |
+| Benachrichtigung     | _n8n Slack Node_                                    | Team über neue Seiten informieren                        |
 
 ### 2. Website-Relaunch / Content-Migration
 
@@ -24,8 +25,9 @@ Eine Liste von URLs der alten Website wird Seite für Seite gescrapt, per KI in 
 | Schritt                 | Tool                                                | Zweck                                                      |
 | ----------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
 | URLs auflisten          | _n8n Spreadsheet / Sitemap-Parser_                  | Alle zu migrierenden Seiten sammeln                        |
+| Ziel-Muster analysieren | `analyze_content_patterns`                          | Bestehende Seitenstrukturen der neuen Site verstehen       |
 | Seite scrapen           | `scrape_url`                                        | HTML → sauberes Markdown konvertieren                      |
-| Inhalt generieren       | `generate_content`                                  | Markdown als Prompt → strukturierter Design-System-Content |
+| Sektionen generieren    | `generate_section` (pro Sektion)                    | Markdown als Prompt → strukturierter Design-System-Content |
 | Seite erstellen         | `create_page_with_content` mit `uploadAssets: true` | Neue Seite in Storyblok inkl. Bilder                       |
 | Altes/Neues vergleichen | _n8n Comparison Node_                               | Diff-Report für manuelle QA                                |
 
@@ -136,12 +138,12 @@ Stories, die seit X Monaten nicht aktualisiert wurden, werden identifiziert. Opt
 
 Regelmäßig wird ein Snapshot erstellt: Wie viele Stories pro Typ, wie viele Assets, durchschnittliche Sektionen pro Seite etc.
 
-| Schritt             | Tool                                 | Zweck                                |
-| ------------------- | ------------------------------------ | ------------------------------------ |
-| Stories zählen      | `list_stories` (pro `contentType`)   | Content-Inventar nach Typ            |
-| Assets zählen       | `list_assets`                        | Medien-Statistiken                   |
-| Komponenten-Nutzung | `list_stories` + `get_story`         | Welche Komponenten wie oft verwendet |
-| Dashboard           | _n8n Google Sheets / Dashboard Node_ | Wöchentlicher Content-KPI-Report     |
+| Schritt             | Tool                                 | Zweck                                                |
+| ------------------- | ------------------------------------ | ---------------------------------------------------- |
+| Stories zählen      | `list_stories` (pro `contentType`)   | Content-Inventar nach Typ                            |
+| Assets zählen       | `list_assets`                        | Medien-Statistiken                                   |
+| Komponenten-Nutzung | `analyze_content_patterns`           | Komponentenfrequenz, Sektionsfolgen, Sub-Item-Counts |
+| Dashboard           | _n8n Google Sheets / Dashboard Node_ | Wöchentlicher Content-KPI-Report                     |
 
 ### 12. Automatische Archivierung
 
@@ -160,24 +162,28 @@ Abgelaufene Event-Seiten oder veraltete Kampagnen-Seiten werden automatisch depu
 
 Alle im MCP Server verfügbaren Tools auf einen Blick:
 
-| Kategorie          | Tool                         | Beschreibung                                                                    |
-| ------------------ | ---------------------------- | ------------------------------------------------------------------------------- |
-| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern         |
-|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                 |
-|                    | `create_story`               | Neue Story mit Basisinhalt anlegen                                              |
-|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren         |
-|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                             |
-|                    | `delete_story`               | Story dauerhaft löschen                                                         |
-|                    | `search_content`             | Volltextsuche über alle Stories                                                 |
-|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                             |
-| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                |
-|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen |
-| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema |
-| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                     |
-|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                         |
-| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                  |
-| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)     |
-| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                    |
+| Kategorie          | Tool                         | Beschreibung                                                                                         |
+| ------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern                              |
+|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                                      |
+|                    | `create_story`               | Neue Story mit Basisinhalt anlegen                                                                   |
+|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren                              |
+|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                                                  |
+|                    | `delete_story`               | Story dauerhaft löschen                                                                              |
+|                    | `search_content`             | Volltextsuche über alle Stories                                                                      |
+|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                                                  |
+| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                     |
+|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                      |
+| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                      |
+| **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish) |
+|                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space             |
+|                    | `plan_page`                  | KI-gestützte Seitenstruktur-Planung anhand von Intent und Website-Mustern                            |
+|                    | `generate_section`           | Einzelne Sektion generieren mit automatischer Site-Kontext-Injektion und Übergangshinweisen          |
+| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                                          |
+|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                                              |
+| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                                       |
+| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)                          |
+| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                                         |
 
 ---
 
@@ -189,12 +195,14 @@ Neben den automatisierten n8n-Workflows kann ein Redakteur den MCP Server auch *
 
 #### Komplette Seiten per Prompt generieren
 
-Der Editor beschreibt in natürlicher Sprache, welche Seite er braucht – z.B. _„Erstelle eine Landing Page für unser neues Produkt X mit Hero, Features-Sektion und FAQ"_. Claude generiert die Inhalte KI-gestützt, strukturiert sie passend zum Design System und legt die Seite direkt in Storyblok an – sofort im Visual Editor bearbeitbar.
+Der Editor beschreibt in natürlicher Sprache, welche Seite er braucht – z.B. _„Erstelle eine Landing Page für unser neues Produkt X mit Hero, Features-Sektion und FAQ"_. Claude analysiert zunächst bestehende Seitenmuster, plant die Struktur und generiert die Sektionen einzeln – mit automatischem Site-Kontext und Übergangshinweisen für konsistentere Ergebnisse.
 
-| Tool                       | Zweck                                       |
-| -------------------------- | ------------------------------------------- |
-| `generate_content`         | KI erzeugt Design-System-konforme Sektionen |
-| `create_page_with_content` | Seite wird direkt in Storyblok angelegt     |
+| Tool                       | Zweck                                                    |
+| -------------------------- | -------------------------------------------------------- |
+| `analyze_content_patterns` | Bestehende Seitenmuster und Komponentennutzung verstehen |
+| `plan_page`                | KI-gestützte Seitenstruktur planen                       |
+| `generate_section`         | Einzelne Sektionen mit Site-Kontext generieren           |
+| `create_page_with_content` | Fertige Seite direkt in Storyblok anlegen                |
 
 #### Einzelne Sektionen zu bestehenden Seiten hinzufügen
 
@@ -203,7 +211,7 @@ Eine Seite existiert bereits, aber es fehlt z.B. ein Testimonial-Bereich oder ei
 | Tool                         | Zweck                                         |
 | ---------------------------- | --------------------------------------------- |
 | `get_story`                  | Bestehende Seitenstruktur laden und verstehen |
-| `generate_content`           | Neue Sektion erzeugen                         |
+| `generate_section`           | Neue Sektion passend zum Kontext erzeugen     |
 | `import_content_at_position` | An gewünschter Stelle einfügen                |
 
 #### Iteratives Verfeinern im Dialog
@@ -273,10 +281,11 @@ _„Welche Komponenten kann ich auf einer Seite verwenden?"_ – Claude listet a
 
 _„Was ist der Unterschied zwischen Hero und Image-Story?"_ oder _„Welche Komponente eignet sich am besten für Kundenzitate?"_ – Claude vergleicht die Schemas und gibt eine Empfehlung.
 
-| Tool                       | Zweck                          |
-| -------------------------- | ------------------------------ |
-| `get_component` (mehrfach) | Schemas vergleichen            |
-| `list_components`          | Gesamtübersicht für Empfehlung |
+| Tool                       | Zweck                                          |
+| -------------------------- | ---------------------------------------------- |
+| `get_component` (mehrfach) | Schemas vergleichen                            |
+| `list_components`          | Gesamtübersicht für Empfehlung                 |
+| `list_recipes`             | Bewährte Kombinationen und Rezepte vorschlagen |
 
 #### Verfügbare Icons nachschlagen
 
@@ -335,12 +344,14 @@ _„Wir brauchen eine neue Kampagnen-Seite zum Thema Sommerschlussverkauf. Was h
 
 Der Editor startet mit einer vagen Idee, Claude hilft bei der Strukturierung, generiert Inhalte Sektion für Sektion, der Editor gibt Feedback, und am Ende steht eine fertige Seite in Storyblok – alles in einer einzigen Chat-Session.
 
-| Tool                          | Zweck                                   |
-| ----------------------------- | --------------------------------------- |
-| `list_components`             | Mögliche Seitenbausteine vorschlagen    |
-| `generate_content` (iterativ) | Sektionen einzeln erzeugen und anpassen |
-| `create_page_with_content`    | Finales Ergebnis in Storyblok anlegen   |
+| Tool                             | Zweck                                                     |
+| -------------------------------- | --------------------------------------------------------- |
+| `analyze_content_patterns`       | Bestehende Muster als Grundlage verstehen                 |
+| `list_recipes`                   | Bewährte Sektions-Rezepte und Seitentemplates vorschlagen |
+| `plan_page`                      | Seitenstruktur auf Basis der Idee planen                  |
+| `generate_section` (pro Sektion) | Sektionen einzeln erzeugen und im Dialog anpassen         |
+| `create_page_with_content`       | Finales Ergebnis in Storyblok anlegen                     |
 
 ---
 
-> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **KI-Verarbeitung** (`generate_content`) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `update_story`) → **Benachrichtigung**. Die Stärke liegt darin, dass n8n diese Kette vollautomatisch oder per Trigger auslösen kann, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.
+> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **Muster-Analyse** (`analyze_content_patterns`) → **Planung** (`plan_page`, `list_recipes`) → **KI-Generierung** (`generate_section` für Guided Generation oder `generate_content` für einfache Fälle) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `update_story`) → **Benachrichtigung**. Die Stärke liegt darin, dass n8n diese Kette vollautomatisch oder per Trigger auslösen kann, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.

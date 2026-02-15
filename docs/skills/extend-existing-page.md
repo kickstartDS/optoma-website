@@ -27,6 +27,11 @@ Der Editor hat eine bestehende Seite in Storyblok und möchte eine oder mehrere 
 - **Tool:** `list_components`
 - **Zweck:** Sicherstellen, dass der gewünschte Sektionstyp existiert
 - Falls der Editor unsicher ist, Optionen vorschlagen, die zur bestehenden Seite passen
+- Die `typicalUsage`-Hinweise pro Komponente beachten — sie enthalten Empfehlungen für passende Folge-Sektionen
+- **Tool:** `analyze_content_patterns`
+- **Zweck:** Prüfen, welche Komponenten auf dieser Website typischerweise nach der aktuell letzten Sektion kommen (Antwort kommt sofort aus dem Startup-Cache)
+- Beispiel: _„Auf dieser Website folgt nach features typischerweise testimonials oder cta"_
+- Abgleichen, ob die gewünschte Ergänzung zu den bestehenden Mustern passt
 
 ### Schritt 2b: Verfügbare Icons prüfen (bei Bedarf)
 

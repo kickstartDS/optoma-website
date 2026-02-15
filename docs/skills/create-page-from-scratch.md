@@ -11,6 +11,14 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 
 ## Ablauf
 
+### Schritt 0: Bestehende Muster und Rezepte prüfen
+
+- **Tool:** `analyze_content_patterns`
+- **Zweck:** Die etablierten Content-Muster dieser Website lernen — welche Komponenten werden häufig verwendet, welche Sektionsabfolgen sind typisch, wie viele Sub-Elemente haben Komponenten normalerweise?
+- Antwort kommt sofort aus dem Startup-Cache (kein API-Call). Bei frisch publiziertem Content `refresh: true` übergeben.
+- **Alternativ:** Die `recipes://section-recipes` Ressource lesen für allgemeine Best Practices zu Komponentenkombinationen und Seitenvorlagen
+- Das Ergebnis als Leitfaden für die Planung nutzen — neue Seiten sollten zum bestehenden Stil der Website passen
+
 ### Schritt 1: Verfügbare Komponenten prüfen
 
 - **Tool:** `list_components`
@@ -28,11 +36,22 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 ### Schritt 2: Inhalte generieren
 
 - **Tool:** `generate_content`
-- **Parameter:**
+- **Empfohlener Ansatz — Sektion für Sektion:**
+  Für beste Ergebnisse jede Sektion einzeln generieren statt `sectionCount` zu nutzen:
+
+  1. Sektionsfolge planen (z.B. hero → features → testimonials → cta)
+  2. Für jede Sektion: `generate_content` mit `componentType` und sektionsspezifischem Prompt
+  3. Alle Sektionen sammeln und zusammen an `create_page_with_content` übergeben
+     → Siehe Skill _„Seite Sektion für Sektion planen und erstellen"_ für den detaillierten Ablauf
+
+- **Schneller Ansatz — alles auf einmal:**
+
+  - `sectionCount`: Anzahl der gewünschten Sektionen (nur für ≤ 4 Sektionen empfohlen)
+  - `componentType`: Optional, falls nur eine bestimmte Sektion generiert werden soll
+
+- **Für beide Ansätze:**
   - `system`: Einen passenden System-Prompt formulieren, der Tonalität, Zielgruppe und Marke berücksichtigt – z.B. _„Du bist ein erfahrener Content-Autor für eine B2B-Softwarefirma. Schreibe professionell aber zugänglich."_
   - `prompt`: Die Beschreibung des Editors + ggf. bereitgestelltes Material
-  - `sectionCount`: Anzahl der gewünschten Sektionen (aus dem Gespräch ableiten)
-  - `componentType`: Optional, falls nur eine bestimmte Sektion generiert werden soll
 - **Ergebnis dem Editor zeigen** und fragen, ob Anpassungen nötig sind
 - ⚠️ Bei Bedarf `generate_content` mit angepasstem Prompt erneut aufrufen
 
@@ -56,14 +75,15 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 
 ## Häufige Fehler
 
-| Fehler                         | Auswirkung                                                              | Vermeidung                                       |
-| ------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| `uploadAssets: true` vergessen | Bilder bleiben als externe URLs, brechen evtl. später                   | Immer setzen                                     |
-| `publish: true` ohne Review    | Ungeprüfter Content geht live                                           | Immer `false`, Editor entscheidet                |
-| `list_components` übersprungen | Claude generiert Sektionstypen, die es nicht gibt → Import schlägt fehl | Immer zuerst Komponenten prüfen                  |
-| Icon-Bezeichner erfunden       | Ungültige Icons werden nicht gerendert                                  | Immer `list_icons` aufrufen vor Icon-Nutzung     |
-| Slug nicht abgestimmt          | Doppelte Slugs → Storyblok-Fehler                                       | Slug mit Editor besprechen                       |
-| Zu viele Sektionen auf einmal  | Ergebnis schwer zu überblicken                                          | Bei > 5 Sektionen lieber schrittweise generieren |
+| Fehler                         | Auswirkung                                                              | Vermeidung                                                                                                    |
+| ------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `uploadAssets: true` vergessen | Bilder bleiben als externe URLs, brechen evtl. später                   | Immer setzen                                                                                                  |
+| `publish: true` ohne Review    | Ungeprüfter Content geht live                                           | Immer `false`, Editor entscheidet                                                                             |
+| `list_components` übersprungen | Claude generiert Sektionstypen, die es nicht gibt → Import schlägt fehl | Immer zuerst Komponenten prüfen                                                                               |
+| Icon-Bezeichner erfunden       | Ungültige Icons werden nicht gerendert                                  | Immer `list_icons` aufrufen vor Icon-Nutzung                                                                  |
+| Slug nicht abgestimmt          | Doppelte Slugs → Storyblok-Fehler                                       | Slug mit Editor besprechen                                                                                    |
+| Zu viele Sektionen auf einmal  | Ergebnis schwer zu überblicken                                          | Bei > 4 Sektionen den Sektion-für-Sektion Ansatz verwenden (siehe Skill _„Seite Sektion für Sektion planen"_) |
+| Bestehende Muster ignoriert    | Neuer Content passt nicht zum Rest der Website                          | Immer zuerst `analyze_content_patterns` oder Rezepte prüfen                                                   |
 
 ## Varianten
 

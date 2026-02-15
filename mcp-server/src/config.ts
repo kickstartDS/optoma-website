@@ -312,6 +312,71 @@ export const schemas = {
         "Optional CSS selector to extract a specific part of the page (e.g. 'main', 'article', '.content'). Defaults to 'main' if present, otherwise full body."
       ),
   }),
+
+  analyzeContentPatterns: z.object({
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Filter stories by content type (default: 'page'). Use 'blog-post', 'event-detail', etc. for other types."
+      ),
+    startsWith: z
+      .string()
+      .optional()
+      .describe("Filter stories by slug prefix (e.g. 'en/' for English pages)"),
+    refresh: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Force a fresh analysis instead of using the cached result. Use after publishing new content."
+      ),
+  }),
+
+  listRecipes: z.object({
+    intent: z
+      .string()
+      .optional()
+      .describe(
+        "Optional intent to help prioritize relevant recipes (e.g. 'product landing page', 'about page')"
+      ),
+    includePatterns: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe(
+        "Include live patterns from existing content alongside static recipes (default: true)"
+      ),
+  }),
+
+  planPage: z.object({
+    intent: z
+      .string()
+      .describe(
+        "Description of the page to plan (e.g. 'Product landing page for our new AI feature')"
+      ),
+    sectionCount: z
+      .number()
+      .optional()
+      .describe("Target number of sections (default: auto-determined)"),
+  }),
+
+  generateSection: z.object({
+    componentType: z
+      .string()
+      .describe("Component type to generate (e.g. 'hero', 'features', 'faq')"),
+    prompt: z.string().describe("Content description for this section"),
+    system: z.string().optional().describe("System prompt override"),
+    previousSection: z
+      .string()
+      .optional()
+      .describe("Component type of the section before this one (for context)"),
+    nextSection: z
+      .string()
+      .optional()
+      .describe("Component type of the section after this one (for context)"),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -332,3 +397,9 @@ export type GetComponentInput = z.infer<typeof schemas.getComponent>;
 export type ListAssetsInput = z.infer<typeof schemas.listAssets>;
 export type SearchContentInput = z.infer<typeof schemas.searchContent>;
 export type ScrapeUrlInput = z.infer<typeof schemas.scrapeUrl>;
+export type AnalyzeContentPatternsInput = z.infer<
+  typeof schemas.analyzeContentPatterns
+>;
+export type ListRecipesInput = z.infer<typeof schemas.listRecipes>;
+export type PlanPageInput = z.infer<typeof schemas.planPage>;
+export type GenerateSectionInput = z.infer<typeof schemas.generateSection>;

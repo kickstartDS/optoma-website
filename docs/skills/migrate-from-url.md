@@ -27,6 +27,9 @@ Der Editor möchte Inhalte von einer externen Webseite übernehmen – z.B. bei 
 - **Zweck:** Entscheiden, welche Design-System-Sektionen am besten zum gescrapten Inhalt passen
 - Z.B.: Überschrift + Bild → Hero; Aufzählung → Features oder FAQ; Fließtext → Text/Bild-Sektion
 - Dem Editor die geplante Zuordnung kurz vorstellen
+- **Tool:** `analyze_content_patterns`
+- **Zweck:** Die bestehenden Muster der Zielwebsite kennenlernen und die migrierte Seitenstruktur daran angleichen (Antwort kommt sofort aus dem Startup-Cache)
+- **Alternativ:** Die `recipes://section-recipes` Ressource lesen, um die gescrapte Seitenstruktur auf passende Rezepte abzubilden
 
 ### Schritt 2b: Verfügbare Icons prüfen (bei Bedarf)
 

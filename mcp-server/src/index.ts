@@ -20,6 +20,10 @@ import {
   ContentGenerationService,
   scrapeUrl,
   PAGE_VALIDATION_RULES,
+  analyzeContentPatterns,
+  checkCompositionalQuality,
+  type ContentPatternAnalysis,
+  type SubComponentStats,
 } from "./services.js";
 import {
   formatErrorResponse,
@@ -104,6 +108,27 @@ console.error(
   }`
 );
 
+// Load section recipes (curated component combination guidance)
+let sectionRecipes: Record<string, any> = {};
+try {
+  const __filename_recipes = fileURLToPath(import.meta.url);
+  const __dirname_recipes = dirname(__filename_recipes);
+  const recipesPath = join(
+    __dirname_recipes,
+    "..",
+    "schemas",
+    "section-recipes.json"
+  );
+  sectionRecipes = JSON.parse(readFileSync(recipesPath, "utf-8"));
+  console.error(
+    `Loaded section recipes: ${
+      (sectionRecipes.recipes || []).length
+    } recipes, ${(sectionRecipes.pageTemplates || []).length} page templates`
+  );
+} catch {
+  console.error("Section recipes not found, skipping");
+}
+
 /**
  * Available icon identifiers.
  *
@@ -152,6 +177,23 @@ try {
 } catch (error) {
   console.error("Failed to initialize services:", error);
   process.exit(1);
+}
+
+// ── Content pattern cache ──────────────────────────────────────────
+// Warmed once at startup; refreshed on-demand via analyze_content_patterns(refresh: true).
+let cachedPatterns: ContentPatternAnalysis | null = null;
+
+async function warmPatternCache(): Promise<ContentPatternAnalysis> {
+  console.error("[MCP] Warming content pattern cache...");
+  cachedPatterns = await analyzeContentPatterns(
+    storyblokService,
+    PAGE_VALIDATION_RULES,
+    { contentType: "page" }
+  );
+  console.error(
+    `[MCP] Pattern cache ready (${cachedPatterns.totalStoriesAnalyzed} stories, ${cachedPatterns.componentFrequency.length} components)`
+  );
+  return cachedPatterns;
 }
 
 /**
@@ -772,6 +814,153 @@ to ensure only valid icon identifiers are used.`,
         required: [],
       },
     },
+    {
+      name: "analyze_content_patterns",
+      description: `Analyze content patterns across all published stories in the Storyblok space.
+
+This tool reads all existing stories and extracts structural patterns \u2014
+no AI call needed, pure structural analysis. Use this BEFORE creating new
+content to understand the site's established style and produce content that
+feels native.
+
+Returns:
+- Component frequency (which components are actually used and how often)
+- Common section sequences (which components typically follow each other)
+- Section compositions (which components are grouped together in sections)
+- Sub-component item counts (e.g. features typically has 4 items on this site)
+- Page archetypes (recurring full-page patterns)
+- Unused components (available but never used on this site)
+
+This is the single most important tool for creating consistent content.
+Call it before planning any new page.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          contentType: {
+            type: "string",
+            description:
+              "Filter stories by content type (default: 'page'). Use 'blog-post', 'event-detail', etc. for other types.",
+          },
+          startsWith: {
+            type: "string",
+            description:
+              "Filter stories by slug prefix (e.g., 'en/' for English pages only)",
+          },
+          refresh: {
+            type: "boolean",
+            description:
+              "Force a fresh analysis instead of using the cached result. Use after publishing new content. Default: false.",
+          },
+        },
+        required: [],
+      },
+    },
+    {
+      name: "list_recipes",
+      description: `List curated section recipes, page templates, and anti-patterns.
+
+Returns proven component combinations merged with live patterns from the
+current Storyblok space (when includePatterns is true).
+
+Use this tool when planning a page to understand:
+- Which component combinations work well together (recipes)
+- Ready-made page templates for common page types
+- Anti-patterns to avoid (e.g. duplicate heroes, sparse stats)
+- How this specific site uses components (live patterns)
+
+This combines universal best practices with site-specific intelligence.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          intent: {
+            type: "string",
+            description:
+              "Optional intent to help prioritize relevant recipes (e.g. 'product landing page', 'about page')",
+          },
+          includePatterns: {
+            type: "boolean",
+            description:
+              "Include live patterns from existing content alongside static recipes (default: true)",
+          },
+        },
+        required: [],
+      },
+    },
+    {
+      name: "plan_page",
+      description: `Plan a page structure with AI-assisted section selection.
+
+Returns a recommended section sequence based on the page intent, available
+components, and the site's existing content patterns. Does NOT generate
+content \u2014 only plans the structure.
+
+Use the returned plan to generate each section individually with
+\`generate_content(componentType=...)\` for best results.
+
+Requires OpenAI API key for the planning AI call.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          intent: {
+            type: "string",
+            description:
+              "Description of the page to plan (e.g. 'Product landing page for our new AI feature')",
+          },
+          sectionCount: {
+            type: "number",
+            description:
+              "Target number of sections (default: auto-determined based on intent)",
+          },
+        },
+        required: ["intent"],
+      },
+    },
+    {
+      name: "generate_section",
+      description: `Generate a single section with site-aware context.
+
+A convenience wrapper around \`generate_content\` that automatically:
+1. Analyzes the site's content patterns
+2. Injects site-specific context into the system prompt (e.g. typical sub-item counts)
+3. Accepts optional previous/next section context for better transitions
+4. Validates the output against recipe anti-patterns
+
+Use this instead of \`generate_content\` when building a page section-by-section.
+For best results, call \`plan_page\` first, then \`generate_section\` for each
+planned section.
+
+Requires OpenAI API key.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          componentType: {
+            type: "string",
+            description:
+              "Component type to generate (e.g. 'hero', 'features', 'faq')",
+          },
+          prompt: {
+            type: "string",
+            description: "Content description for this section",
+          },
+          system: {
+            type: "string",
+            description:
+              "System prompt override (default: auto-generated with site context)",
+          },
+          previousSection: {
+            type: "string",
+            description:
+              "Component type of the section before this one (for transitional context)",
+          },
+          nextSection: {
+            type: "string",
+            description:
+              "Component type of the section after this one (for transitional context)",
+          },
+        },
+        required: ["componentType", "prompt"],
+      },
+    },
   ];
 
   /**
@@ -784,6 +973,26 @@ to ensure only valid icon identifiers are used.`,
   /**
    * Handle tool execution
    */
+  /**
+   * Run compositional quality checks on sections and return warnings.
+   * Non-blocking — failures are logged and return empty array.
+   */
+  function getCompositionalWarnings(sections: Record<string, any>[]): Array<{
+    level: string;
+    message: string;
+    path?: string;
+    suggestion?: string;
+  }> {
+    try {
+      return checkCompositionalQuality(sections, PAGE_VALIDATION_RULES, {
+        format: "auto",
+      });
+    } catch (err) {
+      console.error(`[MCP] Warning: Compositional check failed: ${err}`);
+      return [];
+    }
+  }
+
   mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
@@ -838,6 +1047,9 @@ to ensure only valid icon identifiers are used.`,
 
         case "import_content": {
           const validated = schemas.importContent.parse(args);
+          const warnings = getCompositionalWarnings(
+            validated.page.content.section as Record<string, any>[]
+          );
           const result = await storyblokService.importContent({
             ...validated,
             skipTransform: validated.skipTransform,
@@ -854,6 +1066,7 @@ to ensure only valid icon identifiers are used.`,
                     success: true,
                     message: "Content imported successfully",
                     story: result,
+                    ...(warnings.length > 0 && { warnings }),
                   },
                   null,
                   2
@@ -865,6 +1078,9 @@ to ensure only valid icon identifiers are used.`,
 
         case "import_content_at_position": {
           const validated = schemas.importContentAtPosition.parse(args);
+          const warnings = getCompositionalWarnings(
+            validated.sections as Record<string, any>[]
+          );
           const result = await storyblokService.importContentAtPosition({
             storyUid: validated.storyUid,
             position: validated.position,
@@ -884,6 +1100,7 @@ to ensure only valid icon identifiers are used.`,
                     success: true,
                     message: `Content imported at position ${validated.position}`,
                     story: result,
+                    ...(warnings.length > 0 && { warnings }),
                   },
                   null,
                   2
@@ -895,6 +1112,9 @@ to ensure only valid icon identifiers are used.`,
 
         case "create_page_with_content": {
           const validated = schemas.createPageWithContent.parse(args);
+          const warnings = getCompositionalWarnings(
+            validated.sections as Record<string, any>[]
+          );
           const result = await storyblokService.createPageWithContent({
             ...validated,
             skipValidation: validated.skipValidation,
@@ -912,6 +1132,7 @@ to ensure only valid icon identifiers are used.`,
                       ? "Page created and published"
                       : "Page created (draft)",
                     story: result,
+                    ...(warnings.length > 0 && { warnings }),
                   },
                   null,
                   2
@@ -1042,6 +1263,81 @@ to ensure only valid icon identifiers are used.`,
         case "list_components": {
           const result = await storyblokService.listComponents();
 
+          // Component usage hints — derived from section recipes
+          const COMPONENT_USAGE_HINTS: Record<
+            string,
+            {
+              typicalUsage: string;
+              typicalSubItemCount?: Record<string, [number, number]>;
+            }
+          > = {
+            hero: {
+              typicalUsage:
+                "Page opener. Usually the first section. Include 1-2 CTA buttons. Pair with features, split, or logos-companies below.",
+              typicalSubItemCount: { buttons: [1, 2] },
+            },
+            "video-curtain": {
+              typicalUsage:
+                "Alternative page opener with full-width video background. Use instead of hero for video-heavy pages. Maximum one per page.",
+              typicalSubItemCount: { buttons: [1, 2] },
+            },
+            features: {
+              typicalUsage:
+                "Present 3-4 key capabilities or benefits with icons. Keep text concise. Great after hero. Icons must come from list_icons.",
+              typicalSubItemCount: { feature: [3, 4] },
+            },
+            split: {
+              typicalUsage:
+                "Side-by-side layout: image + text. Good for feature deep-dives. Alternate sides when using multiple splits.",
+            },
+            testimonials: {
+              typicalUsage:
+                "Social proof with 2-3 customer quotes. Include real names, roles, and companies. Place before CTA for conversion.",
+              typicalSubItemCount: { testimonial: [2, 3] },
+            },
+            stats: {
+              typicalUsage:
+                "Data-driven credibility with 3-4 stat items. Use specific numbers. Place before CTA to establish proof.",
+              typicalSubItemCount: { stat: [3, 4] },
+            },
+            cta: {
+              typicalUsage:
+                "Conversion point. Clear, action-oriented headline with 1-2 buttons. Usually the last section on a page.",
+              typicalSubItemCount: { buttons: [1, 2] },
+            },
+            faq: {
+              typicalUsage:
+                "Answer 5-8 common questions. Great for addressing objections before CTA. Order by importance.",
+              typicalSubItemCount: { questions: [5, 8] },
+            },
+            "logos-companies": {
+              typicalUsage:
+                "Trust signal with 5-8 client/partner logos. Works best after hero or before CTA. Needs density to be effective.",
+              typicalSubItemCount: { logo: [5, 8] },
+            },
+            mosaic: {
+              typicalUsage:
+                "Visual grid with 4-6 tiles for portfolios, team grids, or project showcases. Each tile can have its own link.",
+              typicalSubItemCount: { tile: [4, 6] },
+            },
+            "blog-teaser": {
+              typicalUsage:
+                "Article teaser card. Always group 3 blog-teasers per section for visual balance. Each must have a link_url.",
+            },
+            contact: {
+              typicalUsage:
+                "Contact details section. Include relevant channels (email, phone, address). Use icons from list_icons.",
+            },
+            slider: {
+              typicalUsage:
+                "Rotating content carousel. Minimum 3 slides. Accepts full components in its slots.",
+            },
+            divider: {
+              typicalUsage:
+                "Visual separator. Use sparingly — only between major thematic shifts. Consider section background colors instead.",
+            },
+          };
+
           // Annotate each component with nesting rules from the schema
           const annotated = (result as Array<{ name: string }>).map((comp) => {
             const name = comp.name;
@@ -1065,6 +1361,15 @@ to ensure only valid icon identifiers are used.`,
               allowedIn: slots.length > 0 ? slots : undefined,
               isSubComponent,
             };
+
+            // Add usage hints from recipes
+            const hints = COMPONENT_USAGE_HINTS[name];
+            if (hints) {
+              annotation.typicalUsage = hints.typicalUsage;
+              if (hints.typicalSubItemCount) {
+                annotation.typicalSubItemCount = hints.typicalSubItemCount;
+              }
+            }
 
             if (isSubComponent && parentComponents?.length) {
               annotation.parentComponent =
@@ -1212,6 +1517,288 @@ to ensure only valid icon identifiers are used.`,
           };
         }
 
+        case "analyze_content_patterns": {
+          const validated = schemas.analyzeContentPatterns.parse(args);
+          const isDefaultQuery =
+            validated.contentType === "page" && !validated.startsWith;
+          console.error(
+            `[MCP] Analyzing content patterns (contentType: ${
+              validated.contentType
+            }, startsWith: ${validated.startsWith || "all"}, refresh: ${
+              validated.refresh
+            }, cached: ${isDefaultQuery && !!cachedPatterns})...`
+          );
+
+          let analysis: ContentPatternAnalysis;
+          if (isDefaultQuery && cachedPatterns && !validated.refresh) {
+            analysis = cachedPatterns;
+          } else {
+            analysis = await analyzeContentPatterns(
+              storyblokService,
+              PAGE_VALIDATION_RULES,
+              validated
+            );
+            // Update the cache when this is the default query
+            if (isDefaultQuery) {
+              cachedPatterns = analysis;
+            }
+          }
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(analysis, null, 2),
+              },
+            ],
+          };
+        }
+
+        case "list_recipes": {
+          const validated = schemas.listRecipes.parse(args);
+          console.error(
+            `[MCP] Listing recipes (intent: ${
+              validated.intent || "all"
+            }, includePatterns: ${validated.includePatterns})...`
+          );
+
+          const result: Record<string, unknown> = {
+            recipes: sectionRecipes.recipes,
+            pageTemplates: sectionRecipes.pageTemplates,
+            antiPatterns: sectionRecipes.antiPatterns,
+          };
+
+          // Optionally merge live patterns from the space (uses startup cache)
+          if (validated.includePatterns && cachedPatterns) {
+            result.livePatterns = {
+              componentFrequency: cachedPatterns.componentFrequency.slice(
+                0,
+                15
+              ),
+              commonSequences: cachedPatterns.commonSequences.slice(0, 10),
+              subComponentCounts: cachedPatterns.subComponentCounts,
+              note: "Live patterns from startup cache. Use analyze_content_patterns(refresh: true) to update after publishing.",
+            };
+          } else if (validated.includePatterns) {
+            result.livePatterns = {
+              error:
+                "Pattern cache not available. Call analyze_content_patterns first to populate it.",
+            };
+          }
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case "plan_page": {
+          const validated = schemas.planPage.parse(args);
+          console.error(
+            `[MCP] Planning page structure for: "${validated.intent}"...`
+          );
+
+          if (!contentService) {
+            throw new ConfigurationError(
+              "OpenAI API key is required for plan_page. Set OPENAI_API_KEY environment variable."
+            );
+          }
+
+          // Gather site intelligence from startup cache
+          let patternsContext = "";
+          if (cachedPatterns) {
+            const topComponents = cachedPatterns.componentFrequency
+              .slice(0, 10)
+              .map(
+                (c: { component: string; count: number }) =>
+                  `${c.component} (used ${c.count}x)`
+              )
+              .join(", ");
+            const topSequences = cachedPatterns.commonSequences
+              .slice(0, 8)
+              .map(
+                (s: { from: string; to: string; count: number }) =>
+                  `${s.from} → ${s.to} (${s.count}x)`
+              )
+              .join(", ");
+            const subItems = Object.entries(cachedPatterns.subComponentCounts)
+              .map(
+                ([component, s]) =>
+                  `${component}: median ${
+                    (s as SubComponentStats).median
+                  } items (${(s as SubComponentStats).min}-${
+                    (s as SubComponentStats).max
+                  })`
+              )
+              .join(", ");
+            patternsContext = `\n\nSite patterns:\n- Most used: ${topComponents}\n- Common sequences: ${topSequences}\n- Sub-item counts: ${subItems}`;
+          }
+
+          // Get available components from the section.components slot
+          const sectionSlot =
+            PAGE_VALIDATION_RULES.containerSlots.get("section.components");
+          const componentNames = sectionSlot
+            ? [...sectionSlot]
+            : [...PAGE_VALIDATION_RULES.allKnownComponents];
+
+          const planPrompt = `You are a web page structure planner. Given a page intent, suggest an ordered list of sections.
+
+Available section component types: ${componentNames.join(", ")}
+${patternsContext}
+
+Recipes resource is also available with proven combinations.
+
+Rules:
+- Start most pages with "hero" or "video-curtain"
+- End conversion pages with a CTA section
+- Use "divider" sparingly, only between thematically different blocks
+- Prefer variety: don't repeat the same component type in adjacent sections
+- ${
+            validated.sectionCount
+              ? `Target exactly ${validated.sectionCount} sections`
+              : "Choose an appropriate number of sections (typically 4-8)"
+          }
+
+Respond with a JSON object:
+{
+  "sections": [
+    { "componentType": "hero", "intent": "brief description of what this section should convey" }
+  ],
+  "reasoning": "brief explanation of the structure choices"
+}`;
+
+          const response = await contentService.generateContent({
+            system: planPrompt,
+            prompt: `Plan a page for: ${validated.intent}`,
+            schema: {
+              name: "page_plan",
+              schema: {
+                type: "object",
+                properties: {
+                  sections: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        componentType: {
+                          type: "string",
+                          enum: componentNames,
+                        },
+                        intent: { type: "string" },
+                      },
+                      required: ["componentType", "intent"],
+                      additionalProperties: false,
+                    },
+                  },
+                  reasoning: { type: "string" },
+                },
+                required: ["sections", "reasoning"],
+                additionalProperties: false,
+              },
+              strict: true,
+            },
+          });
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    plan: response,
+                    usage:
+                      "Use generate_section or generate_content(componentType=...) for each section in order. Pass previousSection/nextSection for better transitions.",
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "generate_section": {
+          const validated = schemas.generateSection.parse(args);
+          console.error(
+            `[MCP] Generating section: ${validated.componentType}...`
+          );
+
+          if (!contentService) {
+            throw new ConfigurationError(
+              "OpenAI API key is required for generate_section. Set OPENAI_API_KEY environment variable."
+            );
+          }
+
+          // Gather site-specific context from startup cache
+          let siteContext = "";
+          if (cachedPatterns) {
+            const relevantStats = cachedPatterns.subComponentCounts[
+              validated.componentType
+            ] as SubComponentStats | undefined;
+            if (relevantStats) {
+              siteContext += `\nOn this site, ${validated.componentType} sections typically have ${relevantStats.median} sub-items (range: ${relevantStats.min}-${relevantStats.max}).`;
+            }
+            const freq = cachedPatterns.componentFrequency.find(
+              (c: { component: string }) =>
+                c.component === validated.componentType
+            );
+            if (freq) {
+              siteContext += `\nThis component is used ${freq.count} times across the site.`;
+            }
+          }
+
+          // Build context-aware system prompt
+          let systemPrompt =
+            validated.system ||
+            `You are an expert content writer creating a ${validated.componentType} section for a website.`;
+          if (siteContext) {
+            systemPrompt += `\n\nSite-specific guidance:${siteContext}`;
+          }
+          if (validated.previousSection) {
+            systemPrompt += `\n\nThis section follows a "${validated.previousSection}" section. Ensure a smooth content transition.`;
+          }
+          if (validated.nextSection) {
+            systemPrompt += `\n\nThis section precedes a "${validated.nextSection}" section. Set up the transition naturally.`;
+          }
+
+          // Check anti-patterns from recipes
+          const recipe = sectionRecipes.recipes?.find(
+            (r: { components: string[] }) =>
+              r.components.includes(validated.componentType)
+          );
+          if (recipe?.notes) {
+            systemPrompt += `\n\nBest practices: ${recipe.notes}`;
+          }
+
+          // Generate via the content service (full pipeline with schema auto-derivation)
+          const result = await contentService.generateWithSchema({
+            system: systemPrompt,
+            prompt: validated.prompt,
+            componentType: validated.componentType,
+          });
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    section: result.storyblokContent,
+                    designSystemProps: result.designSystemProps,
+                    componentType: validated.componentType,
+                    note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains Storyblok-ready content.",
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
         default:
           throw new ValidationError(`Unknown tool: ${name}`);
       }
@@ -1263,6 +1850,13 @@ to ensure only valid icon identifiers are used.`,
           description: "Overview of all stories in the space",
           mimeType: "application/json",
         },
+        {
+          uri: "recipes://section-recipes",
+          name: "Section Recipes",
+          description:
+            "Curated component combinations, page templates, and anti-patterns. Use this as a guide when planning page structure and choosing section types.",
+          mimeType: "application/json",
+        },
         ...skills.map((skill) => ({
           uri: `skill://${skill.id}`,
           name: `Skill: ${skill.name}`,
@@ -1306,6 +1900,18 @@ to ensure only valid icon identifiers are used.`,
         };
       }
 
+      case "recipes://section-recipes": {
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: "application/json",
+              text: JSON.stringify(sectionRecipes, null, 2),
+            },
+          ],
+        };
+      }
+
       default: {
         // Check if it's a skill resource
         if (uri.startsWith("skill://")) {
@@ -1339,6 +1945,16 @@ to ensure only valid icon identifiers are used.`,
  * - http: For cloud deployment via Streamable HTTP (set MCP_TRANSPORT=http)
  */
 async function main() {
+  // Warm pattern cache once at startup
+  try {
+    await warmPatternCache();
+  } catch (err) {
+    console.error(`[MCP] Warning: Could not warm pattern cache: ${err}`);
+    console.error(
+      "[MCP] Patterns will be fetched on first analyze_content_patterns call."
+    );
+  }
+
   const transportMode = process.env.MCP_TRANSPORT || "stdio";
 
   if (transportMode === "http") {

@@ -91,11 +91,13 @@ export {
   validateSections,
   validatePageContent,
   formatValidationErrors,
+  checkCompositionalQuality,
 } from "./validate.js";
 export type {
   ValidationRules,
   ValidationResult,
   ValidationError,
+  ValidationWarning,
   ValidateContentOptions,
   ContainerSlot,
 } from "./validate.js";

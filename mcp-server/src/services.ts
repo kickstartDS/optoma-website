@@ -27,8 +27,10 @@ import {
   validateSections,
   validatePageContent,
   formatValidationErrors,
+  checkCompositionalQuality,
   type PrepareSchemaOptions,
   type ValidationRules,
+  type ValidationWarning,
 } from "@kickstartds/storyblok-services";
 
 // Load the dereferenced page schema once at module load
@@ -56,7 +58,248 @@ function rules_rootMatchesSchema(content: Record<string, any>): boolean {
 }
 
 /** Export validation rules so introspection tools can use them. */
-export { PAGE_VALIDATION_RULES, PAGE_SCHEMA };
+export { PAGE_VALIDATION_RULES, PAGE_SCHEMA, checkCompositionalQuality };
+export type { ValidationWarning };
+
+// ─── Content Pattern Analysis ─────────────────────────────────────────
+
+/** Component frequency entry. */
+interface ComponentFrequency {
+  component: string;
+  count: number;
+  percentage: number;
+}
+
+/** Section sequence bigram. */
+interface SequenceBigram {
+  from: string;
+  to: string;
+  count: number;
+}
+
+/** Section composition (components grouped in one section). */
+interface SectionComposition {
+  components: string[];
+  count: number;
+}
+
+/** Sub-component item count statistics. */
+export interface SubComponentStats {
+  median: number;
+  min: number;
+  max: number;
+  samples: number;
+}
+
+/** Page archetype (recurring full-page pattern). */
+interface PageArchetype {
+  pattern: string[];
+  count: number;
+  exampleSlug: string;
+}
+
+/** Full result of content pattern analysis. */
+export interface ContentPatternAnalysis {
+  totalStoriesAnalyzed: number;
+  componentFrequency: ComponentFrequency[];
+  commonSequences: SequenceBigram[];
+  sectionCompositions: SectionComposition[];
+  subComponentCounts: Record<string, SubComponentStats>;
+  pageArchetypes: PageArchetype[];
+  unusedComponents: string[];
+}
+
+/**
+ * Analyze content patterns across all published stories in the space.
+ *
+ * Fetches all stories via pagination, walks their section arrays, and
+ * extracts structural patterns: component frequency, section sequences,
+ * sub-component item counts, and full-page archetypes.
+ *
+ * Pure structural analysis — no AI calls needed.
+ */
+export async function analyzeContentPatterns(
+  storyblokService: StoryblokService,
+  validationRules: ValidationRules,
+  options: { contentType?: string; startsWith?: string } = {}
+): Promise<ContentPatternAnalysis> {
+  // ── 1. Fetch all stories with pagination ─────────────────────────
+  const allStories: Record<string, any>[] = [];
+  let page = 1;
+  const perPage = 100;
+  let total = Infinity;
+
+  while (allStories.length < total) {
+    const result = (await storyblokService.listStories({
+      page,
+      perPage,
+      contentType: options.contentType || "page",
+      startsWith: options.startsWith,
+    })) as { stories: Record<string, any>[]; total: number };
+
+    allStories.push(...result.stories);
+    total = result.total;
+    page++;
+
+    // Safety: avoid infinite loops
+    if (result.stories.length === 0) break;
+  }
+
+  // ── 2. Extract section structures ────────────────────────────────
+  // Maps for aggregation
+  const componentCounts = new Map<string, number>();
+  const sequenceCounts = new Map<string, number>();
+  const compositionCounts = new Map<
+    string,
+    { components: string[]; count: number }
+  >();
+  const subItemCounts = new Map<string, number[]>();
+  const pagePatterns = new Map<
+    string,
+    { pattern: string[]; count: number; exampleSlug: string }
+  >();
+
+  for (const story of allStories) {
+    const sections: Record<string, any>[] = story.content?.section || [];
+    if (sections.length === 0) continue;
+
+    // Extract per-section component types
+    const sectionTypes: string[][] = [];
+
+    for (const section of sections) {
+      const components: Record<string, any>[] = section.components || [];
+      const componentTypes: string[] = [];
+
+      for (const comp of components) {
+        const type = comp.component || comp.type;
+        if (typeof type === "string") {
+          componentTypes.push(type);
+
+          // Count component frequency
+          componentCounts.set(type, (componentCounts.get(type) || 0) + 1);
+
+          // Count sub-component items
+          for (const [parentType, childKey] of Object.entries(
+            validationRules.subComponentMap
+          )) {
+            if (type === parentType && Array.isArray(comp[childKey])) {
+              const key = `${parentType}.${childKey}`;
+              const existing = subItemCounts.get(key) || [];
+              existing.push(comp[childKey].length);
+              subItemCounts.set(key, existing);
+            }
+          }
+        }
+      }
+
+      sectionTypes.push(componentTypes);
+
+      // Track section compositions
+      if (componentTypes.length > 0) {
+        const compositionKey = componentTypes.join(",");
+        const existing = compositionCounts.get(compositionKey);
+        if (existing) {
+          existing.count++;
+        } else {
+          compositionCounts.set(compositionKey, {
+            components: [...componentTypes],
+            count: 1,
+          });
+        }
+      }
+    }
+
+    // Track section sequence bigrams
+    const flatTypes = sectionTypes.map((types) => types.join("+") || "(empty)");
+    for (let i = 0; i < flatTypes.length - 1; i++) {
+      const key = `${flatTypes[i]}→${flatTypes[i + 1]}`;
+      sequenceCounts.set(key, (sequenceCounts.get(key) || 0) + 1);
+    }
+
+    // Track full-page archetype
+    const pagePattern = flatTypes.filter((t) => t !== "(empty)");
+    if (pagePattern.length > 0) {
+      const patternKey = pagePattern.join(" | ");
+      const existing = pagePatterns.get(patternKey);
+      if (existing) {
+        existing.count++;
+      } else {
+        pagePatterns.set(patternKey, {
+          pattern: pagePattern,
+          count: 1,
+          exampleSlug: story.full_slug || story.slug || "",
+        });
+      }
+    }
+  }
+
+  // ── 3. Compute statistics ────────────────────────────────────────
+
+  // Component frequency (sorted by count descending)
+  const componentFrequency: ComponentFrequency[] = [
+    ...componentCounts.entries(),
+  ]
+    .map(([component, count]) => ({
+      component,
+      count,
+      percentage:
+        allStories.length > 0
+          ? Math.round((count / allStories.length) * 100)
+          : 0,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  // Common sequences (sorted by count descending, top 20)
+  const commonSequences: SequenceBigram[] = [...sequenceCounts.entries()]
+    .map(([key, count]) => {
+      const [from, to] = key.split("→");
+      return { from, to, count };
+    })
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 20);
+
+  // Section compositions (sorted by count descending, top 20)
+  const sectionCompositions: SectionComposition[] = [
+    ...compositionCounts.values(),
+  ]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 20);
+
+  // Sub-component counts (compute median, min, max)
+  const subComponentCountsResult: Record<string, SubComponentStats> = {};
+  for (const [key, values] of subItemCounts) {
+    if (values.length === 0) continue;
+    const sorted = [...values].sort((a, b) => a - b);
+    subComponentCountsResult[key] = {
+      median: sorted[Math.floor(sorted.length / 2)],
+      min: sorted[0],
+      max: sorted[sorted.length - 1],
+      samples: sorted.length,
+    };
+  }
+
+  // Page archetypes (only those occurring 2+ times, sorted by count)
+  const pageArchetypes: PageArchetype[] = [...pagePatterns.values()]
+    .filter((p) => p.count >= 2)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  // Unused components (known in schema but never seen in content)
+  const usedComponents = new Set(componentCounts.keys());
+  const unusedComponents = [...validationRules.allKnownComponents]
+    .filter((c) => !usedComponents.has(c))
+    .sort();
+
+  return {
+    totalStoriesAnalyzed: allStories.length,
+    componentFrequency,
+    commonSequences,
+    sectionCompositions,
+    subComponentCounts: subComponentCountsResult,
+    pageArchetypes,
+    unusedComponents,
+  };
+}
 
 /**
  * Wrapper class for Storyblok API operations.

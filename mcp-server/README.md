@@ -45,6 +45,15 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 | ------------ | ------------------------------------------------------------------------------------------------- |
 | `list_icons` | List all available icon identifiers for use in component icon fields (hero, features, contact, …) |
 
+### Guided Generation & Planning
+
+| Tool                       | Description                                                                                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes). Cached at startup; pass `refresh: true` after publishing new content |
+| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                 |
+| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns                                                                       |
+| `generate_section`         | Generate a single section with auto-injected site context, transition hints, and recipe-based best practices                                                                         |
+
 ## Installation
 
 ### Prerequisites
@@ -434,12 +443,110 @@ The response includes the full set of valid values:
 }
 ```
 
+### Analyze content patterns
+
+Pattern data is **cached at server startup** — this call returns instantly from memory. Other tools (`plan_page`, `generate_section`, `list_recipes`) also read from this cache automatically.
+
+```json
+{
+  "tool": "analyze_content_patterns",
+  "arguments": {
+    "contentType": "page"
+  }
+}
+```
+
+Returns component frequency, common sequences, sub-component item counts, page archetypes, and unused components.
+
+After publishing new content, pass `refresh: true` to re-fetch from Storyblok and update the cache:
+
+```json
+{
+  "tool": "analyze_content_patterns",
+  "arguments": { "refresh": true }
+}
+```
+
+### Plan a page
+
+Get an AI-assisted section plan based on site patterns:
+
+```json
+{
+  "tool": "plan_page",
+  "arguments": {
+    "intent": "Product landing page for our new AI feature",
+    "sectionCount": 5
+  }
+}
+```
+
+Returns a structured plan with `componentType` and `intent` per section. Use the plan to generate each section individually.
+
+### Generate a single section with site context
+
+Generate content for one section with automatic site-aware context injection:
+
+```json
+{
+  "tool": "generate_section",
+  "arguments": {
+    "componentType": "features",
+    "prompt": "4 key capabilities of our AI consulting service",
+    "previousSection": "hero",
+    "nextSection": "testimonials"
+  }
+}
+```
+
+The tool auto-injects site-specific guidance (e.g. "this site typically uses 4 feature items") and transition context into the system prompt.
+
+### List recipes with live patterns
+
+Get curated component combinations merged with the site's actual usage patterns:
+
+```json
+{
+  "tool": "list_recipes",
+  "arguments": {
+    "intent": "service landing page",
+    "includePatterns": true
+  }
+}
+```
+
 ## Resources
 
 The server also exposes MCP resources:
 
 - `storyblok://components` - All component schemas
 - `storyblok://stories` - Overview of all stories
+- `recipes://section-recipes` - Curated section recipes, page templates, and anti-patterns for guided content generation
+
+## Guided Generation
+
+The server supports a **section-by-section generation workflow** that produces higher-quality content than generating entire pages at once. The recommended flow:
+
+1. **Analyze** — `analyze_content_patterns` returns the site's structural patterns from a **startup cache** (instant, no API call). Pass `refresh: true` after publishing new content
+2. **Plan** — `plan_page` uses AI + site patterns to suggest a section sequence for a given page intent
+3. **Generate** — `generate_section` creates each section individually with site-aware context injection
+4. **Assemble** — `create_page_with_content` combines all sections into a page with validation and optional asset upload
+
+Alternatively, use `list_recipes` for a single-call overview of proven component combinations merged with the site's live patterns.
+
+### Compositional Quality Warnings
+
+Write tools (`import_content`, `import_content_at_position`, `create_page_with_content`) return **compositional quality warnings** alongside successful results. These are non-blocking hints about content quality:
+
+| Warning                     | Example                                                            |
+| --------------------------- | ------------------------------------------------------------------ |
+| Duplicate heroes            | "Multiple hero-type components found (hero, video-curtain)"        |
+| Adjacent same-type sections | "Adjacent sections both use 'features'. This may look repetitive." |
+| Sparse sub-items            | "'stats' has only 2 stat items (minimum recommended: 3)"           |
+| Missing blog-teaser link    | "'blog-teaser' section has no link URL"                            |
+| No CTA on conversion page   | "This looks like a conversion page but has no CTA section"         |
+
+Warnings appear in the `warnings` array of the response. Content is still saved — warnings are advisory only.
 
 ## Schema Guardrails & Content Validation
 
@@ -484,7 +591,8 @@ mcp-server/
 │   ├── services.ts   # Storyblok and OpenAI service classes (delegates to shared lib)
 │   └── errors.ts     # Error types and handling
 ├── schemas/
-│   └── page.schema.dereffed.json  # Bundled Design System page schema for auto-schema mode
+│   ├── page.schema.dereffed.json  # Bundled Design System page schema for auto-schema mode
+│   └── section-recipes.json       # Curated section recipes, page templates, and anti-patterns
 ├── config/
 │   └── deploy.yml    # Kamal deployment configuration
 ├── .kamal/
@@ -495,7 +603,7 @@ mcp-server/
 └── README.md
 ```
 
-Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`), and the high-level pipeline (`generateAndPrepareContent`). MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), and the high-level pipeline (`generateAndPrepareContent`). Content pattern analysis (`analyzeContentPatterns`) runs in `services.ts` using paginated story fetching; results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 
@@ -649,7 +757,7 @@ curl -s -X POST https://YOUR_DOMAIN/mcp \
   }'
 ```
 
-You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, etc.
+You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, etc.
 
 ### 4. Call a tool
 

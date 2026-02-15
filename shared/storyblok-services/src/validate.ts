@@ -744,3 +744,195 @@ function buildNestingSuggestion(
     .map((p) => `"${p}"`)
     .join(", ")}.`;
 }
+
+// ─── Compositional Quality Warnings ───────────────────────────────────
+
+/**
+ * A non-blocking quality warning about content composition.
+ *
+ * Unlike `ValidationError`, warnings don't prevent content from being saved.
+ * They flag patterns that produce suboptimal visual or UX results.
+ */
+export interface ValidationWarning {
+  /** Severity level. */
+  level: "info" | "warning";
+  /** Human-readable warning message. */
+  message: string;
+  /** JSON-path-like location, if applicable. */
+  path?: string;
+  /** Suggested improvement. */
+  suggestion?: string;
+}
+
+/**
+ * Minimum sub-item counts for components to render well.
+ *
+ * Derived from Design System layout constraints — e.g. a stats row needs
+ * at least 3 items to avoid awkward whitespace, a slider needs ≥3 slides.
+ *
+ * Schema-driven: keys must match `subComponentMap` parent names.
+ */
+const MIN_SUB_ITEMS: Record<string, { min: number; label: string }> = {
+  stats: { min: 3, label: "stat items" },
+  features: { min: 2, label: "feature items" },
+  testimonials: { min: 2, label: "testimonials" },
+  slider: { min: 3, label: "slides" },
+  "logos-companies": { min: 4, label: "logo items" },
+  mosaic: { min: 3, label: "tiles" },
+  gallery: { min: 3, label: "gallery images" },
+};
+
+/**
+ * Check content for compositional quality issues.
+ *
+ * This is a "soft" check that produces warnings, not errors. Content is
+ * still valid even if warnings are present — they're hints for improvement.
+ *
+ * @param sections  - Array of section objects (Storyblok or Design System format).
+ * @param rules     - Validation rules (for subComponentMap and topLevelComponents).
+ * @param options   - Same format options as validateContent.
+ * @returns Array of warnings (empty = no issues detected).
+ */
+export function checkCompositionalQuality(
+  sections: Record<string, any>[],
+  rules: ValidationRules,
+  options: ValidateContentOptions = {}
+): ValidationWarning[] {
+  const warnings: ValidationWarning[] = [];
+  const format = options.format ?? "auto";
+
+  if (!sections || sections.length === 0) return warnings;
+
+  // Extract all top-level components from sections
+  const sectionComponents: Array<{
+    type: string;
+    index: number;
+    section: Record<string, any>;
+    components: Record<string, any>[];
+  }> = [];
+
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i];
+    // Find the component array in the section
+    const componentsKey = Object.keys(section).find(
+      (k) =>
+        Array.isArray(section[k]) &&
+        section[k].length > 0 &&
+        typeof section[k][0] === "object"
+    );
+    const components: Record<string, any>[] = componentsKey
+      ? section[componentsKey]
+      : [];
+
+    for (const comp of components) {
+      const type = getComponentType(comp, format);
+      if (type) {
+        sectionComponents.push({
+          type,
+          index: i,
+          section,
+          components,
+        });
+      }
+    }
+  }
+
+  // 1. Duplicate heroes
+  const heroComponents = sectionComponents.filter(
+    (c) => c.type === "hero" || c.type === "video-curtain"
+  );
+  if (heroComponents.length > 1) {
+    warnings.push({
+      level: "warning",
+      message: `Multiple hero-type components found (${heroComponents
+        .map((h) => h.type)
+        .join(", ")}). Pages typically have exactly one hero.`,
+      path: `section[${heroComponents[1].index}]`,
+      suggestion:
+        "Keep only the first hero/video-curtain. Use a different component type for subsequent sections.",
+    });
+  }
+
+  // 2. Same component type in adjacent sections
+  for (let i = 1; i < sectionComponents.length; i++) {
+    const prev = sectionComponents[i - 1];
+    const curr = sectionComponents[i];
+    if (
+      prev.type === curr.type &&
+      prev.type !== "divider" &&
+      prev.index !== curr.index // only if in different sections
+    ) {
+      warnings.push({
+        level: "info",
+        message: `Adjacent sections both use "${curr.type}". This may look repetitive.`,
+        path: `section[${curr.index}]`,
+        suggestion: `Consider using a different component type, or merging the content into a single "${curr.type}" section.`,
+      });
+    }
+  }
+
+  // 3. Too few sub-items
+  for (const comp of sectionComponents) {
+    const subKey = rules.subComponentMap[comp.type];
+    if (!subKey) continue;
+
+    const minSpec = MIN_SUB_ITEMS[comp.type];
+    if (!minSpec) continue;
+
+    // Find the component node with sub-items
+    const compNode = comp.components.find((c) => {
+      const t = getComponentType(c, format);
+      return t === comp.type;
+    });
+    if (!compNode) continue;
+
+    const subItems = compNode[subKey];
+    if (Array.isArray(subItems) && subItems.length < minSpec.min) {
+      warnings.push({
+        level: "warning",
+        message: `"${comp.type}" has only ${subItems.length} ${minSpec.label} (minimum recommended: ${minSpec.min}).`,
+        path: `section[${comp.index}].${comp.type}.${subKey}`,
+        suggestion: `Add more ${
+          minSpec.label
+        } for a balanced layout. Most sites use ${minSpec.min}-${
+          minSpec.min + 2
+        }.`,
+      });
+    }
+  }
+
+  // 4. blog-teaser without link_url
+  for (const comp of sectionComponents) {
+    if (comp.type !== "blog-teaser") continue;
+    const compNode = comp.components.find((c) => {
+      const t = getComponentType(c, format);
+      return t === "blog-teaser";
+    });
+    if (compNode && !compNode.link_url && !compNode.link?.url) {
+      warnings.push({
+        level: "warning",
+        message: `"blog-teaser" section at index ${comp.index} has no link URL. Visitors can't navigate to the blog.`,
+        path: `section[${comp.index}].blog-teaser`,
+        suggestion: "Add a link_url pointing to the blog overview page.",
+      });
+    }
+  }
+
+  // 5. No CTA component on a page that looks like a conversion page
+  const hasHero = sectionComponents.some((c) => c.type === "hero");
+  const hasFeatures = sectionComponents.some(
+    (c) => c.type === "features" || c.type === "split"
+  );
+  const hasCta = sectionComponents.some((c) => c.type === "cta");
+  if (hasHero && hasFeatures && !hasCta && sectionComponents.length >= 4) {
+    warnings.push({
+      level: "info",
+      message:
+        "This looks like a conversion page (hero + features) but has no CTA section.",
+      suggestion:
+        'Consider adding a "cta" section near the end to drive conversions.',
+    });
+  }
+
+  return warnings;
+}

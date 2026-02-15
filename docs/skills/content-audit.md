@@ -54,6 +54,13 @@ Mit dem Content aus Schritt 1 und den Schemas aus Schritt 2 die folgenden Prüfu
 - Sehr kurze Seiten (nur 1 Sektion)
 - Doppelte Sektionstypen, die ungewollt sein könnten
 
+**Konsistenz mit Website-Mustern (aus `analyze_content_patterns` Startup-Cache):**
+
+- Sektionsfolge dieser Seite mit den typischen Mustern der Website vergleichen
+- Ungewöhnliche Komponentenwahl identifizieren, die sonst nirgends auf der Website vorkommt
+- Sub-Element-Anzahlen prüfen (z.B. hat diese Seite nur 1 Feature, obwohl der Website-Durchschnitt 4 ist?)
+- Anti-Patterns aus den Rezepten (`recipes://section-recipes`) abgleichen
+
 ### Schritt 4: Ergebnis präsentieren
 
 Dem Editor einen übersichtlichen Report zeigen:
