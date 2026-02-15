@@ -411,7 +411,15 @@ export async function uploadAndReplaceAssets(
   for (const ref of references) {
     const asset = urlMap.get(stripStoryblokImageService(ref.url));
     if (asset) {
-      ref.parent[ref.key] = createAssetObject(asset.url, asset.id);
+      if (ref.key === "filename" && ref.parent.fieldtype === "asset") {
+        // The URL lives inside an existing Storyblok asset object —
+        // update the object in place instead of nesting a new one.
+        ref.parent.filename = asset.url;
+        ref.parent.id = asset.id;
+        ref.parent.is_external_url = false;
+      } else {
+        ref.parent[ref.key] = createAssetObject(asset.url, asset.id);
+      }
       rewritten++;
     }
   }
