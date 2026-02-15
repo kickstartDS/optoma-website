@@ -790,11 +790,17 @@ export async function scrapeUrl(options: {
     replacement: () => "",
   });
 
-  // Remove header and footer for cleaner content
-  turndown.addRule("removeHeaderFooter", {
+  // Remove page-level <header> and <footer> (site nav / site footer).
+  // Only strip those that are direct children of <body> — semantic <header>
+  // elements inside content sections (e.g. kickstartDS headline components)
+  // must be preserved because they carry section headings and sub-headlines.
+  turndown.addRule("removePageHeaderFooter", {
     filter: (node) => {
       const tagName = node.tagName?.toLowerCase();
-      return tagName === "header" || tagName === "footer";
+      if (tagName !== "header" && tagName !== "footer") return false;
+      // Only strip top-level (direct child of <body> or the Readability wrapper)
+      const parentTag = node.parentNode?.nodeName?.toLowerCase();
+      return parentTag === "body" || parentTag === "#document";
     },
     replacement: () => "",
   });
