@@ -745,6 +745,8 @@ export async function scrapeUrl(options: {
 
   // ── 4. Extract readable content ───────────────────────────────────────
   let contentHtml: string;
+  /** Links from <main> that Readability dropped (CTA buttons, card links, etc.) */
+  let droppedLinks: { text: string; href: string }[] = [];
 
   if (options.selector) {
     // User-specified CSS selector — use the real DOM instead of regex
@@ -761,7 +763,32 @@ export async function scrapeUrl(options: {
 
     if (article && article.content) {
       contentHtml = article.content;
-      // Readability may extract a better title
+
+      // Readability is designed for articles and aggressively strips CTA buttons,
+      // card links, and other interactive elements. For marketing / services pages
+      // we recover any meaningful links from <main> that Readability dropped.
+      const main = document.querySelector("main");
+      if (main) {
+        const readabilityDom = new JSDOM(contentHtml, { url: options.url });
+        const readabilityHrefs = new Set<string>();
+        for (const a of readabilityDom.window.document.querySelectorAll("a")) {
+          const href = a.getAttribute("href");
+          if (href) readabilityHrefs.add(resolveUrl(href));
+        }
+
+        for (const a of main.querySelectorAll("a")) {
+          const href = a.getAttribute("href");
+          const text = a.textContent?.trim();
+          if (
+            href &&
+            text &&
+            !href.startsWith("#") &&
+            !readabilityHrefs.has(resolveUrl(href))
+          ) {
+            droppedLinks.push({ text, href: resolveUrl(href) });
+          }
+        }
+      }
     } else {
       // Fallback: <main>, then <body>
       const main = document.querySelector("main");
@@ -870,8 +897,23 @@ export async function scrapeUrl(options: {
 
   const markdown = turndown.turndown(contentHtml);
 
+  // Append links that Readability dropped (CTA buttons, card links, etc.)
+  let linksSection = "";
+  if (droppedLinks.length > 0) {
+    // Deduplicate by href
+    const seen = new Set<string>();
+    const unique = droppedLinks.filter((l) => {
+      if (seen.has(l.href)) return false;
+      seen.add(l.href);
+      return true;
+    });
+    linksSection =
+      "\n\n---\n\n**Additional links:**\n\n" +
+      unique.map((l) => `- [${l.text}](${l.href})`).join("\n");
+  }
+
   // Clean up excessive blank lines
-  const cleaned = markdown.replace(/\n{3,}/g, "\n\n").trim();
+  const cleaned = (markdown + linksSection).replace(/\n{3,}/g, "\n\n").trim();
 
   return {
     url: options.url,
