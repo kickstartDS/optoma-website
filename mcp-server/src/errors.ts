@@ -74,6 +74,8 @@ export function withErrorHandling<T extends unknown[], R>(
 
 /**
  * Format error for MCP response
+ *
+ * Also logs the error to stderr so it appears in stdio / server logs.
  */
 export function formatErrorResponse(error: unknown): {
   content: Array<{ type: "text"; text: string }>;
@@ -92,6 +94,12 @@ export function formatErrorResponse(error: unknown): {
     details = { stack: error.stack };
   } else {
     message = String(error);
+  }
+
+  // Log every error to stderr so it is visible in stdio / server logs
+  console.error(`[MCP Error] [${code}] ${message}`);
+  if (Object.keys(details).length > 0) {
+    console.error(`[MCP Error Details]`, JSON.stringify(details, null, 2));
   }
 
   return {

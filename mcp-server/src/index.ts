@@ -1218,19 +1218,26 @@ to ensure only valid icon identifiers are used.`,
         const zodError = error as {
           issues: Array<{ path: string[]; message: string }>;
         };
-        throw new ValidationError("Invalid input parameters", {
+        const validationErr = new ValidationError("Invalid input parameters", {
           issues: zodError.issues.map((i) => ({
             path: i.path.join("."),
             message: i.message,
           })),
         });
+        console.error(
+          `[MCP Error] [VALIDATION_ERROR] Invalid input parameters:`,
+          JSON.stringify(validationErr.details, null, 2)
+        );
+        throw validationErr;
       }
 
-      // Re-throw MCP errors
+      // Re-throw MCP errors (formatErrorResponse will log them)
       if (error instanceof Error && error.name.includes("Error")) {
         return formatErrorResponse(error);
       }
 
+      // Log unexpected errors before re-throwing
+      console.error(`[MCP Error] Unexpected error:`, error);
       throw error;
     }
   });
