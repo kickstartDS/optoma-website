@@ -324,6 +324,7 @@ export class StoryblokService {
     // Content Delivery API client (for read operations)
     this.contentClient = new StoryblokClient({
       accessToken: config.apiToken,
+      rateLimit: 1,
     });
   }
 

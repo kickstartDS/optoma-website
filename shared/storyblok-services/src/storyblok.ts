@@ -21,7 +21,10 @@ import { uploadAndReplaceAssets, wrapAssetUrls } from "./assets.js";
 export function createStoryblokClient(
   credentials: StoryblokCredentials
 ): StoryblokClient {
-  return new StoryblokClient({ oauthToken: credentials.oauthToken });
+  return new StoryblokClient({
+    oauthToken: credentials.oauthToken,
+    rateLimit: 1,
+  });
 }
 
 // ─── Story operations ─────────────────────────────────────────────────
