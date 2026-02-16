@@ -113,7 +113,8 @@ The project includes a **Storyblok MCP server** ([mcp-server/](mcp-server/)) tha
 
 Key capabilities:
 
-- **Auto-schema derivation**: The `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System page schema — no manual schema authoring needed
+- **Multi-content-type support**: 5 content types (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`) with per-type schema validation via a `SchemaRegistry`
+- **Auto-schema derivation**: The `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema for any content type — no manual schema authoring needed
 - **Automatic transforms**: Import tools automatically convert Design System props into Storyblok's flat `key_subKey` format
 - **Full pipeline**: End-to-end content generation from prompt → schema preparation → OpenAI generation → post-processing → Storyblok import
 

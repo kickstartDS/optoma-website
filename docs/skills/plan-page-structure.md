@@ -116,3 +116,43 @@ Alle generierten Sektionen in einem Array zusammenführen.
 | Qualität bei 5+ Sektionen | Gleichbleibend hoch                        | Nimmt deutlich ab                       |
 | Aufwand                   | Mehr Tool-Calls                            | Ein einziger Call                       |
 | Empfehlung                | ✅ Für Produktion                          | ⚠️ Nur für schnelle Prototypen          |
+
+## Multi-Content-Type Support
+
+Der Workflow funktioniert nicht nur für `page`, sondern auch für alle anderen Content-Typen:
+
+### Tier 1 (Sektions-basiert): `page`, `blog-post`, `blog-overview`
+
+Diese Content-Typen haben ein Sektions-Array und funktionieren identisch zum Standard-Workflow. Den `contentType`-Parameter bei allen Tools setzen:
+
+```
+analyze_content_patterns(contentType: "blog-post")
+plan_page(intent: "Tutorial-Artikel über KI", contentType: "blog-post")
+generate_section(componentType: "hero", prompt: "...", contentType: "blog-post")
+create_page_with_content(contentType: "blog-post", sections: [...], rootFields: { content: "..." })
+```
+
+**Wichtig bei blog-post:** Die Root-Objekte `head` (Titel/Datum/Autor), `aside` (Sidebar), `cta` und `seo` über den `rootFields`-Parameter setzen.
+
+**Wichtig bei blog-overview:** Root-Objekte `latest`, `list`, `more` und die Skalare `latestTitle`, `listTitle`, `moreTitle` über `rootFields` setzen.
+
+### Tier 2 (Flach): `event-detail`, `event-list`
+
+Diese Content-Typen haben KEINE Sektionen. Stattdessen werden Root-Felder direkt befüllt:
+
+```
+plan_page(intent: "Workshop-Event", contentType: "event-detail")
+→ Gibt einen Feld-Befüllungsplan zurück (fields statt sections)
+
+generate_content(contentType: "event-detail", prompt: "Workshop zu KI-Tools")
+→ Generiert den gesamten Content
+
+create_page_with_content(contentType: "event-detail", sections: [], rootFields: { title: "...", description: "...", categories: [...] })
+```
+
+### Rezepte nach Content-Typ filtern
+
+```
+list_recipes(contentType: "blog-post")
+→ Gibt nur Universal- und Blog-spezifische Rezepte zurück
+```

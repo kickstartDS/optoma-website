@@ -1,5 +1,7 @@
 # Plan: Guided Content Generation for the Storyblok MCP Server
 
+> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 18 recipes, 13 page templates, 10 anti-patterns (including content-type-specific entries for blog-post, event-detail, and event-list).
+
 ## Problem Statement
 
 The MCP server currently supports two extremes for content creation:

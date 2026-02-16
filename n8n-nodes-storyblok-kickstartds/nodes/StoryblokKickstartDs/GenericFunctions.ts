@@ -21,10 +21,12 @@ import {
   buildValidationRules,
   validateSections,
   formatValidationErrors,
+  createRegistryFromSchemaDir,
   type StoryblokCredentials,
   type OpenAiCredentials,
   type PrepareSchemaOptions,
   type ValidationRules,
+  type SchemaRegistry,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
 import * as path from "path";
@@ -50,21 +52,18 @@ export {
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";
 
-// ─── Schema-driven validation rules ──────────────────────────────────
-// Load the dereferenced page schema once and build validation rules so
-// the import operation can catch structural errors before writing to CMS.
+// ─── Schema Registry ─────────────────────────────────────────────────
+// Load all content type schemas from the schemas directory and build
+// a registry for multi-content-type validation support.
 
-const PAGE_SCHEMA: Record<string, any> = JSON.parse(
-  fs.readFileSync(
-    path.join(__dirname, "schemas", "page.schema.dereffed.json"),
-    "utf-8"
-  )
-);
+const schemasDir = path.join(__dirname, "schemas");
+const registry: SchemaRegistry = createRegistryFromSchemaDir(schemasDir);
 
-const PAGE_VALIDATION_RULES: ValidationRules =
-  buildValidationRules(PAGE_SCHEMA);
+// Backward-compatible aliases
+const PAGE_SCHEMA: Record<string, any> = registry.page.schema;
+const PAGE_VALIDATION_RULES: ValidationRules = registry.page.rules;
 
-export { PAGE_VALIDATION_RULES };
+export { PAGE_VALIDATION_RULES, registry };
 
 // ─── n8n-facing wrappers ─────────────────────────────────────────────
 // These preserve the original function signatures used by the node.
@@ -81,10 +80,14 @@ export async function importContentIntoStory(
   prompterUid: string,
   sections: Record<string, unknown>[],
   publish: boolean,
-  skipValidation = false
+  skipValidation = false,
+  contentType = "page"
 ): Promise<Record<string, any>> {
   if (!skipValidation) {
-    const result = validateSections(sections, PAGE_VALIDATION_RULES);
+    const rules = registry.has(contentType)
+      ? registry.get(contentType).rules
+      : PAGE_VALIDATION_RULES;
+    const result = validateSections(sections, rules);
     if (!result.valid) {
       throw new Error(formatValidationErrors(result.errors));
     }
@@ -110,10 +113,14 @@ export async function insertContentAtPosition(
   position: number,
   sections: Record<string, unknown>[],
   publish: boolean,
-  skipValidation = false
+  skipValidation = false,
+  contentType = "page"
 ): Promise<Record<string, any>> {
   if (!skipValidation) {
-    const result = validateSections(sections, PAGE_VALIDATION_RULES);
+    const rules = registry.has(contentType)
+      ? registry.get(contentType).rules
+      : PAGE_VALIDATION_RULES;
+    const result = validateSections(sections, rules);
     if (!result.valid) {
       throw new Error(formatValidationErrors(result.errors));
     }

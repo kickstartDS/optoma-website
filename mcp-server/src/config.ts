@@ -9,8 +9,8 @@ import { z } from "zod";
  */
 const sectionSchema = z
   .object({
-    component: z.literal("section").optional(),
-    type: z.literal("section").optional(),
+    component: z.string().optional(),
+    type: z.string().optional(),
     components: z.array(z.record(z.unknown())).optional(),
   })
   .passthrough();
@@ -91,6 +91,19 @@ export const schemas = {
       .number()
       .optional()
       .describe("Number of sections to generate for full-page generation."),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type to generate for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'."
+      ),
+    rootField: z
+      .string()
+      .optional()
+      .describe(
+        "For Tier 2 (flat) content types: generate content for a specific root field only (e.g. 'locations', 'events')."
+      ),
   }),
 
   importContent: z.object({
@@ -100,11 +113,20 @@ export const schemas = {
       .describe("The UID of the prompter component to replace"),
     page: z
       .object({
-        content: z.object({
-          section: z.array(sectionSchema),
-        }),
+        content: z
+          .object({
+            section: z.array(sectionSchema),
+          })
+          .passthrough(),
       })
       .describe("Page content with sections to import"),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type (e.g. 'page', 'blog-post'). Determines which schema to validate against. Default: 'page'."
+      ),
     skipTransform: z
       .boolean()
       .optional()
@@ -144,6 +166,19 @@ export const schemas = {
     sections: z
       .array(sectionSchema)
       .describe("Array of section objects to insert at the given position"),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type (e.g. 'page', 'blog-post', 'event-detail'). Determines which schema to validate against. Default: 'page'."
+      ),
+    targetField: z
+      .string()
+      .optional()
+      .describe(
+        "Name of the root array field to insert into (e.g. 'section', 'locations', 'events'). Defaults to the content type's primary root array."
+      ),
     publish: z
       .boolean()
       .optional()
@@ -199,6 +234,19 @@ export const schemas = {
       .array(sectionSchema)
       .describe(
         "Array of section objects to populate the page with. Missing _uid fields will be auto-generated."
+      ),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type to create (e.g. 'page', 'blog-post', 'blog-overview'). Determines the component name and root array field. Default: 'page'."
+      ),
+    rootFields: z
+      .record(z.unknown())
+      .optional()
+      .describe(
+        "Additional root-level fields for the content envelope (e.g. blog-post's 'head', 'aside', 'cta'). Merged into the content object alongside sections."
       ),
     publish: z
       .boolean()
@@ -369,6 +417,12 @@ export const schemas = {
       .describe(
         "Include live patterns from existing content alongside static recipes (default: true)"
       ),
+    contentType: z
+      .string()
+      .optional()
+      .describe(
+        "Filter recipes by content type (e.g. 'blog-post', 'event-detail'). When set, only recipes and templates for the specified content type (plus universal ones) are returned."
+      ),
   }),
 
   planPage: z.object({
@@ -381,6 +435,13 @@ export const schemas = {
       .number()
       .optional()
       .describe("Target number of sections (default: auto-determined)"),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type to plan for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'."
+      ),
   }),
 
   generateSection: z.object({
@@ -397,6 +458,13 @@ export const schemas = {
       .string()
       .optional()
       .describe("Component type of the section after this one (for context)"),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type to generate for (e.g. 'page', 'blog-post'). Default: 'page'."
+      ),
   }),
 
   ensurePath: z.object({

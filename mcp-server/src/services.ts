@@ -28,38 +28,55 @@ import {
   validatePageContent,
   formatValidationErrors,
   checkCompositionalQuality,
+  createRegistryFromSchemaDir,
+  SchemaRegistry,
   type PrepareSchemaOptions,
   type ValidationRules,
   type ValidationWarning,
+  type ContentTypeEntry,
 } from "@kickstartds/storyblok-services";
 
-// Load the dereferenced page schema once at module load
+// Load all content type schemas via the registry
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PAGE_SCHEMA: Record<string, any> = JSON.parse(
-  readFileSync(
-    join(__dirname, "..", "schemas", "page.schema.dereffed.json"),
-    "utf-8"
-  )
-);
+const schemasDir = join(__dirname, "..", "schemas");
+const registry: SchemaRegistry = createRegistryFromSchemaDir(schemasDir);
 
-// Build validation rules from the page schema at startup
-const PAGE_VALIDATION_RULES: ValidationRules =
-  buildValidationRules(PAGE_SCHEMA);
+// Backward-compatible aliases — existing code can keep referencing these
+const PAGE_SCHEMA: Record<string, any> = registry.page.schema;
+const PAGE_VALIDATION_RULES: ValidationRules = registry.page.rules;
 
 /**
  * Check whether a content object has any of the root array fields defined
- * by the schema (e.g. `section`), indicating it's a page-like structure
- * that can be validated.
+ * by its schema, indicating it can be structurally validated.
+ *
+ * First tries to detect the content type from the `component` field and
+ * look up matching rules from the registry. Falls back to page rules.
  */
 function rules_rootMatchesSchema(content: Record<string, any>): boolean {
-  return PAGE_VALIDATION_RULES.rootArrayFields.some((field) =>
-    Array.isArray(content[field])
-  );
+  const entry = registry.detectContentType(content);
+  const rules = entry ? entry.rules : PAGE_VALIDATION_RULES;
+  return rules.rootArrayFields.some((field) => Array.isArray(content[field]));
 }
 
-/** Export validation rules so introspection tools can use them. */
-export { PAGE_VALIDATION_RULES, PAGE_SCHEMA, checkCompositionalQuality };
-export type { ValidationWarning };
+/**
+ * Get the appropriate validation rules for a content object.
+ * Detects the content type from the registry; falls back to page rules.
+ */
+function getValidationRulesForContent(
+  content: Record<string, any>
+): ValidationRules {
+  const entry = registry.detectContentType(content);
+  return entry ? entry.rules : PAGE_VALIDATION_RULES;
+}
+
+/** Export validation rules and registry so introspection tools can use them. */
+export {
+  PAGE_VALIDATION_RULES,
+  PAGE_SCHEMA,
+  registry,
+  checkCompositionalQuality,
+};
+export type { ValidationWarning, ContentTypeEntry };
 
 // ─── Content Pattern Analysis ─────────────────────────────────────────
 
@@ -159,58 +176,74 @@ export async function analyzeContentPatterns(
     { pattern: string[]; count: number; exampleSlug: string }
   >();
 
+  // Determine which root array fields to iterate based on the schema
+  const rootFields = validationRules.rootArrayFields;
+
   for (const story of allStories) {
-    const sections: Record<string, any>[] = story.content?.section || [];
-    if (sections.length === 0) continue;
+    const allSectionTypes: string[][] = [];
 
-    // Extract per-section component types
-    const sectionTypes: string[][] = [];
+    for (const rootField of rootFields) {
+      const items: Record<string, any>[] = story.content?.[rootField] || [];
+      if (items.length === 0) continue;
 
-    for (const section of sections) {
-      const components: Record<string, any>[] = section.components || [];
-      const componentTypes: string[] = [];
+      for (const item of items) {
+        const components: Record<string, any>[] = item.components || [];
+        const componentTypes: string[] = [];
 
-      for (const comp of components) {
-        const type = comp.component || comp.type;
-        if (typeof type === "string") {
-          componentTypes.push(type);
+        // If the item itself has no `components` array, it might be a
+        // flat-type root array item — treat the item type as a component.
+        if (components.length === 0) {
+          const type = item.component || item.type;
+          if (typeof type === "string") {
+            componentTypes.push(type);
+            componentCounts.set(type, (componentCounts.get(type) || 0) + 1);
+          }
+        }
 
-          // Count component frequency
-          componentCounts.set(type, (componentCounts.get(type) || 0) + 1);
+        for (const comp of components) {
+          const type = comp.component || comp.type;
+          if (typeof type === "string") {
+            componentTypes.push(type);
 
-          // Count sub-component items
-          for (const [parentType, childKey] of Object.entries(
-            validationRules.subComponentMap
-          )) {
-            if (type === parentType && Array.isArray(comp[childKey])) {
-              const key = `${parentType}.${childKey}`;
-              const existing = subItemCounts.get(key) || [];
-              existing.push(comp[childKey].length);
-              subItemCounts.set(key, existing);
+            // Count component frequency
+            componentCounts.set(type, (componentCounts.get(type) || 0) + 1);
+
+            // Count sub-component items
+            for (const [parentType, childKey] of Object.entries(
+              validationRules.subComponentMap
+            )) {
+              if (type === parentType && Array.isArray(comp[childKey])) {
+                const key = `${parentType}.${childKey}`;
+                const existing = subItemCounts.get(key) || [];
+                existing.push(comp[childKey].length);
+                subItemCounts.set(key, existing);
+              }
             }
           }
         }
-      }
 
-      sectionTypes.push(componentTypes);
+        allSectionTypes.push(componentTypes);
 
-      // Track section compositions
-      if (componentTypes.length > 0) {
-        const compositionKey = componentTypes.join(",");
-        const existing = compositionCounts.get(compositionKey);
-        if (existing) {
-          existing.count++;
-        } else {
-          compositionCounts.set(compositionKey, {
-            components: [...componentTypes],
-            count: 1,
-          });
+        // Track section compositions
+        if (componentTypes.length > 0) {
+          const compositionKey = componentTypes.join(",");
+          const existing = compositionCounts.get(compositionKey);
+          if (existing) {
+            existing.count++;
+          } else {
+            compositionCounts.set(compositionKey, {
+              components: [...componentTypes],
+              count: 1,
+            });
+          }
         }
       }
     }
 
     // Track section sequence bigrams
-    const flatTypes = sectionTypes.map((types) => types.join("+") || "(empty)");
+    const flatTypes = allSectionTypes.map(
+      (types) => types.join("+") || "(empty)"
+    );
     for (let i = 0; i < flatTypes.length - 1; i++) {
       const key = `${flatTypes[i]}→${flatTypes[i + 1]}`;
       sequenceCounts.set(key, (sequenceCounts.get(key) || 0) + 1);
@@ -423,11 +456,9 @@ export class StoryblokService {
       const content = options.content as Record<string, any>;
       const contentType = content.component || content.type;
       // Only validate content types that match known root schemas
-      if (contentType === "page" || rules_rootMatchesSchema(content)) {
-        const validationResult = validatePageContent(
-          content,
-          PAGE_VALIDATION_RULES
-        );
+      if (registry.has(contentType) || rules_rootMatchesSchema(content)) {
+        const rules = getValidationRulesForContent(content);
+        const validationResult = validatePageContent(content, rules);
         if (!validationResult.valid) {
           throw new Error(formatValidationErrors(validationResult.errors));
         }
@@ -469,11 +500,9 @@ export class StoryblokService {
     if (!skipValidation && updates.content) {
       const content = updates.content as Record<string, any>;
       const contentType = content.component || content.type;
-      if (contentType === "page" || rules_rootMatchesSchema(content)) {
-        const validationResult = validatePageContent(
-          content,
-          PAGE_VALIDATION_RULES
-        );
+      if (registry.has(contentType) || rules_rootMatchesSchema(content)) {
+        const rules = getValidationRulesForContent(content);
+        const validationResult = validatePageContent(content, rules);
         if (!validationResult.valid) {
           throw new Error(formatValidationErrors(validationResult.errors));
         }
@@ -529,18 +558,23 @@ export class StoryblokService {
         section: Record<string, unknown>[];
       };
     };
+    contentType?: string;
     skipTransform?: boolean;
     skipValidation?: boolean;
     uploadAssets?: boolean;
     assetFolderName?: string;
   }): Promise<unknown> {
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+    const rootArrayField = entry.rootArrayFields[0] || "section";
     let sections = options.page.content.section;
 
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
       const validationResult = validateSections(
         sections as Record<string, any>[],
-        PAGE_VALIDATION_RULES
+        entry.rules
       );
       if (!validationResult.valid) {
         throw new Error(formatValidationErrors(validationResult.errors));
@@ -548,8 +582,8 @@ export class StoryblokService {
     }
 
     if (!options.skipTransform) {
-      const transformed = processForStoryblok({ section: sections });
-      sections = transformed.section;
+      const transformed = processForStoryblok({ [rootArrayField]: sections });
+      sections = transformed[rootArrayField];
     }
     return importByPrompterReplacement(this.managementClient, this.spaceId, {
       storyUid: options.storyUid,
@@ -573,19 +607,26 @@ export class StoryblokService {
         section: Record<string, unknown>[];
       };
     };
+    contentType?: string;
+    targetField?: string;
     publish?: boolean;
     skipTransform?: boolean;
     skipValidation?: boolean;
     uploadAssets?: boolean;
     assetFolderName?: string;
   }): Promise<unknown> {
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+    const rootArrayField =
+      options.targetField || entry.rootArrayFields[0] || "section";
     let sections = options.page.content.section;
 
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
       const validationResult = validateSections(
         sections as Record<string, any>[],
-        PAGE_VALIDATION_RULES
+        entry.rules
       );
       if (!validationResult.valid) {
         throw new Error(formatValidationErrors(validationResult.errors));
@@ -593,8 +634,8 @@ export class StoryblokService {
     }
 
     if (!options.skipTransform) {
-      const transformed = processForStoryblok({ section: sections });
-      sections = transformed.section;
+      const transformed = processForStoryblok({ [rootArrayField]: sections });
+      sections = transformed[rootArrayField];
     }
     return importAtPosition(this.managementClient, this.spaceId, {
       storyUid: options.storyUid,
@@ -684,7 +725,7 @@ export class StoryblokService {
    *
    * This is a convenience method that:
    * 1. Auto-generates `_uid` fields for every nested component that lacks one
-   * 2. Wraps the sections in a standard `page` component envelope
+   * 2. Wraps the sections in a standard component envelope (dynamic by content type)
    * 3. Creates the story in Storyblok
    * 4. Optionally publishes it
    */
@@ -693,16 +734,24 @@ export class StoryblokService {
     slug: string;
     parentId?: number;
     sections: Record<string, unknown>[];
+    contentType?: string;
+    rootFields?: Record<string, unknown>;
     publish?: boolean;
     skipValidation?: boolean;
     uploadAssets?: boolean;
     assetFolderName?: string;
   }): Promise<unknown> {
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+    const componentName = entry.name;
+    const rootArrayField = entry.rootArrayFields[0] || "section";
+
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
       const validationResult = validateSections(
         options.sections as Record<string, any>[],
-        PAGE_VALIDATION_RULES
+        entry.rules
       );
       if (!validationResult.valid) {
         throw new Error(formatValidationErrors(validationResult.errors));
@@ -718,7 +767,7 @@ export class StoryblokService {
     // Upload external images to Storyblok (if requested)
     let assetsSummary;
     if (options.uploadAssets) {
-      const wrapper = { section: sections } as Record<string, any>;
+      const wrapper = { [rootArrayField]: sections } as Record<string, any>;
       assetsSummary = await uploadAndReplaceAssets(
         this.managementClient,
         wrapper,
@@ -735,9 +784,10 @@ export class StoryblokService {
     }
 
     const content: Record<string, unknown> = {
-      component: "page",
+      component: componentName,
       _uid: randomUUID(),
-      section: sections,
+      [rootArrayField]: sections,
+      ...(options.rootFields || {}),
     };
 
     // Create the story
@@ -905,18 +955,16 @@ export class ContentGenerationService {
   /**
    * Generate content with automatic schema preparation and response processing.
    *
-   * When a `pageSchema` is provided (the dereffed Design System schema), the
-   * full pipeline runs:
+   * When a content type is specified, the corresponding schema is looked up
+   * from the registry. The full pipeline runs:
    *   schema prep → OpenAI call → response post-processing → Storyblok flatten
-   *
-   * This is the recommended method for MCP tool callers who want a simple
-   * "give me content" experience without dealing with schemas.
    */
   async generateWithSchema(options: {
     system: string;
     prompt: string;
     componentType?: string;
     sectionCount?: number;
+    contentType?: string;
   }): Promise<{
     designSystemProps: Record<string, any>;
     storyblokContent: Record<string, any>;
@@ -928,7 +976,15 @@ export class ContentGenerationService {
       );
     }
 
-    const schemaOptions: PrepareSchemaOptions = {};
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+    const schema = entry.schema;
+
+    const schemaOptions: PrepareSchemaOptions = {
+      validationRules: entry.rules,
+      contentType: entry.name,
+    };
     if (options.sectionCount) {
       schemaOptions.sections = options.sectionCount;
     }
@@ -939,7 +995,7 @@ export class ContentGenerationService {
     const result = await generateAndPrepareContent(this.client as any, {
       system: options.system,
       prompt: options.prompt,
-      pageSchema: PAGE_SCHEMA,
+      pageSchema: schema,
       schemaOptions,
     });
 

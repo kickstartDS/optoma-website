@@ -20,6 +20,7 @@ import {
   ContentGenerationService,
   scrapeUrl,
   PAGE_VALIDATION_RULES,
+  registry,
   analyzeContentPatterns,
   checkCompositionalQuality,
   type ContentPatternAnalysis,
@@ -278,6 +279,16 @@ Example use cases:
             description:
               "Number of sections to generate (for full-page generation). Defaults to 1 when componentType is used.",
           },
+          contentType: {
+            type: "string",
+            description:
+              "Content type to generate for (default: 'page'). Use 'blog-post', 'blog-overview', 'event-detail', or 'event-list' for other content types.",
+          },
+          rootField: {
+            type: "string",
+            description:
+              "For flat (Tier 2) content types, generate content for a specific root field only (e.g. 'categories' for event-detail).",
+          },
         },
         required: ["system", "prompt"],
       },
@@ -350,6 +361,11 @@ The tool:
             description:
               "Skip content validation against the Design System schema (default: false)",
           },
+          contentType: {
+            type: "string",
+            description:
+              "Content type being imported (default: 'page'). Use 'blog-post', 'blog-overview', 'event-detail', or 'event-list' for other content types.",
+          },
         },
         required: ["storyUid", "prompterUid", "page"],
       },
@@ -414,6 +430,16 @@ Position semantics:
             type: "boolean",
             description:
               "Skip content validation against the Design System schema (default: false)",
+          },
+          contentType: {
+            type: "string",
+            description:
+              "Content type of the target story (default: 'page'). Use 'blog-post', 'blog-overview', 'event-detail', or 'event-list' for other content types.",
+          },
+          targetField: {
+            type: "string",
+            description:
+              "Target array field name to insert into. Defaults to the primary root array field for the content type (e.g. 'section' for page).",
           },
         },
         required: ["storyUid", "position", "sections"],
@@ -491,6 +517,16 @@ Use this instead of create_story when you have section content ready to go.`,
             type: "boolean",
             description:
               "Skip content validation against the Design System schema (default: false)",
+          },
+          contentType: {
+            type: "string",
+            description:
+              "Content type to create (default: 'page'). Use 'blog-post', 'blog-overview', 'event-detail', or 'event-list' for other content types.",
+          },
+          rootFields: {
+            type: "object",
+            description:
+              "Additional root-level fields to set on the content (e.g. { title: 'Event Title', description: '...' } for event-detail). These are merged into the story content alongside sections.",
           },
         },
         required: ["name", "slug", "sections"],
@@ -906,6 +942,11 @@ This combines universal best practices with site-specific intelligence.`,
             description:
               "Include live patterns from existing content alongside static recipes (default: true)",
           },
+          contentType: {
+            type: "string",
+            description:
+              "Filter recipes by content type (e.g. 'blog-post', 'event-detail'). Returns universal recipes plus content-type-specific ones.",
+          },
         },
         required: [],
       },
@@ -934,6 +975,11 @@ Requires OpenAI API key for the planning AI call.`,
             type: "number",
             description:
               "Target number of sections (default: auto-determined based on intent)",
+          },
+          contentType: {
+            type: "string",
+            description:
+              "Content type to plan for (default: 'page'). Use 'blog-post', 'blog-overview', 'event-detail', or 'event-list' for other content types. Tier 2 (flat) types return a field population plan instead of a section sequence.",
           },
         },
         required: ["intent"],
@@ -981,6 +1027,11 @@ Requires OpenAI API key.`,
             description:
               "Component type of the section after this one (for transitional context)",
           },
+          contentType: {
+            type: "string",
+            description:
+              "Content type context (default: 'page'). Affects which schema and component rules are used.",
+          },
         },
         required: ["componentType", "prompt"],
       },
@@ -1027,14 +1078,21 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
    * Run compositional quality checks on sections and return warnings.
    * Non-blocking — failures are logged and return empty array.
    */
-  function getCompositionalWarnings(sections: Record<string, any>[]): Array<{
+  function getCompositionalWarnings(
+    sections: Record<string, any>[],
+    contentType?: string
+  ): Array<{
     level: string;
     message: string;
     path?: string;
     suggestion?: string;
   }> {
     try {
-      return checkCompositionalQuality(sections, PAGE_VALIDATION_RULES, {
+      const rules =
+        contentType && registry.has(contentType)
+          ? registry.get(contentType).rules
+          : PAGE_VALIDATION_RULES;
+      return checkCompositionalQuality(sections, rules, {
         format: "auto",
       });
     } catch (err) {
@@ -1063,6 +1121,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
               prompt: validated.prompt,
               componentType: validated.componentType,
               sectionCount: validated.sectionCount,
+              contentType: validated.contentType,
             });
             return {
               content: [
@@ -1097,11 +1156,22 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
 
         case "import_content": {
           const validated = schemas.importContent.parse(args);
+          const importContentType = validated.contentType || "page";
+          const importEntry = registry.has(importContentType)
+            ? registry.get(importContentType)
+            : registry.page;
+          const importRootField =
+            importEntry.rules.rootArrayFields[0] || "section";
+          const importSections = (
+            validated.page?.content as Record<string, any>
+          )?.[importRootField];
           const warnings = getCompositionalWarnings(
-            validated.page.content.section as Record<string, any>[]
+            Array.isArray(importSections) ? importSections : [],
+            importContentType
           );
           const result = await storyblokService.importContent({
             ...validated,
+            contentType: validated.contentType,
             skipTransform: validated.skipTransform,
             uploadAssets: validated.uploadAssets,
             assetFolderName: validated.assetFolderName,
@@ -1129,12 +1199,15 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
         case "import_content_at_position": {
           const validated = schemas.importContentAtPosition.parse(args);
           const warnings = getCompositionalWarnings(
-            validated.sections as Record<string, any>[]
+            validated.sections as Record<string, any>[],
+            validated.contentType
           );
           const result = await storyblokService.importContentAtPosition({
             storyUid: validated.storyUid,
             position: validated.position,
             page: { content: { section: validated.sections } },
+            contentType: validated.contentType,
+            targetField: validated.targetField,
             publish: validated.publish,
             skipTransform: validated.skipTransform,
             uploadAssets: validated.uploadAssets,
@@ -1175,11 +1248,16 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           }
 
           const warnings = getCompositionalWarnings(
-            validated.sections as Record<string, any>[]
+            validated.sections as Record<string, any>[],
+            validated.contentType
           );
           const result = await storyblokService.createPageWithContent({
             ...validated,
             parentId,
+            contentType: validated.contentType,
+            rootFields: validated.rootFields as
+              | Record<string, unknown>
+              | undefined,
             skipValidation: validated.skipValidation,
             uploadAssets: validated.uploadAssets,
             assetFolderName: validated.assetFolderName,
@@ -1415,18 +1493,31 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           };
 
           // Annotate each component with nesting rules from the schema
+          // Aggregate rules from ALL content types in the registry
+          const allContentTypes = registry.listContentTypes();
           const annotated = (result as Array<{ name: string }>).map((comp) => {
             const name = comp.name;
-            const slots =
-              PAGE_VALIDATION_RULES.componentToSlots.get(name) || [];
+            // Collect slots from all content types
+            const allSlots = new Set<string>();
+            for (const ct of allContentTypes) {
+              const entry = registry.get(ct);
+              const slots = entry.rules.componentToSlots.get(name) || [];
+              slots.forEach((s) => allSlots.add(s));
+            }
+            const slots = [...allSlots];
+
             const isSubComponent =
               slots.length > 0 &&
               slots.every((s) => {
                 const parts = s.split(".");
-                return !(
-                  parts.length === 2 &&
-                  PAGE_VALIDATION_RULES.rootArrayFields.includes(parts[0])
-                );
+                // Check across all content types' root array fields
+                return !allContentTypes.some((ct) => {
+                  const entry = registry.get(ct);
+                  return (
+                    parts.length === 2 &&
+                    entry.rules.rootArrayFields.includes(parts[0])
+                  );
+                });
               });
             const parentComponents = isSubComponent
               ? [...new Set(slots.map((s) => s.split(".")[0]))]
@@ -1480,28 +1571,44 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             validated.componentName
           );
 
-          // Add composition rules from the schema
+          // Add composition rules from the schema (aggregate across all content types)
           const name = validated.componentName;
-          const slots = PAGE_VALIDATION_RULES.componentToSlots.get(name) || [];
+          const allCTs = registry.listContentTypes();
+          const allComponentSlots = new Set<string>();
+          for (const ct of allCTs) {
+            const entry = registry.get(ct);
+            const s = entry.rules.componentToSlots.get(name) || [];
+            s.forEach((slot) => allComponentSlots.add(slot));
+          }
+          const slots = [...allComponentSlots];
 
-          // Find child slots this component defines
+          // Find child slots this component defines (across all content types)
           const childSlots: Record<
             string,
             { slotPath: string; allowedTypes: string[]; note: string }
           > = {};
-          for (const [
-            slotPath,
-            allowedTypes,
-          ] of PAGE_VALIDATION_RULES.containerSlots) {
-            const parts = slotPath.split(".");
-            if (parts.length === 2 && parts[0] === name) {
-              childSlots[parts[1]] = {
-                slotPath,
-                allowedTypes: [...allowedTypes],
-                note: `Array of ${[...allowedTypes].join(
-                  "/"
-                )} sub-component(s)`,
-              };
+          for (const ct of allCTs) {
+            const entry = registry.get(ct);
+            for (const [slotPath, allowedTypes] of entry.rules.containerSlots) {
+              const parts = slotPath.split(".");
+              if (parts.length === 2 && parts[0] === name) {
+                if (!childSlots[parts[1]]) {
+                  childSlots[parts[1]] = {
+                    slotPath,
+                    allowedTypes: [...allowedTypes],
+                    note: `Array of ${[...allowedTypes].join(
+                      "/"
+                    )} sub-component(s)`,
+                  };
+                } else {
+                  // Merge allowed types from other content types
+                  for (const t of allowedTypes) {
+                    if (!childSlots[parts[1]].allowedTypes.includes(t)) {
+                      childSlots[parts[1]].allowedTypes.push(t);
+                    }
+                  }
+                }
+              }
             }
           }
 
@@ -1609,9 +1716,14 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           if (isDefaultQuery && cachedPatterns && !validated.refresh) {
             analysis = cachedPatterns;
           } else {
+            // Use the correct validation rules for the content type
+            const contentTypeForAnalysis = validated.contentType || "page";
+            const rules = registry.has(contentTypeForAnalysis)
+              ? registry.get(contentTypeForAnalysis).rules
+              : PAGE_VALIDATION_RULES;
             analysis = await analyzeContentPatterns(
               storyblokService,
-              PAGE_VALIDATION_RULES,
+              rules,
               validated
             );
             // Update the cache when this is the default query
@@ -1634,12 +1746,29 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           console.error(
             `[MCP] Listing recipes (intent: ${
               validated.intent || "all"
+            }, contentType: ${
+              validated.contentType || "all"
             }, includePatterns: ${validated.includePatterns})...`
           );
 
+          // Filter recipes by contentType if specified
+          const filterContentType = validated.contentType;
+          const filteredRecipes = filterContentType
+            ? (sectionRecipes.recipes as Array<Record<string, unknown>>).filter(
+                (r) => !r.contentType || r.contentType === filterContentType
+              )
+            : sectionRecipes.recipes;
+          const filteredTemplates = filterContentType
+            ? (
+                sectionRecipes.pageTemplates as Array<Record<string, unknown>>
+              ).filter(
+                (t) => !t.contentType || t.contentType === filterContentType
+              )
+            : sectionRecipes.pageTemplates;
+
           const result: Record<string, unknown> = {
-            recipes: sectionRecipes.recipes,
-            pageTemplates: sectionRecipes.pageTemplates,
+            recipes: filteredRecipes,
+            pageTemplates: filteredTemplates,
             antiPatterns: sectionRecipes.antiPatterns,
           };
 
@@ -1713,14 +1842,84 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             patternsContext = `\n\nSite patterns:\n- Most used: ${topComponents}\n- Common sequences: ${topSequences}\n- Sub-item counts: ${subItems}`;
           }
 
-          // Get available components from the section.components slot
-          const sectionSlot =
-            PAGE_VALIDATION_RULES.containerSlots.get("section.components");
-          const componentNames = sectionSlot
-            ? [...sectionSlot]
-            : [...PAGE_VALIDATION_RULES.allKnownComponents];
+          // Get available components from the content type's container slots
+          const planContentType = validated.contentType || "page";
+          const planEntry = registry.has(planContentType)
+            ? registry.get(planContentType)
+            : registry.page;
+          const planRules = planEntry.rules;
 
-          const planPrompt = `You are a web page structure planner. Given a page intent, suggest an ordered list of sections.
+          // For section-based types: look up the primary container slot
+          // For flat types: list the root array field names as "fields"
+          let componentNames: string[];
+          let isFlat = false;
+          if (planEntry.hasSections) {
+            const primaryArrayField = planRules.rootArrayFields[0];
+            const sectionSlot = primaryArrayField
+              ? [...planRules.containerSlots.entries()].find(([path]) =>
+                  path.startsWith(`${primaryArrayField}.`)
+                )?.[1]
+              : undefined;
+            componentNames = sectionSlot
+              ? [...sectionSlot]
+              : [...planRules.allKnownComponents];
+          } else {
+            // Tier 2 (flat): list root fields as planning targets
+            isFlat = true;
+            componentNames = planRules.rootArrayFields;
+          }
+
+          let planPrompt: string;
+          let planSchema: {
+            name: string;
+            schema: Record<string, unknown>;
+            strict: boolean;
+          };
+
+          if (isFlat) {
+            // Tier 2 (flat content types): plan which root fields to populate
+            planPrompt = `You are a content structure planner for "${planContentType}" content. Given an intent, suggest which root fields to populate and what content each should contain.
+
+Available root array fields: ${componentNames.join(", ")}
+${patternsContext}
+
+Respond with a JSON object:
+{
+  "fields": [
+    { "fieldName": "categories", "intent": "brief description of what this field should contain" }
+  ],
+  "reasoning": "brief explanation of the structure choices"
+}`;
+            planSchema = {
+              name: `${planContentType}_plan`,
+              schema: {
+                type: "object",
+                properties: {
+                  fields: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        fieldName: {
+                          type: "string",
+                          enum: componentNames,
+                        },
+                        intent: { type: "string" },
+                      },
+                      required: ["fieldName", "intent"],
+                      additionalProperties: false,
+                    },
+                  },
+                  reasoning: { type: "string" },
+                },
+                required: ["fields", "reasoning"],
+                additionalProperties: false,
+              },
+              strict: true,
+            };
+          } else {
+            // Tier 1 (section-based): plan section sequence
+            planPrompt = `You are a web page structure planner. Given a page intent, suggest an ordered list of sections for content type "${planContentType}".
 
 Available section component types: ${componentNames.join(", ")}
 ${patternsContext}
@@ -1733,10 +1932,10 @@ Rules:
 - Use "divider" sparingly, only between thematically different blocks
 - Prefer variety: don't repeat the same component type in adjacent sections
 - ${
-            validated.sectionCount
-              ? `Target exactly ${validated.sectionCount} sections`
-              : "Choose an appropriate number of sections (typically 4-8)"
-          }
+              validated.sectionCount
+                ? `Target exactly ${validated.sectionCount} sections`
+                : "Choose an appropriate number of sections (typically 4-8)"
+            }
 
 Respond with a JSON object:
 {
@@ -1745,12 +1944,8 @@ Respond with a JSON object:
   ],
   "reasoning": "brief explanation of the structure choices"
 }`;
-
-          const response = await contentService.generateContent({
-            system: planPrompt,
-            prompt: `Plan a page for: ${validated.intent}`,
-            schema: {
-              name: "page_plan",
+            planSchema = {
+              name: `${planContentType}_plan`,
               schema: {
                 type: "object",
                 properties: {
@@ -1775,7 +1970,15 @@ Respond with a JSON object:
                 additionalProperties: false,
               },
               strict: true,
-            },
+            };
+          }
+
+          const response = await contentService.generateContent({
+            system: planPrompt,
+            prompt: `Plan ${isFlat ? "content" : "a page"} for: ${
+              validated.intent
+            }`,
+            schema: planSchema,
           });
 
           return {
@@ -1785,8 +1988,10 @@ Respond with a JSON object:
                 text: JSON.stringify(
                   {
                     plan: response,
-                    usage:
-                      "Use generate_section or generate_content(componentType=...) for each section in order. Pass previousSection/nextSection for better transitions.",
+                    contentType: planContentType,
+                    usage: isFlat
+                      ? "Use generate_content(contentType=..., rootField=...) for each field, or generate_content(contentType=...) for the full content."
+                      : "Use generate_section or generate_content(componentType=...) for each section in order. Pass previousSection/nextSection for better transitions.",
                   },
                   null,
                   2
@@ -1798,8 +2003,9 @@ Respond with a JSON object:
 
         case "generate_section": {
           const validated = schemas.generateSection.parse(args);
+          const sectionContentType = validated.contentType || "page";
           console.error(
-            `[MCP] Generating section: ${validated.componentType}...`
+            `[MCP] Generating section: ${validated.componentType} (contentType: ${sectionContentType})...`
           );
 
           if (!contentService) {
@@ -1854,6 +2060,7 @@ Respond with a JSON object:
             system: systemPrompt,
             prompt: validated.prompt,
             componentType: validated.componentType,
+            contentType: sectionContentType,
           });
 
           return {

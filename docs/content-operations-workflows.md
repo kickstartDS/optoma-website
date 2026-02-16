@@ -35,13 +35,13 @@ Eine Liste von URLs der alten Website wird Seite für Seite gescrapt, per KI in 
 
 Externe Branchennews (RSS-Feeds, Newsletter) werden automatisch in Blogpost-Entwürfe umgewandelt – fertig zur redaktionellen Prüfung.
 
-| Schritt              | Tool                                        | Zweck                                             |
-| -------------------- | ------------------------------------------- | ------------------------------------------------- |
-| RSS lesen            | _n8n RSS Feed Node_                         | Neue Artikel erkennen                             |
-| Quelle scrapen       | `scrape_url`                                | Volltexte der Artikel extrahieren                 |
-| Blogpost generieren  | `generate_content` mit `componentType`      | KI schreibt eigenen Blogpost auf Basis der Quelle |
-| Entwurf anlegen      | `create_page_with_content` (ohne `publish`) | Draft in Storyblok, Redaktion prüft & publiziert  |
-| Team benachrichtigen | _n8n Slack/E-Mail Node_                     | „Neuer Entwurf wartet auf Review"                 |
+| Schritt              | Tool                                                                    | Zweck                                             |
+| -------------------- | ----------------------------------------------------------------------- | ------------------------------------------------- |
+| RSS lesen            | _n8n RSS Feed Node_                                                     | Neue Artikel erkennen                             |
+| Quelle scrapen       | `scrape_url`                                                            | Volltexte der Artikel extrahieren                 |
+| Blogpost generieren  | `generate_content` mit `componentType`, `contentType: "blog-post"`      | KI schreibt eigenen Blogpost auf Basis der Quelle |
+| Entwurf anlegen      | `create_page_with_content` (`contentType: "blog-post"`, ohne `publish`) | Draft in Storyblok, Redaktion prüft & publiziert  |
+| Team benachrichtigen | _n8n Slack/E-Mail Node_                                                 | „Neuer Entwurf wartet auf Review"                 |
 
 ---
 
@@ -101,12 +101,12 @@ Regelmäßig werden Wettbewerber-Websites gescrapt und per KI zusammengefasst �
 
 Bei Anlage eines Events in einem externen System (Eventbrite, CRM, Kalender) wird automatisch eine Event-Seite in Storyblok erstellt.
 
-| Schritt            | Tool                                                | Zweck                                                 |
-| ------------------ | --------------------------------------------------- | ----------------------------------------------------- |
-| Event-Trigger      | _n8n Webhook / Eventbrite Node_                     | Neues Event erkannt                                   |
-| Content generieren | `generate_content`                                  | KI erzeugt Event-Seite (Hero, Programm, Speaker, CTA) |
-| Seite erstellen    | `create_page_with_content` mit `uploadAssets: true` | Event-Seite live oder als Draft                       |
-| Kalender-Link      | _n8n HTTP Node_                                     | .ics Datei generieren und als Asset hochladen         |
+| Schritt            | Tool                                                                                             | Zweck                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Event-Trigger      | _n8n Webhook / Eventbrite Node_                                                                  | Neues Event erkannt                                        |
+| Content generieren | `generate_content` mit `contentType: "event-detail"`                                             | KI erzeugt Event-Inhalte (Titel, Beschreibung, Kategorien) |
+| Seite erstellen    | `create_page_with_content` mit `contentType: "event-detail"`, `rootFields`, `uploadAssets: true` | Event-Seite live oder als Draft                            |
+| Kalender-Link      | _n8n HTTP Node_                                                                                  | .ics Datei generieren und als Asset hochladen              |
 
 ### 9. Übersetzungs-Pipeline
 

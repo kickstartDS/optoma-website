@@ -21,18 +21,11 @@ import {
   PRESET_SCHEMAS,
   StoryblokCredentials,
   OpenAiCredentials,
+  registry,
 } from "./GenericFunctions";
 
-import * as path from "path";
-import * as fs from "fs";
-
-// Load the dereferenced page schema once
-const PAGE_SCHEMA: Record<string, any> = JSON.parse(
-  fs.readFileSync(
-    path.join(__dirname, "schemas", "page.schema.dereffed.json"),
-    "utf-8"
-  )
-);
+// Backward-compatible alias via registry
+const PAGE_SCHEMA: Record<string, any> = registry.page.schema;
 
 export class StoryblokKickstartDs implements INodeType {
   description: INodeTypeDescription = {

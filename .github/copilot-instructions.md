@@ -124,7 +124,25 @@ Required in `.env.local`:
 
 The project includes a Storyblok MCP server ([mcp-server/](mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
 
-The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System page schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
+The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
+
+### Multi-Content-Type Support
+
+The MCP server supports **5 root content types** via a schema registry:
+
+- **Tier 1 (section-based):** `page`, `blog-post`, `blog-overview` — these have a root array of polymorphic sections
+- **Tier 2 (flat):** `event-detail`, `event-list` — these use root-level scalar/array/object fields without sections
+
+All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `mcp-server/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
+
+- `generate_content(contentType: "blog-post", componentType: "hero")` — uses blog-post schema
+- `plan_page(intent: "...", contentType: "event-detail")` — returns a field population plan for flat types
+- `import_content_at_position(contentType: "blog-post", targetField: "section")` — specifies target array
+- `create_page_with_content(contentType: "event-detail", sections: [], rootFields: { title: "...", categories: [...] })` — the `rootFields` parameter sets root-level fields for flat content types
+- `list_recipes(contentType: "blog-post")` — filters recipes by content type
+- `analyze_content_patterns(contentType: "blog-post")` — analyzes patterns for specific content types
+
+For Tier 2 types, `plan_page` returns a field population plan (`fields` array) instead of a section sequence.
 
 The `import_content`, `import_content_at_position`, and `create_page_with_content` tools all support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content (e.g. from DALL·E, scraped pages, or other external sources) are downloaded and uploaded to Storyblok as native assets before the story is saved. The original URLs are replaced with Storyblok CDN URLs. An optional `assetFolderName` parameter controls which Storyblok asset folder images are uploaded to (defaults to "AI Generated"). **Always pass `uploadAssets: true`** when creating or importing content that contains external image URLs — images should never reference third-party domains in published stories.
 
@@ -141,9 +159,9 @@ The recommended workflow for multi-section pages is: `analyze_content_patterns` 
 
 The `create_page_with_content` and `create_story` tools support **automatic folder creation** via the `path` parameter: provide a forward-slash-separated folder path (e.g. `path: "en/services/consulting"`) and missing intermediate folders are created automatically, like `mkdir -p`. The `path` parameter is mutually exclusive with `parentId` — use one or the other. A standalone `ensure_path` tool is also available for pre-creating folder hierarchies (useful for sitemap migration workflows where the folder tree should be established before pages are created in parallel).
 
-Section recipes are also available as an MCP resource (`recipes://section-recipes`) with 14 proven component combinations, 7 page templates, and 10 anti-patterns.
+Section recipes are also available as an MCP resource (`recipes://section-recipes`) with 18 proven component combinations, 13 page templates, and 10 anti-patterns.
 
-All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content against the Design System schema before writing to Storyblok. Validation rules are derived automatically from the dereferenced page schema — no component names or nesting rules are hardcoded. Validation catches unknown component types, nesting violations, sub-component misplacement, and dual-discriminator conflicts (`type` + `component` on the same node). Write tools also return **compositional quality warnings** (non-blocking) for issues like duplicate heroes, sparse sub-items, or missing CTAs. Storyblok content must only use `component` as its discriminator — `type` is reserved for user-facing variant props (e.g. CTA visual style). `processForStoryblok()` enforces this by moving `type` → `component` and deleting the original `type`, with a final safety pass to strip any leftover `type` from nodes that already carry `component`. All validated tools accept `skipValidation: true` as an escape hatch. The `list_components` and `get_component` introspection tools annotate their output with nesting and composition rules so LLMs understand where components can be placed.
+All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content against the Design System schema before writing to Storyblok. Validation rules are derived automatically from the dereferenced schema for each content type — no component names or nesting rules are hardcoded. Validation catches unknown component types, nesting violations, sub-component misplacement, and dual-discriminator conflicts (`type` + `component` on the same node). Write tools also return **compositional quality warnings** (non-blocking) for issues like duplicate heroes, sparse sub-items, or missing CTAs. Storyblok content must only use `component` as its discriminator — `type` is reserved for user-facing variant props (e.g. CTA visual style). `processForStoryblok()` enforces this by moving `type` → `component` and deleting the original `type`, with a final safety pass to strip any leftover `type` from nodes that already carry `component`. All validated tools accept `skipValidation: true` as an escape hatch. The `list_components` and `get_component` introspection tools annotate their output with nesting and composition rules so LLMs understand where components can be placed.
 
 The `ensure_path` tool creates folder hierarchies idempotently (like `mkdir -p`) and returns the folder ID of the deepest folder. Use it for sitemap migration or when you need to pre-create a folder tree before bulk page creation.
 
@@ -178,6 +196,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [shared/storyblok-services/src/transform.ts](shared/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
 - [shared/storyblok-services/src/pipeline.ts](shared/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
 - [shared/storyblok-services/src/validate.ts](shared/storyblok-services/src/validate.ts) - Schema-driven content validation (nesting rules, component hierarchy) and compositional quality warnings
+- [shared/storyblok-services/src/registry.ts](shared/storyblok-services/src/registry.ts) - Schema registry for multi-content-type support (loads all root content type schemas)
 - [shared/storyblok-services/src/assets.ts](shared/storyblok-services/src/assets.ts) - Asset download, upload to Storyblok, and URL rewriting
 - [mcp-server/schemas/section-recipes.json](mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
 - [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) - Section-by-section generation workflow guide

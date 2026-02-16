@@ -1,5 +1,7 @@
 # Plan: n8n Nodes for Storyblok Content Generation & Import
 
+> **Status: ✅ FULLY IMPLEMENTED** — All milestones (1–7) are complete. Since this plan was written, the n8n nodes have been updated to use `SchemaRegistry` from `@kickstartds/storyblok-services` instead of loading a single `PAGE_SCHEMA`. The `importContentIntoStory()` and `insertContentAtPosition()` functions now accept a `contentType` parameter for multi-content-type validation. The `schemas/` directory now contains all 5 dereffed root schemas (page, blog-post, blog-overview, event-detail, event-list).
+
 ## Overview
 
 This plan covers adding two custom n8n community nodes that mirror the `generate_content` and `import_content` tools currently implemented in the Storyblok MCP server ([mcp-server/src/services.ts](../mcp-server/src/services.ts)). The nodes will allow n8n workflows to trigger AI-powered content generation via OpenAI and then import that content into Storyblok stories — enabling fully automated, event-driven content pipelines without an LLM intermediary.

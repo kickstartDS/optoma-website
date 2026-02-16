@@ -162,7 +162,7 @@ Import generated content into a Storyblok story. Two placement modes are availab
 
 ## Preset Component Schemas
 
-The following kickstartDS component schemas are built in for the **Preset** schema mode. For most use cases, the **Auto (Design System)** mode is recommended instead — it dynamically derives schemas from the full Design System page schema, supporting all components and producing both Design System–shaped and Storyblok-ready output automatically.
+The following kickstartDS component schemas are built in for the **Preset** schema mode. For most use cases, the **Auto (Design System)** mode is recommended instead — it dynamically derives schemas from the Design System schema for any content type, supporting all components and producing both Design System–shaped and Storyblok-ready output automatically. The node uses a `SchemaRegistry` to load schemas for all 5 content types (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`).
 
 | Preset           | Key Fields                                                               |
 | ---------------- | ------------------------------------------------------------------------ |

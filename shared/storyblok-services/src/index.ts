@@ -101,3 +101,12 @@ export type {
   ValidateContentOptions,
   ContainerSlot,
 } from "./validate.js";
+
+// ─── Schema Registry ────────────────────────────────────────────────
+export {
+  SchemaRegistry,
+  createRegistryFromDirectory,
+  createRegistryFromSchemaDir,
+  ROOT_CONTENT_TYPES,
+} from "./registry.js";
+export type { ContentTypeEntry, RootContentType } from "./registry.js";

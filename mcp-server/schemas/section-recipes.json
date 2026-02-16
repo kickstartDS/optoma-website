@@ -120,6 +120,42 @@
       "notes": "Use sparingly — only between major thematic shifts. Do not use between every section. Consider using section background colors instead for visual separation.",
       "frequency": "rare",
       "goodFollowUps": []
+    },
+    {
+      "name": "Blog Post Hero + Content",
+      "contentType": "blog-post",
+      "intent": "Blog article opener with featured image and article body",
+      "components": ["hero", "text"],
+      "notes": "Blog posts use the head object for title/date/author metadata. The section array contains the article body sections. Start with a compelling hero, then use text/split sections for the article content.",
+      "frequency": "very-common",
+      "goodFollowUps": ["split", "faq", "cta"]
+    },
+    {
+      "name": "Blog Post CTA + Related",
+      "contentType": "blog-post",
+      "intent": "End of blog article with conversion point and related reading",
+      "components": ["cta", "blog-teaser"],
+      "notes": "Blog posts should end with a CTA section and optionally show related articles via blog-teaser. The aside and cta root objects provide sidebar and bottom-of-article CTAs.",
+      "frequency": "common",
+      "goodFollowUps": []
+    },
+    {
+      "name": "Event Detail Layout",
+      "contentType": "event-detail",
+      "intent": "Event page with details, images, and registration",
+      "components": [],
+      "notes": "Event-detail is a flat (Tier 2) content type — it uses root scalar and array fields (title, description, categories, locations, download, images, button) instead of sections. Populate title, intro, description first, then add categories, locations, and images arrays. Use button for registration/RSVP link.",
+      "frequency": "common",
+      "goodFollowUps": []
+    },
+    {
+      "name": "Event List Layout",
+      "contentType": "event-list",
+      "intent": "Event listing page with filterable events",
+      "components": [],
+      "notes": "Event-list is a flat (Tier 2) content type — it has an events array and a filter object at the root level. Populate the events array with event items and configure the filter object for filtering capabilities.",
+      "frequency": "common",
+      "goodFollowUps": []
     }
   ],
   "pageTemplates": [
@@ -171,6 +207,41 @@
       "sequence": ["hero", "faq", "faq", "contact"],
       "intent": "Self-service support, help center, knowledge base",
       "notes": "Multiple FAQ sections can be grouped by topic. End with contact for unresolved questions."
+    },
+    {
+      "name": "Blog Post - Standard Article",
+      "contentType": "blog-post",
+      "sequence": ["hero", "text", "split", "cta"],
+      "intent": "Standard blog article with visual content and conversion",
+      "notes": "Use the head root object for title/date/author metadata, aside for sidebar content, and seo for meta tags. The section array contains the article body. End with cta for newsletter signup or related action."
+    },
+    {
+      "name": "Blog Post - Tutorial / How-To",
+      "contentType": "blog-post",
+      "sequence": ["hero", "text", "text", "faq", "cta"],
+      "intent": "Step-by-step tutorial with FAQ for common issues",
+      "notes": "Multiple text sections for step-by-step content. FAQ section for troubleshooting. Blog posts also have a content root scalar for markdown body text."
+    },
+    {
+      "name": "Blog Overview - Standard",
+      "contentType": "blog-overview",
+      "sequence": ["hero"],
+      "intent": "Blog listing page with featured and categorized posts",
+      "notes": "Blog overview uses root objects latest, list, and more for article groupings. The section array is for additional page sections. Use latestTitle, listTitle, moreTitle scalars for section headings."
+    },
+    {
+      "name": "Event Detail - Standard",
+      "contentType": "event-detail",
+      "sequence": [],
+      "intent": "Event page with all relevant event information",
+      "notes": "Flat content type — no sections. Set title, intro, description scalars. Populate categories, locations, download, images arrays. Use button object for registration link."
+    },
+    {
+      "name": "Event List - Standard",
+      "contentType": "event-list",
+      "sequence": [],
+      "intent": "Filterable list of events",
+      "notes": "Flat content type — no sections. Populate events array with event items. Configure filter object for filtering UI."
     }
   ],
   "antiPatterns": [

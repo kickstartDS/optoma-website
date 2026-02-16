@@ -63,16 +63,16 @@ import {
 } from "@kickstartds/storyblok-services";
 ```
 
-| Export                                                | Description                                                                                                                                 |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prepareSchemaForOpenAi(pageSchema, options?)`        | Takes a dereffed page schema + options (`{ sections?, allowedComponents?, propertiesToDrop? }`) and returns an OpenAI-ready schema envelope |
-| `getComponentPresetSchema(pageSchema, componentName)` | Returns a single-component OpenAI-ready schema (replaces hand-written JSON presets)                                                         |
-| `listAvailableComponents()`                           | Returns the list of supported component names                                                                                               |
-| `getSchemaName()`                                     | Returns the schema name string for the OpenAI envelope                                                                                      |
-| `SUPPORTED_COMPONENTS`                                | Array of component type names the pipeline supports                                                                                         |
-| `SUB_COMPONENT_MAP`                                   | Map of parent component type → sub-component array key (e.g. `downloads` → `download`)                                                      |
-| `UNSUPPORTED_KEYWORDS`                                | JSON Schema keywords stripped for OpenAI compatibility                                                                                      |
-| `DEFAULT_PROPERTIES_TO_DROP`                          | Properties removed by default (icons, layout props, etc.)                                                                                   |
+| Export                                                | Description                                                                                                                                                           |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prepareSchemaForOpenAi(pageSchema, options?)`        | Takes a dereffed schema + options (`{ sections?, allowedComponents?, propertiesToDrop?, contentType?, rootArrayField? }`) and returns an OpenAI-ready schema envelope |
+| `getComponentPresetSchema(pageSchema, componentName)` | Returns a single-component OpenAI-ready schema (replaces hand-written JSON presets)                                                                                   |
+| `listAvailableComponents()`                           | Returns the list of supported component names                                                                                                                         |
+| `getSchemaName()`                                     | Returns the schema name string for the OpenAI envelope                                                                                                                |
+| `SUPPORTED_COMPONENTS`                                | (**deprecated** — use `ValidationRules.allKnownComponents` from registry) Array of component type names                                                               |
+| `SUB_COMPONENT_MAP`                                   | (**deprecated** — use `ValidationRules.containerSlots` from registry) Map of parent → sub-component key                                                               |
+| `UNSUPPORTED_KEYWORDS`                                | JSON Schema keywords stripped for OpenAI compatibility                                                                                                                |
+| `DEFAULT_PROPERTIES_TO_DROP`                          | Properties removed by default (icons, layout props, etc.)                                                                                                             |
 
 ### Content Transformation
 
@@ -147,6 +147,49 @@ const result = await generateAndPrepareContent(openaiClient, {
 
 The import functions (`importByPrompterReplacement` and `importAtPosition`) support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content are downloaded, uploaded to Storyblok as native assets, and their URLs rewritten before the story is saved.
 
+### Content Validation
+
+Schema-driven validation for content before writing to Storyblok:
+
+```typescript
+import {
+  buildValidationRules,
+  validateSections,
+  validatePageContent,
+  formatValidationErrors,
+  checkCompositionalQuality,
+} from "@kickstartds/storyblok-services";
+```
+
+| Function                                              | Description                                                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `buildValidationRules(schema)`                        | Build validation rules from a dereffed schema (component hierarchy, container slots, root array fields) |
+| `validateSections(sections, rules)`                   | Validate an array of sections against rules. Returns `{ valid, errors }`                                |
+| `validatePageContent(content, rules)`                 | Validate full page content (detects `component` discriminator). Returns `{ valid, errors }`             |
+| `formatValidationErrors(errors)`                      | Format validation errors as human-readable string                                                       |
+| `checkCompositionalQuality(sections, rules, options)` | Non-blocking quality checks (duplicate heroes, sparse sub-items, missing CTAs). Returns warnings array  |
+
+### Schema Registry (Multi-Content-Type)
+
+Load and manage schemas for multiple content types:
+
+```typescript
+import {
+  SchemaRegistry,
+  createRegistryFromSchemaDir,
+  createRegistryFromDirectory,
+  ROOT_CONTENT_TYPES,
+} from "@kickstartds/storyblok-services";
+```
+
+| Export                                        | Description                                                                                                                                    |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createRegistryFromSchemaDir(dir)`            | Load all `*.schema.dereffed.json` files from a flat directory and build a `SchemaRegistry`                                                     |
+| `createRegistryFromDirectory(baseDir, types)` | Load schemas from component subdirectories (`baseDir/{type}/{type}.schema.dereffed.json`)                                                      |
+| `ROOT_CONTENT_TYPES`                          | Array of 5 supported content types: `page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`                                         |
+| `SchemaRegistry`                              | Registry class with `get(type)`, `has(type)`, `listContentTypes()`, `listSectionBasedTypes()`, `listFlatTypes()`, `detectContentType(content)` |
+| `ContentTypeEntry`                            | `{ name, schema, rules, hasSections, rootArrayFields }` for each registered content type                                                       |
+
 ```typescript
 const result = await importByPrompterReplacement(storyblokClient, {
   storyId: "home",
@@ -197,6 +240,14 @@ import type {
   UploadAssetsOptions,
   UploadAssetsSummary,
   UploadedAsset,
+  // Validation types
+  ValidationRules,
+  ValidationResult,
+  ValidationError,
+  // Registry types
+  SchemaRegistry,
+  ContentTypeEntry,
+  RootContentType,
 } from "@kickstartds/storyblok-services";
 ```
 
@@ -217,6 +268,8 @@ shared/storyblok-services/
 │   ├── openai.ts          # OpenAI API functions
 │   ├── schema.ts          # Schema preparation for OpenAI structured output
 │   ├── transform.ts       # Content transformation (OpenAI ↔ DS ↔ Storyblok)
+│   ├── validate.ts        # Schema-driven content validation (nesting, hierarchy, compositional quality)
+│   ├── registry.ts        # Schema registry for multi-content-type support
 │   ├── assets.ts          # Asset download, upload to Storyblok, URL rewriting
 │   └── pipeline.ts        # High-level orchestrator (schema prep → OpenAI → transform)
 └── test/

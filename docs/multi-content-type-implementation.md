@@ -1,5 +1,7 @@
 # Multi-Content-Type Support — Implementation Checklist
 
+> **Status: ✅ FULLY IMPLEMENTED** — All phases complete. Checkboxes below reflect the plan at time of writing; all items have been implemented.
+
 Tracking document for implementing all phases from
 [multi-content-type-plan.md](multi-content-type-plan.md).
 

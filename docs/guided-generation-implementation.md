@@ -1,5 +1,7 @@
 # Guided Generation — Implementation Checklist
 
+> **Status: ✅ FULLY IMPLEMENTED** — All phases (1–4) complete. Subsequently extended with multi-content-type support (`contentType` parameter on all tools, content-type-specific recipes/templates).
+
 Tracking document for implementing all four phases from
 [guided-generation-plan.md](guided-generation-plan.md).
 

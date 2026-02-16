@@ -1,5 +1,7 @@
 # Plan: JSON Schema as Single Source of Truth for the MCP Server
 
+> **Status: ✅ FULLY IMPLEMENTED** — All phases (1–8) are complete. See [docs/schema-guardrails-implementation.md](schema-guardrails-implementation.md) for the checklist. Validation logic lives in `shared/storyblok-services/src/validate.ts`. The `PAGE_SCHEMA` singleton has been replaced by `SchemaRegistry` (`shared/storyblok-services/src/registry.ts`) which loads all 5 root content types (page, blog-post, blog-overview, event-detail, event-list) and builds per-type validation rules automatically.
+
 ## Problem Statement
 
 The MCP server currently has **two pathways** for creating content in Storyblok:

@@ -90,4 +90,4 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 
 - **Nur eine einzelne Sektion generieren:** `componentType` statt `sectionCount` verwenden
 - **Seite in einem Unterordner:** `path` verwenden (z.B. `"en/services/consulting"`) — Ordner werden automatisch erstellt. Alternativ `parentId` des Zielordners angeben (über `list_stories` mit `startsWith` ermitteln).
-- **Blogpost statt Seite:** Anderen Content-Typ verwenden, ggf. `create_story` direkt nutzen
+- **Blogpost statt Seite:** `contentType: "blog-post"` bei `generate_content` und `create_page_with_content` übergeben. Für Events: `contentType: "event-detail"` verwenden. Bei Tier-2-Typen (event-detail, event-list) zusätzlich `rootFields` für die Wurzel-Felder setzen.

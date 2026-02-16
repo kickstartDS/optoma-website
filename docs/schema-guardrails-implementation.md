@@ -1,5 +1,7 @@
 # Schema Guardrails Implementation Progress
 
+> **Status: ✅ FULLY IMPLEMENTED** — All phases complete. Subsequently extended with multi-content-type support: `PAGE_VALIDATION_RULES` singleton replaced by `SchemaRegistry` (`shared/storyblok-services/src/registry.ts`) which builds per-content-type validation rules for all 5 root types (page, blog-post, blog-overview, event-detail, event-list).
+
 ## Phase 1: Extract Validation Rules from JSON Schema
 
 - [x] Read and understand existing schema, transform, and pipeline code

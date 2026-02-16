@@ -1,5 +1,7 @@
 # Plan: Multi-Content-Type Support for Generation, Validation & Import
 
+> **Status: ✅ FULLY IMPLEMENTED** — All 9 phases complete. SchemaRegistry in `shared/storyblok-services/src/registry.ts` supports all 5 root content types. All MCP tools, n8n nodes, and shared services have been updated with `contentType` support. See [multi-content-type-implementation.md](multi-content-type-implementation.md) for the implementation checklist.
+
 ## Problem Statement
 
 The MCP server (and n8n nodes) currently treat **`page`** as the only first-class content type. All AI-assisted generation, planning, validation, and import tools are structurally coupled to `page.schema.dereffed.json` and its `section[]` → `components[]` hierarchy.

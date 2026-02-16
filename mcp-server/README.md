@@ -235,7 +235,7 @@ npm start
 
 ### Generate a hero section (auto-schema mode)
 
-When `componentType` is provided, the schema is automatically derived from the kickstartDS Design System page schema — no manual schema needed:
+When `componentType` is provided, the schema is automatically derived from the kickstartDS Design System schema — no manual schema needed. Use `contentType` to target a specific content type (default: `"page"`):
 
 ```json
 {
@@ -243,7 +243,8 @@ When `componentType` is provided, the schema is automatically derived from the k
   "arguments": {
     "system": "You are a content writer for a digital agency website. Create engaging, professional content.",
     "prompt": "Create a hero section for a landing page about AI-powered content generation",
-    "componentType": "hero"
+    "componentType": "hero",
+    "contentType": "page"
   }
 }
 ```
@@ -267,6 +268,25 @@ The response includes both Design System–shaped props and Storyblok-ready cont
     "system": "You are a content writer for a digital agency website.",
     "prompt": "Create a landing page about sustainable energy solutions",
     "sectionCount": 4
+  }
+}
+```
+
+### Generate content for a blog post
+
+All generation, import, and validation tools accept a `contentType` parameter. The server supports 5 content types:
+
+- **Tier 1 (section-based):** `page`, `blog-post`, `blog-overview`
+- **Tier 2 (flat):** `event-detail`, `event-list`
+
+```json
+{
+  "tool": "generate_content",
+  "arguments": {
+    "system": "You are a content writer for a tech blog.",
+    "prompt": "Create a hero section for a blog post about AI trends in 2026",
+    "componentType": "hero",
+    "contentType": "blog-post"
   }
 }
 ```
@@ -477,12 +497,25 @@ Get an AI-assisted section plan based on site patterns:
   "tool": "plan_page",
   "arguments": {
     "intent": "Product landing page for our new AI feature",
-    "sectionCount": 5
+    "sectionCount": 5,
+    "contentType": "page"
   }
 }
 ```
 
 Returns a structured plan with `componentType` and `intent` per section. Use the plan to generate each section individually.
+
+For **Tier 2 (flat) content types**, `plan_page` returns a field population plan instead of a section sequence:
+
+```json
+{
+  "tool": "plan_page",
+  "arguments": {
+    "intent": "Workshop on AI tools for developers",
+    "contentType": "event-detail"
+  }
+}
+```
 
 ### Generate a single section with site context
 
@@ -495,7 +528,8 @@ Generate content for one section with automatic site-aware context injection:
     "componentType": "features",
     "prompt": "4 key capabilities of our AI consulting service",
     "previousSection": "hero",
-    "nextSection": "testimonials"
+    "nextSection": "testimonials",
+    "contentType": "page"
   }
 }
 ```
@@ -511,7 +545,19 @@ Get curated component combinations merged with the site's actual usage patterns:
   "tool": "list_recipes",
   "arguments": {
     "intent": "service landing page",
-    "includePatterns": true
+    "includePatterns": true,
+    "contentType": "page"
+  }
+}
+```
+
+Filter by content type to get recipes specific to blog posts, events, etc.:
+
+```json
+{
+  "tool": "list_recipes",
+  "arguments": {
+    "contentType": "blog-post"
   }
 }
 ```
@@ -551,7 +597,7 @@ Warnings appear in the `warnings` array of the response. Content is still saved 
 
 ## Schema Guardrails & Content Validation
 
-All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content **before** writing to Storyblok. Validation rules are derived automatically from the dereferenced page schema — no component names or nesting rules are hardcoded.
+All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content **before** writing to Storyblok. Validation rules are derived automatically from the dereferenced schema **for each content type** via the `SchemaRegistry` — no component names or nesting rules are hardcoded. The server loads 5 content type schemas at startup (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`) and builds per-type validation rules.
 
 ### What is validated
 
@@ -592,8 +638,12 @@ mcp-server/
 │   ├── services.ts   # Storyblok and OpenAI service classes (delegates to shared lib)
 │   └── errors.ts     # Error types and handling
 ├── schemas/
-│   ├── page.schema.dereffed.json  # Bundled Design System page schema for auto-schema mode
-│   └── section-recipes.json       # Curated section recipes, page templates, and anti-patterns
+│   ├── page.schema.dereffed.json           # Design System page schema
+│   ├── blog-post.schema.dereffed.json      # Design System blog-post schema
+│   ├── blog-overview.schema.dereffed.json  # Design System blog-overview schema
+│   ├── event-detail.schema.dereffed.json   # Design System event-detail schema
+│   ├── event-list.schema.dereffed.json     # Design System event-list schema
+│   └── section-recipes.json               # Curated section recipes, page templates, and anti-patterns
 ├── config/
 │   └── deploy.yml    # Kamal deployment configuration
 ├── .kamal/
