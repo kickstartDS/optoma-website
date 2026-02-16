@@ -10,14 +10,11 @@ export const HeadlineProvider: FC<PropsWithChildren> = (props) => {
     const computedLevel = useHeadlineLevel();
     const nextLevel =
       level !== "p" && computedLevel ? "h" + computedLevel : level;
-    const headlineSlug = slugify(props.text, { lower: true });
+    const headlineSlug = props.text
+      ? slugify(props.text, { lower: true })
+      : undefined;
     return (
-      <PrevHeadline
-        {...props}
-        level={nextLevel}
-        id={headlineSlug}
-        ref={ref}
-      />
+      <PrevHeadline {...props} level={nextLevel} id={headlineSlug} ref={ref} />
     );
   });
   return <HeadlineContext.Provider {...props} value={Headline} />;
