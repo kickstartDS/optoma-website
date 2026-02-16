@@ -6,23 +6,24 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Content Management Tools
 
-| Tool             | Description                                                              |
-| ---------------- | ------------------------------------------------------------------------ |
-| `list_stories`   | List stories with filtering by slug prefix or content type               |
-| `get_story`      | Get a single story by slug, ID, or UUID                                  |
-| `create_story`   | Create a new story with content (validates against Design System schema) |
-| `update_story`   | Update an existing story (validates against Design System schema)        |
-| `delete_story`   | Delete a story                                                           |
-| `search_content` | Full-text search across stories                                          |
+| Tool             | Description                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `list_stories`   | List stories with filtering by slug prefix or content type                                                         |
+| `get_story`      | Get a single story by slug, ID, or UUID                                                                            |
+| `create_story`   | Create a new story with content (validates against Design System schema). Supports `path` for auto-folder creation |
+| `update_story`   | Update an existing story (validates against Design System schema)                                                  |
+| `delete_story`   | Delete a story                                                                                                     |
+| `search_content` | Full-text search across stories                                                                                    |
+| `ensure_path`    | Ensure a folder path exists (like `mkdir -p`), creating missing intermediate folders. Returns the folder ID        |
 
 ### AI Content Generation
 
-| Tool                         | Description                                                                                                                                                |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation                                                                      |
-| `import_content`             | Import generated content into a Storyblok story (replace a prompter), with automatic transform, optional asset upload, and **schema validation**           |
-| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic transform, optional asset upload, and **schema validation**                    |
-| `create_page_with_content`   | Create a new page story with sections, auto-wrapping in page/section structure, with automatic transform, optional asset upload, and **schema validation** |
+| Tool                         | Description                                                                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation                                                                                                       |
+| `import_content`             | Import generated content into a Storyblok story (replace a prompter), with automatic transform, optional asset upload, and **schema validation**                                            |
+| `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic transform, optional asset upload, and **schema validation**                                                     |
+| `create_page_with_content`   | Create a new page story with sections, auto-wrapping in page/section structure, with automatic transform, optional asset upload, `path` for auto-folder creation, and **schema validation** |
 
 ### Web Scraping
 

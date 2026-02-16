@@ -66,6 +66,7 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
   - `assetFolderName`: Sinnvollen Ordnernamen vorschlagen (z.B. _„Landing Page - [Thema]"_)
   - `publish: false` ← **immer als Draft**, der Editor soll im Visual Editor prüfen
 - ⚠️ `parentId` nur setzen, wenn der Editor explizit einen Ordner nennt
+- 💡 Alternativ: `path` verwenden (z.B. `"en/services"`), um Ordner automatisch anlegen zu lassen (wie `mkdir -p`). `path` und `parentId` sind gegenseitig exklusiv.
 
 ### Schritt 4: Bestätigung
 
@@ -88,5 +89,5 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 ## Varianten
 
 - **Nur eine einzelne Sektion generieren:** `componentType` statt `sectionCount` verwenden
-- **Seite in einem Unterordner:** `parentId` des Zielordners angeben (über `list_stories` mit `startsWith` ermitteln)
+- **Seite in einem Unterordner:** `path` verwenden (z.B. `"en/services/consulting"`) — Ordner werden automatisch erstellt. Alternativ `parentId` des Zielordners angeben (über `list_stories` mit `startsWith` ermitteln).
 - **Blogpost statt Seite:** Anderen Content-Typ verwenden, ggf. `create_story` direkt nutzen

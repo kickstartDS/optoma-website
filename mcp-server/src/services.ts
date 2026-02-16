@@ -763,6 +763,101 @@ export class StoryblokService {
       ? { ...(story as Record<string, any>), assetsSummary }
       : story;
   }
+
+  /**
+   * Find a folder (or story) by its full slug path via the Management API.
+   *
+   * Returns the story/folder object if found, or `null` if no match.
+   * Uses `by_slugs` filtering on the CDN API for fast lookup.
+   */
+  async findBySlug(fullSlug: string): Promise<Record<string, any> | null> {
+    try {
+      const response = await this.contentClient.get("cdn/stories", {
+        by_slugs: fullSlug,
+        version: "draft",
+        per_page: 1,
+      });
+      const stories = response.data.stories;
+      if (stories && stories.length > 0) {
+        return stories[0];
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Ensure a full folder path exists, creating missing intermediate folders.
+   *
+   * Works like `mkdir -p`: given a path like `"en/services/consulting"`,
+   * it walks segment by segment, checks if each folder exists, and creates
+   * it if not. Returns the numeric ID of the deepest (last) folder.
+   *
+   * @param folderPath - Forward-slash-separated folder path (e.g. `"en/services/consulting"`)
+   * @returns The numeric ID of the deepest folder in the path
+   */
+  async ensurePath(folderPath: string): Promise<number> {
+    // Normalise: trim slashes, split into segments
+    const segments = folderPath
+      .replace(/^\/+|\/+$/g, "")
+      .split("/")
+      .filter(Boolean);
+
+    if (segments.length === 0) {
+      throw new Error("ensurePath requires at least one path segment");
+    }
+
+    let parentId: number | undefined = undefined;
+    let currentFullSlug = "";
+
+    for (const segment of segments) {
+      currentFullSlug = currentFullSlug
+        ? `${currentFullSlug}/${segment}`
+        : segment;
+
+      // Try to find existing folder/story at this slug
+      const existing = await this.findBySlug(currentFullSlug);
+
+      if (existing) {
+        parentId = existing.id;
+        continue;
+      }
+
+      // Folder doesn't exist — create it
+      try {
+        const folder = await this.createStory({
+          name: segment.charAt(0).toUpperCase() + segment.slice(1), // Title-case the slug
+          slug: segment,
+          parentId,
+          content: { component: "page", _uid: randomUUID() },
+          isFolder: true,
+          skipValidation: true,
+        });
+        parentId = (folder as Record<string, any>).id;
+      } catch (err: any) {
+        // Handle race conditions: if a 409/422 conflict means the folder was
+        // created concurrently, look it up again and continue.
+        const status = err?.response?.status || err?.status;
+        if (status === 409 || status === 422) {
+          const retried = await this.findBySlug(currentFullSlug);
+          if (retried) {
+            parentId = retried.id;
+            continue;
+          }
+        }
+        throw new Error(
+          `Failed to create folder "${currentFullSlug}": ${err?.message || err}`
+        );
+      }
+    }
+
+    if (parentId === undefined) {
+      throw new Error(`ensurePath failed: could not resolve "${folderPath}"`);
+    }
+
+    return parentId;
+  }
 }
 
 /**

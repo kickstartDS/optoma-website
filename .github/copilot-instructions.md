@@ -139,9 +139,13 @@ The MCP server supports **guided content generation** via four additional tools 
 
 The recommended workflow for multi-section pages is: `analyze_content_patterns` → `plan_page` → `generate_section` (per section) → `create_page_with_content`. This section-by-section approach outperforms `generate_content(sectionCount=N)` for pages with 3+ sections. See [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) for the full workflow.
 
+The `create_page_with_content` and `create_story` tools support **automatic folder creation** via the `path` parameter: provide a forward-slash-separated folder path (e.g. `path: "en/services/consulting"`) and missing intermediate folders are created automatically, like `mkdir -p`. The `path` parameter is mutually exclusive with `parentId` — use one or the other. A standalone `ensure_path` tool is also available for pre-creating folder hierarchies (useful for sitemap migration workflows where the folder tree should be established before pages are created in parallel).
+
 Section recipes are also available as an MCP resource (`recipes://section-recipes`) with 14 proven component combinations, 7 page templates, and 10 anti-patterns.
 
 All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content against the Design System schema before writing to Storyblok. Validation rules are derived automatically from the dereferenced page schema — no component names or nesting rules are hardcoded. Validation catches unknown component types, nesting violations, sub-component misplacement, and dual-discriminator conflicts (`type` + `component` on the same node). Write tools also return **compositional quality warnings** (non-blocking) for issues like duplicate heroes, sparse sub-items, or missing CTAs. Storyblok content must only use `component` as its discriminator — `type` is reserved for user-facing variant props (e.g. CTA visual style). `processForStoryblok()` enforces this by moving `type` → `component` and deleting the original `type`, with a final safety pass to strip any leftover `type` from nodes that already carry `component`. All validated tools accept `skipValidation: true` as an escape hatch. The `list_components` and `get_component` introspection tools annotate their output with nesting and composition rules so LLMs understand where components can be placed.
+
+The `ensure_path` tool creates folder hierarchies idempotently (like `mkdir -p`) and returns the folder ID of the deepest folder. Use it for sitemap migration or when you need to pre-create a folder tree before bulk page creation.
 
 ### Transport Modes
 

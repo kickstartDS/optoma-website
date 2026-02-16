@@ -184,7 +184,17 @@ export const schemas = {
     parentId: z
       .number()
       .optional()
-      .describe("Parent folder ID (for nested content)"),
+      .describe(
+        "Parent folder ID (for nested content). Mutually exclusive with 'path'."
+      ),
+    path: z
+      .string()
+      .optional()
+      .describe(
+        "Folder path to create the page in (e.g. 'en/services/consulting'). " +
+          "Intermediate folders are created automatically like mkdir -p. " +
+          "Mutually exclusive with 'parentId'."
+      ),
     sections: z
       .array(sectionSchema)
       .describe(
@@ -250,7 +260,18 @@ export const schemas = {
   createStory: z.object({
     name: z.string().describe("Story name"),
     slug: z.string().describe("URL slug for the story"),
-    parentId: z.number().optional().describe("Parent folder ID"),
+    parentId: z
+      .number()
+      .optional()
+      .describe("Parent folder ID. Mutually exclusive with 'path'."),
+    path: z
+      .string()
+      .optional()
+      .describe(
+        "Folder path to create the story in (e.g. 'en/blog'). " +
+          "Intermediate folders are created automatically like mkdir -p. " +
+          "Mutually exclusive with 'parentId'."
+      ),
     content: z.record(z.unknown()).describe("Story content object"),
     isFolder: z
       .boolean()
@@ -377,6 +398,16 @@ export const schemas = {
       .optional()
       .describe("Component type of the section after this one (for context)"),
   }),
+
+  ensurePath: z.object({
+    path: z
+      .string()
+      .describe(
+        "Forward-slash-separated folder path to ensure exists " +
+          "(e.g. 'en/services/consulting'). Missing intermediate folders " +
+          "are created automatically, like mkdir -p."
+      ),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -403,3 +434,4 @@ export type AnalyzeContentPatternsInput = z.infer<
 export type ListRecipesInput = z.infer<typeof schemas.listRecipes>;
 export type PlanPageInput = z.infer<typeof schemas.planPage>;
 export type GenerateSectionInput = z.infer<typeof schemas.generateSection>;
+export type EnsurePathInput = z.infer<typeof schemas.ensurePath>;

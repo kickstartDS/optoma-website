@@ -166,12 +166,13 @@ Alle im MCP Server verfügbaren Tools auf einen Blick:
 | ------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern                              |
 |                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                                      |
-|                    | `create_story`               | Neue Story mit Basisinhalt anlegen                                                                   |
-|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren                              |
+|                    | `create_story`               | Neue Story mit Basisinhalt anlegen (unterstützt `path` für automatische Ordnererstellung)            |
+|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren (unterstützt `path`)         |
 |                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                                                  |
 |                    | `delete_story`               | Story dauerhaft löschen                                                                              |
 |                    | `search_content`             | Volltextsuche über alle Stories                                                                      |
 |                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                                                  |
+|                    | `ensure_path`                | Ordnerpfad sicherstellen (wie `mkdir -p`), fehlende Zwischenordner anlegen, Ordner-ID zurückgeben    |
 | **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                     |
 |                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                      |
 | **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                      |

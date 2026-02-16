@@ -56,6 +56,7 @@ Der Editor möchte Inhalte von einer externen Webseite übernehmen – z.B. bei 
   - `uploadAssets: true` ← **kritisch bei Migration**, damit Bilder von der Quellseite nach Storyblok kopiert werden
   - `assetFolderName`: Z.B. _„Migration - example.com"_ oder _„Relaunch - [Projektname]"_
   - `publish: false` ← Draft, Editor prüft
+  - `path`: Optional, z.B. `"migration/example-com"` — legt Ordnerhierarchie automatisch an (wie `mkdir -p`)
 - ⚠️ Ohne `uploadAssets: true` verweisen Bilder weiterhin auf die alte Domain – brechen nach Abschaltung!
 
 ### Schritt 5: Qualitätsprüfung
@@ -80,6 +81,6 @@ Der Editor möchte Inhalte von einer externen Webseite übernehmen – z.B. bei 
 ## Varianten
 
 - **Text direkt aus dem Chat:** Falls kein Scrape möglich, kann der Editor den Text einfach einfügen → Schritt 1 überspringen, direkt zu Schritt 3 mit dem eingefügten Text als Prompt
-- **Bulk-Migration:** Für viele Seiten besser einen n8n-Workflow verwenden (siehe Content Operations Workflows Dokument)
+- **Bulk-Migration:** Für viele Seiten besser einen n8n-Workflow verwenden (siehe Content Operations Workflows Dokument). Ordnerstruktur vorab mit `ensure_path` anlegen, dann Seiten parallel erstellen.
 - **Nur Inhalte extrahieren, nicht anlegen:** Schritte 1–3 durchführen und dem Editor das Ergebnis als JSON zeigen, ohne Storyblok-Import
 - **Zu bestehender Seite hinzufügen:** Statt `create_page_with_content` in Schritt 4 → `import_content_at_position` verwenden (siehe Skill „Bestehende Seite erweitern")

@@ -86,6 +86,7 @@ Alle generierten Sektionen in einem Array zusammenführen.
   - `uploadAssets: true` ← **immer setzen** bei KI-generierten Bildern
   - `assetFolderName`: Sinnvollen Ordnernamen vorschlagen
   - `publish: false` ← als Draft, Editor prüft im Visual Editor
+  - `path`: Optional, z.B. `"en/products"` — legt Ordner automatisch an (wie `mkdir -p`). Alternativ `parentId` verwenden.
 
 ### Schritt 6: Bestätigung
 

@@ -66,6 +66,7 @@ Der Editor möchte eine bestehende Seite in eine andere Sprache übersetzen – 
 - **Parameter:**
   - `name`: Übersetzter Seitenname
   - `slug`: Lokalisierter Slug (z.B. `"en/home"` oder `"fr/produit"`)
+  - `path`: Sprachordner angeben, z.B. `"en"` oder `"fr"` — wird automatisch erstellt falls nötig (wie `mkdir -p`)
   - `sections`: Die übersetzten Sektionen aus Schritt 3
   - `uploadAssets: false` ← Bilder können vom Original wiederverwendet werden (gleiche Storyblok-URLs)
   - `publish: false` ← Draft für Review

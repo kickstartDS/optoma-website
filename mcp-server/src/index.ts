@@ -438,6 +438,10 @@ cannot be placed directly at the top level. Use \`generate_content\` to produce
 schema-valid content, or consult \`list_components\` to check the \`allowedIn\`
 field for each component.
 
+Supports automatic folder creation via the 'path' parameter: provide a
+forward-slash-separated folder path (e.g. 'en/services/consulting') and
+missing intermediate folders are created automatically, like mkdir -p.
+
 Use this instead of create_story when you have section content ready to go.`,
       inputSchema: {
         type: "object",
@@ -452,7 +456,15 @@ Use this instead of create_story when you have section content ready to go.`,
           },
           parentId: {
             type: "number",
-            description: "Parent folder ID (for nested content)",
+            description:
+              "Parent folder ID (for nested content). Mutually exclusive with 'path'.",
+          },
+          path: {
+            type: "string",
+            description:
+              "Folder path to create the page in (e.g. 'en/services/consulting'). " +
+              "Intermediate folders are created automatically like mkdir -p. " +
+              "Mutually exclusive with 'parentId'.",
           },
           sections: {
             type: "array",
@@ -569,7 +581,11 @@ The content should match the component schema for the content type.
 
 Content is validated against the Design System's JSON Schema before saving.
 Component nesting must comply with the schema's composition rules —
-sub-components can only appear inside their designated parent slots.`,
+sub-components can only appear inside their designated parent slots.
+
+Supports automatic folder creation via the 'path' parameter: provide a
+forward-slash-separated folder path (e.g. 'en/blog') and missing intermediate
+folders are created automatically, like mkdir -p.`,
       inputSchema: {
         type: "object",
         properties: {
@@ -583,7 +599,15 @@ sub-components can only appear inside their designated parent slots.`,
           },
           parentId: {
             type: "number",
-            description: "Parent folder ID (for nested content)",
+            description:
+              "Parent folder ID (for nested content). Mutually exclusive with 'path'.",
+          },
+          path: {
+            type: "string",
+            description:
+              "Folder path to create the story in (e.g. 'en/blog'). " +
+              "Intermediate folders are created automatically like mkdir -p. " +
+              "Mutually exclusive with 'parentId'.",
           },
           content: {
             type: "object",
@@ -961,6 +985,32 @@ Requires OpenAI API key.`,
         required: ["componentType", "prompt"],
       },
     },
+    {
+      name: "ensure_path",
+      description: `Ensure a folder path exists in Storyblok, creating missing folders.
+
+Works like \`mkdir -p\`: given a path like "en/services/consulting", it walks
+each segment, checks if the folder exists, and creates it if not. Returns
+the numeric ID of the deepest (last) folder.
+
+This is useful for sitemap migration workflows where you need to establish
+a folder hierarchy before creating pages. The returned folder ID can be
+passed as \`parentId\` to \`create_page_with_content\` or \`create_story\`.
+
+Idempotent: calling with an already-existing path simply returns its ID.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          path: {
+            type: "string",
+            description:
+              "Forward-slash-separated folder path (e.g. 'en/services/consulting'). " +
+              "Each segment becomes a folder. Missing intermediate folders are created automatically.",
+          },
+        },
+        required: ["path"],
+      },
+    },
   ];
 
   /**
@@ -1112,11 +1162,24 @@ Requires OpenAI API key.`,
 
         case "create_page_with_content": {
           const validated = schemas.createPageWithContent.parse(args);
+
+          // Resolve path to parentId if provided
+          let parentId = validated.parentId;
+          if (validated.path) {
+            if (validated.parentId) {
+              throw new ValidationError(
+                "'path' and 'parentId' are mutually exclusive. Provide one or the other."
+              );
+            }
+            parentId = await storyblokService.ensurePath(validated.path);
+          }
+
           const warnings = getCompositionalWarnings(
             validated.sections as Record<string, any>[]
           );
           const result = await storyblokService.createPageWithContent({
             ...validated,
+            parentId,
             skipValidation: validated.skipValidation,
             uploadAssets: validated.uploadAssets,
             assetFolderName: validated.assetFolderName,
@@ -1186,8 +1249,21 @@ Requires OpenAI API key.`,
 
         case "create_story": {
           const validated = schemas.createStory.parse(args);
+
+          // Resolve path to parentId if provided
+          let parentId = validated.parentId;
+          if (validated.path) {
+            if (validated.parentId) {
+              throw new ValidationError(
+                "'path' and 'parentId' are mutually exclusive. Provide one or the other."
+              );
+            }
+            parentId = await storyblokService.ensurePath(validated.path);
+          }
+
           const result = await storyblokService.createStory({
             ...validated,
+            parentId,
             skipValidation: validated.skipValidation,
           });
           return {
@@ -1790,6 +1866,28 @@ Respond with a JSON object:
                     designSystemProps: result.designSystemProps,
                     componentType: validated.componentType,
                     note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains Storyblok-ready content.",
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "ensure_path": {
+          const validated = schemas.ensurePath.parse(args);
+          const folderId = await storyblokService.ensurePath(validated.path);
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    message: `Path "${validated.path}" ensured successfully`,
+                    folderId,
+                    path: validated.path,
                   },
                   null,
                   2
