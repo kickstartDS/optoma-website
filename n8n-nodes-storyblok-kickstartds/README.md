@@ -1,15 +1,16 @@
 # n8n-nodes-storyblok-kickstartds
 
-n8n community node package for **Storyblok CMS** with **kickstartDS Design System** — AI-powered content generation and import.
+n8n community node package for **Storyblok CMS** with **kickstartDS Design System** — AI-powered content generation, story management, and space introspection.
 
-This package provides two operations as a single n8n node:
+This package provides **18 operations** across **3 resources** as a single n8n node:
 
-| Operation            | Description                                                                                                                                  |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Generate Content** | Generate structured content via OpenAI GPT-4 using JSON Schema — auto-derived from the Design System, preset, or custom                      |
-| **Import Content**   | Import generated content into a Storyblok story — replace a prompter component or insert at any position, with automatic Storyblok transform |
+| Resource       | Operations | Description                                              |
+| -------------- | ---------- | -------------------------------------------------------- |
+| **AI Content** | 5          | Generate, import, plan, and analyze AI-powered content   |
+| **Story**      | 6          | Full CRUD + search for Storyblok stories                 |
+| **Space**      | 7          | Scrape URLs, introspect components/assets/recipes/icons  |
 
-Together they enable fully automated content pipelines: trigger → generate → import → publish/notify.
+Together they enable fully automated content pipelines: analyze → plan → generate → create → publish.
 
 ## Installation
 
@@ -54,7 +55,9 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-storyblok-kickst
 | ----------- | --------------------------------------- |
 | **API Key** | Your OpenAI API key starting with `sk-` |
 
-> The OpenAI credential is only required for the **Generate Content** operation.
+> The OpenAI credential is only required for the **Generate**, **Generate Section**, and **Plan Page** operations.
+
+---
 
 ## Node Reference
 
@@ -62,33 +65,28 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-storyblok-kickst
 
 #### Operation: Generate
 
-Generate structured content using OpenAI with JSON Schema constraints.
+Generate structured content using OpenAI with JSON Schema constraints. Three schema modes are available:
 
 | Parameter            | Type   | Required    | Description                                                                                 |
 | -------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------- |
 | **System Prompt**    | String | ✅          | Sets the AI's persona, tone, and domain knowledge                                           |
 | **Prompt**           | String | ✅          | Describes what content to generate                                                          |
 | **Schema Mode**      | Select | ✅          | `Auto (Design System)` (default), `Preset`, or `Custom JSON Schema`                         |
-| **Component Type**   | Select | When Auto   | Component to generate (e.g. Hero, FAQ, Features). Omit for full-page generation             |
-| **Section Count**    | Number | When Auto   | Number of sections to generate (default: 3, for full-page mode)                             |
-| **Component Schema** | Select | When Preset | Choose from: Hero, FAQ, Testimonials, Features, CTA, Text, Blog Teaser, Stats, Image + Text |
+| **Component Type**   | String | When Auto   | Component to generate (e.g. `hero`, `faq`). Leave empty for full-page generation            |
+| **Section Count**    | Number | When Auto   | Number of sections to generate (default: 1, for full-page mode)                             |
+| **Component Schema** | Select | When Preset | Choose from built-in component schemas (Hero, FAQ, Testimonials, etc.)                      |
 | **Schema Name**      | String | When Custom | Identifier for the custom schema                                                            |
 | **JSON Schema**      | JSON   | When Custom | Full JSON Schema object for structured output                                               |
-| **Model**            | Select | ✅          | OpenAI model: `gpt-4o-2024-08-06` (default), `gpt-4o-mini`, `gpt-4-turbo`                   |
+| **Model**            | Select | ✅          | OpenAI model to use                                                                          |
 
 **Output (Auto mode):**
 
 ```json
 {
   "designSystemProps": { "headline": "...", "sub": "...", "text": "..." },
-  "storyblokContent": { "component": "hero", "headline": "...", "sub": "...", "text": "..." },
-  "rawResponse": { ... },
-  "_meta": {
-    "model": "gpt-4o-2024-08-06",
-    "schemaMode": "auto",
-    "schemaName": "page_schema",
-    "timestamp": "2026-02-07T10:00:00.000Z"
-  }
+  "storyblokContent": { "component": "hero", "headline": "..." },
+  "rawResponse": {},
+  "_meta": { "model": "gpt-4o-2024-08-06", "schemaMode": "auto", "schemaName": "page_schema", "timestamp": "..." }
 }
 ```
 
@@ -96,73 +94,287 @@ Generate structured content using OpenAI with JSON Schema constraints.
 
 ```json
 {
-  "generatedContent": { ... },
-  "_meta": {
-    "model": "gpt-4o-2024-08-06",
-    "schemaMode": "preset",
-    "schemaName": "hero_section",
-    "timestamp": "2026-02-07T10:00:00.000Z"
-  }
+  "generatedContent": {},
+  "_meta": { "model": "gpt-4o-2024-08-06", "schemaMode": "preset", "schemaName": "hero_section", "timestamp": "..." }
 }
 ```
 
 #### Operation: Import
 
-Import generated content into a Storyblok story. Two placement modes are available:
+Import generated content into a Storyblok story. Two placement modes:
 
-- **Replace Prompter Component** — finds a prompter component by its `_uid` and replaces it with the new sections
-- **Insert at Position** — inserts sections at a specific position (beginning, end, or index) without removing existing content
+- **Replace Prompter Component** — finds a prompter component by its `_uid` and replaces it
+- **Insert at Position** — inserts at beginning, end, or specific index
 
-| Parameter                  | Type    | Required                       | Description                                                                     |
-| -------------------------- | ------- | ------------------------------ | ------------------------------------------------------------------------------- |
-| **Story UID**              | String  | ✅                             | Numeric ID of the Storyblok story to update                                     |
-| **Placement Mode**         | Select  | ✅                             | `Replace Prompter Component` or `Insert at Position`                            |
-| **Prompter Component UID** | String  | When mode = Replace Prompter   | `_uid` of the prompter component to replace                                     |
-| **Insert Position**        | Select  | When mode = Insert at Position | `Beginning`, `End`, or `Specific Index`                                         |
-| **Index**                  | Number  | When position = Specific Index | Zero-based index where sections should be inserted (clamped to bounds)          |
-| **Page Content**           | JSON    | ✅                             | Object with `{ content: { section: [...] } }` structure                         |
-| **Skip Transform**         | Boolean | No                             | Skip automatic Storyblok flattening (for pre-formatted content). Default: false |
-| **Publish Immediately**    | Boolean | No                             | If true, publishes the story; if false (default), saves as draft                |
+| Parameter                  | Type    | Required           | Description                                                            |
+| -------------------------- | ------- | ------------------ | ---------------------------------------------------------------------- |
+| **Story UID**              | String  | ✅                 | Numeric ID of the Storyblok story                                      |
+| **Placement Mode**         | Select  | ✅                 | `Replace Prompter Component` or `Insert at Position`                   |
+| **Prompter Component UID** | String  | When Replace       | `_uid` of the prompter component to replace                            |
+| **Insert Position**        | Select  | When Insert        | `Beginning`, `End`, or `Specific Index`                                |
+| **Index**                  | Number  | When Specific Index| Zero-based insertion index                                             |
+| **Page Content**           | JSON    | ✅                 | Object with `{ content: { section: [...] } }` structure                |
+| **Content Type**           | String  | No                 | Content type (default: `page`)                                         |
+| **Skip Transform**         | Boolean | No                 | Skip automatic Storyblok flattening (default: false)                   |
+| **Publish Immediately**    | Boolean | No                 | Publish or save as draft (default: false)                              |
 
-**Output (Replace Prompter mode):**
+#### Operation: Generate Section
 
-```json
-{
-  "success": true,
-  "message": "Content imported as draft successfully",
-  "story": { ... },
-  "_meta": {
-    "storyUid": "123456",
-    "placementMode": "prompter",
-    "placementDetail": "replaced prompter abc-123",
-    "sectionsImported": 2,
-    "published": false,
-    "timestamp": "2026-02-07T10:00:05.000Z"
-  }
-}
-```
+Generate a single section with site-aware context injection. Automatically injects sub-component counts, transition context, and recipe best practices.
 
-**Output (Insert at Position mode):**
+| Parameter            | Type   | Required | Description                                                     |
+| -------------------- | ------ | -------- | --------------------------------------------------------------- |
+| **Component Type**   | String | ✅       | Section type to generate (`hero`, `features`, `faq`, `cta`)     |
+| **Prompt**           | String | ✅       | Content description for this section                            |
+| **System Prompt**    | String | No       | Override default content-writer system prompt                   |
+| **Previous Section** | String | No       | Component type before this one (for transition context)         |
+| **Next Section**     | String | No       | Component type after this one (for transition context)          |
+| **Content Type**     | String | No       | Content type (default: `page`)                                  |
+| **Model**            | String | No       | OpenAI model (default: `gpt-4o`)                                |
+
+**Output:**
 
 ```json
 {
-  "success": true,
-  "message": "Content imported as draft successfully",
-  "story": { ... },
-  "_meta": {
-    "storyUid": "123456",
-    "placementMode": "position",
-    "placementDetail": "appended at end",
-    "sectionsImported": 2,
-    "published": false,
-    "timestamp": "2026-02-07T10:00:05.000Z"
-  }
+  "designSystemProps": { "headline": "...", "text": "...", "feature": [] },
+  "storyblokContent": { "component": "features", "headline": "..." },
+  "_meta": { "model": "gpt-4o", "componentType": "features", "timestamp": "..." }
 }
 ```
+
+#### Operation: Plan Page
+
+AI-assisted page structure planning. Returns a recommended section sequence based on available components, recipes, and existing content patterns.
+
+| Parameter         | Type   | Required | Description                                                          |
+| ----------------- | ------ | -------- | -------------------------------------------------------------------- |
+| **Intent**        | String | ✅       | Page description (e.g. "Product landing page with pricing tiers")    |
+| **Section Count** | Number | No       | Target number of sections (0 = auto-determined)                      |
+| **Content Type**  | String | No       | Content type (default: `page`)                                       |
+| **Model**         | String | No       | OpenAI model (default: `gpt-4o`)                                     |
+
+**Output:**
+
+```json
+{
+  "plan": {
+    "sections": [
+      { "componentType": "hero", "intent": "Opening hero with...", "notes": "..." },
+      { "componentType": "features", "intent": "Feature grid showing...", "notes": "..." }
+    ]
+  },
+  "_meta": { "model": "gpt-4o", "intent": "...", "availableComponents": 15, "timestamp": "..." }
+}
+```
+
+#### Operation: Analyze Patterns
+
+Analyze content patterns across published stories. Returns component frequency, section sequences, sub-component counts, and page archetypes.
+
+| Parameter        | Type   | Required | Description                                           |
+| ---------------- | ------ | -------- | ----------------------------------------------------- |
+| **Content Type** | String | No       | Content type to analyze (default: `page`)             |
+| **Starts With**  | String | No       | Slug prefix filter (e.g. `en/`)                       |
+
+**Output:**
+
+```json
+{
+  "patterns": {
+    "totalStories": 42,
+    "componentFrequency": { "hero": 38, "features": 25, "cta": 20 },
+    "sectionSequences": [{ "pair": "hero→features", "count": 18 }],
+    "subComponentCounts": { "features.feature": { "min": 3, "max": 6, "avg": 4 } },
+    "pageArchetypes": [{ "name": "Landing Page", "pattern": ["hero", "features", "cta"] }]
+  },
+  "_meta": { "contentType": "page", "timestamp": "..." }
+}
+```
+
+---
+
+### Resource: Story
+
+#### Operation: List
+
+List stories with optional filtering and pagination.
+
+| Parameter        | Type   | Required | Description                                     |
+| ---------------- | ------ | -------- | ----------------------------------------------- |
+| **Content Type** | String | No       | Filter by content type (default: `page`)        |
+| **Starts With**  | String | No       | Filter by slug prefix (e.g. `en/`)              |
+| **Page**         | Number | No       | Page number (default: 1)                        |
+| **Per Page**     | Number | No       | Items per page, max 100 (default: 25)           |
+
+#### Operation: Get
+
+Retrieve a single story by slug, ID, or UUID.
+
+| Parameter            | Type   | Required | Description                                  |
+| -------------------- | ------ | -------- | -------------------------------------------- |
+| **Story Identifier** | String | ✅       | Slug, numeric ID, or UUID                    |
+| **Find By**          | Select | No       | `Slug` (default), `ID`, or `UUID`            |
+| **Version**          | Select | No       | `Published` (default) or `Draft`             |
+
+#### Operation: Create Page
+
+Create a new page pre-populated with section content. Supports automatic UID injection, schema validation, Storyblok flattening, folder creation, and asset upload.
+
+| Parameter             | Type    | Required    | Description                                                                 |
+| --------------------- | ------- | ----------- | --------------------------------------------------------------------------- |
+| **Name**              | String  | ✅          | Display name (shown in Storyblok dashboard)                                 |
+| **Slug**              | String  | ✅          | URL slug (must be unique within parent folder)                              |
+| **Sections**          | JSON    | ✅          | Array of section objects (typically from Generate operations)                |
+| **Content Type**      | String  | No          | Root content type (default: `page`)                                         |
+| **Path**              | String  | No          | Folder path with auto-creation (e.g. `en/services`). Mutually exclusive with Parent ID |
+| **Parent ID**         | Number  | No          | Numeric parent folder ID. Mutually exclusive with Path                      |
+| **Root Fields**       | JSON    | No          | Additional root-level fields (e.g. `{ "title": "..." }` for blog-post)     |
+| **Publish**           | Boolean | No          | Publish immediately (default: false)                                        |
+| **Upload Assets**     | Boolean | No          | Upload external images as Storyblok assets (default: false)                 |
+| **Asset Folder Name** | String  | When Upload | Storyblok asset folder name (default: `AI Generated`)                       |
+| **Skip Validation**   | Boolean | No          | Skip schema validation (default: false)                                     |
+| **Skip Transform**    | Boolean | No          | Skip Storyblok flattening (default: false)                                  |
+
+#### Operation: Update
+
+Update an existing story's content, name, or slug.
+
+| Parameter           | Type    | Required | Description                                        |
+| ------------------- | ------- | -------- | -------------------------------------------------- |
+| **Story ID**        | Number  | ✅       | Numeric story ID                                   |
+| **Content**         | JSON    | No       | Updated content object (replaces entire content)   |
+| **Name**            | String  | No       | Updated display name                               |
+| **Slug**            | String  | No       | Updated URL slug                                   |
+| **Publish**         | Boolean | No       | Publish after updating (default: false)            |
+| **Skip Validation** | Boolean | No       | Skip schema validation (default: false)            |
+
+#### Operation: Delete
+
+Permanently delete a story. This action cannot be undone.
+
+| Parameter    | Type   | Required | Description          |
+| ------------ | ------ | -------- | -------------------- |
+| **Story ID** | Number | ✅       | Numeric story ID     |
+
+#### Operation: Search
+
+Full-text search across all stories.
+
+| Parameter        | Type   | Required | Description                                     |
+| ---------------- | ------ | -------- | ----------------------------------------------- |
+| **Search Query** | String | ✅       | Full-text search query                          |
+| **Content Type** | String | No       | Filter results by content type                  |
+
+---
+
+### Resource: Space
+
+#### Operation: Scrape URL
+
+Fetch a web page and convert it to clean Markdown with extracted images. Useful for content migration.
+
+| Parameter        | Type   | Required | Description                                         |
+| ---------------- | ------ | -------- | --------------------------------------------------- |
+| **URL**          | String | ✅       | Web page URL to scrape                              |
+| **CSS Selector** | String | No       | CSS selector to extract a specific part of the page |
+
+**Output:**
+
+```json
+{
+  "title": "Page Title",
+  "url": "https://example.com/page",
+  "markdown": "# Heading\n\nParagraph text...",
+  "images": [{ "src": "https://...", "alt": "...", "context": "content" }]
+}
+```
+
+#### Operation: List Components
+
+List all component schemas defined in the Storyblok space. No parameters required.
+
+#### Operation: Get Component
+
+Get the full schema definition for a single component.
+
+| Parameter          | Type   | Required | Description                            |
+| ------------------ | ------ | -------- | -------------------------------------- |
+| **Component Name** | String | ✅       | Technical component name (e.g. `hero`) |
+
+#### Operation: List Assets
+
+List assets (images, files) in the Storyblok space.
+
+| Parameter     | Type   | Required | Description                                    |
+| ------------- | ------ | -------- | ---------------------------------------------- |
+| **Search**    | String | No       | Filter by filename                             |
+| **Folder ID** | Number | No       | Filter by asset folder ID                      |
+| **Page**      | Number | No       | Page number (default: 1)                       |
+| **Per Page**  | Number | No       | Items per page, max 100 (default: 25)          |
+
+#### Operation: List Recipes
+
+List curated section recipes, page templates, and anti-patterns for content planning. Includes 18 recipes, 13 page templates, and 10 anti-patterns.
+
+| Parameter                 | Type    | Required | Description                                          |
+| ------------------------- | ------- | -------- | ---------------------------------------------------- |
+| **Intent**                | String  | No       | Intent to prioritize relevant recipes                |
+| **Content Type**          | String  | No       | Filter recipes by content type                       |
+| **Include Live Patterns** | Boolean | No       | Merge live component usage patterns (default: false) |
+
+#### Operation: List Icons
+
+List all 28 available icon identifiers for component icon fields (e.g. `arrow-right`, `star`, `email`, `phone`). No parameters required.
+
+#### Operation: Ensure Path
+
+Create a folder hierarchy idempotently (like `mkdir -p`). Returns the folder ID of the deepest folder.
+
+| Parameter       | Type   | Required | Description                                           |
+| --------------- | ------ | -------- | ----------------------------------------------------- |
+| **Folder Path** | String | ✅       | Forward-slash path (e.g. `en/services/consulting`)    |
+
+---
+
+## Cross-Node Expression Examples
+
+### Plan → Generate Section → Create Page pipeline
+
+```
+# In Generate Section node, reference the Plan Page output:
+Component Type: {{ $('Plan Page').item.json.plan.sections[0].componentType }}
+Prompt:         {{ $('Plan Page').item.json.plan.sections[0].intent }}
+
+# In Create Page node, collect all generated sections:
+Sections:       {{ JSON.stringify($('Generate Section').all().map(i => i.json.storyblokContent)) }}
+```
+
+### Generate → Import pipeline
+
+```
+# In Import node, reference Generate output:
+Page Content:   {{ JSON.stringify({ content: { section: [$json.storyblokContent] } }) }}
+```
+
+### Scrape URL → Generate from scraped content
+
+```
+# In Generate node, use scraped markdown as context:
+Prompt:         Rewrite this content for our website: {{ $('Scrape URL').item.json.markdown }}
+```
+
+### List Stories → Loop → Update each
+
+```
+# In IF node after List Stories, check if more pages exist:
+{{ $json.total > ($json._meta.page * $json._meta.perPage) }}
+```
+
+---
 
 ## Preset Component Schemas
 
-The following kickstartDS component schemas are built in for the **Preset** schema mode. For most use cases, the **Auto (Design System)** mode is recommended instead — it dynamically derives schemas from the Design System schema for any content type, supporting all components and producing both Design System–shaped and Storyblok-ready output automatically. The node uses a `SchemaRegistry` to load schemas for all 5 content types (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`).
+The following kickstartDS component schemas are built in for the **Preset** schema mode. For most use cases, the **Auto (Design System)** mode is recommended — it dynamically derives schemas from the Design System schema for any content type, supporting all components. The node uses a `SchemaRegistry` to load schemas for all 5 content types (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`).
 
 | Preset           | Key Fields                                                               |
 | ---------------- | ------------------------------------------------------------------------ |
@@ -178,49 +390,43 @@ The following kickstartDS component schemas are built in for the **Preset** sche
 
 ## Example Workflows
 
-Three ready-to-import workflow templates are included in the `workflows/` directory:
+Nine ready-to-import workflow templates are included in the `workflows/` directory:
 
 ### Template 1: Manual → Generate Hero → Import
 
-Simple manual trigger flow. Good for testing and one-off content generation.
+Simple manual trigger. Good for testing and one-off content generation.
 
-### Template 2: Webhook → Generate Full Page → Import → Slack Notification
+### Template 2: Webhook → Generate Full Page → Import → Slack
 
-Receive a webhook with prompt + story/prompter UIDs, generate multi-section page content, import it, and send a Slack notification.
+Webhook-triggered full-page generation with Slack notification.
 
-**Webhook payload:**
+### Template 3: Schedule → Batch Blog Teasers → Import
 
-```json
-{
-  "prompt": "Create a landing page about our new AI product",
-  "storyUid": "123456",
-  "prompterUid": "abc-123-def-456"
-}
-```
+Weekly batch generation of blog teaser content.
 
-### Template 3: Schedule → Batch Generate Blog Teasers → Import
+### Template 4: Weekly Content Audit
 
-Weekly scheduled workflow that fetches the latest blog posts and generates teaser content for each using `gpt-4o-mini` for cost efficiency.
+Scheduled audit of all stories — checks for missing CTAs, sparse sections, and structural issues using Analyze Patterns.
 
-## Data Flow Between Nodes
+### Template 5: Blog Autopilot (RSS → Generate → Create)
 
-The output of **Generate Content** feeds directly into **Import Content**:
+Monitors an RSS feed, scrapes each new article, generates a blog post, and creates it in Storyblok.
 
-```
-Generate Content → $json.generatedContent → Import Content (page parameter)
-```
+### Template 6: Content Migration (Scrape → Generate → Create)
 
-**Example n8n expression for the page parameter:**
+Scrapes pages from an external website, generates Design System–compatible content, and creates pages with folder structure.
 
-```
-={{ JSON.stringify({ content: { section: [{ component: 'hero', ...($json.generatedContent) }] } }) }}
-```
+### Template 7: SEO Fix Pipeline
 
-Or, if the generated content is already structured with multiple sections:
+Lists all pages, identifies those missing meta descriptions or with short content, generates improvements, and updates them.
 
-```
-={{ JSON.stringify({ content: { section: $json.generatedContent.sections } }) }}
-```
+### Template 8: Section-by-Section Page Generation
+
+Full guided generation pipeline: Analyze Patterns → Plan Page → Generate Section (loop) → Create Page.
+
+### Template 9: Broken Asset Detection
+
+Lists all assets and stories, cross-references to find unused or broken asset references.
 
 ## Error Handling
 
@@ -228,8 +434,10 @@ Or, if the generated content is already structured with multiple sections:
 | ---------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `OpenAI content generation failed` | Invalid API key, rate limit, or model error       | Check OpenAI credentials and quota                                                                                                      |
 | `Storyblok import failed`          | Invalid story UID or API permissions              | Verify the story exists and tokens have write access                                                                                    |
-| `Prompter component not found`     | The `_uid` doesn't match any section in the story | The error message lists all available section UIDs for reference. Or switch to **Insert at Position** mode if the story has no prompter |
+| `Prompter component not found`     | The `_uid` doesn't match any section in the story | The error message lists all available section UIDs. Or switch to **Insert at Position** mode                                            |
 | `Invalid JSON in custom schema`    | Malformed JSON Schema input                       | Validate your JSON Schema syntax                                                                                                        |
+| `Failed to list stories`           | Invalid API token or network error                | Verify Storyblok credentials and connectivity                                                                                           |
+| `Validation error`                 | Content doesn't match Design System schema        | Check component nesting rules, or use Skip Validation as escape hatch                                                                  |
 
 All operations support n8n's built-in **Retry on Fail** setting for transient errors.
 
@@ -269,19 +477,19 @@ n8n start
 
 ## Related
 
-- [Shared Service Library](../shared/storyblok-services/) — `@kickstartds/storyblok-services` — shared Storyblok, OpenAI, schema preparation, and content transformation logic consumed by this package, the MCP server, and the Next.js API routes
-- [Storyblok MCP Server](../mcp-server/) — The MCP server that this n8n node is based on (deployable to the cloud via Kamal with Streamable HTTP transport)
+- [Shared Service Library](../shared/storyblok-services/) — `@kickstartds/storyblok-services` — shared Storyblok, OpenAI, schema preparation, content transformation, pattern analysis, and validation logic consumed by this package, the MCP server, and the Next.js API routes
+- [Storyblok MCP Server](../mcp-server/) — The MCP server that exposes the same capabilities via Model Context Protocol (deployable via Kamal with Streamable HTTP transport)
 - [kickstartDS Design System](https://www.kickstartds.com/) — The component library powering the content schemas
 - [n8n Community Nodes docs](https://docs.n8n.io/integrations/community-nodes/) — How to install and use community nodes
 
 ## Key Dependencies
 
-| Package                           | Version   | Purpose                                     |
-| --------------------------------- | --------- | ------------------------------------------- |
-| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI service functions |
-| `openai`                          | `^6.18.0` | OpenAI API client                           |
-| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management API client             |
-| `n8n-workflow`                    | `^1.0.0`  | n8n workflow types                          |
+| Package                           | Version   | Purpose                                              |
+| --------------------------------- | --------- | ---------------------------------------------------- |
+| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI + validation services      |
+| `openai`                          | `^6.18.0` | OpenAI API client                                    |
+| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management + Content API client            |
+| `n8n-workflow`                    | `^1.0.0`  | n8n workflow types                                   |
 
 ## License
 

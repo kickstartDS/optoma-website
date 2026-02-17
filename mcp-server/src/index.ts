@@ -187,7 +187,7 @@ let cachedPatterns: ContentPatternAnalysis | null = null;
 async function warmPatternCache(): Promise<ContentPatternAnalysis> {
   console.error("[MCP] Warming content pattern cache...");
   cachedPatterns = await analyzeContentPatterns(
-    storyblokService,
+    storyblokService.getContentClient(),
     PAGE_VALIDATION_RULES,
     { contentType: "page" }
   );
@@ -1722,7 +1722,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
               ? registry.get(contentTypeForAnalysis).rules
               : PAGE_VALIDATION_RULES;
             analysis = await analyzeContentPatterns(
-              storyblokService,
+              storyblokService.getContentClient(),
               rules,
               validated
             );

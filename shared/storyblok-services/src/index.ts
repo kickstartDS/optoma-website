@@ -13,6 +13,11 @@ export type {
   GenerateContentOptions,
   ImportByPrompterOptions,
   ImportAtPositionOptions,
+  ListStoriesOptions,
+  CreateStoryOptions,
+  CreatePageWithContentOptions,
+  UpdateStoryOptions,
+  ListAssetsOptions,
 } from "./types.js";
 
 export {
@@ -110,3 +115,36 @@ export {
   ROOT_CONTENT_TYPES,
 } from "./registry.js";
 export type { ContentTypeEntry, RootContentType } from "./registry.js";
+
+// ─── Story CRUD & search ────────────────────────────────────────────
+export {
+  createContentClient,
+  listStories,
+  searchStories,
+  findBySlug,
+  createStory,
+  createPageWithContent,
+  updateStory,
+  deleteStory,
+  ensurePath,
+  ensureUids,
+} from "./stories.js";
+
+// ─── Component & asset introspection ────────────────────────────────
+export { listComponents, getComponent, listAssets } from "./components.js";
+
+// ─── URL scraping ───────────────────────────────────────────────────
+export { scrapeUrl, pickBestFromSrcset } from "./scrape.js";
+export type {
+  ScrapedImage,
+  ScrapeUrlOptions,
+  ScrapeUrlResult,
+} from "./scrape.js";
+
+// ─── Content pattern analysis ───────────────────────────────────────
+export { analyzeContentPatterns } from "./patterns.js";
+export type {
+  ContentPatternAnalysis,
+  SubComponentStats,
+  AnalyzeContentPatternsOptions,
+} from "./patterns.js";

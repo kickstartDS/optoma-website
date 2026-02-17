@@ -22,11 +22,38 @@ import {
   validateSections,
   formatValidationErrors,
   createRegistryFromSchemaDir,
+  // Story CRUD + search shared functions
+  createContentClient,
+  listStories,
+  searchStories,
+  findBySlug,
+  createStory,
+  createPageWithContent,
+  updateStory,
+  deleteStory,
+  ensurePath,
+  ensureUids,
+  // Component & asset introspection shared functions
+  listComponents,
+  getComponent,
+  listAssets,
+  // Scraping shared functions
+  scrapeUrl,
+  // Content pattern analysis
+  analyzeContentPatterns,
   type StoryblokCredentials,
   type OpenAiCredentials,
   type PrepareSchemaOptions,
   type ValidationRules,
   type SchemaRegistry,
+  type ListStoriesOptions,
+  type CreateStoryOptions,
+  type CreatePageWithContentOptions,
+  type UpdateStoryOptions,
+  type ListAssetsOptions,
+  type ContentPatternAnalysis,
+  type SubComponentStats,
+  type AnalyzeContentPatternsOptions,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
 import * as path from "path";
@@ -45,9 +72,35 @@ export {
   processOpenAiResponse,
   processForStoryblok,
   generateAndPrepareContent,
+  // Story CRUD + search
+  createContentClient,
+  listStories,
+  searchStories,
+  findBySlug,
+  createStory,
+  createPageWithContent,
+  updateStory,
+  deleteStory,
+  ensurePath,
+  ensureUids,
+  // Component & asset introspection
+  listComponents,
+  getComponent,
+  listAssets,
+  // Scraping
+  scrapeUrl,
+  // Content pattern analysis
+  analyzeContentPatterns,
   type StoryblokCredentials,
   type OpenAiCredentials,
   type PrepareSchemaOptions,
+  type ListStoriesOptions,
+  type CreateStoryOptions,
+  type CreatePageWithContentOptions,
+  type UpdateStoryOptions,
+  type ListAssetsOptions,
+  type ContentPatternAnalysis,
+  type SubComponentStats,
 };
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";

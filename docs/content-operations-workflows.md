@@ -2,6 +2,8 @@
 
 This document describes automation workflows that editors can build using **n8n** connected to the **Storyblok MCP Server** via an MCP client node. Each workflow combines MCP tools with external n8n nodes to automate content production, quality assurance, and housekeeping.
 
+> **💡 Native n8n Node Available:** All MCP tools referenced in these workflows are also available as **native n8n operations** via the [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/) community node package. The native node provides 18 operations across 3 resources (AI Content, Story, Space) and is the recommended approach — no MCP client node needed. See the [n8n node README](../n8n-nodes-storyblok-kickstartds/README.md) for the full operation reference and ready-to-import workflow templates (`workflows/template-*.json`).
+
 ---
 
 ## 🔴 Höchste Priorität: Content-Produktion automatisieren

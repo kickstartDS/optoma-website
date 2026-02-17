@@ -168,3 +168,91 @@ export class ContentGenerationError extends ServiceError {
     this.name = "ContentGenerationError";
   }
 }
+
+// ─── Story CRUD option types ──────────────────────────────────────────
+
+/**
+ * Options for listing stories.
+ */
+export interface ListStoriesOptions {
+  /** Filter by slug prefix (e.g. `"en/blog/"`). */
+  startsWith?: string;
+  /** Filter by content type (e.g. `"page"`, `"blog-post"`). */
+  contentType?: string;
+  /** Pagination page number (1-based). @default 1 */
+  page?: number;
+  /** Results per page. @default 25 */
+  perPage?: number;
+}
+
+/**
+ * Options for creating a story.
+ */
+export interface CreateStoryOptions {
+  /** Display name. */
+  name: string;
+  /** URL slug. */
+  slug: string;
+  /** Parent folder ID for nested content. */
+  parentId?: number;
+  /** Content object with component data. */
+  content: Record<string, unknown>;
+  /** Create as a folder instead of a story. @default false */
+  isFolder?: boolean;
+  /** Skip Design System schema validation. @default false */
+  skipValidation?: boolean;
+}
+
+/**
+ * Options for creating a page pre-populated with section content.
+ */
+export interface CreatePageWithContentOptions {
+  /** Display name. */
+  name: string;
+  /** URL slug. */
+  slug: string;
+  /** Parent folder ID (mutually exclusive with `path`). */
+  parentId?: number;
+  /** Array of section objects (Design System format). */
+  sections: Record<string, unknown>[];
+  /** Root-level fields for flat content types (event-detail, event-list). */
+  rootFields?: Record<string, unknown>;
+  /** Publish immediately after creation. @default false */
+  publish?: boolean;
+  /** Download external images and upload to Storyblok. @default false */
+  uploadAssets?: boolean;
+  /** Storyblok asset folder name. @default "AI Generated" */
+  assetFolderName?: string;
+  /** Skip Design System schema validation. @default false */
+  skipValidation?: boolean;
+}
+
+/**
+ * Options for updating an existing story.
+ */
+export interface UpdateStoryOptions {
+  /** Updated content object (replaces entire content). */
+  content?: Record<string, unknown>;
+  /** Updated display name. */
+  name?: string;
+  /** Updated URL slug. */
+  slug?: string;
+  /** Publish after update. @default false */
+  publish?: boolean;
+  /** Skip Design System schema validation. @default false */
+  skipValidation?: boolean;
+}
+
+/**
+ * Options for listing assets.
+ */
+export interface ListAssetsOptions {
+  /** Pagination page number (1-based). @default 1 */
+  page?: number;
+  /** Results per page. @default 25 */
+  perPage?: number;
+  /** Filter assets by filename. */
+  search?: string;
+  /** Filter by asset folder ID. */
+  inFolder?: number;
+}

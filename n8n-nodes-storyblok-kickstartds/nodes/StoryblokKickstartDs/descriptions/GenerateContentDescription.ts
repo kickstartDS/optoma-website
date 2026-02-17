@@ -215,22 +215,22 @@ export const generateContentFields: INodeProperties[] = [
     type: "options",
     options: [
       {
+        name: "GPT-4o (Latest)",
+        value: "gpt-4o",
+        description: "Best quality, supports structured output",
+      },
+      {
         name: "GPT-4o (2024-08-06)",
         value: "gpt-4o-2024-08-06",
-        description: "Best quality, supports structured output",
+        description: "Stable snapshot with structured output support",
       },
       {
         name: "GPT-4o Mini",
         value: "gpt-4o-mini",
         description: "Faster and cheaper, good for simpler content",
       },
-      {
-        name: "GPT-4 Turbo",
-        value: "gpt-4-turbo",
-        description: "Previous generation, high quality",
-      },
     ],
-    default: "gpt-4o-2024-08-06",
+    default: "gpt-4o",
     description: "OpenAI model to use for content generation",
     displayOptions: {
       show: {

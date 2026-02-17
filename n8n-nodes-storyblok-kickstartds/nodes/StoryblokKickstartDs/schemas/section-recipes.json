@@ -1,0 +1,289 @@
+{
+  "recipes": [
+    {
+      "name": "Hero with CTA",
+      "intent": "Landing page opener, product launch, campaign entry point",
+      "components": ["hero"],
+      "subComponents": { "buttons": [1, 2] },
+      "notes": "Use buttons sub-component for primary + secondary CTA. Set a compelling image or video. Write a concise, action-oriented headline.",
+      "frequency": "very-common",
+      "goodFollowUps": ["features", "split", "stats", "logos-companies"]
+    },
+    {
+      "name": "Video Opener",
+      "intent": "Video-first landing page, brand storytelling, immersive entry",
+      "components": ["video-curtain"],
+      "subComponents": { "buttons": [1, 2] },
+      "notes": "Full-width video background with overlay text and CTA. Use sparingly — one per page max. Alternative to hero for video-heavy pages.",
+      "frequency": "occasional",
+      "goodFollowUps": ["features", "split", "stats"]
+    },
+    {
+      "name": "Feature Showcase",
+      "intent": "Present product capabilities, service offerings, key benefits",
+      "components": ["features"],
+      "subComponents": { "feature": [3, 4] },
+      "notes": "3-4 feature items with icons. Keep text concise (1-2 sentences per feature). Use consistent icon style throughout. Icons must come from list_icons.",
+      "frequency": "very-common",
+      "goodFollowUps": ["testimonials", "cta", "split", "stats"]
+    },
+    {
+      "name": "Content Split",
+      "intent": "Side-by-side detail: image + text, before/after, feature deep-dive",
+      "components": ["split"],
+      "notes": "Visual content (image, video) on one side, text + buttons on the other. When using multiple splits on a page, alternate the image side for visual rhythm.",
+      "frequency": "common",
+      "goodFollowUps": ["features", "testimonials", "cta", "faq"]
+    },
+    {
+      "name": "Social Proof Block",
+      "intent": "Build trust, show customer validation, increase conversion confidence",
+      "components": ["testimonials"],
+      "subComponents": { "testimonial": [2, 3] },
+      "notes": "Include real names, job titles, and company names. Photos greatly increase trust. Keep quotes concise and specific — avoid vague praise.",
+      "frequency": "common",
+      "goodFollowUps": ["cta", "stats", "faq"]
+    },
+    {
+      "name": "Statistics Display",
+      "intent": "Data-driven persuasion, showcase achievements, establish credibility",
+      "components": ["stats"],
+      "subComponents": { "stat": [3, 4] },
+      "notes": "3-4 stat items with large numbers. Use specific numbers (not rounded). Place before a CTA to establish credibility first. Each stat needs a label and value.",
+      "frequency": "common",
+      "goodFollowUps": ["cta", "testimonials"]
+    },
+    {
+      "name": "Call to Action",
+      "intent": "Conversion point, sign-up prompt, contact invitation",
+      "components": ["cta"],
+      "subComponents": { "buttons": [1, 2] },
+      "notes": "Clear, action-oriented headline. Primary + optional secondary button. Usually the last section on a conversion-oriented page. Keep text focused on a single action.",
+      "frequency": "very-common",
+      "goodFollowUps": []
+    },
+    {
+      "name": "FAQ Section",
+      "intent": "Answer common questions, reduce support load, boost SEO, address objections",
+      "components": ["faq"],
+      "subComponents": { "questions": [5, 8] },
+      "notes": "5-8 questions is ideal. Keep answers concise but complete. Order questions by importance/frequency. Great for addressing purchase objections.",
+      "frequency": "common",
+      "goodFollowUps": ["cta", "contact"]
+    },
+    {
+      "name": "Logo Wall",
+      "intent": "Client logos, partner brands, trust signals, social proof",
+      "components": ["logos-companies"],
+      "subComponents": { "logo": [5, 8] },
+      "notes": "Minimum 5 logos for visual impact. Works best after hero or before CTA. All logos should have similar visual weight (size, contrast).",
+      "frequency": "occasional",
+      "goodFollowUps": ["testimonials", "features", "cta"]
+    },
+    {
+      "name": "Visual Portfolio / Team Grid",
+      "intent": "Mosaic gallery, team members, project showcase, case studies",
+      "components": ["mosaic"],
+      "subComponents": { "tile": [4, 6] },
+      "notes": "4-6 tiles with images. Each tile can have its own link. Use consistent image aspect ratios. Good for visual-first content.",
+      "frequency": "occasional",
+      "goodFollowUps": ["cta", "testimonials", "contact"]
+    },
+    {
+      "name": "Blog Teaser Group",
+      "intent": "Cross-promote articles, content hub section, related reading",
+      "components": ["blog-teaser", "blog-teaser", "blog-teaser"],
+      "notes": "Always group 3 blog-teasers per section for visual balance. Each teaser must have a link_url — without it, teasers create dead-end content. Include tags and author info.",
+      "frequency": "occasional",
+      "goodFollowUps": ["cta"]
+    },
+    {
+      "name": "Contact Information",
+      "intent": "Contact details, office locations, get in touch",
+      "components": ["contact"],
+      "notes": "Include relevant contact channels (email, phone, address). Can be combined with a contact form. Use appropriate icons from list_icons.",
+      "frequency": "occasional",
+      "goodFollowUps": ["faq", "cta"]
+    },
+    {
+      "name": "Content Slider",
+      "intent": "Showcase multiple items in limited space, rotating testimonials, image gallery",
+      "components": ["slider"],
+      "notes": "Minimum 3 slides for meaningful navigation. The slider accepts full components in its slots — use it to rotate through splits, features, or other content sections.",
+      "frequency": "occasional",
+      "goodFollowUps": ["cta", "features"]
+    },
+    {
+      "name": "Section Divider",
+      "intent": "Visual break between thematic blocks, transition marker",
+      "components": ["divider"],
+      "notes": "Use sparingly — only between major thematic shifts. Do not use between every section. Consider using section background colors instead for visual separation.",
+      "frequency": "rare",
+      "goodFollowUps": []
+    },
+    {
+      "name": "Blog Post Hero + Content",
+      "contentType": "blog-post",
+      "intent": "Blog article opener with featured image and article body",
+      "components": ["hero", "text"],
+      "notes": "Blog posts use the head object for title/date/author metadata. The section array contains the article body sections. Start with a compelling hero, then use text/split sections for the article content.",
+      "frequency": "very-common",
+      "goodFollowUps": ["split", "faq", "cta"]
+    },
+    {
+      "name": "Blog Post CTA + Related",
+      "contentType": "blog-post",
+      "intent": "End of blog article with conversion point and related reading",
+      "components": ["cta", "blog-teaser"],
+      "notes": "Blog posts should end with a CTA section and optionally show related articles via blog-teaser. The aside and cta root objects provide sidebar and bottom-of-article CTAs.",
+      "frequency": "common",
+      "goodFollowUps": []
+    },
+    {
+      "name": "Event Detail Layout",
+      "contentType": "event-detail",
+      "intent": "Event page with details, images, and registration",
+      "components": [],
+      "notes": "Event-detail is a flat (Tier 2) content type — it uses root scalar and array fields (title, description, categories, locations, download, images, button) instead of sections. Populate title, intro, description first, then add categories, locations, and images arrays. Use button for registration/RSVP link.",
+      "frequency": "common",
+      "goodFollowUps": []
+    },
+    {
+      "name": "Event List Layout",
+      "contentType": "event-list",
+      "intent": "Event listing page with filterable events",
+      "components": [],
+      "notes": "Event-list is a flat (Tier 2) content type — it has an events array and a filter object at the root level. Populate the events array with event items and configure the filter object for filtering capabilities.",
+      "frequency": "common",
+      "goodFollowUps": []
+    }
+  ],
+  "pageTemplates": [
+    {
+      "name": "Product Landing Page",
+      "sequence": ["hero", "features", "testimonials", "stats", "cta"],
+      "intent": "Convert visitors for a product or service",
+      "notes": "Classic conversion-optimized layout. Hero grabs attention, features explain value, testimonials build trust, stats prove impact, CTA converts."
+    },
+    {
+      "name": "Company About Page",
+      "sequence": ["hero", "split", "mosaic", "testimonials", "cta"],
+      "intent": "Tell the company story with visual elements",
+      "notes": "Start with company mission (hero), detail the story (split), show the team (mosaic), prove impact (testimonials), invite engagement (CTA)."
+    },
+    {
+      "name": "Service Detail Page",
+      "sequence": ["hero", "features", "faq", "testimonials", "cta"],
+      "intent": "Explain a service, address objections, build trust",
+      "notes": "Hero introduces service, features list capabilities, FAQ addresses objections, testimonials validate, CTA converts."
+    },
+    {
+      "name": "Blog / Content Hub",
+      "sequence": ["hero", "blog-teaser×3", "blog-teaser×3", "cta"],
+      "intent": "Showcase articles and drive engagement",
+      "notes": "Hero sets the theme, blog teasers showcase recent/featured articles, CTA encourages subscription or further reading."
+    },
+    {
+      "name": "Minimal Landing Page",
+      "sequence": ["hero", "cta"],
+      "intent": "Single-purpose conversion page, event registration, waitlist",
+      "notes": "Maximum focus on one action. No distractions. Hero + CTA only."
+    },
+    {
+      "name": "Trust-Heavy Landing Page",
+      "sequence": [
+        "hero",
+        "logos-companies",
+        "features",
+        "testimonials",
+        "stats",
+        "cta"
+      ],
+      "intent": "Enterprise sales, high-value conversion with maximum social proof",
+      "notes": "Logos immediately after hero for instant credibility. Layer multiple proof types before the CTA."
+    },
+    {
+      "name": "Knowledge Base / Support",
+      "sequence": ["hero", "faq", "faq", "contact"],
+      "intent": "Self-service support, help center, knowledge base",
+      "notes": "Multiple FAQ sections can be grouped by topic. End with contact for unresolved questions."
+    },
+    {
+      "name": "Blog Post - Standard Article",
+      "contentType": "blog-post",
+      "sequence": ["hero", "text", "split", "cta"],
+      "intent": "Standard blog article with visual content and conversion",
+      "notes": "Use the head root object for title/date/author metadata, aside for sidebar content, and seo for meta tags. The section array contains the article body. End with cta for newsletter signup or related action."
+    },
+    {
+      "name": "Blog Post - Tutorial / How-To",
+      "contentType": "blog-post",
+      "sequence": ["hero", "text", "text", "faq", "cta"],
+      "intent": "Step-by-step tutorial with FAQ for common issues",
+      "notes": "Multiple text sections for step-by-step content. FAQ section for troubleshooting. Blog posts also have a content root scalar for markdown body text."
+    },
+    {
+      "name": "Blog Overview - Standard",
+      "contentType": "blog-overview",
+      "sequence": ["hero"],
+      "intent": "Blog listing page with featured and categorized posts",
+      "notes": "Blog overview uses root objects latest, list, and more for article groupings. The section array is for additional page sections. Use latestTitle, listTitle, moreTitle scalars for section headings."
+    },
+    {
+      "name": "Event Detail - Standard",
+      "contentType": "event-detail",
+      "sequence": [],
+      "intent": "Event page with all relevant event information",
+      "notes": "Flat content type — no sections. Set title, intro, description scalars. Populate categories, locations, download, images arrays. Use button object for registration link."
+    },
+    {
+      "name": "Event List - Standard",
+      "contentType": "event-list",
+      "sequence": [],
+      "intent": "Filterable list of events",
+      "notes": "Flat content type — no sections. Populate events array with event items. Configure filter object for filtering UI."
+    }
+  ],
+  "antiPatterns": [
+    {
+      "rule": "Never place two hero or video-curtain sections on the same page",
+      "reason": "Confuses the visual hierarchy — a page should have exactly one opening section"
+    },
+    {
+      "rule": "Avoid consecutive text-heavy sections without visual breaks",
+      "reason": "Creates a wall of text — alternate between text and visual components"
+    },
+    {
+      "rule": "Don't use slider with fewer than 3 items",
+      "reason": "Navigation controls are confusing with too few items to slide through"
+    },
+    {
+      "rule": "blog-teaser without link_url creates dead-end content",
+      "reason": "Users expect to click through to the full article"
+    },
+    {
+      "rule": "stats with fewer than 3 stat items looks sparse",
+      "reason": "The visual grid needs at least 3 items to look intentional"
+    },
+    {
+      "rule": "logos-companies with fewer than 4 logos looks empty",
+      "reason": "A logo wall needs density to convey widespread adoption"
+    },
+    {
+      "rule": "Don't repeat the same component type in adjacent sections (except blog-teaser groups)",
+      "reason": "Creates visual monotony — vary the layout between sections"
+    },
+    {
+      "rule": "Always end a conversion-oriented page with a cta section",
+      "reason": "Give visitors a clear next action at the bottom of the page"
+    },
+    {
+      "rule": "Don't use features with fewer than 2 feature items",
+      "reason": "A single feature looks like a mistake — use split instead for a single feature deep-dive"
+    },
+    {
+      "rule": "Don't use testimonials with only 1 testimonial",
+      "reason": "Multiple voices are more convincing — use at least 2 testimonials"
+    }
+  ]
+}

@@ -654,7 +654,7 @@ mcp-server/
 └── README.md
 ```
 
-Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), and the high-level pipeline (`generateAndPrepareContent`). Content pattern analysis (`analyzeContentPatterns`) runs in `services.ts` using paginated story fetching; results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 
@@ -722,11 +722,15 @@ Error codes:
 
 For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/).
 
-It provides the same `generate_content` (with auto-schema derivation) and `import_content` (with automatic Storyblok transform) capabilities as n8n workflow nodes, enabling pipelines like:
+It provides **18 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
 
-- **Webhook → Generate → Import → Slack** — trigger content generation from external events
-- **Schedule → Batch Generate → Import** — automated recurring content creation
-- **Manual trigger → Generate hero/FAQ/features → Import as draft** — one-click content scaffolding
+| Resource       | Operations | Covers MCP tools                                                                                             |
+| -------------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
+| **AI Content** | 5          | `generate_content`, `import_content`, `generate_section`, `plan_page`, `analyze_content_patterns`            |
+| **Story**      | 6          | `list_stories`, `get_story`, `create_page_with_content`, `update_story`, `delete_story`, `search_content`    |
+| **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path` |
+
+Both packages consume the same shared service library (`@kickstartds/storyblok-services`), so validation, schema preparation, and content transformation behave identically. Nine ready-to-import workflow templates are included.
 
 ## License
 

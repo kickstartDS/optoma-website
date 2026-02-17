@@ -10,6 +10,8 @@ import {
 
 import { generateContentFields } from "./descriptions/GenerateContentDescription";
 import { importContentFields } from "./descriptions/ImportContentDescription";
+import { storyOperations, storyFields } from "./descriptions/StoryDescription";
+import { spaceOperations, spaceFields } from "./descriptions/SpaceDescription";
 import {
   getStoryblokManagementClient,
   getOpenAiClient,
@@ -22,6 +24,23 @@ import {
   StoryblokCredentials,
   OpenAiCredentials,
   registry,
+  // Story CRUD shared functions
+  createContentClient,
+  listStories,
+  searchStories,
+  createPageWithContent,
+  updateStory,
+  deleteStory,
+  ensurePath,
+  // Space introspection shared functions
+  scrapeUrl,
+  listComponents,
+  getComponent,
+  listAssets,
+  // Content pattern analysis
+  analyzeContentPatterns,
+  type ContentPatternAnalysis,
+  type SubComponentStats,
 } from "./GenericFunctions";
 
 // Backward-compatible alias via registry
@@ -34,10 +53,9 @@ export class StoryblokKickstartDs implements INodeType {
     icon: "file:storyblokKickstartDs.svg",
     group: ["transform"],
     version: 1,
-    subtitle:
-      '={{$parameter["operation"] === "generate" ? "Generate Content" : "Import Content"}}',
+    subtitle: '={{$parameter["resource"] + " / " + $parameter["operation"]}}',
     description:
-      "Generate AI-powered content and import it into Storyblok stories using kickstartDS Design System components",
+      "Manage Storyblok stories and generate AI-powered content using kickstartDS Design System components",
     defaults: {
       name: "Storyblok kickstartDS",
     },
@@ -53,7 +71,8 @@ export class StoryblokKickstartDs implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["generate"],
+            resource: ["aiContent"],
+            operation: ["generate", "generateSection", "planPage"],
           },
         },
       },
@@ -71,6 +90,18 @@ export class StoryblokKickstartDs implements INodeType {
             value: "aiContent",
             description:
               "Generate and import AI-powered content for kickstartDS components",
+          },
+          {
+            name: "Story",
+            value: "story",
+            description:
+              "CRUD operations for Storyblok stories — list, get, create, update, delete, search",
+          },
+          {
+            name: "Space",
+            value: "space",
+            description:
+              "Space-level utilities — scrape URLs, introspect components/assets/recipes/icons, manage folder paths",
           },
         ],
         default: "aiContent",
@@ -97,6 +128,27 @@ export class StoryblokKickstartDs implements INodeType {
               "Import generated content into a Storyblok story by replacing a prompter component",
             action: "Import content into a Storyblok story",
           },
+          {
+            name: "Generate Section",
+            value: "generateSection",
+            description:
+              "Generate a single section with site-aware context injection (sub-component counts, transitions, recipes)",
+            action: "Generate a single section with AI",
+          },
+          {
+            name: "Plan Page",
+            value: "planPage",
+            description:
+              "AI-assisted page structure planning — recommends a section sequence based on intent and existing patterns",
+            action: "Plan a page structure with AI",
+          },
+          {
+            name: "Analyze Patterns",
+            value: "analyzePatterns",
+            description:
+              "Analyze content patterns across published stories — component frequency, section sequences, page archetypes",
+            action: "Analyze content patterns",
+          },
         ],
         default: "generate",
         displayOptions: {
@@ -109,6 +161,213 @@ export class StoryblokKickstartDs implements INodeType {
       // ── Spread operation-specific fields ──────────────────────
       ...generateContentFields,
       ...importContentFields,
+
+      // ── Generate Section fields ───────────────────────────────
+      {
+        displayName: "Component Type",
+        name: "sectionComponentType",
+        type: "string",
+        default: "",
+        required: true,
+        description:
+          'The section component type to generate (e.g. "hero", "features", "faq", "cta")',
+        placeholder: "hero",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
+        displayName: "Prompt",
+        name: "sectionPrompt",
+        type: "string",
+        typeOptions: { rows: 4 },
+        default: "",
+        required: true,
+        description: "Content description for this section",
+        placeholder:
+          "A hero section for our AI-powered analytics platform, highlighting real-time insights",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
+        displayName: "System Prompt",
+        name: "sectionSystem",
+        type: "string",
+        typeOptions: { rows: 3 },
+        default: "",
+        description:
+          "Optional system prompt override. If empty, a default content-writer system prompt is used.",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
+        displayName: "Previous Section",
+        name: "sectionPrevious",
+        type: "string",
+        default: "",
+        description:
+          "Component type of the section before this one (for transition context)",
+        placeholder: "hero",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
+        displayName: "Next Section",
+        name: "sectionNext",
+        type: "string",
+        default: "",
+        description:
+          "Component type of the section after this one (for transition context)",
+        placeholder: "features",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
+        displayName: "Content Type",
+        name: "sectionContentType",
+        type: "string",
+        default: "page",
+        description:
+          'Content type to generate for (e.g. "page", "blog-post"). Default: "page".',
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
+        displayName: "Model",
+        name: "sectionModel",
+        type: "string",
+        default: "gpt-4o",
+        description: "OpenAI model to use for generation",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+
+      // ── Plan Page fields ──────────────────────────────────────
+      {
+        displayName: "Intent",
+        name: "planIntent",
+        type: "string",
+        typeOptions: { rows: 3 },
+        default: "",
+        required: true,
+        description:
+          "Description of the page to plan (e.g. 'Product landing page for our new AI feature')",
+        placeholder:
+          "Product landing page for our new AI feature with pricing tiers",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["planPage"],
+          },
+        },
+      },
+      {
+        displayName: "Section Count",
+        name: "planSectionCount",
+        type: "number",
+        default: 0,
+        description:
+          "Target number of sections. Leave at 0 for auto-determined count.",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["planPage"],
+          },
+        },
+      },
+      {
+        displayName: "Content Type",
+        name: "planContentType",
+        type: "string",
+        default: "page",
+        description:
+          'Content type to plan for (e.g. "page", "blog-post", "event-detail"). Default: "page".',
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["planPage"],
+          },
+        },
+      },
+      {
+        displayName: "Model",
+        name: "planModel",
+        type: "string",
+        default: "gpt-4o",
+        description: "OpenAI model to use for planning",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["planPage"],
+          },
+        },
+      },
+
+      // ── Analyze Patterns fields ───────────────────────────────
+      {
+        displayName: "Content Type",
+        name: "patternContentType",
+        type: "string",
+        default: "page",
+        description:
+          'Content type to analyze (e.g. "page", "blog-post"). Default: "page".',
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["analyzePatterns"],
+          },
+        },
+      },
+      {
+        displayName: "Starts With",
+        name: "patternStartsWith",
+        type: "string",
+        default: "",
+        description:
+          "Optional slug prefix filter for stories to include in analysis",
+        placeholder: "en/",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["analyzePatterns"],
+          },
+        },
+      },
+
+      // ── Story resource ────────────────────────────────────────
+      storyOperations,
+      ...storyFields,
+
+      // ── Space resource ────────────────────────────────────────
+      spaceOperations,
+      ...spaceFields,
     ],
   };
 
@@ -116,23 +375,82 @@ export class StoryblokKickstartDs implements INodeType {
     const items = this.getInputData();
     const returnData: INodeExecutionData[] = [];
 
+    const resource = this.getNodeParameter("resource", 0) as string;
     const operation = this.getNodeParameter("operation", 0) as string;
 
     for (let i = 0; i < items.length; i++) {
       try {
-        if (operation === "generate") {
-          const result = await executeGenerate.call(this, i);
-          returnData.push({ json: result as IDataObject });
-        } else if (operation === "import") {
-          const result = await executeImport.call(this, i);
-          returnData.push({ json: result as IDataObject });
+        let result: Record<string, unknown>;
+
+        if (resource === "aiContent") {
+          if (operation === "generate") {
+            result = await executeGenerate.call(this, i);
+          } else if (operation === "import") {
+            result = await executeImport.call(this, i);
+          } else if (operation === "generateSection") {
+            result = await executeGenerateSection.call(this, i);
+          } else if (operation === "planPage") {
+            result = await executePlanPage.call(this, i);
+          } else if (operation === "analyzePatterns") {
+            result = await executeAnalyzePatterns.call(this, i);
+          } else {
+            throw new NodeOperationError(
+              this.getNode(),
+              `Unknown AI Content operation: ${operation}`,
+              { itemIndex: i }
+            );
+          }
+        } else if (resource === "story") {
+          if (operation === "list") {
+            result = await executeListStories.call(this, i);
+          } else if (operation === "get") {
+            result = await executeGetStory.call(this, i);
+          } else if (operation === "createPage") {
+            result = await executeCreatePage.call(this, i);
+          } else if (operation === "update") {
+            result = await executeUpdateStory.call(this, i);
+          } else if (operation === "delete") {
+            result = await executeDeleteStory.call(this, i);
+          } else if (operation === "search") {
+            result = await executeSearchStories.call(this, i);
+          } else {
+            throw new NodeOperationError(
+              this.getNode(),
+              `Unknown Story operation: ${operation}`,
+              { itemIndex: i }
+            );
+          }
+        } else if (resource === "space") {
+          if (operation === "scrapeUrl") {
+            result = await executeScrapeUrl.call(this, i);
+          } else if (operation === "listComponents") {
+            result = await executeListComponents.call(this, i);
+          } else if (operation === "getComponent") {
+            result = await executeGetComponent.call(this, i);
+          } else if (operation === "listAssets") {
+            result = await executeListAssets.call(this, i);
+          } else if (operation === "listRecipes") {
+            result = await executeListRecipes.call(this, i);
+          } else if (operation === "listIcons") {
+            result = await executeListIcons.call(this, i);
+          } else if (operation === "ensurePath") {
+            result = await executeEnsurePath.call(this, i);
+          } else {
+            throw new NodeOperationError(
+              this.getNode(),
+              `Unknown Space operation: ${operation}`,
+              { itemIndex: i }
+            );
+          }
         } else {
           throw new NodeOperationError(
             this.getNode(),
-            `Unknown operation: ${operation}`,
+            `Unknown resource: ${resource}`,
             { itemIndex: i }
           );
         }
+
+        returnData.push({ json: result as IDataObject });
       } catch (error) {
         if (this.continueOnFail()) {
           const errorMessage =
@@ -450,6 +768,1033 @@ async function executeImport(
     const message = error instanceof Error ? error.message : String(error);
     throw new NodeApiError(this.getNode(), { message } as any, {
       message: `Storyblok import failed: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+// ─── Story CRUD execution functions ───────────────────────────────────
+
+async function executeListStories(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+
+  const contentType = this.getNodeParameter(
+    "contentType",
+    itemIndex,
+    "page"
+  ) as string;
+  const startsWith = this.getNodeParameter(
+    "startsWith",
+    itemIndex,
+    ""
+  ) as string;
+  const page = this.getNodeParameter("page", itemIndex, 1) as number;
+  const perPage = this.getNodeParameter("perPage", itemIndex, 25) as number;
+
+  try {
+    const result = await listStories(client, {
+      contentType: contentType || undefined,
+      startsWith: startsWith || undefined,
+      page,
+      perPage,
+    });
+
+    return {
+      stories: result.stories,
+      total: result.total,
+      perPage: result.perPage,
+      _meta: {
+        operation: "list",
+        contentType,
+        startsWith,
+        page,
+        perPage,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to list stories: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeGetStory(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+
+  const identifier = this.getNodeParameter(
+    "storyIdentifier",
+    itemIndex
+  ) as string;
+  const findBy = this.getNodeParameter("findBy", itemIndex, "slug") as string;
+  const version = this.getNodeParameter(
+    "version",
+    itemIndex,
+    "published"
+  ) as string;
+
+  try {
+    const params: Record<string, unknown> = { version };
+    if (findBy === "uuid") {
+      params.find_by = "uuid";
+    }
+
+    const response = await client.get(`cdn/stories/${identifier}`, params);
+    const story = response.data.story;
+
+    return {
+      story,
+      _meta: {
+        operation: "get",
+        identifier,
+        findBy,
+        version,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to get story "${identifier}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeCreatePage(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const managementClient = getStoryblokManagementClient(storyblokCredentials);
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+  const spaceId = storyblokCredentials.spaceId;
+
+  const name = this.getNodeParameter("name", itemIndex) as string;
+  const slug = this.getNodeParameter("slug", itemIndex) as string;
+  const sectionsRaw = this.getNodeParameter("sections", itemIndex) as
+    | string
+    | object;
+  const contentType = this.getNodeParameter(
+    "createContentType",
+    itemIndex,
+    "page"
+  ) as string;
+  const path = this.getNodeParameter("path", itemIndex, "") as string;
+  const parentIdParam = this.getNodeParameter(
+    "parentId",
+    itemIndex,
+    0
+  ) as number;
+  const rootFieldsRaw = this.getNodeParameter("rootFields", itemIndex, "{}") as
+    | string
+    | object;
+  const publish = this.getNodeParameter("publish", itemIndex, false) as boolean;
+  const uploadAssets = this.getNodeParameter(
+    "uploadAssets",
+    itemIndex,
+    false
+  ) as boolean;
+  const assetFolderName = this.getNodeParameter(
+    "assetFolderName",
+    itemIndex,
+    "AI Generated"
+  ) as string;
+  const skipValidation = this.getNodeParameter(
+    "skipValidation",
+    itemIndex,
+    false
+  ) as boolean;
+  const skipTransform = this.getNodeParameter(
+    "skipTransform",
+    itemIndex,
+    false
+  ) as boolean;
+
+  // Parse sections
+  let sections: Record<string, unknown>[];
+  try {
+    const parsed =
+      typeof sectionsRaw === "string" ? JSON.parse(sectionsRaw) : sectionsRaw;
+    sections = Array.isArray(parsed) ? parsed : [parsed];
+  } catch {
+    throw new NodeOperationError(
+      this.getNode(),
+      "Invalid JSON in Sections field. Expected an array of section objects.",
+      { itemIndex }
+    );
+  }
+
+  // Parse root fields
+  let rootFields: Record<string, unknown> = {};
+  try {
+    rootFields =
+      typeof rootFieldsRaw === "string"
+        ? JSON.parse(rootFieldsRaw || "{}")
+        : (rootFieldsRaw as Record<string, unknown>);
+  } catch {
+    throw new NodeOperationError(
+      this.getNode(),
+      "Invalid JSON in Root Fields field.",
+      { itemIndex }
+    );
+  }
+
+  // Auto-flatten for Storyblok
+  if (!skipTransform) {
+    const flattened = processForStoryblok({ section: sections });
+    sections = (flattened as any).section;
+  }
+
+  // Resolve parentId from path if provided
+  let parentId: number | undefined = parentIdParam || undefined;
+  if (path) {
+    parentId = await ensurePath(managementClient, contentClient, spaceId, path);
+  }
+
+  // Resolve content type entry from registry
+  const entry = registry.has(contentType)
+    ? registry.get(contentType)
+    : registry.page;
+
+  try {
+    const result = await createPageWithContent(managementClient, spaceId, {
+      name,
+      slug,
+      parentId,
+      sections,
+      rootFields,
+      publish,
+      uploadAssets,
+      assetFolderName,
+      skipValidation,
+      validationRules: entry.rules,
+      componentName: entry.name,
+      rootArrayField: entry.rootArrayFields[0] || "section",
+    });
+
+    return {
+      success: true,
+      story: result,
+      _meta: {
+        operation: "createPage",
+        name,
+        slug,
+        contentType,
+        path: path || undefined,
+        parentId,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to create page "${name}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeUpdateStory(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const storyId = this.getNodeParameter("updateStoryId", itemIndex) as number;
+  const contentRaw = this.getNodeParameter("updateContent", itemIndex, "") as
+    | string
+    | object;
+  const name = this.getNodeParameter("updateName", itemIndex, "") as string;
+  const slug = this.getNodeParameter("updateSlug", itemIndex, "") as string;
+  const publish = this.getNodeParameter(
+    "updatePublish",
+    itemIndex,
+    false
+  ) as boolean;
+  const skipValidation = this.getNodeParameter(
+    "updateSkipValidation",
+    itemIndex,
+    false
+  ) as boolean;
+
+  // Parse content if provided
+  let content: Record<string, unknown> | undefined;
+  if (contentRaw && typeof contentRaw === "string" && contentRaw.trim()) {
+    try {
+      content = JSON.parse(contentRaw);
+    } catch {
+      throw new NodeOperationError(
+        this.getNode(),
+        "Invalid JSON in Content field.",
+        { itemIndex }
+      );
+    }
+  } else if (contentRaw && typeof contentRaw === "object") {
+    content = contentRaw as Record<string, unknown>;
+  }
+
+  // Determine validation rules
+  let validationRules;
+  if (content && !skipValidation) {
+    const ct = (content as any).component || (content as any).type;
+    if (ct && registry.has(ct)) {
+      validationRules = registry.get(ct).rules;
+    }
+  }
+
+  try {
+    const result = await updateStory(
+      client,
+      spaceId,
+      String(storyId),
+      {
+        content,
+        name: name || undefined,
+        slug: slug || undefined,
+        publish,
+        skipValidation,
+      },
+      validationRules
+    );
+
+    return {
+      success: true,
+      story: result,
+      _meta: {
+        operation: "update",
+        storyId,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to update story ${storyId}: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeDeleteStory(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const storyId = this.getNodeParameter("deleteStoryId", itemIndex) as number;
+
+  try {
+    await deleteStory(client, spaceId, String(storyId));
+
+    return {
+      success: true,
+      message: `Story ${storyId} deleted successfully`,
+      _meta: {
+        operation: "delete",
+        storyId,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to delete story ${storyId}: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeSearchStories(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+
+  const query = this.getNodeParameter("searchQuery", itemIndex) as string;
+  const contentType = this.getNodeParameter(
+    "searchContentType",
+    itemIndex,
+    ""
+  ) as string;
+
+  try {
+    const result = await searchStories(client, query, contentType || undefined);
+
+    return {
+      stories: result.stories,
+      total: result.total,
+      _meta: {
+        operation: "search",
+        query,
+        contentType: contentType || undefined,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Search failed: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+// ─── Guided Generation execution functions ──────────────────────────────
+
+async function executeGenerateSection(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const openAiCredentials = (await this.getCredentials(
+    "openAiApi",
+    itemIndex
+  )) as unknown as OpenAiCredentials;
+
+  const client = getOpenAiClient(openAiCredentials);
+
+  const componentType = this.getNodeParameter(
+    "sectionComponentType",
+    itemIndex
+  ) as string;
+  const prompt = this.getNodeParameter("sectionPrompt", itemIndex) as string;
+  const systemOverride = this.getNodeParameter(
+    "sectionSystem",
+    itemIndex,
+    ""
+  ) as string;
+  const previousSection = this.getNodeParameter(
+    "sectionPrevious",
+    itemIndex,
+    ""
+  ) as string;
+  const nextSection = this.getNodeParameter(
+    "sectionNext",
+    itemIndex,
+    ""
+  ) as string;
+  const contentType = this.getNodeParameter(
+    "sectionContentType",
+    itemIndex,
+    "page"
+  ) as string;
+  const model = this.getNodeParameter(
+    "sectionModel",
+    itemIndex,
+    "gpt-4o"
+  ) as string;
+
+  // Build system prompt with site-aware context
+  let system =
+    systemOverride ||
+    `You are an expert content writer creating a ${componentType} section for a website.`;
+
+  // Add transition context if provided
+  if (previousSection) {
+    system += `\n\nThis section follows a "${previousSection}" section — ensure a smooth content transition.`;
+  }
+  if (nextSection) {
+    system += `\n\nThis section will be followed by a "${nextSection}" section — set up a natural lead-in.`;
+  }
+
+  // Look up recipe notes for this component type
+  const matchingRecipe = (sectionRecipesData.recipes || []).find(
+    (r: Record<string, unknown>) =>
+      Array.isArray(r.components) && r.components.includes(componentType)
+  );
+  if (matchingRecipe && (matchingRecipe as Record<string, unknown>).notes) {
+    system += `\n\nBest practices for ${componentType}: ${
+      (matchingRecipe as Record<string, unknown>).notes
+    }`;
+  }
+
+  // Resolve content type for schema
+  const entry = registry.has(contentType)
+    ? registry.get(contentType)
+    : registry.page;
+
+  try {
+    const result = await generateAndPrepareContent(client, {
+      system,
+      prompt,
+      pageSchema: entry.schema,
+      schemaOptions: {
+        allowedComponents: [componentType, "section"],
+        sections: 1,
+      },
+      model,
+    });
+
+    return {
+      generatedContent: result.storyblokContent,
+      designSystemProps: result.designSystemProps,
+      rawResponse: result.rawResponse,
+      _meta: {
+        operation: "generateSection",
+        componentType,
+        contentType,
+        model,
+        previousSection: previousSection || undefined,
+        nextSection: nextSection || undefined,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Section generation failed for "${componentType}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executePlanPage(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const openAiCredentials = (await this.getCredentials(
+    "openAiApi",
+    itemIndex
+  )) as unknown as OpenAiCredentials;
+
+  const client = getOpenAiClient(openAiCredentials);
+
+  const intent = this.getNodeParameter("planIntent", itemIndex) as string;
+  const sectionCount = this.getNodeParameter(
+    "planSectionCount",
+    itemIndex,
+    0
+  ) as number;
+  const contentType = this.getNodeParameter(
+    "planContentType",
+    itemIndex,
+    "page"
+  ) as string;
+  const model = this.getNodeParameter(
+    "planModel",
+    itemIndex,
+    "gpt-4o"
+  ) as string;
+
+  // Resolve content type from registry
+  const entry = registry.has(contentType)
+    ? registry.get(contentType)
+    : registry.page;
+  const rules = entry.rules;
+
+  // Get available component names from the primary container slot
+  const containerSlots = rules.containerSlots;
+  let allowedComponents: string[] = [];
+  for (const [, types] of containerSlots) {
+    for (const t of types) {
+      if (!allowedComponents.includes(t)) {
+        allowedComponents.push(t);
+      }
+    }
+  }
+
+  // Build a planning prompt
+  const systemPrompt = `You are a website content architect. Given a page intent, recommend a sequence of sections using the available component types.
+
+Available section component types: ${allowedComponents.join(", ")}
+
+${
+  sectionCount > 0
+    ? `Target section count: ${sectionCount}`
+    : "Choose an appropriate number of sections (typically 4-8)."
+}
+
+Return a JSON object with:
+- "sections": array of objects, each with "componentType" (one of the available types) and "intent" (brief description of what this section should contain)
+- "reasoning": brief explanation of why this structure works for the intent`;
+
+  // Build a simple schema for the plan output
+  const planSchema = {
+    name: "page_plan",
+    strict: true,
+    schema: {
+      type: "object" as const,
+      properties: {
+        sections: {
+          type: "array" as const,
+          items: {
+            type: "object" as const,
+            properties: {
+              componentType: {
+                type: "string" as const,
+                enum: allowedComponents,
+              },
+              intent: { type: "string" as const },
+            },
+            required: ["componentType", "intent"] as const,
+            additionalProperties: false,
+          },
+        },
+        reasoning: { type: "string" as const },
+      },
+      required: ["sections", "reasoning"] as const,
+      additionalProperties: false,
+    },
+  };
+
+  try {
+    const result = await generateStructuredContent(client, {
+      system: systemPrompt,
+      prompt: intent,
+      schema: planSchema,
+      model,
+    });
+
+    return {
+      plan: result,
+      usage:
+        'Use "Generate Section" for each section in the plan, then "Create Page" to assemble the full page.',
+      _meta: {
+        operation: "planPage",
+        intent,
+        contentType,
+        model,
+        availableComponents: allowedComponents,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Page planning failed: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeAnalyzePatterns(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+
+  const contentType = this.getNodeParameter(
+    "patternContentType",
+    itemIndex,
+    "page"
+  ) as string;
+  const startsWith = this.getNodeParameter(
+    "patternStartsWith",
+    itemIndex,
+    ""
+  ) as string;
+
+  // Resolve validation rules for the content type
+  const entry = registry.has(contentType)
+    ? registry.get(contentType)
+    : registry.page;
+
+  try {
+    const analysis = await analyzeContentPatterns(contentClient, entry.rules, {
+      contentType: contentType || "page",
+      startsWith: startsWith || undefined,
+    });
+
+    return {
+      ...analysis,
+      _meta: {
+        operation: "analyzePatterns",
+        contentType,
+        startsWith: startsWith || undefined,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Pattern analysis failed: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+// ─── Space resource execution functions ─────────────────────────────────
+
+// Hardcoded icon list — same as MCP server
+const AVAILABLE_ICONS = [
+  "arrow-left",
+  "arrow-right",
+  "chevron-down",
+  "chevron-left",
+  "chevron-right",
+  "close",
+  "search",
+  "skip-back",
+  "skip-forward",
+  "zoom",
+  "arrow-down",
+  "date",
+  "download",
+  "email",
+  "facebook",
+  "file",
+  "home",
+  "linkedin",
+  "login",
+  "map-pin",
+  "map",
+  "person",
+  "phone",
+  "star",
+  "time",
+  "twitter",
+  "upload",
+  "xing",
+];
+
+// Section recipes loaded from bundled JSON
+import sectionRecipesData from "./schemas/section-recipes.json";
+
+async function executeScrapeUrl(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const url = this.getNodeParameter("scrapeUrlTarget", itemIndex) as string;
+  const selector = this.getNodeParameter(
+    "scrapeSelector",
+    itemIndex,
+    ""
+  ) as string;
+
+  try {
+    const result = await scrapeUrl({
+      url,
+      selector: selector || undefined,
+    });
+
+    return {
+      title: result.title,
+      sourceUrl: result.url,
+      markdown: result.markdown,
+      images: result.images,
+      _meta: {
+        operation: "scrapeUrl",
+        url,
+        selector: selector || undefined,
+        imageCount: result.images.length,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to scrape URL "${url}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeListComponents(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  try {
+    const components = await listComponents(client, spaceId);
+
+    return {
+      components,
+      total: (components as unknown[]).length,
+      _meta: {
+        operation: "listComponents",
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to list components: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeGetComponent(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const componentName = this.getNodeParameter(
+    "componentName",
+    itemIndex
+  ) as string;
+
+  try {
+    const component = await getComponent(client, spaceId, componentName);
+
+    return {
+      component,
+      _meta: {
+        operation: "getComponent",
+        componentName,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to get component "${componentName}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeListAssets(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const search = this.getNodeParameter("assetSearch", itemIndex, "") as string;
+  const folderId = this.getNodeParameter(
+    "assetFolderId",
+    itemIndex,
+    0
+  ) as number;
+  const page = this.getNodeParameter("assetPage", itemIndex, 1) as number;
+  const perPage = this.getNodeParameter(
+    "assetPerPage",
+    itemIndex,
+    25
+  ) as number;
+
+  try {
+    const result = await listAssets(client, spaceId, {
+      search: search || undefined,
+      inFolder: folderId || undefined,
+      page,
+      perPage,
+    });
+
+    return {
+      assets: result,
+      total: (result as unknown[]).length,
+      _meta: {
+        operation: "listAssets",
+        search: search || undefined,
+        folderId: folderId || undefined,
+        page,
+        perPage,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to list assets: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeListRecipes(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const intent = this.getNodeParameter("recipeIntent", itemIndex, "") as string;
+  const contentType = this.getNodeParameter(
+    "recipeContentType",
+    itemIndex,
+    ""
+  ) as string;
+  const includeLivePatterns = this.getNodeParameter(
+    "recipeIncludeLivePatterns",
+    itemIndex,
+    false
+  ) as boolean;
+
+  // Filter recipes by contentType if specified
+  const recipes = sectionRecipesData.recipes || [];
+  const pageTemplates = sectionRecipesData.pageTemplates || [];
+  const antiPatterns = sectionRecipesData.antiPatterns || [];
+
+  const filteredRecipes = contentType
+    ? recipes.filter(
+        (r: Record<string, unknown>) =>
+          !r.contentType || r.contentType === contentType
+      )
+    : recipes;
+
+  const filteredTemplates = contentType
+    ? pageTemplates.filter(
+        (t: Record<string, unknown>) =>
+          !t.contentType || t.contentType === contentType
+      )
+    : pageTemplates;
+
+  const result: Record<string, unknown> = {
+    recipes: filteredRecipes,
+    pageTemplates: filteredTemplates,
+    antiPatterns,
+  };
+
+  // Note: live patterns require analyzeContentPatterns which is not yet
+  // available in n8n (planned for M11). For now, return a helpful message.
+  if (includeLivePatterns) {
+    result.livePatterns = {
+      note: "Live pattern merging is not yet available in the n8n node. Use the MCP server's list_recipes tool with includePatterns=true, or use the Analyze Content Patterns operation (coming in a future release).",
+    };
+  }
+
+  return {
+    ...result,
+    _meta: {
+      operation: "listRecipes",
+      intent: intent || undefined,
+      contentType: contentType || undefined,
+      recipesCount: (filteredRecipes as unknown[]).length,
+      templatesCount: (filteredTemplates as unknown[]).length,
+      antiPatternsCount: (antiPatterns as unknown[]).length,
+      timestamp: new Date().toISOString(),
+    },
+  };
+}
+
+async function executeListIcons(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  return {
+    icons: AVAILABLE_ICONS,
+    count: AVAILABLE_ICONS.length,
+    usage:
+      "Use these identifiers for any icon field in component content (e.g. hero cta_icon, feature icon, contact-info icon)",
+    _meta: {
+      operation: "listIcons",
+      timestamp: new Date().toISOString(),
+    },
+  };
+}
+
+async function executeEnsurePath(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const managementClient = getStoryblokManagementClient(storyblokCredentials);
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+  const spaceId = storyblokCredentials.spaceId;
+
+  const folderPath = this.getNodeParameter(
+    "ensurePathValue",
+    itemIndex
+  ) as string;
+
+  try {
+    const folderId = await ensurePath(
+      managementClient,
+      contentClient,
+      spaceId,
+      folderPath
+    );
+
+    return {
+      success: true,
+      folderId,
+      path: folderPath,
+      _meta: {
+        operation: "ensurePath",
+        path: folderPath,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to ensure path "${folderPath}": ${message}`,
       itemIndex,
     });
   }

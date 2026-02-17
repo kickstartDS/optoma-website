@@ -198,9 +198,26 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [shared/storyblok-services/src/validate.ts](shared/storyblok-services/src/validate.ts) - Schema-driven content validation (nesting rules, component hierarchy) and compositional quality warnings
 - [shared/storyblok-services/src/registry.ts](shared/storyblok-services/src/registry.ts) - Schema registry for multi-content-type support (loads all root content type schemas)
 - [shared/storyblok-services/src/assets.ts](shared/storyblok-services/src/assets.ts) - Asset download, upload to Storyblok, and URL rewriting
+- [shared/storyblok-services/src/patterns.ts](shared/storyblok-services/src/patterns.ts) - Content pattern analysis (component frequency, section sequences, sub-component counts, page archetypes)
 - [mcp-server/schemas/section-recipes.json](mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
+- [n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (18 operations across 3 resources)
+- [n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/GenericFunctions.ts](n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) - Section-by-section generation workflow guide
 - [docs/guided-generation-plan.md](docs/guided-generation-plan.md) - Design document for guided content generation
+
+## n8n Community Node
+
+The project includes an n8n community node package ([n8n-nodes-storyblok-kickstartds/](n8n-nodes-storyblok-kickstartds/)) that provides **18 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+
+| Resource       | Operations | Description                                                                             |
+| -------------- | ---------- | --------------------------------------------------------------------------------------- |
+| **AI Content** | 5          | generate, import, generateSection, planPage, analyzePatterns                            |
+| **Story**      | 6          | list, get, createPage, update, delete, search                                           |
+| **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath |
+
+The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
+
+Nine workflow templates are included in `n8n-nodes-storyblok-kickstartds/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
 
 ## Common Patterns
 

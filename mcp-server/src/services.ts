@@ -1,8 +1,3 @@
-import { randomUUID } from "node:crypto";
-import TurndownService from "turndown";
-import { JSDOM } from "jsdom";
-import { Readability } from "@mozilla/readability";
-import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import StoryblokClient from "storyblok-js-client";
@@ -30,10 +25,29 @@ import {
   checkCompositionalQuality,
   createRegistryFromSchemaDir,
   SchemaRegistry,
+  // Shared CRUD + introspection + scraping functions
+  listStories as sharedListStories,
+  searchStories as sharedSearchStories,
+  findBySlug as sharedFindBySlug,
+  createStory as sharedCreateStory,
+  createPageWithContent as sharedCreatePageWithContent,
+  updateStory as sharedUpdateStory,
+  deleteStory as sharedDeleteStory,
+  ensurePath as sharedEnsurePath,
+  ensureUids as sharedEnsureUids,
+  createContentClient,
+  listComponents as sharedListComponents,
+  getComponent as sharedGetComponent,
+  listAssets as sharedListAssets,
+  scrapeUrl as sharedScrapeUrl,
+  analyzeContentPatterns as sharedAnalyzeContentPatterns,
   type PrepareSchemaOptions,
   type ValidationRules,
   type ValidationWarning,
   type ContentTypeEntry,
+  type ContentPatternAnalysis,
+  type SubComponentStats,
+  type AnalyzeContentPatternsOptions,
 } from "@kickstartds/storyblok-services";
 
 // Load all content type schemas via the registry
@@ -79,260 +93,10 @@ export {
 export type { ValidationWarning, ContentTypeEntry };
 
 // ─── Content Pattern Analysis ─────────────────────────────────────────
-
-/** Component frequency entry. */
-interface ComponentFrequency {
-  component: string;
-  count: number;
-  percentage: number;
-}
-
-/** Section sequence bigram. */
-interface SequenceBigram {
-  from: string;
-  to: string;
-  count: number;
-}
-
-/** Section composition (components grouped in one section). */
-interface SectionComposition {
-  components: string[];
-  count: number;
-}
-
-/** Sub-component item count statistics. */
-export interface SubComponentStats {
-  median: number;
-  min: number;
-  max: number;
-  samples: number;
-}
-
-/** Page archetype (recurring full-page pattern). */
-interface PageArchetype {
-  pattern: string[];
-  count: number;
-  exampleSlug: string;
-}
-
-/** Full result of content pattern analysis. */
-export interface ContentPatternAnalysis {
-  totalStoriesAnalyzed: number;
-  componentFrequency: ComponentFrequency[];
-  commonSequences: SequenceBigram[];
-  sectionCompositions: SectionComposition[];
-  subComponentCounts: Record<string, SubComponentStats>;
-  pageArchetypes: PageArchetype[];
-  unusedComponents: string[];
-}
-
-/**
- * Analyze content patterns across all published stories in the space.
- *
- * Fetches all stories via pagination, walks their section arrays, and
- * extracts structural patterns: component frequency, section sequences,
- * sub-component item counts, and full-page archetypes.
- *
- * Pure structural analysis — no AI calls needed.
- */
-export async function analyzeContentPatterns(
-  storyblokService: StoryblokService,
-  validationRules: ValidationRules,
-  options: { contentType?: string; startsWith?: string } = {}
-): Promise<ContentPatternAnalysis> {
-  // ── 1. Fetch all stories with pagination ─────────────────────────
-  const allStories: Record<string, any>[] = [];
-  let page = 1;
-  const perPage = 100;
-  let total = Infinity;
-
-  while (allStories.length < total) {
-    const result = (await storyblokService.listStories({
-      page,
-      perPage,
-      contentType: options.contentType || "page",
-      startsWith: options.startsWith,
-    })) as { stories: Record<string, any>[]; total: number };
-
-    allStories.push(...result.stories);
-    total = result.total;
-    page++;
-
-    // Safety: avoid infinite loops
-    if (result.stories.length === 0) break;
-  }
-
-  // ── 2. Extract section structures ────────────────────────────────
-  // Maps for aggregation
-  const componentCounts = new Map<string, number>();
-  const sequenceCounts = new Map<string, number>();
-  const compositionCounts = new Map<
-    string,
-    { components: string[]; count: number }
-  >();
-  const subItemCounts = new Map<string, number[]>();
-  const pagePatterns = new Map<
-    string,
-    { pattern: string[]; count: number; exampleSlug: string }
-  >();
-
-  // Determine which root array fields to iterate based on the schema
-  const rootFields = validationRules.rootArrayFields;
-
-  for (const story of allStories) {
-    const allSectionTypes: string[][] = [];
-
-    for (const rootField of rootFields) {
-      const items: Record<string, any>[] = story.content?.[rootField] || [];
-      if (items.length === 0) continue;
-
-      for (const item of items) {
-        const components: Record<string, any>[] = item.components || [];
-        const componentTypes: string[] = [];
-
-        // If the item itself has no `components` array, it might be a
-        // flat-type root array item — treat the item type as a component.
-        if (components.length === 0) {
-          const type = item.component || item.type;
-          if (typeof type === "string") {
-            componentTypes.push(type);
-            componentCounts.set(type, (componentCounts.get(type) || 0) + 1);
-          }
-        }
-
-        for (const comp of components) {
-          const type = comp.component || comp.type;
-          if (typeof type === "string") {
-            componentTypes.push(type);
-
-            // Count component frequency
-            componentCounts.set(type, (componentCounts.get(type) || 0) + 1);
-
-            // Count sub-component items
-            for (const [parentType, childKey] of Object.entries(
-              validationRules.subComponentMap
-            )) {
-              if (type === parentType && Array.isArray(comp[childKey])) {
-                const key = `${parentType}.${childKey}`;
-                const existing = subItemCounts.get(key) || [];
-                existing.push(comp[childKey].length);
-                subItemCounts.set(key, existing);
-              }
-            }
-          }
-        }
-
-        allSectionTypes.push(componentTypes);
-
-        // Track section compositions
-        if (componentTypes.length > 0) {
-          const compositionKey = componentTypes.join(",");
-          const existing = compositionCounts.get(compositionKey);
-          if (existing) {
-            existing.count++;
-          } else {
-            compositionCounts.set(compositionKey, {
-              components: [...componentTypes],
-              count: 1,
-            });
-          }
-        }
-      }
-    }
-
-    // Track section sequence bigrams
-    const flatTypes = allSectionTypes.map(
-      (types) => types.join("+") || "(empty)"
-    );
-    for (let i = 0; i < flatTypes.length - 1; i++) {
-      const key = `${flatTypes[i]}→${flatTypes[i + 1]}`;
-      sequenceCounts.set(key, (sequenceCounts.get(key) || 0) + 1);
-    }
-
-    // Track full-page archetype
-    const pagePattern = flatTypes.filter((t) => t !== "(empty)");
-    if (pagePattern.length > 0) {
-      const patternKey = pagePattern.join(" | ");
-      const existing = pagePatterns.get(patternKey);
-      if (existing) {
-        existing.count++;
-      } else {
-        pagePatterns.set(patternKey, {
-          pattern: pagePattern,
-          count: 1,
-          exampleSlug: story.full_slug || story.slug || "",
-        });
-      }
-    }
-  }
-
-  // ── 3. Compute statistics ────────────────────────────────────────
-
-  // Component frequency (sorted by count descending)
-  const componentFrequency: ComponentFrequency[] = [
-    ...componentCounts.entries(),
-  ]
-    .map(([component, count]) => ({
-      component,
-      count,
-      percentage:
-        allStories.length > 0
-          ? Math.round((count / allStories.length) * 100)
-          : 0,
-    }))
-    .sort((a, b) => b.count - a.count);
-
-  // Common sequences (sorted by count descending, top 20)
-  const commonSequences: SequenceBigram[] = [...sequenceCounts.entries()]
-    .map(([key, count]) => {
-      const [from, to] = key.split("→");
-      return { from, to, count };
-    })
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 20);
-
-  // Section compositions (sorted by count descending, top 20)
-  const sectionCompositions: SectionComposition[] = [
-    ...compositionCounts.values(),
-  ]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 20);
-
-  // Sub-component counts (compute median, min, max)
-  const subComponentCountsResult: Record<string, SubComponentStats> = {};
-  for (const [key, values] of subItemCounts) {
-    if (values.length === 0) continue;
-    const sorted = [...values].sort((a, b) => a - b);
-    subComponentCountsResult[key] = {
-      median: sorted[Math.floor(sorted.length / 2)],
-      min: sorted[0],
-      max: sorted[sorted.length - 1],
-      samples: sorted.length,
-    };
-  }
-
-  // Page archetypes (only those occurring 2+ times, sorted by count)
-  const pageArchetypes: PageArchetype[] = [...pagePatterns.values()]
-    .filter((p) => p.count >= 2)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
-
-  // Unused components (known in schema but never seen in content)
-  const usedComponents = new Set(componentCounts.keys());
-  const unusedComponents = [...validationRules.allKnownComponents]
-    .filter((c) => !usedComponents.has(c))
-    .sort();
-
-  return {
-    totalStoriesAnalyzed: allStories.length,
-    componentFrequency,
-    commonSequences,
-    sectionCompositions,
-    subComponentCounts: subComponentCountsResult,
-    pageArchetypes,
-    unusedComponents,
-  };
-}
+// Re-exported from shared library. The function signature now takes a
+// content API client instead of a StoryblokService instance.
+export { sharedAnalyzeContentPatterns as analyzeContentPatterns };
+export type { ContentPatternAnalysis, SubComponentStats };
 
 /**
  * Wrapper class for Storyblok API operations.
@@ -355,10 +119,15 @@ export class StoryblokService {
     });
 
     // Content Delivery API client (for read operations)
-    this.contentClient = new StoryblokClient({
-      accessToken: config.apiToken,
-      rateLimit: 1,
+    this.contentClient = createContentClient({
+      spaceId: config.spaceId,
+      apiToken: config.apiToken,
     });
+  }
+
+  /** Expose the content API client for shared functions that need it. */
+  getContentClient(): StoryblokClient {
+    return this.contentClient;
   }
 
   /**
@@ -372,7 +141,8 @@ export class StoryblokService {
   }
 
   /**
-   * List stories with optional filtering
+   * List stories with optional filtering.
+   * Delegates to shared `listStories()`.
    */
   async listStories(options: {
     startsWith?: string;
@@ -380,25 +150,7 @@ export class StoryblokService {
     page?: number;
     perPage?: number;
   }): Promise<unknown> {
-    const params: Record<string, unknown> = {
-      page: options.page || 1,
-      per_page: options.perPage || 25,
-    };
-
-    if (options.startsWith) {
-      params.starts_with = options.startsWith;
-    }
-
-    if (options.contentType) {
-      params.content_type = options.contentType;
-    }
-
-    const response = await this.contentClient.get("cdn/stories", params);
-    return {
-      stories: response.data.stories,
-      total: response.total,
-      perPage: response.perPage,
-    };
+    return sharedListStories(this.contentClient, options);
   }
 
   /**
@@ -417,12 +169,7 @@ export class StoryblokService {
       params.find_by = "uuid";
     }
 
-    const path =
-      findBy === "id"
-        ? `cdn/stories/${identifier}`
-        : findBy === "uuid"
-        ? `cdn/stories/${identifier}`
-        : `cdn/stories/${identifier}`;
+    const path = `cdn/stories/${identifier}`;
 
     const response = await this.contentClient.get(path, params);
     return response.data.story;
@@ -441,7 +188,8 @@ export class StoryblokService {
   }
 
   /**
-   * Create a new story
+   * Create a new story.
+   * Delegates to shared `createStory()` with local validation.
    */
   async createStory(options: {
     name: string;
@@ -455,7 +203,6 @@ export class StoryblokService {
     if (!options.skipValidation && !options.isFolder) {
       const content = options.content as Record<string, any>;
       const contentType = content.component || content.type;
-      // Only validate content types that match known root schemas
       if (registry.has(contentType) || rules_rootMatchesSchema(content)) {
         const rules = getValidationRulesForContent(content);
         const validationResult = validatePageContent(content, rules);
@@ -465,26 +212,19 @@ export class StoryblokService {
       }
     }
 
-    const story: Record<string, unknown> = {
+    return sharedCreateStory(this.managementClient, this.spaceId, {
       name: options.name,
       slug: options.slug,
+      parentId: options.parentId,
       content: options.content,
-      is_folder: options.isFolder || false,
-    };
-
-    if (options.parentId) {
-      story.parent_id = options.parentId;
-    }
-
-    const response = await this.managementClient.post(
-      `spaces/${this.spaceId}/stories/`,
-      { story } as any
-    );
-    return (response as any).data.story;
+      isFolder: options.isFolder,
+      skipValidation: true, // already validated above
+    });
   }
 
   /**
-   * Update an existing story
+   * Update an existing story.
+   * Delegates to shared `updateStory()` with local validation.
    */
   async updateStory(
     storyId: number,
@@ -509,39 +249,29 @@ export class StoryblokService {
       }
     }
 
-    // First, get the current story
-    const currentStory = (await this.getStoryManagement(storyId)) as Record<
-      string,
-      unknown
-    >;
-    const story = currentStory;
-
-    // Merge updates
-    if (updates.content) {
-      story.content = updates.content;
-    }
-    if (updates.name) {
-      story.name = updates.name;
-    }
-    if (updates.slug) {
-      story.slug = updates.slug;
-    }
-
-    return saveStory(
+    return sharedUpdateStory(
       this.managementClient,
       this.spaceId,
       String(storyId),
-      story as Record<string, any>,
-      publish
+      {
+        content: updates.content,
+        name: updates.name,
+        slug: updates.slug,
+        publish,
+        skipValidation: true, // already validated above
+      }
     );
   }
 
   /**
-   * Delete a story
+   * Delete a story.
+   * Delegates to shared `deleteStory()`.
    */
   async deleteStory(storyId: number): Promise<void> {
-    await this.managementClient.delete(
-      `spaces/${this.spaceId}/stories/${storyId}`
+    await sharedDeleteStory(
+      this.managementClient,
+      this.spaceId,
+      String(storyId)
     );
   }
 
@@ -648,31 +378,24 @@ export class StoryblokService {
   }
 
   /**
-   * List all components in the space
+   * List all components in the space.
+   * Delegates to shared `listComponents()`.
    */
   async listComponents(): Promise<unknown> {
-    const response = await this.managementClient.get(
-      `spaces/${this.spaceId}/components/`
-    );
-    return response.data.components;
+    return sharedListComponents(this.managementClient, this.spaceId);
   }
 
   /**
-   * Get a specific component by name
+   * Get a specific component by name.
+   * Delegates to shared `getComponent()`.
    */
   async getComponent(name: string): Promise<unknown> {
-    const components = (await this.listComponents()) as Array<{ name: string }>;
-    const component = components.find((c) => c.name === name);
-
-    if (!component) {
-      throw new Error(`Component "${name}" not found`);
-    }
-
-    return component;
+    return sharedGetComponent(this.managementClient, this.spaceId, name);
   }
 
   /**
-   * List assets in the space
+   * List assets in the space.
+   * Delegates to shared `listAssets()`.
    */
   async listAssets(options: {
     page?: number;
@@ -680,44 +403,15 @@ export class StoryblokService {
     search?: string;
     inFolder?: number;
   }): Promise<unknown> {
-    const params: Record<string, unknown> = {
-      page: options.page || 1,
-      per_page: options.perPage || 25,
-    };
-
-    if (options.search) {
-      params.search = options.search;
-    }
-
-    if (options.inFolder) {
-      params.in_folder = options.inFolder;
-    }
-
-    const response = await this.managementClient.get(
-      `spaces/${this.spaceId}/assets/`,
-      params
-    );
-    return response.data;
+    return sharedListAssets(this.managementClient, this.spaceId, options);
   }
 
   /**
-   * Search content across stories
+   * Search content across stories.
+   * Delegates to shared `searchStories()`.
    */
   async searchContent(query: string, contentType?: string): Promise<unknown> {
-    const params: Record<string, unknown> = {
-      search_term: query,
-      per_page: 100,
-    };
-
-    if (contentType) {
-      params.content_type = contentType;
-    }
-
-    const response = await this.contentClient.get("cdn/stories", params);
-    return {
-      stories: response.data.stories,
-      total: response.total,
-    };
+    return sharedSearchStories(this.contentClient, query, contentType);
   }
 
   /**
@@ -747,166 +441,33 @@ export class StoryblokService {
     const componentName = entry.name;
     const rootArrayField = entry.rootArrayFields[0] || "section";
 
-    // Validate sections against the Design System schema
-    if (!options.skipValidation) {
-      const validationResult = validateSections(
-        options.sections as Record<string, any>[],
-        entry.rules
-      );
-      if (!validationResult.valid) {
-        throw new Error(formatValidationErrors(validationResult.errors));
-      }
-    }
-
-    // Recursively inject _uid where missing
-    const sections = options.sections.map((s) => ensureUids(s)) as Record<
-      string,
-      unknown
-    >[];
-
-    // Upload external images to Storyblok (if requested)
-    let assetsSummary;
-    if (options.uploadAssets) {
-      const wrapper = { [rootArrayField]: sections } as Record<string, any>;
-      assetsSummary = await uploadAndReplaceAssets(
-        this.managementClient,
-        wrapper,
-        {
-          spaceId: this.spaceId,
-          assetFolderName: options.assetFolderName || "AI Generated",
-        }
-      );
-    }
-
-    // Wrap plain URL strings in asset fields into Storyblok asset objects
-    for (const section of sections) {
-      wrapAssetUrls(section as Record<string, any>);
-    }
-
-    const content: Record<string, unknown> = {
-      component: componentName,
-      _uid: randomUUID(),
-      [rootArrayField]: sections,
-      ...(options.rootFields || {}),
-    };
-
-    // Create the story
-    const story = await this.createStory({
-      name: options.name,
-      slug: options.slug,
-      parentId: options.parentId,
-      content,
+    return sharedCreatePageWithContent(this.managementClient, this.spaceId, {
+      ...options,
+      validationRules: entry.rules,
+      componentName,
+      rootArrayField,
     });
-
-    // Optionally publish
-    if (options.publish) {
-      const storyId = (story as Record<string, any>).id;
-      if (storyId) {
-        const savedStory = await this.updateStory(storyId, {}, true);
-        return assetsSummary
-          ? { ...(savedStory as Record<string, any>), assetsSummary }
-          : savedStory;
-      }
-    }
-
-    return assetsSummary
-      ? { ...(story as Record<string, any>), assetsSummary }
-      : story;
   }
 
   /**
-   * Find a folder (or story) by its full slug path via the Management API.
-   *
-   * Returns the story/folder object if found, or `null` if no match.
-   * Uses `by_slugs` filtering on the CDN API for fast lookup.
+   * Find a folder (or story) by its full slug path.
+   * Delegates to shared `findBySlug()`.
    */
   async findBySlug(fullSlug: string): Promise<Record<string, any> | null> {
-    try {
-      const response = await this.contentClient.get("cdn/stories", {
-        by_slugs: fullSlug,
-        version: "draft",
-        per_page: 1,
-      });
-      const stories = response.data.stories;
-      if (stories && stories.length > 0) {
-        return stories[0];
-      }
-      return null;
-    } catch {
-      return null;
-    }
+    return sharedFindBySlug(this.contentClient, fullSlug);
   }
 
   /**
    * Ensure a full folder path exists, creating missing intermediate folders.
-   *
-   * Works like `mkdir -p`: given a path like `"en/services/consulting"`,
-   * it walks segment by segment, checks if each folder exists, and creates
-   * it if not. Returns the numeric ID of the deepest (last) folder.
-   *
-   * @param folderPath - Forward-slash-separated folder path (e.g. `"en/services/consulting"`)
-   * @returns The numeric ID of the deepest folder in the path
+   * Delegates to shared `ensurePath()`.
    */
   async ensurePath(folderPath: string): Promise<number> {
-    // Normalise: trim slashes, split into segments
-    const segments = folderPath
-      .replace(/^\/+|\/+$/g, "")
-      .split("/")
-      .filter(Boolean);
-
-    if (segments.length === 0) {
-      throw new Error("ensurePath requires at least one path segment");
-    }
-
-    let parentId: number | undefined = undefined;
-    let currentFullSlug = "";
-
-    for (const segment of segments) {
-      currentFullSlug = currentFullSlug
-        ? `${currentFullSlug}/${segment}`
-        : segment;
-
-      // Try to find existing folder/story at this slug
-      const existing = await this.findBySlug(currentFullSlug);
-
-      if (existing) {
-        parentId = existing.id;
-        continue;
-      }
-
-      // Folder doesn't exist — create it
-      try {
-        const folder = await this.createStory({
-          name: segment.charAt(0).toUpperCase() + segment.slice(1), // Title-case the slug
-          slug: segment,
-          parentId,
-          content: { component: "page", _uid: randomUUID() },
-          isFolder: true,
-          skipValidation: true,
-        });
-        parentId = (folder as Record<string, any>).id;
-      } catch (err: any) {
-        // Handle race conditions: if a 409/422 conflict means the folder was
-        // created concurrently, look it up again and continue.
-        const status = err?.response?.status || err?.status;
-        if (status === 409 || status === 422) {
-          const retried = await this.findBySlug(currentFullSlug);
-          if (retried) {
-            parentId = retried.id;
-            continue;
-          }
-        }
-        throw new Error(
-          `Failed to create folder "${currentFullSlug}": ${err?.message || err}`
-        );
-      }
-    }
-
-    if (parentId === undefined) {
-      throw new Error(`ensurePath failed: could not resolve "${folderPath}"`);
-    }
-
-    return parentId;
+    return sharedEnsurePath(
+      this.managementClient,
+      this.contentClient,
+      this.spaceId,
+      folderPath
+    );
   }
 }
 
@@ -1009,378 +570,10 @@ export class ContentGenerationService {
 
 // ─── Scraping ─────────────────────────────────────────────────────────
 
-/** Describes an image discovered during scraping. */
-interface ScrapedImage {
-  src: string;
-  alt: string;
-  /** Where the image was found: 'content', 'background', 'meta', 'picture-source'. */
-  context: string;
-}
-
-/**
- * Fetch a URL and convert its HTML content to Markdown.
- *
- * The function:
- * 1. Fetches the page HTML with a browser-like User-Agent
- * 2. Parses it into a full DOM with JSDOM
- * 3. Runs @mozilla/readability to extract the main article content
- *    (falls back to a CSS-selector or <main>/<body> if Readability returns nothing)
- * 4. Converts the readable HTML to clean Markdown using Turndown
- * 5. Extracts images from <img>, <picture>/<source>, CSS background-image,
- *    lazy-loading data attributes, and Open Graph / meta tags
- * 6. Returns the title, Markdown, and a structured images array
- */
-export async function scrapeUrl(options: {
-  url: string;
-  selector?: string;
-}): Promise<{
-  url: string;
-  markdown: string;
-  title: string;
-  images: ScrapedImage[];
-}> {
-  // ── 1. Fetch ──────────────────────────────────────────────────────────
-  const response = await fetch(options.url, {
-    headers: {
-      Accept: "text/html",
-      "User-Agent":
-        "Mozilla/5.0 (compatible; kickstartDS-MCP/1.0; +https://www.kickstartds.com)",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch URL: ${response.status} ${response.statusText}`
-    );
-  }
-
-  const html = await response.text();
-
-  // ── 2. Parse into DOM ─────────────────────────────────────────────────
-  const dom = new JSDOM(html, { url: options.url });
-  const document = dom.window.document;
-
-  // Extract title from the DOM (more reliable than regex)
-  const title = document.querySelector("title")?.textContent?.trim() ?? "";
-
-  // ── 3. Collect images BEFORE Readability mutates the DOM ──────────────
-  const images: ScrapedImage[] = [];
-  const seenSrcs = new Set<string>();
-
-  const resolveUrl = (raw: string): string => {
-    try {
-      return new URL(raw, options.url).href;
-    } catch {
-      return raw;
-    }
-  };
-
-  const addImage = (src: string, alt: string, context: string) => {
-    if (!src || src.startsWith("data:")) return;
-    const resolved = resolveUrl(src);
-    if (seenSrcs.has(resolved)) return;
-    seenSrcs.add(resolved);
-    images.push({ src: resolved, alt, context });
-  };
-
-  // (a) Open Graph & meta images — always available regardless of Readability
-  for (const meta of document.querySelectorAll(
-    'meta[property="og:image"], meta[name="twitter:image"], meta[name="twitter:image:src"]'
-  )) {
-    const content = meta.getAttribute("content");
-    if (content) addImage(content, title, "meta");
-  }
-
-  // Helper: extract images from a DOM subtree
-  const collectImagesFromElement = (root: Element | Document) => {
-    // (b) <img> tags — including lazy-load data attributes
-    for (const img of root.querySelectorAll("img")) {
-      const alt = img.getAttribute("alt") || "";
-      const src =
-        img.getAttribute("src") ||
-        img.getAttribute("data-src") ||
-        img.getAttribute("data-lazy") ||
-        img.getAttribute("data-original") ||
-        img.getAttribute("data-lazy-src") ||
-        "";
-      addImage(src, alt, "content");
-
-      // Also check srcset for higher-res versions
-      const srcset =
-        img.getAttribute("srcset") || img.getAttribute("data-srcset") || "";
-      const best = pickBestFromSrcset(srcset);
-      if (best) addImage(best, alt, "content");
-    }
-
-    // (c) <picture> / <source> elements
-    for (const source of root.querySelectorAll("picture source")) {
-      const srcset = source.getAttribute("srcset") || "";
-      const best = pickBestFromSrcset(srcset);
-      if (best) {
-        const picture = source.closest("picture");
-        const alt = picture?.querySelector("img")?.getAttribute("alt") || "";
-        addImage(best, alt, "picture-source");
-      }
-    }
-
-    // (d) CSS background-image in inline styles
-    for (const el of root.querySelectorAll("[style]")) {
-      const style = el.getAttribute("style") || "";
-      const bgMatches = style.matchAll(
-        /background(?:-image)?\s*:[^;]*url\(\s*["']?([^"')]+)["']?\s*\)/gi
-      );
-      for (const m of bgMatches) {
-        addImage(m[1], "", "background");
-      }
-    }
-  };
-
-  // Collect from the full document first (catches everything)
-  collectImagesFromElement(document);
-
-  // ── 4. Extract readable content ───────────────────────────────────────
-  let contentHtml: string;
-  /** Links from <main> that Readability dropped (CTA buttons, card links, etc.) */
-  let droppedLinks: { text: string; href: string }[] = [];
-
-  if (options.selector) {
-    // User-specified CSS selector — use the real DOM instead of regex
-    const selected = document.querySelector(options.selector);
-    contentHtml = selected
-      ? selected.innerHTML
-      : document.body?.innerHTML ?? html;
-  } else {
-    // Try Readability first — produces clean, article-focused content
-    // Clone the document because Readability mutates it in place
-    const clone = new JSDOM(html, { url: options.url });
-    const reader = new Readability(clone.window.document);
-    const article = reader.parse();
-
-    if (article && article.content) {
-      contentHtml = article.content;
-
-      // Readability is designed for articles and aggressively strips CTA buttons,
-      // card links, and other interactive elements. For marketing / services pages
-      // we recover any meaningful links from <main> that Readability dropped.
-      const main = document.querySelector("main");
-      if (main) {
-        const readabilityDom = new JSDOM(contentHtml, { url: options.url });
-        const readabilityHrefs = new Set<string>();
-        for (const a of readabilityDom.window.document.querySelectorAll("a")) {
-          const href = a.getAttribute("href");
-          if (href) readabilityHrefs.add(resolveUrl(href));
-        }
-
-        for (const a of main.querySelectorAll("a")) {
-          const href = a.getAttribute("href");
-          const text = a.textContent?.trim();
-          if (
-            href &&
-            text &&
-            !href.startsWith("#") &&
-            !readabilityHrefs.has(resolveUrl(href))
-          ) {
-            droppedLinks.push({ text, href: resolveUrl(href) });
-          }
-        }
-      }
-    } else {
-      // Fallback: <main>, then <body>
-      const main = document.querySelector("main");
-      contentHtml = main ? main.innerHTML : document.body?.innerHTML ?? html;
-    }
-  }
-
-  // Also collect images specifically from the extracted content
-  // (they'll deduplicate via seenSrcs)
-  const contentDom = new JSDOM(contentHtml, { url: options.url });
-  collectImagesFromElement(contentDom.window.document);
-
-  // ── 5. Convert to Markdown ────────────────────────────────────────────
-  const turndown = new TurndownService({
-    headingStyle: "atx",
-    codeBlockStyle: "fenced",
-    bulletListMarker: "-",
-  });
-
-  // Remove noisy elements
-  turndown.remove(["script", "style", "nav"] as any);
-
-  // Remove SVG elements
-  turndown.addRule("removeSvg", {
-    filter: (node) => node.tagName?.toLowerCase() === "svg",
-    replacement: () => "",
-  });
-
-  // Remove page-level <header> and <footer> (site nav / site footer).
-  // Only strip those that are direct children of <body> — semantic <header>
-  // elements inside content sections (e.g. kickstartDS headline components)
-  // must be preserved because they carry section headings and sub-headlines.
-  turndown.addRule("removePageHeaderFooter", {
-    filter: (node) => {
-      const tagName = node.tagName?.toLowerCase();
-      if (tagName !== "header" && tagName !== "footer") return false;
-      // Only strip top-level (direct child of <body> or the Readability wrapper)
-      const parentTag = node.parentNode?.nodeName?.toLowerCase();
-      return parentTag === "body" || parentTag === "#document";
-    },
-    replacement: () => "",
-  });
-
-  // Image handling — preserve alt text, resolve relative URLs,
-  // and check lazy-load data attributes
-  turndown.addRule("images", {
-    filter: "img",
-    replacement: (_content, node) => {
-      const el = node as HTMLElement;
-      const alt = el.getAttribute("alt") || "";
-      const src =
-        el.getAttribute("src") ||
-        el.getAttribute("data-src") ||
-        el.getAttribute("data-lazy") ||
-        el.getAttribute("data-original") ||
-        el.getAttribute("data-lazy-src") ||
-        "";
-      if (!src) return "";
-      return `![${alt}](${resolveUrl(src)})`;
-    },
-  });
-
-  // <picture>: render the best <source> as an image in Markdown
-  turndown.addRule("picture", {
-    filter: (node) => {
-      return (
-        node.tagName?.toLowerCase() === "picture" &&
-        node.querySelectorAll("source").length > 0
-      );
-    },
-    replacement: (_content, node) => {
-      const el = node as HTMLElement;
-      const img = el.querySelector("img");
-      const alt = img?.getAttribute("alt") || "";
-
-      // Try to get the best source from <source> elements
-      for (const source of el.querySelectorAll("source")) {
-        const srcset = source.getAttribute("srcset") || "";
-        const best = pickBestFromSrcset(srcset);
-        if (best) return `![${alt}](${resolveUrl(best)})`;
-      }
-
-      // Fallback to <img>
-      const src =
-        img?.getAttribute("src") || img?.getAttribute("data-src") || "";
-      if (src) return `![${alt}](${resolveUrl(src)})`;
-      return "";
-    },
-  });
-
-  // Elements with background images — emit as Markdown image
-  turndown.addRule("backgroundImages", {
-    filter: (node) => {
-      const style = node.getAttribute?.("style") || "";
-      return /background(?:-image)?\s*:[^;]*url\(/i.test(style);
-    },
-    replacement: (content, node) => {
-      const style = (node as HTMLElement).getAttribute("style") || "";
-      const match = style.match(
-        /background(?:-image)?\s*:[^;]*url\(\s*["']?([^"')]+)["']?\s*\)/i
-      );
-      const bgImage = match ? `\n\n![](${resolveUrl(match[1])})\n\n` : "";
-      return bgImage + content;
-    },
-  });
-
-  const markdown = turndown.turndown(contentHtml);
-
-  // Append links that Readability dropped (CTA buttons, card links, etc.)
-  let linksSection = "";
-  if (droppedLinks.length > 0) {
-    // Deduplicate by href
-    const seen = new Set<string>();
-    const unique = droppedLinks.filter((l) => {
-      if (seen.has(l.href)) return false;
-      seen.add(l.href);
-      return true;
-    });
-    linksSection =
-      "\n\n---\n\n**Additional links:**\n\n" +
-      unique.map((l) => `- [${l.text}](${l.href})`).join("\n");
-  }
-
-  // Clean up excessive blank lines
-  const cleaned = (markdown + linksSection).replace(/\n{3,}/g, "\n\n").trim();
-
-  return {
-    url: options.url,
-    title,
-    markdown: cleaned,
-    images,
-  };
-}
-
-/**
- * Pick the highest-resolution image URL from a `srcset` attribute value.
- * Handles both width descriptors (`480w`) and pixel-density descriptors (`2x`).
- * Returns `undefined` if srcset is empty or unparseable.
- */
-function pickBestFromSrcset(srcset: string): string | undefined {
-  if (!srcset.trim()) return undefined;
-
-  let bestUrl: string | undefined;
-  let bestValue = 0;
-
-  for (const candidate of srcset.split(",")) {
-    const parts = candidate.trim().split(/\s+/);
-    if (parts.length < 1) continue;
-    const url = parts[0];
-    const descriptor = parts[1] || "1x";
-
-    let value: number;
-    if (descriptor.endsWith("w")) {
-      value = parseInt(descriptor, 10) || 0;
-    } else if (descriptor.endsWith("x")) {
-      // Treat pixel density as a much smaller number to prefer `w` descriptors
-      value = parseFloat(descriptor) || 1;
-    } else {
-      value = 0;
-    }
-
-    if (value > bestValue || !bestUrl) {
-      bestValue = value;
-      bestUrl = url;
-    }
-  }
-
-  return bestUrl;
-}
+// Re-export from shared library for backward compatibility
+export const scrapeUrl = sharedScrapeUrl;
 
 // ─── Helpers ──────────────────────────────────────────────────────────
 
-/**
- * Recursively walk a Storyblok component tree and add a `_uid` (UUID v4)
- * to every object that has a `component` key but is missing `_uid`.
- * Arrays are traversed element-by-element.
- */
-function ensureUids<T>(value: T): T {
-  if (Array.isArray(value)) {
-    return value.map((item) => ensureUids(item)) as unknown as T;
-  }
-
-  if (value !== null && typeof value === "object") {
-    const obj = value as Record<string, unknown>;
-
-    // If it looks like a component block, ensure _uid
-    if (obj.component && !obj._uid) {
-      obj._uid = randomUUID();
-    }
-
-    // Recurse into all values
-    for (const key of Object.keys(obj)) {
-      obj[key] = ensureUids(obj[key]);
-    }
-
-    return obj as T;
-  }
-
-  return value;
-}
+// Re-export from shared library for backward compatibility
+export const ensureUids = sharedEnsureUids;
