@@ -79,7 +79,7 @@ export const SUPPORTED_COMPONENTS = [
   "image-text",
   "info-table",
   "logos",
-  "mosaic",
+  // "mosaic",
   "page",
   "section",
   "split-even",
@@ -506,6 +506,7 @@ export function prepareSchemaForOpenAi(
     warnings.push(
       `Enum value count (${enumValueCount}) exceeds OpenAI limit of 1000.`
     );
+    console.error(JSON.stringify(clonedSchema, null, 2));
   }
 
   const contentType = options.contentType || "page";
