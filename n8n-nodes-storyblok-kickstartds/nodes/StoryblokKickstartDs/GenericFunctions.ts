@@ -41,6 +41,8 @@ import {
   scrapeUrl,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Prompt constants
+  PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
   type OpenAiCredentials,
   type PrepareSchemaOptions,
@@ -91,6 +93,8 @@ export {
   scrapeUrl,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Prompt constants
+  PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
   type OpenAiCredentials,
   type PrepareSchemaOptions,

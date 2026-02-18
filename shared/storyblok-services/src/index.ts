@@ -83,7 +83,10 @@ export type {
 } from "./assets.js";
 
 // ─── Pipeline (high-level orchestrator) ──────────────────────────────
-export { generateAndPrepareContent } from "./pipeline.js";
+export {
+  generateAndPrepareContent,
+  PLACEHOLDER_IMAGE_INSTRUCTIONS,
+} from "./pipeline.js";
 export type {
   GenerateAndPrepareOptions,
   GenerateAndPrepareResult,

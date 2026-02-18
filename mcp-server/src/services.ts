@@ -91,6 +91,7 @@ export {
   checkCompositionalQuality,
 };
 export type { ValidationWarning, ContentTypeEntry };
+export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
 
 // ─── Content Pattern Analysis ─────────────────────────────────────────
 // Re-exported from shared library. The function signature now takes a

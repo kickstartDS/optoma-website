@@ -23,6 +23,7 @@ import {
   registry,
   analyzeContentPatterns,
   checkCompositionalQuality,
+  PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type ContentPatternAnalysis,
   type SubComponentStats,
 } from "./services.js";
@@ -1114,10 +1115,13 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           }
           const validated = schemas.generateContent.parse(args);
 
+          // Append placeholder image instructions to the system prompt
+          const systemWithImages = `${validated.system}\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
+
           // If componentType or sectionCount is provided, use auto-schema pipeline
           if (validated.componentType || validated.sectionCount) {
             const result = await contentService.generateWithSchema({
-              system: validated.system,
+              system: systemWithImages,
               prompt: validated.prompt,
               componentType: validated.componentType,
               sectionCount: validated.sectionCount,
@@ -1140,7 +1144,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             );
           }
           const result = await contentService.generateContent({
-            system: validated.system,
+            system: systemWithImages,
             prompt: validated.prompt,
             schema: validated.schema,
           });
@@ -2036,6 +2040,10 @@ Respond with a JSON object:
           let systemPrompt =
             validated.system ||
             `You are an expert content writer creating a ${validated.componentType} section for a website.`;
+
+          // Always inject placeholder image instructions so image fields are never left empty
+          systemPrompt += `\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
+
           if (siteContext) {
             systemPrompt += `\n\nSite-specific guidance:${siteContext}`;
           }

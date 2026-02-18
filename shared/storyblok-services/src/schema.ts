@@ -53,6 +53,9 @@ export const DEFAULT_PROPERTIES_TO_DROP = [
   "backgroundImage",
   "spotlight",
   "textColor",
+  "spaceBefore",
+  "spaceAfter",
+  "variant",
 ] as const;
 
 /**

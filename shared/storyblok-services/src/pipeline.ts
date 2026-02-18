@@ -21,6 +21,30 @@ import {
   type TransformedContent,
 } from "./transform.js";
 
+// ─── Constants ────────────────────────────────────────────────────────
+
+/**
+ * Instructions for generating placeholder images via placehold.co.
+ *
+ * When no real image URLs are available (e.g. during AI content generation),
+ * these instructions tell the model to produce descriptive placeholder URLs
+ * so that generated pages always render visible images instead of blank areas.
+ *
+ * Used by: MCP server (generate_section, generate_content), n8n node (generateSection).
+ */
+export const PLACEHOLDER_IMAGE_INSTRUCTIONS = `
+For every image field in the generated content, you MUST provide a placeholder URL using placehold.co:
+- Format: https://placehold.co/1200x600?text=Dynamic+Web+Evolution
+  where after the domain you specify dimensions (width x height) and a "text" query parameter
+- The text should be a short, descriptive phrase for a fitting image (it doubles as alt text)
+- Use "+" for spaces in the text parameter
+- If the image field is called "backgroundImage" or is inside a Hero component's "image" field,
+  add "transparent/999999" after the dimensions:
+  e.g. https://placehold.co/1200x600/transparent/999999?text=Dynamic+Web+Evolution
+- Never append any other parameters or path segments beyond what is described here
+- Always fill image fields — never leave them empty or omit them
+`.trim();
+
 // ─── Types ────────────────────────────────────────────────────────────
 
 /** Options for the end-to-end generation pipeline. */

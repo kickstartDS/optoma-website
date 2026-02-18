@@ -39,6 +39,8 @@ import {
   listAssets,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Prompt constants
+  PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type ContentPatternAnalysis,
   type SubComponentStats,
 } from "./GenericFunctions";
@@ -1241,6 +1243,9 @@ async function executeGenerateSection(
   let system =
     systemOverride ||
     `You are an expert content writer creating a ${componentType} section for a website.`;
+
+  // Always inject placeholder image instructions so image fields are never left empty
+  system += `\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
 
   // Add transition context if provided
   if (previousSection) {
