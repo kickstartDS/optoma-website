@@ -281,7 +281,7 @@ async function uploadToStoryblok(
   }
   formData.append(
     "file",
-    new Blob([file.buffer], { type: file.contentType }),
+    new Blob([new Uint8Array(file.buffer)], { type: file.contentType }),
     file.filename
   );
 

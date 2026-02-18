@@ -85,6 +85,24 @@ export async function generateAndPrepareContent(
   // 1. Prepare schema
   const preparedSchema = prepareSchemaForOpenAi(pageSchema, schemaOptions);
 
+  // 1b. Pre-flight: abort if schema exceeds OpenAI structured-output limits
+  const { warnings, enumValueCount, totalProperties } =
+    preparedSchema.validation;
+  if (warnings.length > 0) {
+    const limitErrors = warnings.filter((w) =>
+      w.includes("exceeds OpenAI limit")
+    );
+    if (limitErrors.length > 0) {
+      throw new Error(
+        `Schema exceeds OpenAI structured-output limits and would be rejected:\n` +
+          limitErrors.join("\n") +
+          `\n(totalProperties=${totalProperties}, enumValueCount=${enumValueCount})` +
+          `\nConsider reducing the number of allowed components or using ` +
+          `componentType to generate a single component at a time.`
+      );
+    }
+  }
+
   // 2. Generate via OpenAI
   const rawResponse = await generateStructuredContent(client as any, {
     system,
