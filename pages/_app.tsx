@@ -78,6 +78,8 @@ export default function App({
   const invertFooter = storyProps?.footer?.inverted
     ? !footerProps?.inverted
     : footerProps?.inverted;
+  const hideBreadcrumbs =
+    settings?.hideBreadcrumbs || storyProps?.hidePageBreadcrumbs || false;
 
   setActiveNavItem(headerProps?.navItems, router.asPath);
   setActiveNavItem(footerProps?.navItems, router.asPath);
@@ -135,26 +137,30 @@ export default function App({
                     }}
                   />
                 )}
-                {breadcrumbItems && breadcrumbItems.length > 1 && (
-                  <Section width="wide" spaceAfter="none" spaceBefore="none">
-                    <Breadcrumb pages={breadcrumbItems} />
-                    <JsonLd<BreadcrumbList>
-                      item={{
-                        "@context": "https://schema.org",
-                        "@type": "BreadcrumbList",
-                        name: "Breadcrumbs",
-                        itemListElement: breadcrumbItems.map((item, index) => ({
-                          "@type": "ListItem",
-                          position: index + 1,
-                          name: item.label,
-                          item: `${process.env.NEXT_PUBLIC_SITE_URL || ""}${
-                            item.url
-                          }`,
-                        })),
-                      }}
-                    />
-                  </Section>
-                )}
+                {!hideBreadcrumbs &&
+                  breadcrumbItems &&
+                  breadcrumbItems.length > 1 && (
+                    <Section width="wide" spaceAfter="none" spaceBefore="none">
+                      <Breadcrumb pages={breadcrumbItems} />
+                      <JsonLd<BreadcrumbList>
+                        item={{
+                          "@context": "https://schema.org",
+                          "@type": "BreadcrumbList",
+                          name: "Breadcrumbs",
+                          itemListElement: breadcrumbItems.map(
+                            (item, index) => ({
+                              "@type": "ListItem",
+                              position: index + 1,
+                              name: item.label,
+                              item: `${process.env.NEXT_PUBLIC_SITE_URL || ""}${
+                                item.url
+                              }`,
+                            })
+                          ),
+                        }}
+                      />
+                    </Section>
+                  )}
                 <Component {...pageProps} />
                 {footerProps && (
                   <Footer
