@@ -556,6 +556,230 @@ Follow the workflow documented in [docs/skills/plan-page-structure.md](skills/pl
 
 ---
 
+## Trade Fair Promo Pages: HANNOVER MESSE 2026
+
+### n8n Workflow Showcase
+
+This section defines the content for an **automated trade fair promotion workflow** built in n8n. The workflow demonstrates how a marketing team can rapidly generate product-specific landing pages for an upcoming trade fair using the `StoryblokKickstartDs` n8n node.
+
+**Workflow concept:** Given a trade fair and a set of demo products, n8n iterates over each product, generates a dedicated landing page (hero + features + split + cta), and publishes all pages under a shared trade fair folder — fully automated, no manual CMS work required.
+
+### Trade Fair: HANNOVER MESSE 2026
+
+| Field                | Value                                                                                                                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Event**            | HANNOVER MESSE 2026                                                                                                                                                                                                      |
+| **Tagline**          | "Think Tech Forward"                                                                                                                                                                                                     |
+| **Dates**            | 20 – 24 April 2026                                                                                                                                                                                                       |
+| **Location**         | Exhibition Grounds, Hannover, Germany                                                                                                                                                                                    |
+| **Organizer**        | Deutsche Messe AG                                                                                                                                                                                                        |
+| **Key Topics**       | Automation & Digitalization, Industrial AI, IIoT & Cloud, Robotics, Energy & Industrial Infrastructure                                                                                                                   |
+| **Relevance**        | World's leading trade fair for the manufacturing industry — the premier venue for industrial sensor, automation, and Industry 4.0 technology providers to showcase innovations to a global audience of 130,000+ visitors |
+| **Partner Country**  | Brazil                                                                                                                                                                                                                   |
+| **Website**          | https://www.hannovermesse.de/en/                                                                                                                                                                                         |
+| **FALKENBERG Booth** | Hall 11, Stand B42 (fictional)                                                                                                                                                                                           |
+
+#### Why HANNOVER MESSE?
+
+HANNOVER MESSE is the natural flagship event for FALKENBERG Precision. Its "Automation & Digitalization" track covers industrial sensors, IIoT connectivity, and production automation — all core FALKENBERG competencies. The 2026 edition's "Think Tech Forward" theme and strong focus on Industrial AI align perfectly with FALKENBERG's FalkenConnect IoT platform and smart sensor portfolio. As a Stuttgart-based manufacturer, FALKENBERG has exhibited at HANNOVER MESSE since 1991 and uses the event to launch new products, meet international distributors, and generate qualified leads.
+
+---
+
+### Demo Products for HANNOVER MESSE 2026
+
+FALKENBERG will showcase 5 products at HANNOVER MESSE 2026. Each product gets a dedicated promo landing page generated via the n8n workflow under the path `industry/hannover-messe-2026/{product-slug}`.
+
+---
+
+#### Product 1: FalkenSense OptiLine 7000
+
+| Field            | Value                                        |
+| ---------------- | -------------------------------------------- |
+| **Product Name** | FalkenSense OptiLine 7000                    |
+| **Category**     | Precision Optical Sensor                     |
+| **Slug**         | `industry/hannover-messe-2026/optline-7000`  |
+| **Tagline**      | "See the Invisible — Measure the Impossible" |
+| **Status**       | New Product Launch at HANNOVER MESSE 2026    |
+
+**Description:**
+The FalkenSense OptiLine 7000 is FALKENBERG's next-generation confocal chromatic sensor for non-contact surface measurement. It achieves a breakthrough resolution of ±0.05 µm — twice the precision of the previous generation — while maintaining measurement rates of up to 70 kHz. Designed for demanding applications in semiconductor inspection, medical device manufacturing, and optical component quality control, the OptiLine 7000 measures virtually any surface: transparent, reflective, matte, or multi-layered.
+
+**Key Features:**
+
+- ±0.05 µm resolution (best-in-class for confocal chromatic sensors)
+- 70 kHz measurement rate for high-speed inline inspection
+- Multi-layer measurement: simultaneously capture thickness and surface profile of transparent coatings
+- Integrated LED status ring for at-a-glance sensor health monitoring
+- IP67-rated housing with M12 connectivity, operating range -20°C to +80°C
+- Plug-and-play compatibility with FalkenConnect IoT Gateway
+
+**Trade Fair Messaging:**
+"We're unveiling the OptiLine 7000 at HANNOVER MESSE 2026 — the most precise confocal chromatic sensor we've ever built. Visit us at Hall 11, Stand B42 for a live demonstration on multi-layer glass measurement. See sub-micron features that other sensors simply miss."
+
+**Target Audience:** Quality engineers in semiconductor, medical device, and optics manufacturing; R&D lab managers; OEM integration partners building inline inspection systems.
+
+**Landing Page Tone:** Exciting product launch energy. Emphasize "world premiere at HANNOVER MESSE," breakthrough specs, live demo invitation. Balance technical depth with accessibility.
+
+---
+
+#### Product 2: FalkenConnect Gateway Pro X
+
+| Field            | Value                                              |
+| ---------------- | -------------------------------------------------- |
+| **Product Name** | FalkenConnect Gateway Pro X                        |
+| **Category**     | Industrial IoT Gateway                             |
+| **Slug**         | `industry/hannover-messe-2026/falkenconnect-pro-x` |
+| **Tagline**      | "Every Sensor. Every Protocol. One Platform."      |
+| **Status**       | Major Update — New AI Edge Processing Module       |
+
+**Description:**
+The FalkenConnect Gateway Pro X is the latest evolution of FALKENBERG's Industrial IoT platform, now featuring an integrated AI edge processing module. The Pro X connects up to 128 sensors (analog and digital) from any manufacturer, processes data locally using pre-trained anomaly detection models, and streams results to any cloud or on-premise platform via OPC UA, MQTT, REST, or Modbus. The new AI module enables predictive quality alerts directly at the sensor level — no cloud round-trip required, reducing reaction time from minutes to milliseconds.
+
+**Key Features:**
+
+- 128-channel sensor input (analog 4–20 mA, voltage, digital IO, HART, IO-Link)
+- Built-in AI edge processor with pre-trained models for vibration anomaly, drift detection, and predictive maintenance
+- Protocol support: OPC UA, MQTT, REST API, Modbus TCP/RTU, PROFINET, EtherNet/IP
+- Web-based configuration UI — no programming required; drag-and-drop data flow editor
+- Redundant power supply, DIN-rail mount, -40°C to +70°C operating range
+- Cybersecurity: IEC 62443 certified, encrypted data transmission, role-based access
+
+**Trade Fair Messaging:**
+"See AI meet the factory floor at HANNOVER MESSE 2026. The FalkenConnect Pro X brings machine learning to your sensor data — right at the edge. Watch live as our gateway detects a simulated bearing failure 47 minutes before it happens, using nothing but vibration sensor data and on-device AI. Hall 11, Stand B42."
+
+**Target Audience:** Plant managers evaluating Industry 4.0 / digital transformation; IT/OT convergence teams; automation engineers integrating multi-vendor sensor networks; predictive maintenance managers.
+
+**Landing Page Tone:** Innovation-forward, Industry 4.0 leadership. Emphasize AI edge computing, multi-protocol flexibility, and the live predictive maintenance demo. Position FALKENBERG as a technology leader, not just a sensor company.
+
+---
+
+#### Product 3: FalkenSense InduLine IS-500
+
+| Field            | Value                                                                       |
+| ---------------- | --------------------------------------------------------------------------- |
+| **Product Name** | FalkenSense InduLine IS-500                                                 |
+| **Category**     | Inductive Displacement Sensor                                               |
+| **Slug**         | `industry/hannover-messe-2026/induline-is-500`                              |
+| **Tagline**      | "Built for the Harshest Environments. Trusted for the Finest Measurements." |
+| **Status**       | Product Line Extension — New Extreme Environment Variants                   |
+
+**Description:**
+The FalkenSense InduLine IS-500 is FALKENBERG's ruggedized inductive displacement sensor series, engineered for reliable micron-level measurement in extreme industrial environments. The new 2026 variants extend the operating temperature range to -60°C to +200°C and add IP69K certification for high-pressure washdown resistance. The IS-500 is the go-to sensor for steel mills, foundries, offshore platforms, and heavy machinery OEMs where conventional sensors fail.
+
+**Key Features:**
+
+- Measurement range: 0.5 mm to 50 mm, resolution down to ±0.5 µm
+- Extended temperature range: -60°C to +200°C (with active cooling option for +300°C environments)
+- IP69K housing: withstands 80°C water jets at 100 bar pressure
+- Eddy-current principle: immune to oil, dust, coolant, and electromagnetic interference
+- Titanium alloy sensor head option for corrosive environments (salt spray, acids)
+- Integrated temperature compensation for <0.01% full-scale drift across the entire operating range
+
+**Trade Fair Messaging:**
+"Precision doesn't stop where conditions get extreme. The new InduLine IS-500 delivers micron-level accuracy at 200°C, under 100-bar washdown, through oil, dust, and electromagnetic noise. At HANNOVER MESSE, we'll demonstrate live measurement in a simulated steel mill environment — come feel the heat at Hall 11, Stand B42."
+
+**Target Audience:** Maintenance and reliability engineers in heavy industry (steel, mining, oil & gas); OEM machine builders for extreme-environment applications; offshore and energy sector engineers.
+
+**Landing Page Tone:** Rugged, confident, no-nonsense. Emphasize extreme durability and reliability. Appeal to engineers who've been burned by sensors that fail in the field. Proof through specs, not hype.
+
+---
+
+#### Product 4: FalkenCalib QuickCheck QC-200
+
+| Field            | Value                                                |
+| ---------------- | ---------------------------------------------------- |
+| **Product Name** | FalkenCalib QuickCheck QC-200                        |
+| **Category**     | Portable Calibration System                          |
+| **Slug**         | `industry/hannover-messe-2026/quickcheck-qc-200`     |
+| **Tagline**      | "Lab-Grade Calibration. Anywhere on the Shop Floor." |
+| **Status**       | New Product — Expanding into Portable Metrology      |
+
+**Description:**
+The FalkenCalib QuickCheck QC-200 is FALKENBERG's first portable calibration system, bringing ISO 17025-traceable verification directly to the production line. Instead of shipping sensors back to the calibration lab — a process that can take weeks and leaves measurement gaps — the QC-200 lets quality technicians verify sensor accuracy on-site in under 10 minutes. The system includes a set of certified reference standards, a ruggedized tablet interface, and automatic calibration certificate generation with digital signatures.
+
+**Key Features:**
+
+- Supports calibration verification for inductive, capacitive, and optical sensors
+- ISO 17025-traceable reference standards included (DAkkS-certified)
+- Calibration check completed in under 10 minutes per sensor
+- Ruggedized 10" tablet with guided workflow — step-by-step instructions, no metrology expertise required
+- Automatic PDF/XML calibration certificate generation with digital signature and QR code
+- Wireless data sync to FalkenConnect platform for fleet-wide calibration status dashboard
+- Pelican-style carrying case, rated for field use and air travel
+
+**Trade Fair Messaging:**
+"Stop shipping sensors to the lab. The new FalkenCalib QuickCheck QC-200 brings ISO 17025-traceable calibration verification to your shop floor — in under 10 minutes. At HANNOVER MESSE, try it yourself: grab the tablet, follow the guided workflow, and verify a sensor's accuracy on our demo stand. It's that simple. Hall 11, Stand B42."
+
+**Target Audience:** Quality managers concerned about calibration downtime; plant metrology teams; companies with large installed sensor fleets seeking to reduce calibration turnaround time and costs.
+
+**Landing Page Tone:** Problem-solution framing. Lead with the pain (calibration downtime, shipping delays, measurement gaps) and position QC-200 as the elegant fix. Hands-on, approachable — "try it yourself" energy.
+
+---
+
+#### Product 5: FalkenSense CapLine CS-350 Hygienic
+
+| Field            | Value                                                   |
+| ---------------- | ------------------------------------------------------- |
+| **Product Name** | FalkenSense CapLine CS-350 Hygienic                     |
+| **Category**     | Capacitive Sensor for Hygienic / Cleanroom Applications |
+| **Slug**         | `industry/hannover-messe-2026/capline-cs-350`           |
+| **Tagline**      | "Precision Meets Purity."                               |
+| **Status**       | New Variant — Hygienic Design for Pharma & Food         |
+
+**Description:**
+The FalkenSense CapLine CS-350 Hygienic is a capacitive proximity and displacement sensor specifically designed for pharmaceutical, food & beverage, and semiconductor cleanroom environments. Its electropolished 316L stainless steel housing with EHEDG-certified hygienic design eliminates crevices where bacteria or particles could accumulate. The sensor meets FDA 21 CFR Part 11 data integrity requirements, making it suitable for GMP-regulated manufacturing lines. It measures fill levels, distances, and material thickness on both conductive and non-conductive targets — without physical contact.
+
+**Key Features:**
+
+- EHEDG-certified hygienic design, CIP/SIP compatible (Clean-in-Place / Sterilize-in-Place)
+- Electropolished 316L stainless steel housing, Ra < 0.4 µm surface finish
+- FDA 21 CFR Part 11 compliant data output with audit trail
+- Measurement range: 0.1 mm to 10 mm, resolution ±1 µm
+- Non-contact capacitive measurement works on metals, plastics, glass, liquids, and powders
+- ISO 14644-1 Class 5 cleanroom compatible (generates zero particles)
+- IP69K rated, autoclavable up to 134°C
+
+**Trade Fair Messaging:**
+"Where hygiene is non-negotiable, every sensor component matters. The new CapLine CS-350 Hygienic combines EHEDG-certified design with micron-level capacitive measurement — purpose-built for pharma fill lines, food processing, and semiconductor fabs. Visit Hall 11, Stand B42 at HANNOVER MESSE to see our cleanroom-ready sensor demo and discuss your hygienic measurement challenges with our application engineers."
+
+**Target Audience:** Pharmaceutical production engineers and quality/compliance managers; food & beverage process engineers; semiconductor fab equipment designers; cleanroom equipment OEMs.
+
+**Landing Page Tone:** Clean, precise, compliance-aware. Emphasize certifications (EHEDG, FDA, ISO) and hygienic design. Speak the language of regulated industries — validation, traceability, audit trails. Professional trust-building.
+
+---
+
+### n8n Workflow: Trade Fair Promo Page Generator
+
+**Workflow Name:** `FALKENBERG — HANNOVER MESSE 2026 Product Promo Pages`
+
+**Trigger:** Manual execution (or scheduled 4 weeks before the fair)
+
+**Workflow Steps:**
+
+1. **Start Node** — Contains the trade fair metadata (name, dates, location, booth, slug prefix) and an array of 5 product objects (name, slug, tagline, description, key features, trade fair messaging, target audience, landing page tone).
+
+2. **Loop Over Products** — Iterates over each product in the array.
+
+3. **Plan Page** (`StoryblokKickstartDs` → AI Content → Plan Page) — For each product, generates a recommended section sequence using the intent: "Trade fair product landing page for {product name} at HANNOVER MESSE 2026. {product tagline}. {landing page tone}."
+
+4. **Generate Sections** (`StoryblokKickstartDs` → AI Content → Generate Section) — For each planned section, generates content using the product's description, key features, trade fair messaging, and target audience as prompt context.
+
+5. **Create Page** (`StoryblokKickstartDs` → Story → Create Page) — Assembles all sections and creates the page in Storyblok under `industry/hannover-messe-2026/{product-slug}` with `uploadAssets: true`.
+
+6. **Notification** — Sends a summary Slack/email notification with links to all 5 created pages.
+
+**Expected Output:** 5 product landing pages at:
+
+- `industry/hannover-messe-2026/optline-7000`
+- `industry/hannover-messe-2026/falkenconnect-pro-x`
+- `industry/hannover-messe-2026/induline-is-500`
+- `industry/hannover-messe-2026/quickcheck-qc-200`
+- `industry/hannover-messe-2026/capline-cs-350`
+
+**Bonus Page:** An overview landing page at `industry/hannover-messe-2026` linking to all 5 product pages, with a hero section about FALKENBERG at HANNOVER MESSE, the booth location, and a CTA to book a meeting.
+
+---
+
 ## Notes for Content Creators
 
 - **Tone of voice:** Professional, technical but accessible. Think "confident German engineering firm speaking to technical decision-makers." Avoid jargon overload — the content should be understandable by both engineers and C-level executives.
