@@ -1,6 +1,28 @@
 const fs = require("node:fs/promises");
+const path = require("node:path");
 const esbuild = require("esbuild");
 const fg = require("fast-glob");
+
+// @glidejs/glide@3.7+ added an `exports` map that only exposes "./dist/*",
+// but @kickstartds/content imports from "./src/index" and "./src/utils/*".
+// Under pnpm's strict resolution esbuild sees the exports restriction.
+// This plugin rewrites those bare specifiers to absolute file paths with
+// extensions, bypassing package.json exports entirely.
+const glideResolvePlugin = {
+  name: "glide-subpath-resolve",
+  setup(build) {
+    build.onResolve({ filter: /^@glidejs\/glide\/src\// }, (args) => {
+      // Resolve glide root via an exported path, then build absolute path to src/
+      const glidePkg = require.resolve("@glidejs/glide/dist/glide.esm.js");
+      const glideRoot = path.dirname(glidePkg).replace(/\/dist$/, "");
+      const subpath = args.path.replace("@glidejs/glide/", "");
+      let fullPath = path.join(glideRoot, subpath);
+      // Add .js extension if missing (bare imports like "src/index" → "src/index.js")
+      if (!path.extname(fullPath)) fullPath += ".js";
+      return { path: fullPath };
+    });
+  },
+};
 
 const importPath = (filePath) => `import "./${filePath}";`;
 
@@ -32,7 +54,7 @@ const build = async () => {
     outdir: "public/_",
     entryNames: "[dir]/client",
     logLevel: "info",
-    plugins: [],
+    plugins: [glideResolvePlugin],
     loader: {
       ".scss": "empty",
       ".css": "empty",

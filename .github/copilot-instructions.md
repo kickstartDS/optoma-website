@@ -2,7 +2,32 @@
 
 ## Project Overview
 
-This is a **Next.js 13** website using **Storyblok** as headless CMS, powered by **kickstartDS** design system components (`@kickstartds/ds-agency-premium`). It generates static pages with ISR and supports live preview editing in Storyblok's Visual Editor.
+This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyblok MCP server, a shared services library, and an n8n community node — all powered by the **kickstartDS** design system (`@kickstartds/ds-agency-premium`).
+
+### Monorepo Structure
+
+```
+packages/
+  website/          — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
+  storyblok-services/ — Shared library (schema, validation, transforms)
+  mcp-server/       — Storyblok MCP server (Model Context Protocol)
+  n8n-nodes/        — n8n community node for Storyblok workflows
+```
+
+**Package manager:** pnpm 9.15.0 (declared in root `packageManager` field)
+**Versioning:** Changesets (`@changesets/cli`) for independent per-package publishing
+
+### Key Commands (run from monorepo root)
+
+```bash
+pnpm install                 # Install all workspaces
+pnpm -r run build            # Build all packages (topological order)
+pnpm --filter website dev    # Start website dev server
+pnpm --filter mcp-server dev # Start MCP server in dev mode
+pnpm changeset               # Create a new changeset
+pnpm version-packages        # Bump versions from changesets
+pnpm publish-packages        # Publish to npm
+```
 
 ## Architecture
 
@@ -12,12 +37,12 @@ This is a **Next.js 13** website using **Storyblok** as headless CMS, powered by
 Storyblok CMS → storyblok.ts (fetch/transform) → unflatten() → React Components
 ```
 
-- **Storyblok stores flattened props** (e.g., `image_src`, `image_alt`) which get transformed via `unflatten()` in [helpers/unflatten.ts](helpers/unflatten.ts) into nested objects (`{ image: { src, alt } }`)
-- **Story processing** in [helpers/storyblok.ts](helpers/storyblok.ts#L70-L200) handles asset URLs, link resolution, and global references
+- **Storyblok stores flattened props** (e.g., `image_src`, `image_alt`) which get transformed via `unflatten()` in [packages/website/helpers/unflatten.ts](packages/website/helpers/unflatten.ts) into nested objects (`{ image: { src, alt } }`)
+- **Story processing** in [packages/website/helpers/storyblok.ts](packages/website/helpers/storyblok.ts#L70-L200) handles asset URLs, link resolution, and global references
 
 ### Component Registration Pattern
 
-All Storyblok components are registered in [components/index.tsx](components/index.tsx):
+All Storyblok components are registered in [packages/website/components/index.tsx](packages/website/components/index.tsx):
 
 ```tsx
 export const components = {
@@ -32,21 +57,21 @@ The `editable()` HOC wraps kickstartDS components with `storyblokEditable()` for
 
 ### Page Types
 
-- **page**: Standard pages ([components/Page.tsx](components/Page.tsx))
-- **blog-post**: Blog articles ([components/BlogPost.tsx](components/BlogPost.tsx))
+- **page**: Standard pages ([packages/website/components/Page.tsx](packages/website/components/Page.tsx))
+- **blog-post**: Blog articles ([packages/website/components/BlogPost.tsx](packages/website/components/BlogPost.tsx))
 - **blog-overview**: Blog listing
 - **event-list**, **event-detail**: Events
 - **search**: Site search with Pagefind
 
 ### Provider Hierarchy
 
-App providers in [pages/\_app.tsx](pages/_app.tsx#L108-L175):
+App providers in [packages/website/pages/\_app.tsx](packages/website/pages/_app.tsx#L108-L175):
 
 ```
 LanguageProvider → BlurHashProvider → DsaProviders → ComponentProviders → ImageSizeProviders → ImageRatioProviders
 ```
 
-[components/ComponentProviders.tsx](components/ComponentProviders.tsx) provides custom implementations for `Picture`, `Link`, and various kickstartDS contexts.
+[packages/website/components/ComponentProviders.tsx](packages/website/components/ComponentProviders.tsx) provides custom implementations for `Picture`, `Link`, and various kickstartDS contexts.
 
 ## Key Conventions
 
@@ -61,29 +86,29 @@ Override kickstartDS components via React Context:
 
 ### Local Component Extensions
 
-Custom components live in `components/{name}/`:
+Custom components live in `packages/website/components/{name}/`:
 
-- [components/prompter/](components/prompter/) - AI content generation
-- [components/info-table/](components/info-table/) - Custom info table
-- [components/headline/](components/headline/) - Extended headline
+- [packages/website/components/prompter/](packages/website/components/prompter/) - AI content generation
+- [packages/website/components/info-table/](packages/website/components/info-table/) - Custom info table
+- [packages/website/components/headline/](packages/website/components/headline/) - Extended headline
 
 ### TypeScript Types
 
-- **Generated types**: [types/components-schema.d.ts](types/components-schema.d.ts) from Storyblok schema
-- Regenerate with: `npm run generate-content-types`
+- **Generated types**: [packages/website/types/components-schema.d.ts](packages/website/types/components-schema.d.ts) from Storyblok schema
+- Regenerate with: `pnpm --filter website generate-content-types`
 
 ## Design Tokens
 
 ### Token Architecture (3 layers)
 
-1. **Branding** (`--ks-brand-*`): Core values in [token/branding-tokens.css](token/branding-token.css)
-2. **Semantic** (`--ks-*`): Purpose-based tokens in `token/*.scss`
+1. **Branding** (`--ks-brand-*`): Core values in [packages/website/token/branding-token.css](packages/website/token/branding-token.css)
+2. **Semantic** (`--ks-*`): Purpose-based tokens in `packages/website/token/*.scss`
 3. **Component** (`--dsa-*`): Component-specific customizations
 
 ### Token Commands
 
 ```bash
-npm run extract-tokens   # Extract component tokens
+pnpm --filter website extract-tokens   # Extract component tokens
 ```
 
 ## Developer Workflows
@@ -91,8 +116,8 @@ npm run extract-tokens   # Extract component tokens
 ### Local Development
 
 ```bash
-npm run build            # Full build (required before dev)
-npm run dev              # Start dev server with SSL proxy on :3010
+pnpm -r run build            # Full build (required before dev)
+pnpm --filter website dev    # Start dev server with SSL proxy on :3010
 ```
 
 Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
@@ -100,21 +125,21 @@ Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
 ### CMS Sync Commands
 
 ```bash
-npm run push-components              # Push cms/components.123456.json to Storyblok
-npm run pull-content-schema          # Pull schema from Storyblok → types/
-npm run create-storyblok-config      # Regenerate CMS config from JSON schemas
-npm run generate-content-types       # Pull + generate TypeScript types
+pnpm --filter website push-components        # Push cms/components.123456.json to Storyblok
+pnpm --filter website pull-content-schema    # Pull schema from Storyblok → types/
+pnpm --filter website create-storyblok-config # Regenerate CMS config from JSON schemas
+pnpm --filter website generate-content-types  # Pull + generate TypeScript types
 ```
 
 ### Build Pipeline
 
 ```bash
-npm run build  # Runs: build-tokens → extract-tokens → blurhashes → bundle-static-assets → next build → sitemap → pagefind
+pnpm --filter website build  # Runs: build-tokens → extract-tokens → blurhashes → bundle-static-assets → next build → sitemap → pagefind
 ```
 
 ## Environment Variables
 
-Required in `.env.local`:
+Required in `packages/website/.env.local`:
 
 - `NEXT_STORYBLOK_API_TOKEN` - Preview API token
 - `NEXT_STORYBLOK_OAUTH_TOKEN` - Management API token
@@ -122,7 +147,7 @@ Required in `.env.local`:
 
 ## MCP Server
 
-The project includes a Storyblok MCP server ([mcp-server/](mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
+The project includes a Storyblok MCP server ([packages/mcp-server/](packages/mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
 
 The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
 
@@ -133,7 +158,7 @@ The MCP server supports **5 root content types** via a schema registry:
 - **Tier 1 (section-based):** `page`, `blog-post`, `blog-overview` — these have a root array of polymorphic sections
 - **Tier 2 (flat):** `event-detail`, `event-list` — these use root-level scalar/array/object fields without sections
 
-All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `mcp-server/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
+All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `packages/mcp-server/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
 
 - `generate_content(contentType: "blog-post", componentType: "hero")` — uses blog-post schema
 - `plan_page(intent: "...", contentType: "event-detail")` — returns a field population plan for flat types
@@ -174,40 +199,39 @@ The `ensure_path` tool creates folder hierarchies idempotently (like `mkdir -p`)
 
 ### Cloud Deployment
 
-The MCP server has its own Kamal config at [mcp-server/config/deploy.yml](mcp-server/config/deploy.yml) and deploys to the same server as the main site under a separate subdomain.
+The MCP server has its own Kamal config at [config/deploy-mcp.yml](config/deploy-mcp.yml) and deploys to the same server as the main site under a separate subdomain.
 
 ```bash
-cd mcp-server
-kamal setup    # First-time
-kamal deploy   # Subsequent
+kamal deploy -d mcp    # Deploy MCP server
+kamal setup -d mcp     # First-time setup
 ```
 
 Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOSTING_SERVER_IP`, `STORYBLOK_API_TOKEN`, `STORYBLOK_OAUTH_TOKEN`, `STORYBLOK_SPACE_ID`, `OPENAI_API_KEY`.
 
 ## Important Files
 
-- [cms/components.123456.json](cms/components.123456.json) - Storyblok component definitions
-- [cms/presets.123456.json](cms/presets.123456.json) - Component presets
-- [helpers/storyblok.ts](helpers/storyblok.ts) - Storyblok API utilities and story transformations
-- [scripts/prepareProject.js](scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
-- [mcp-server/config/deploy.yml](mcp-server/config/deploy.yml) - Kamal deployment config for the MCP server
+- [packages/website/cms/components.123456.json](packages/website/cms/components.123456.json) - Storyblok component definitions
+- [packages/website/cms/presets.123456.json](packages/website/cms/presets.123456.json) - Component presets
+- [packages/website/helpers/storyblok.ts](packages/website/helpers/storyblok.ts) - Storyblok API utilities and story transformations
+- [packages/website/scripts/prepareProject.js](packages/website/scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
+- [config/deploy-mcp.yml](config/deploy-mcp.yml) - Kamal deployment config for the MCP server
 - [config/deploy.yml](config/deploy.yml) - Kamal deployment config for the main Next.js site
-- [shared/storyblok-services/src/schema.ts](shared/storyblok-services/src/schema.ts) - Schema preparation for OpenAI structured output (13 transformation passes)
-- [shared/storyblok-services/src/transform.ts](shared/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
-- [shared/storyblok-services/src/pipeline.ts](shared/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
-- [shared/storyblok-services/src/validate.ts](shared/storyblok-services/src/validate.ts) - Schema-driven content validation (nesting rules, component hierarchy) and compositional quality warnings
-- [shared/storyblok-services/src/registry.ts](shared/storyblok-services/src/registry.ts) - Schema registry for multi-content-type support (loads all root content type schemas)
-- [shared/storyblok-services/src/assets.ts](shared/storyblok-services/src/assets.ts) - Asset download, upload to Storyblok, and URL rewriting
-- [shared/storyblok-services/src/patterns.ts](shared/storyblok-services/src/patterns.ts) - Content pattern analysis (component frequency, section sequences, sub-component counts, page archetypes)
-- [mcp-server/schemas/section-recipes.json](mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
-- [n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (18 operations across 3 resources)
-- [n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/GenericFunctions.ts](n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
+- [packages/storyblok-services/src/schema.ts](packages/storyblok-services/src/schema.ts) - Schema preparation for OpenAI structured output (13 transformation passes)
+- [packages/storyblok-services/src/transform.ts](packages/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
+- [packages/storyblok-services/src/pipeline.ts](packages/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
+- [packages/storyblok-services/src/validate.ts](packages/storyblok-services/src/validate.ts) - Schema-driven content validation (nesting rules, component hierarchy) and compositional quality warnings
+- [packages/storyblok-services/src/registry.ts](packages/storyblok-services/src/registry.ts) - Schema registry for multi-content-type support (loads all root content type schemas)
+- [packages/storyblok-services/src/assets.ts](packages/storyblok-services/src/assets.ts) - Asset download, upload to Storyblok, and URL rewriting
+- [packages/storyblok-services/src/patterns.ts](packages/storyblok-services/src/patterns.ts) - Content pattern analysis (component frequency, section sequences, sub-component counts, page archetypes)
+- [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
+- [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (18 operations across 3 resources)
+- [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) - Section-by-section generation workflow guide
 - [docs/guided-generation-plan.md](docs/guided-generation-plan.md) - Design document for guided content generation
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([n8n-nodes-storyblok-kickstartds/](n8n-nodes-storyblok-kickstartds/)) that provides **18 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **18 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
 
 | Resource       | Operations | Description                                                                             |
 | -------------- | ---------- | --------------------------------------------------------------------------------------- |
@@ -217,7 +241,7 @@ The project includes an n8n community node package ([n8n-nodes-storyblok-kicksta
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 
-Nine workflow templates are included in `n8n-nodes-storyblok-kickstartds/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
+Nine workflow templates are included in `packages/n8n-nodes/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
 
 ## Common Patterns
 
@@ -230,14 +254,14 @@ Always consult specialized MCP servers for the Design System for this:
 
 Steps:
 
-1. Create component locally in `components/`
-2. Add to `components` map in [components/index.tsx](components/index.tsx)
-3. Update `components/section/section.schema.json` to include new component in the `anyOf` clause of the `components` field
-4. Update `package.json` to also include the new component schema in the `create-storyblok-config` script
-5. Run `npm run create-storyblok-config` to update CMS schema
-6. Inside `cms/components.123456.json` remove everything except the new component definition
-7. Run `npm run push-components` to sync with Storyblok
-8. Run `npm run generate-content-types` to update TypeScript types
+1. Create component locally in `packages/website/components/`
+2. Add to `components` map in [packages/website/components/index.tsx](packages/website/components/index.tsx)
+3. Update `packages/website/components/section/section.schema.json` to include new component in the `anyOf` clause of the `components` field
+4. Update `packages/website/package.json` to also include the new component schema in the `create-storyblok-config` script
+5. Run `pnpm --filter website create-storyblok-config` to update CMS schema
+6. Inside `packages/website/cms/components.123456.json` remove everything except the new component definition
+7. Run `pnpm --filter website push-components` to sync with Storyblok
+8. Run `pnpm --filter website generate-content-types` to update TypeScript types
 
 Important:
 

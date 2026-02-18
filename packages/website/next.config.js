@@ -1,3 +1,5 @@
+const path = require("path");
+
 const cspHeader = `
     default-src 'self';
     connect-src 'self' https://api.storyblok.com https://*.${process.env.NEXT_PUBLIC_PRIMARY_PUBLIC_SITE_DOMAIN} https://journeyengine.production.wlp.cloud;
@@ -26,6 +28,38 @@ const nextConfig = {
     "@kickstartds/ds-agency-premium",
   ],
   output: "standalone",
+  // Point to monorepo root so Next.js can trace dependencies hoisted by pnpm
+  outputFileTracingRoot: path.join(__dirname, "../../"),
+  webpack: (config, { isServer }) => {
+    // @glidejs/glide@3.7+ has a restrictive exports map that only exposes
+    // "./dist/*", but @kickstartds/content imports from "./src/*".
+    // Alias the subpath to the actual filesystem location to bypass exports.
+    const glideDir = path.dirname(
+      require.resolve("@glidejs/glide/dist/glide.esm.js")
+    );
+    config.resolve.alias["@glidejs/glide/src"] = path.join(glideDir, "../src");
+
+    if (isServer) {
+      // jsdom (used by storyblok-services/scrape) and its transitive deps
+      // (undici@7, whatwg-url@16, html-encoding-sniffer@6, etc.) use
+      // ESM-only sub-packages and modern syntax (private class fields)
+      // that webpack in Next.js 13 cannot bundle or parse.
+      // Externalize them so Node.js resolves them at runtime instead.
+      const serverOnlyPackages = ["jsdom", "@mozilla/readability", "turndown"];
+      config.externals.push(({ request }, callback) => {
+        if (
+          serverOnlyPackages.some(
+            (pkg) => request === pkg || request.startsWith(pkg + "/")
+          )
+        ) {
+          return callback(null, `commonjs ${request}`);
+        }
+        callback();
+      });
+    }
+
+    return config;
+  },
 };
 
 module.exports = {

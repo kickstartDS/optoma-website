@@ -9,8 +9,12 @@
   STORYBLOK_REGION = "Add the region you used on Storyblok for the newly created Space here"
 
 [build]
-  command = "(npm run netlify-init && npm run build) || npm run build"
+  command = "(pnpm --filter website run netlify-init && pnpm --filter '...@kickstartds/storyblok-starter-premium' run build) || pnpm --filter '...@kickstartds/storyblok-starter-premium' run build"
   publish = ".next"
+  base = "/"
+
+[build.environment]
+  PNPM_VERSION = "9.15.0"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
