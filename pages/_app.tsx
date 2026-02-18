@@ -26,6 +26,7 @@ import "@/components/prompter/prompter.scss";
 import { BlurHashProvider } from "@/components/BlurHashContext";
 import { LanguageProvider } from "@/components/LanguageContext";
 import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
+import { StoryblokComponent } from "@storyblok/react";
 
 initStoryblok(process.env.NEXT_STORYBLOK_API_TOKEN);
 if (typeof window !== "undefined") {
@@ -108,6 +109,28 @@ export default function App({
     breadcrumbItems.unshift({ label: "Home", url: "/" });
   }
 
+  let heroSection;
+  let newPageProps = pageProps;
+  const heroSectionFirst =
+    pageProps.story?.content?.section?.[0]?.components?.[0]?.component ===
+    "hero";
+  if (heroSectionFirst) {
+    const [firstSection, ...restSections] = pageProps.story?.content?.section;
+
+    heroSection = firstSection;
+
+    newPageProps = {
+      ...pageProps,
+      story: {
+        ...pageProps.story,
+        content: {
+          ...pageProps.story?.content,
+          section: restSections,
+        },
+      },
+    };
+  }
+
   return (
     <LanguageProvider language={language}>
       <BlurHashProvider blurHashes={blurHashes}>
@@ -137,6 +160,7 @@ export default function App({
                     }}
                   />
                 )}
+                {heroSection && <StoryblokComponent blok={heroSection} />}
                 {!hideBreadcrumbs &&
                   breadcrumbItems &&
                   breadcrumbItems.length > 1 && (
@@ -161,7 +185,7 @@ export default function App({
                       />
                     </Section>
                   )}
-                <Component {...pageProps} />
+                <Component {...newPageProps} />
                 {footerProps && (
                   <Footer
                     {...footerProps}
