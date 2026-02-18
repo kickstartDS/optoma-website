@@ -92,6 +92,29 @@ const AI_IMAGE_HOSTS = [
 ];
 
 /**
+ * Hosts known to serve images without file extensions in the URL path.
+ *
+ * These are popular placeholder/stock image services whose URLs don't
+ * end with a recognizable image extension, e.g.:
+ * - `https://images.unsplash.com/photo-xxx?w=1920`
+ * - `https://via.placeholder.com/200x80/e2e8f0/475569?text=Foo`
+ * - `https://placehold.co/600x400/EEE/31343C`
+ */
+const IMAGE_HOSTING_SERVICES = [
+  "images.unsplash.com",
+  "plus.unsplash.com",
+  "via.placeholder.com",
+  "placehold.co",
+  "placeholder.co",
+  "picsum.photos",
+  "fastly.picsum.photos",
+  "placekitten.com",
+  "loremflickr.com",
+  "dummyimage.com",
+  "fakeimg.pl",
+];
+
+/**
  * Storyblok image service suffix pattern.
  *
  * Storyblok's image service appends `/m/{options}` to asset URLs for
@@ -133,6 +156,14 @@ export function defaultIsImageUrl(value: string): boolean {
 
     // Check for AI image hosts (DALL·E etc.)
     if (AI_IMAGE_HOSTS.some((host) => url.hostname.includes(host))) return true;
+
+    // Check for known image hosting / placeholder services
+    if (
+      IMAGE_HOSTING_SERVICES.some(
+        (host) => url.hostname === host || url.hostname.endsWith(`.${host}`)
+      )
+    )
+      return true;
   } catch {
     // Malformed URL — skip
     return false;
