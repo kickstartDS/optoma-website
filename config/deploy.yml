@@ -41,7 +41,7 @@ registry:
 # Configure builder setup.
 builder:
   arch: amd64
-  context: ../
+  context: .
   dockerfile: packages/website/Dockerfile
   # Pass in additional build args needed for your Dockerfile.
   args:

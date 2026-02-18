@@ -42,13 +42,12 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/packages/website/public ./public
-RUN mkdir .next
-RUN chown 1001:1001 .next
-
+# With outputFileTracingRoot pointing to the monorepo root, Next.js standalone
+# output mirrors the repo structure: .next/standalone/packages/website/server.js
+# Copy the entire standalone tree, then layer static + public into the correct subpath.
 COPY --from=builder --chown=1001:1001 /app/packages/website/.next/standalone ./
-COPY --from=builder --chown=1001:1001 /app/packages/website/.next/static ./.next/static
-COPY --from=builder --chown=1001:1001 /app/packages/website/public ./public
+COPY --from=builder --chown=1001:1001 /app/packages/website/.next/static ./packages/website/.next/static
+COPY --from=builder --chown=1001:1001 /app/packages/website/public ./packages/website/public
 
 USER nextjs
 
@@ -57,4 +56,4 @@ EXPOSE 3030
 ENV PORT=3030
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["node", "packages/website/server.js"]
