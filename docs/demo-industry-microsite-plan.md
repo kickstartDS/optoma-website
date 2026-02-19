@@ -754,21 +754,266 @@ The FalkenSense CapLine CS-350 Hygienic is a capacitive proximity and displaceme
 
 **Trigger:** Manual execution (or scheduled 4 weeks before the fair)
 
-**Workflow Steps:**
+**Data Source:** Google Sheets spreadsheet imported from `docs/hannover-messe-2026-products.csv`. Each row contains one product with all input fields plus empty output columns (`story_id`, `story_uuid`, `page_url`, `sections_count`, `workflow_status`, `created_at`) that are filled in by the workflow as pages are created.
 
-1. **Start Node** — Contains the trade fair metadata (name, dates, location, booth, slug prefix) and an array of 5 product objects (name, slug, tagline, description, key features, trade fair messaging, target audience, landing page tone).
+#### Architecture
 
-2. **Loop Over Products** — Iterates over each product in the array.
+The workflow uses an **AI Agent node** with an **MCP Client tool** connected to the Storyblok MCP server's HTTP endpoint (`https://<mcp-domain>/mcp`). The agent autonomously plans, generates, and creates each page using the MCP tools — adapting section counts and content strategy per product rather than following a rigid fixed pipeline.
 
-3. **Plan Page** (`StoryblokKickstartDs` → AI Content → Plan Page) — For each product, generates a recommended section sequence using the intent: "Trade fair product landing page for {product name} at HANNOVER MESSE 2026. {product tagline}. {landing page tone}."
+```
+Manual Trigger
+  → Google Sheets (Read all rows)
+    → Split In Batches (size: 1)
+      → AI Agent
+          ├── LLM: OpenAI GPT-4o
+          ├── Tool: MCP Client → Storyblok MCP Server
+          └── Output Parser: Structured Output Parser
+        → Google Sheets (Update row by product_name)
+      ← (loop back)
+    → Aggregate (Code node: collect all results into summary)
+      → Slack / Email notification
+```
 
-4. **Generate Sections** (`StoryblokKickstartDs` → AI Content → Generate Section) — For each planned section, generates content using the product's description, key features, trade fair messaging, and target audience as prompt context.
+#### MCP Tools Used by the Agent
 
-5. **Create Page** (`StoryblokKickstartDs` → Story → Create Page) — Assembles all sections and creates the page in Storyblok under `industry/hannover-messe-2026/{product-slug}` with `uploadAssets: true`.
+The MCP Client exposes all Storyblok MCP tools. The agent uses these 6:
 
-6. **Notification** — Sends a summary Slack/email notification with links to all 5 created pages.
+| Tool                       | Purpose                                       | Called           |
+| -------------------------- | --------------------------------------------- | ---------------- |
+| `analyze_content_patterns` | Understand existing site structure            | Once at start    |
+| `list_recipes`             | Get section recipes and anti-patterns         | Once at start    |
+| `list_icons`               | Get valid icon identifiers for feature icons  | Once at start    |
+| `plan_page`                | Get recommended section sequence per product  | Once per product |
+| `generate_section`         | Generate each section with site-aware context | 4–7× per product |
+| `create_page_with_content` | Assemble all sections and create the page     | Once per product |
 
-**Expected Output:** 5 product landing pages at:
+#### Node Configuration
+
+##### 1. Google Sheets — Read Products
+
+- **Operation:** Read Rows
+- **Document:** FALKENBERG HANNOVER MESSE 2026 Products
+- **Sheet:** Sheet1
+
+##### 2. Split In Batches
+
+- **Batch Size:** 1 (one product at a time — required because each agent run creates a page)
+
+##### 3. AI Agent
+
+- **Agent Type:** Tools Agent
+- **LLM:** OpenAI Chat Model → GPT-4o
+- **Tool:** MCP Client → `https://<mcp-domain>/mcp`
+- **Output Parsing:** "Require Specific Output Format" → Yes
+- **Output Parser:** Structured Output Parser (schema below)
+- **System Prompt:** See "AI Agent System Prompt" section below
+- **User Prompt:** See "AI Agent User Prompt" section below
+
+##### 4. Structured Output Parser
+
+Connected to the AI Agent's parser input. Schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "product_name": {
+      "type": "string",
+      "description": "The product name exactly as provided in the input"
+    },
+    "story_id": {
+      "type": "number",
+      "description": "The numeric story ID returned by create_page_with_content"
+    },
+    "story_uuid": {
+      "type": "string",
+      "description": "The UUID returned by create_page_with_content"
+    },
+    "slug": {
+      "type": "string",
+      "description": "The full page slug, e.g. industry/hannover-messe-2026/optline-7000"
+    },
+    "page_url": {
+      "type": "string",
+      "description": "The full page URL: https://falkenberg-precision.de/{slug}"
+    },
+    "sections_count": {
+      "type": "number",
+      "description": "Total number of sections created on the page"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["created", "error"],
+      "description": "Whether the page was created successfully"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of when the page was created"
+    }
+  },
+  "required": [
+    "product_name",
+    "story_id",
+    "slug",
+    "page_url",
+    "sections_count",
+    "status",
+    "created_at"
+  ]
+}
+```
+
+The parser automatically injects format instructions into the agent prompt, validates the output, and retries with a fix prompt if parsing fails. Each field is exposed as a direct `$json` property for downstream nodes.
+
+##### 5. Google Sheets — Update Row
+
+- **Operation:** Update
+- **Matching Column:** `product_name` (unique identifier to find the correct row)
+- **Column Mappings:**
+
+| Sheet Column      | n8n Expression               |
+| ----------------- | ---------------------------- |
+| `story_id`        | `{{ $json.story_id }}`       |
+| `story_uuid`      | `{{ $json.story_uuid }}`     |
+| `page_url`        | `{{ $json.page_url }}`       |
+| `sections_count`  | `{{ $json.sections_count }}` |
+| `workflow_status` | `{{ $json.status }}`         |
+| `created_at`      | `{{ $json.created_at }}`     |
+
+##### 6. Aggregate (Code Node — after loop completes)
+
+```javascript
+const allItems = $items("Google Sheets — Update Row");
+const summary = allItems.map((item) => ({
+  product: item.json.product_name,
+  url: item.json.page_url,
+  status: item.json.status,
+}));
+
+const created = summary.filter((s) => s.status === "created").length;
+const failed = summary.filter((s) => s.status === "error").length;
+
+return [
+  {
+    json: {
+      summary: `Created ${created}/${summary.length} pages (${failed} failed)`,
+      pages: summary,
+      timestamp: new Date().toISOString(),
+    },
+  },
+];
+```
+
+##### 7. Slack / Email Notification
+
+Send `$json.summary` and `$json.pages` as the notification body.
+
+#### AI Agent System Prompt
+
+```
+You are a senior industrial marketing specialist creating trade fair product
+landing pages for FALKENBERG Precision GmbH, a German manufacturer of precision
+sensors and measurement systems. You are creating pages for HANNOVER MESSE 2026
+(20–24 April 2026, Hannover, Germany). FALKENBERG's booth is at Hall 11,
+Stand B42.
+
+## Your Task
+
+For each product you receive, create a compelling landing page in the Storyblok
+CMS using the available MCP tools. Follow this exact workflow:
+
+1. **Analyze the site first** (only on the first product):
+   - Call `analyze_content_patterns` to understand existing page structures.
+   - Call `list_recipes` with intent "trade fair product landing page" to get
+     proven section combinations and anti-patterns to avoid.
+   - Call `list_icons` to get the list of valid icon identifiers.
+
+2. **Plan the page structure**:
+   - Call `plan_page` with an intent derived from the product's name, tagline,
+     and landing page tone. Example intent format:
+     "Trade fair product landing page for {product_name} at HANNOVER MESSE 2026.
+     {tagline}. Tone: {landing_page_tone}"
+
+3. **Generate sections one by one**:
+   - For each section in the plan, call `generate_section` with:
+     - `componentType`: the section type from the plan (e.g. "hero", "features")
+     - `prompt`: a detailed prompt incorporating the product's description,
+       key features, trade fair messaging, and target audience. Tailor the
+       prompt to the specific section type (e.g. for a hero, focus on headline
+       and tagline; for features, focus on key_features; for CTA, focus on
+       trade fair messaging and booth location).
+     - `previousSection` and `nextSection`: set these for transition context.
+   - Collect all generated sections in order.
+
+4. **Create the page**:
+   - Call `create_page_with_content` with:
+     - `name`: the product_name
+     - `slug`: take only the last segment of the slug column
+       (e.g. "optline-7000")
+     - `path`: "industry/hannover-messe-2026"
+     - `sections`: all generated sections combined
+     - `uploadAssets`: true
+     - `assetFolderName`: "FALKENBERG Precision"
+     - `publish`: false
+
+## Content Guidelines
+
+- **Tone**: Follow the `landing_page_tone` field for each product. All content
+  should be professional, technically credible, and aimed at industrial
+  decision-makers.
+- **Trade fair context**: Every page must prominently feature the HANNOVER MESSE
+  2026 context — dates, booth location (Hall 11, Stand B42), and a clear call
+  to action to visit the booth or book a meeting.
+- **Icons**: Only use identifiers returned by `list_icons`. Common choices:
+  `star`, `arrow-right`, `download`, `email`, `search`, `person`.
+- **Hero sections**: Use 1–2 buttons. Primary button should drive to the booth
+  or contact. Secondary can link to product details or catalog download.
+- **Features sections**: Use 3–4 items (not more). Each feature should have an
+  icon from the valid icon list.
+- **CTA sections**: Always include the booth location and a "Book a Meeting"
+  or "Visit Our Booth" call to action.
+- **Images**: Provide descriptive image prompts in the content. The asset
+  upload pipeline will handle them.
+- **Language**: English.
+- **All content is fictional** — FALKENBERG Precision GmbH does not exist.
+
+When you finish creating the page, report back the product_name, story_id,
+story_uuid, slug, page_url (https://falkenberg-precision.de/{slug}),
+sections_count, status, and created_at from the create_page_with_content result.
+```
+
+#### AI Agent User Prompt (per row, using n8n expressions)
+
+```
+Create a trade fair product landing page for the following product:
+
+**Product Name:** {{ $json.product_name }}
+**Category:** {{ $json.category }}
+**Tagline:** {{ $json.tagline }}
+**Status:** {{ $json.status }}
+
+**Description:**
+{{ $json.description }}
+
+**Key Features:**
+{{ $json.key_features.split(' | ').map((f, i) => `${i + 1}. ${f}`).join('\n') }}
+
+**Trade Fair Messaging:**
+{{ $json.trade_fair_messaging }}
+
+**Target Audience:** {{ $json.target_audience }}
+**Landing Page Tone:** {{ $json.landing_page_tone }}
+
+**Page slug:** {{ $json.slug.split('/').pop() }}
+**Page path:** industry/hannover-messe-2026
+
+Please follow the full workflow: plan the page, generate each section
+individually with proper transition context, then create the page in Storyblok.
+```
+
+#### Expected Output
+
+5 product landing pages at:
 
 - `industry/hannover-messe-2026/optline-7000`
 - `industry/hannover-messe-2026/falkenconnect-pro-x`
@@ -776,7 +1021,9 @@ The FalkenSense CapLine CS-350 Hygienic is a capacitive proximity and displaceme
 - `industry/hannover-messe-2026/quickcheck-qc-200`
 - `industry/hannover-messe-2026/capline-cs-350`
 
-**Bonus Page:** An overview landing page at `industry/hannover-messe-2026` linking to all 5 product pages, with a hero section about FALKENBERG at HANNOVER MESSE, the booth location, and a CTA to book a meeting.
+The Google Sheets spreadsheet is updated in real-time as each page is created, serving as a live dashboard with story IDs, page URLs, section counts, and timestamps.
+
+**Bonus Page:** An overview landing page at `industry/hannover-messe-2026` linking to all 5 product pages, with a hero section about FALKENBERG at HANNOVER MESSE, the booth location, and a CTA to book a meeting. This can be created manually or as a 6th iteration with a hardcoded prompt in the workflow.
 
 ---
 
