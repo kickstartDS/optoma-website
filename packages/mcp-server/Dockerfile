@@ -13,6 +13,10 @@ COPY packages/mcp-server/package.json ./packages/mcp-server/
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
+# Cache-bust: everything below here rebuilds when source changes.
+# Pass --build-arg CACHEBUST=$(date +%s) to force a fresh build.
+ARG CACHEBUST=0
+
 # Copy source code
 COPY packages/storyblok-services/ ./packages/storyblok-services/
 COPY packages/mcp-server/ ./packages/mcp-server/

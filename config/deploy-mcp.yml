@@ -32,6 +32,9 @@ builder:
   # Build context is the repo root so workspace packages are available
   context: .
   dockerfile: packages/mcp-server/Dockerfile
+  # Bust the source-code cache on every deploy so code changes always ship
+  args:
+    CACHEBUST: <%= Time.now.to_i %>
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:

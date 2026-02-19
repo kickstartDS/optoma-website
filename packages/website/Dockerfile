@@ -26,6 +26,11 @@ ARG NEXT_OPENAI_API_KEY
 ENV NEXT_OPENAI_API_KEY=$NEXT_OPENAI_API_KEY
 WORKDIR /app
 COPY --from=deps /app ./
+
+# Cache-bust: everything below here rebuilds when source changes.
+# Pass --build-arg CACHEBUST=$(date +%s) to force a fresh build.
+ARG CACHEBUST=0
+
 # Copy source for shared lib and website
 COPY packages/storyblok-services/ ./packages/storyblok-services/
 COPY packages/website/ ./packages/website/
