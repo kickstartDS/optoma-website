@@ -41,6 +41,10 @@ import {
   scrapeUrl,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Root field & SEO generation
+  generateRootFieldContent,
+  generateSeoContent,
+  getRootFieldSchema,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
@@ -56,6 +60,12 @@ import {
   type ContentPatternAnalysis,
   type SubComponentStats,
   type AnalyzeContentPatternsOptions,
+  type RootFieldMeta,
+  type RootFieldPriority,
+  type GenerateRootFieldOptions,
+  type GenerateRootFieldResult,
+  type GenerateSeoOptions,
+  type GenerateSeoResult,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
 import * as path from "path";
@@ -93,6 +103,10 @@ export {
   scrapeUrl,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Root field & SEO generation
+  generateRootFieldContent,
+  generateSeoContent,
+  getRootFieldSchema,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
@@ -105,6 +119,12 @@ export {
   type ListAssetsOptions,
   type ContentPatternAnalysis,
   type SubComponentStats,
+  type RootFieldMeta,
+  type RootFieldPriority,
+  type GenerateRootFieldOptions,
+  type GenerateRootFieldResult,
+  type GenerateSeoOptions,
+  type GenerateSeoResult,
 };
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";

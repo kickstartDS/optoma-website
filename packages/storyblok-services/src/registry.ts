@@ -19,6 +19,43 @@ import { buildValidationRules, type ValidationRules } from "./validate.js";
 
 // ─── Types ────────────────────────────────────────────────────────────
 
+/**
+ * Generation priority for a root-level field.
+ *
+ * - `"required"`: Always generate — the field is essential for this content
+ *    type (e.g. `head` on blog-post).
+ * - `"recommended"`: Strongly prefer generating — omission would be a gap
+ *    (e.g. `cta`, `seo`).
+ * - `"optional"`: Generate when useful, but fine to skip.
+ * - `"excluded"`: Never generate — field is structural/layout (header, footer, token).
+ */
+export type RootFieldPriority =
+  | "required"
+  | "recommended"
+  | "optional"
+  | "excluded";
+
+/** Metadata for a root-level field on a content type schema. */
+export interface RootFieldMeta {
+  /** Property name in the schema (e.g. `"head"`, `"aside"`, `"seo"`). */
+  name: string;
+  /** JSON Schema type (e.g. `"object"`, `"string"`, `"array"`). */
+  type: string;
+  /** Schema title, if present. */
+  title?: string;
+  /** Schema description, if present. */
+  description?: string;
+  /** Whether the field is listed in the schema's `required` array. */
+  schemaRequired: boolean;
+  /** Generation priority — controls whether AI should generate this field. */
+  priority: RootFieldPriority;
+  /**
+   * Whether this field is the primary section array for the content type.
+   * Only one field per content type can be `true`.
+   */
+  isSectionArray: boolean;
+}
+
 /** A registered content type with its schema and pre-built rules. */
 export interface ContentTypeEntry {
   /** Content type name, e.g. `"page"`, `"blog-post"`, `"event-detail"`. */
@@ -42,6 +79,14 @@ export interface ContentTypeEntry {
    * (e.g. `["section"]` for page, `["events"]` for event-list).
    */
   rootArrayFields: string[];
+  /**
+   * Metadata for ALL root-level fields in this content type's schema.
+   *
+   * Includes section arrays, scalar fields, and object fields. Use
+   * `rootFieldMeta.filter(f => f.priority !== "excluded" && !f.isSectionArray)`
+   * to get the content-relevant non-section fields that AI should populate.
+   */
+  rootFieldMeta: RootFieldMeta[];
 }
 
 // ─── Registry ─────────────────────────────────────────────────────────
@@ -67,6 +112,7 @@ export class SchemaRegistry {
   register(name: string, schema: Record<string, any>): ContentTypeEntry {
     const rules = buildValidationRules(schema);
     const hasSections = detectHasSections(rules);
+    const rootFieldMeta = detectRootFieldMeta(name, schema, rules, hasSections);
 
     const entry: ContentTypeEntry = {
       name,
@@ -74,6 +120,7 @@ export class SchemaRegistry {
       rules,
       hasSections,
       rootArrayFields: rules.rootArrayFields,
+      rootFieldMeta,
     };
 
     this.entries.set(name, entry);
@@ -255,4 +302,70 @@ function detectHasSections(rules: ValidationRules): boolean {
     }
   }
   return false;
+}
+
+/** Property names that are structural/layout and should never be AI-generated. */
+const EXCLUDED_FIELD_NAMES = new Set(["header", "footer", "token"]);
+
+/**
+ * Detect root field metadata for a content type schema.
+ *
+ * Analyses every root-level property and assigns a generation priority:
+ * - `"excluded"`: Structural fields (`header`, `footer`, `token`)
+ * - `"required"`: Schema-required fields (unless excluded or the section array)
+ * - `"recommended"`: `seo`, `cta`, `aside`, and other content-relevant optional objects
+ * - `"optional"`: Everything else (e.g. markdown `content` on blog-post)
+ *
+ * The primary section array field is marked with `isSectionArray: true`
+ * and gets `"optional"` priority (sections are handled by `generate_section`).
+ */
+function detectRootFieldMeta(
+  contentTypeName: string,
+  schema: Record<string, any>,
+  rules: ValidationRules,
+  hasSections: boolean
+): RootFieldMeta[] {
+  const props = schema.properties || {};
+  const required = new Set<string>(schema.required || []);
+  const primarySectionField = hasSections ? rules.rootArrayFields[0] : null;
+
+  // Names that get "recommended" priority when not schema-required
+  const RECOMMENDED_FIELD_NAMES = new Set(["seo", "cta", "aside"]);
+
+  const fields: RootFieldMeta[] = [];
+
+  for (const [name, propSchema] of Object.entries<any>(props)) {
+    const fieldType: string =
+      propSchema.type || (propSchema.anyOf ? "anyOf" : "unknown");
+    const isSectionArray = name === primarySectionField;
+
+    let priority: RootFieldPriority;
+    if (EXCLUDED_FIELD_NAMES.has(name)) {
+      priority = "excluded";
+    } else if (isSectionArray) {
+      // Section arrays are handled separately by generate_section
+      priority = "optional";
+    } else if (required.has(name) && !EXCLUDED_FIELD_NAMES.has(name)) {
+      priority = "required";
+    } else if (RECOMMENDED_FIELD_NAMES.has(name)) {
+      priority = "recommended";
+    } else if (fieldType === "object" || fieldType === "array") {
+      // Non-trivial structured fields default to recommended
+      priority = "recommended";
+    } else {
+      priority = "optional";
+    }
+
+    fields.push({
+      name,
+      type: fieldType,
+      title: propSchema.title,
+      description: propSchema.description,
+      schemaRequired: required.has(name),
+      priority,
+      isSectionArray,
+    });
+  }
+
+  return fields;
 }

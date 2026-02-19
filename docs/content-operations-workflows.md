@@ -2,7 +2,7 @@
 
 This document describes automation workflows that editors can build using **n8n** connected to the **Storyblok MCP Server** via an MCP client node. Each workflow combines MCP tools with external n8n nodes to automate content production, quality assurance, and housekeeping.
 
-> **💡 Native n8n Node Available:** All MCP tools referenced in these workflows are also available as **native n8n operations** via the [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/) community node package. The native node provides 18 operations across 3 resources (AI Content, Story, Space) and is the recommended approach — no MCP client node needed. See the [n8n node README](../n8n-nodes-storyblok-kickstartds/README.md) for the full operation reference and ready-to-import workflow templates (`workflows/template-*.json`).
+> **💡 Native n8n Node Available:** All MCP tools referenced in these workflows are also available as **native n8n operations** via the [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/) community node package. The native node provides 20 operations across 3 resources (AI Content, Story, Space) and is the recommended approach — no MCP client node needed. See the [n8n node README](../n8n-nodes-storyblok-kickstartds/README.md) for the full operation reference and ready-to-import workflow templates (`workflows/template-*.json`).
 
 ---
 
@@ -37,13 +37,15 @@ Eine Liste von URLs der alten Website wird Seite für Seite gescrapt, per KI in 
 
 Externe Branchennews (RSS-Feeds, Newsletter) werden automatisch in Blogpost-Entwürfe umgewandelt – fertig zur redaktionellen Prüfung.
 
-| Schritt              | Tool                                                                    | Zweck                                             |
-| -------------------- | ----------------------------------------------------------------------- | ------------------------------------------------- |
-| RSS lesen            | _n8n RSS Feed Node_                                                     | Neue Artikel erkennen                             |
-| Quelle scrapen       | `scrape_url`                                                            | Volltexte der Artikel extrahieren                 |
-| Blogpost generieren  | `generate_content` mit `componentType`, `contentType: "blog-post"`      | KI schreibt eigenen Blogpost auf Basis der Quelle |
-| Entwurf anlegen      | `create_page_with_content` (`contentType: "blog-post"`, ohne `publish`) | Draft in Storyblok, Redaktion prüft & publiziert  |
-| Team benachrichtigen | _n8n Slack/E-Mail Node_                                                 | „Neuer Entwurf wartet auf Review"                 |
+| Schritt              | Tool                                                                                             | Zweck                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| RSS lesen            | _n8n RSS Feed Node_                                                                              | Neue Artikel erkennen                                 |
+| Quelle scrapen       | `scrape_url`                                                                                     | Volltexte der Artikel extrahieren                     |
+| Sektionen generieren | `generate_section` (pro Sektion, `contentType: "blog-post"`)                                     | KI erzeugt Sektionen (Hero, Text, CTA) pro Artikel    |
+| Root-Felder gen.     | `generate_root_field` für `head`, `aside`, `cta`                                                 | Titel/Autor, Sidebar, Blogpost-CTA generieren         |
+| SEO generieren       | `generate_seo` mit `contentType: "blog-post"`                                                    | SEO-Metadaten (Titel, Description, Keywords) ableiten |
+| Entwurf anlegen      | `create_page_with_content` (`contentType: "blog-post"`, `rootFields: { head, aside, cta, seo }`) | Draft in Storyblok mit allen Feldern                  |
+| Team benachrichtigen | _n8n Slack/E-Mail Node_                                                                          | „Neuer Entwurf wartet auf Review"                     |
 
 ---
 
@@ -164,29 +166,31 @@ Abgelaufene Event-Seiten oder veraltete Kampagnen-Seiten werden automatisch depu
 
 Alle im MCP Server verfügbaren Tools auf einen Blick:
 
-| Kategorie          | Tool                         | Beschreibung                                                                                         |
-| ------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern                              |
-|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                                      |
-|                    | `create_story`               | Neue Story mit Basisinhalt anlegen (unterstützt `path` für automatische Ordnererstellung)            |
-|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren (unterstützt `path`)         |
-|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                                                  |
-|                    | `delete_story`               | Story dauerhaft löschen                                                                              |
-|                    | `search_content`             | Volltextsuche über alle Stories                                                                      |
-|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                                                  |
-|                    | `ensure_path`                | Ordnerpfad sicherstellen (wie `mkdir -p`), fehlende Zwischenordner anlegen, Ordner-ID zurückgeben    |
-| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                     |
-|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                      |
-| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                      |
-| **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish) |
-|                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space             |
-|                    | `plan_page`                  | KI-gestützte Seitenstruktur-Planung anhand von Intent und Website-Mustern                            |
-|                    | `generate_section`           | Einzelne Sektion generieren mit automatischer Site-Kontext-Injektion und Übergangshinweisen          |
-| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                                          |
-|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                                              |
-| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                                       |
-| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)                          |
-| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                                         |
+| Kategorie          | Tool                         | Beschreibung                                                                                                       |
+| ------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern                                            |
+|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                                                    |
+|                    | `create_story`               | Neue Story mit Basisinhalt anlegen (unterstützt `path` für automatische Ordnererstellung)                          |
+|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren (unterstützt `path`)                       |
+|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                                                                |
+|                    | `delete_story`               | Story dauerhaft löschen                                                                                            |
+|                    | `search_content`             | Volltextsuche über alle Stories                                                                                    |
+|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                                                                |
+|                    | `ensure_path`                | Ordnerpfad sicherstellen (wie `mkdir -p`), fehlende Zwischenordner anlegen, Ordner-ID zurückgeben                  |
+| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                                   |
+|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                                    |
+| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                                    |
+| **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish)               |
+|                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space                           |
+|                    | `plan_page`                  | KI-gestützte Seitenstruktur-Planung anhand von Intent und Website-Mustern (bei Hybrid-Typen inkl. `rootFieldMeta`) |
+|                    | `generate_section`           | Einzelne Sektion generieren mit automatischer Site-Kontext-Injektion und Übergangshinweisen                        |
+|                    | `generate_root_field`        | Einzelnes Root-Feld für Hybrid-Content-Typen generieren (z.B. `head`, `aside`, `cta` bei blog-post)                |
+|                    | `generate_seo`               | SEO-Metadaten (Titel, Description, Keywords, OG-Image) für beliebigen Content-Typ generieren                       |
+| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                                                        |
+|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                                                            |
+| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                                                     |
+| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)                                        |
+| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                                                       |
 
 ---
 

@@ -12,12 +12,14 @@ import type { OpenAI } from "openai";
 import { generateStructuredContent } from "./openai.js";
 import {
   prepareSchemaForOpenAi,
+  getRootFieldSchema,
   type PrepareSchemaOptions,
   type PreparedSchema,
 } from "./schema.js";
 import {
   processOpenAiResponse,
   processForStoryblok,
+  flattenNestedObjects,
   type TransformedContent,
 } from "./transform.js";
 
@@ -152,4 +154,174 @@ export async function generateAndPrepareContent(
     designSystemProps,
     storyblokContent,
   };
+}
+
+// ─── Root field generation ────────────────────────────────────────────
+
+/** Options for generating a single root-level field. */
+export interface GenerateRootFieldOptions {
+  /** System prompt guiding the AI. */
+  system: string;
+  /** User prompt describing what to generate. */
+  prompt: string;
+  /** The fully dereferenced content type JSON Schema. */
+  contentTypeSchema: Record<string, any>;
+  /** Name of the root field to generate (e.g. `"head"`, `"aside"`, `"cta"`). */
+  fieldName: string;
+  /** Content type name (e.g. `"blog-post"`). @default "page" */
+  contentType?: string;
+  /** OpenAI model identifier. @default "gpt-4o-2024-08-06" */
+  model?: string;
+}
+
+/** Result of root field generation. */
+export interface GenerateRootFieldResult {
+  /** The raw JSON returned by OpenAI. */
+  rawResponse: Record<string, any>;
+  /** The generated field content in Design System shape. */
+  designSystemProps: Record<string, any>;
+  /** The generated field content flattened for Storyblok. */
+  storyblokContent: Record<string, any>;
+  /** The field name that was generated. */
+  fieldName: string;
+}
+
+/**
+ * Generate content for a single root-level field on a content type.
+ *
+ * Used for non-section root fields like `head`, `aside`, `cta` on blog-post,
+ * or `filter` on event-list. Extracts the field's sub-schema, prepares it
+ * for OpenAI, generates content, and flattens for Storyblok.
+ *
+ * @returns The generated content for the field, both in DS and Storyblok shapes.
+ */
+export async function generateRootFieldContent(
+  client: OpenAI,
+  options: GenerateRootFieldOptions
+): Promise<GenerateRootFieldResult> {
+  const {
+    system,
+    prompt,
+    contentTypeSchema,
+    fieldName,
+    contentType = "page",
+    model,
+  } = options;
+
+  // Extract the field's sub-schema
+  const fieldSchemaEnvelope = getRootFieldSchema(
+    contentTypeSchema,
+    fieldName,
+    contentType
+  );
+  if (!fieldSchemaEnvelope) {
+    throw new Error(
+      `Root field "${fieldName}" not found in ${contentType} schema. ` +
+        `Available properties: ${Object.keys(
+          contentTypeSchema.properties || {}
+        ).join(", ")}`
+    );
+  }
+
+  // Generate via OpenAI
+  const rawResponse = await generateStructuredContent(client as any, {
+    system,
+    prompt,
+    schema: fieldSchemaEnvelope,
+    model,
+  });
+
+  // The response IS the field content (no envelope to unwrap)
+  const designSystemProps = structuredClone(rawResponse);
+
+  // Flatten nested objects for Storyblok
+  const storyblokContent = structuredClone(rawResponse);
+  if (
+    typeof storyblokContent === "object" &&
+    storyblokContent !== null &&
+    !Array.isArray(storyblokContent)
+  ) {
+    flattenNestedObjects(storyblokContent);
+  }
+
+  return {
+    rawResponse,
+    designSystemProps,
+    storyblokContent,
+    fieldName,
+  };
+}
+
+// ─── SEO generation ──────────────────────────────────────────────────
+
+/** Options for generating SEO metadata. */
+export interface GenerateSeoOptions {
+  /** User prompt / page summary to derive SEO from. */
+  prompt: string;
+  /** The fully dereferenced content type JSON Schema (must have a `seo` field). */
+  contentTypeSchema: Record<string, any>;
+  /** Content type name (e.g. `"blog-post"`). @default "page" */
+  contentType?: string;
+  /** OpenAI model identifier. @default "gpt-4o-2024-08-06" */
+  model?: string;
+  /**
+   * Optional system prompt override. Defaults to an SEO-specialist prompt.
+   */
+  system?: string;
+}
+
+/** Result of SEO generation. */
+export interface GenerateSeoResult {
+  /** The raw JSON returned by OpenAI. */
+  rawResponse: Record<string, any>;
+  /** The generated SEO content in Design System shape. */
+  designSystemProps: Record<string, any>;
+  /** The generated SEO content flattened for Storyblok. */
+  storyblokContent: Record<string, any>;
+}
+
+/** Default system prompt for SEO generation. */
+const SEO_SYSTEM_PROMPT = `You are an SEO specialist. Generate optimized SEO metadata for a web page based on the provided content summary.
+
+Guidelines:
+- Title: 50-60 characters, include primary keyword near the start
+- Description: 150-160 characters, compelling and action-oriented
+- Keywords: 5-8 relevant keywords, comma-separated
+- Image: If an image field is available, provide a descriptive placeholder URL using placehold.co (e.g. https://placehold.co/1200x630?text=Page+Title+OG+Image)
+
+The SEO metadata should accurately represent the page content while being optimized for search engines and social media sharing.`;
+
+/**
+ * Generate SEO metadata for a content type.
+ *
+ * Extracts the `seo` field's sub-schema from the content type schema,
+ * generates optimized SEO content via OpenAI, and returns it ready for
+ * merging into `rootFields`.
+ *
+ * This is designed as a post-generation step: call it AFTER generating
+ * sections and root fields, passing a summary of the page content as
+ * the prompt so the SEO metadata accurately reflects the actual content.
+ *
+ * @returns The generated SEO content for the `seo` field.
+ */
+export async function generateSeoContent(
+  client: OpenAI,
+  options: GenerateSeoOptions
+): Promise<GenerateSeoResult> {
+  const {
+    prompt,
+    contentTypeSchema,
+    contentType = "page",
+    model,
+    system = SEO_SYSTEM_PROMPT,
+  } = options;
+
+  return generateRootFieldContent(client, {
+    system,
+    prompt,
+    contentTypeSchema,
+    fieldName: "seo",
+    contentType,
+    model,
+  });
 }

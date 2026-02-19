@@ -39,6 +39,10 @@ import {
   listAssets,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Root field & SEO generation
+  generateRootFieldContent,
+  generateSeoContent,
+  getRootFieldSchema,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type ContentPatternAnalysis,
@@ -74,7 +78,13 @@ export class StoryblokKickstartDs implements INodeType {
         displayOptions: {
           show: {
             resource: ["aiContent"],
-            operation: ["generate", "generateSection", "planPage"],
+            operation: [
+              "generate",
+              "generateSection",
+              "planPage",
+              "generateRootField",
+              "generateSeo",
+            ],
           },
         },
       },
@@ -150,6 +160,20 @@ export class StoryblokKickstartDs implements INodeType {
             description:
               "Analyze content patterns across published stories — component frequency, section sequences, page archetypes",
             action: "Analyze content patterns",
+          },
+          {
+            name: "Generate Root Field",
+            value: "generateRootField",
+            description:
+              "Generate content for a single root-level field (e.g. head, aside, cta) on hybrid content types like blog-post",
+            action: "Generate a root field with AI",
+          },
+          {
+            name: "Generate SEO",
+            value: "generateSeo",
+            description:
+              "Generate SEO metadata (title, description, keywords, og image) for any content type",
+            action: "Generate SEO metadata with AI",
           },
         ],
         default: "generate",
@@ -363,6 +387,146 @@ export class StoryblokKickstartDs implements INodeType {
         },
       },
 
+      // ── Generate Root Field fields ────────────────────────────
+      {
+        displayName: "Field Name",
+        name: "rootFieldName",
+        type: "string",
+        default: "",
+        required: true,
+        description:
+          'The root-level field to generate (e.g. "head", "aside", "cta"). Must be a valid root property on the content type schema.',
+        placeholder: "head",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateRootField"],
+          },
+        },
+      },
+      {
+        displayName: "Prompt",
+        name: "rootFieldPrompt",
+        type: "string",
+        typeOptions: { rows: 4 },
+        default: "",
+        required: true,
+        description:
+          "Content description for this field (e.g. author info, blog meta, CTA details)",
+        placeholder:
+          "Blog post about AI trends in 2026, author is Jane Doe, CTO at TechCorp",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateRootField"],
+          },
+        },
+      },
+      {
+        displayName: "System Prompt",
+        name: "rootFieldSystem",
+        type: "string",
+        typeOptions: { rows: 3 },
+        default: "",
+        description:
+          "Optional system prompt override. If empty, a default content-writer system prompt is used.",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateRootField"],
+          },
+        },
+      },
+      {
+        displayName: "Content Type",
+        name: "rootFieldContentType",
+        type: "string",
+        default: "blog-post",
+        description:
+          'Content type to generate for (e.g. "blog-post", "blog-overview"). Default: "blog-post".',
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateRootField"],
+          },
+        },
+      },
+      {
+        displayName: "Model",
+        name: "rootFieldModel",
+        type: "string",
+        default: "gpt-4o",
+        description: "OpenAI model to use for generation",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateRootField"],
+          },
+        },
+      },
+
+      // ── Generate SEO fields ───────────────────────────────────
+      {
+        displayName: "Prompt",
+        name: "seoPrompt",
+        type: "string",
+        typeOptions: { rows: 4 },
+        default: "",
+        required: true,
+        description:
+          "Summary of the page content to derive SEO metadata from. Include key topics, target audience, and primary keywords.",
+        placeholder:
+          "Blog post about AI trends in 2026 targeting CTOs and engineering leaders. Keywords: AI, machine learning, enterprise",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSeo"],
+          },
+        },
+      },
+      {
+        displayName: "Content Type",
+        name: "seoContentType",
+        type: "string",
+        default: "page",
+        description:
+          'Content type (e.g. "page", "blog-post"). Determines which seo sub-schema to use. Default: "page".',
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSeo"],
+          },
+        },
+      },
+      {
+        displayName: "System Prompt",
+        name: "seoSystem",
+        type: "string",
+        typeOptions: { rows: 3 },
+        default: "",
+        description:
+          "Optional system prompt override. If empty, a default SEO-specialist system prompt is used.",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSeo"],
+          },
+        },
+      },
+      {
+        displayName: "Model",
+        name: "seoModel",
+        type: "string",
+        default: "gpt-4o",
+        description: "OpenAI model to use for generation",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSeo"],
+          },
+        },
+      },
+
       // ── Story resource ────────────────────────────────────────
       storyOperations,
       ...storyFields,
@@ -395,6 +559,10 @@ export class StoryblokKickstartDs implements INodeType {
             result = await executePlanPage.call(this, i);
           } else if (operation === "analyzePatterns") {
             result = await executeAnalyzePatterns.call(this, i);
+          } else if (operation === "generateRootField") {
+            result = await executeGenerateRootField.call(this, i);
+          } else if (operation === "generateSeo") {
+            result = await executeGenerateSeo.call(this, i);
           } else {
             throw new NodeOperationError(
               this.getNode(),
@@ -1311,6 +1479,138 @@ async function executeGenerateSection(
     const message = error instanceof Error ? error.message : String(error);
     throw new NodeApiError(this.getNode(), { message } as any, {
       message: `Section generation failed for "${componentType}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeGenerateRootField(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const openAiCredentials = (await this.getCredentials(
+    "openAiApi",
+    itemIndex
+  )) as unknown as OpenAiCredentials;
+
+  const client = getOpenAiClient(openAiCredentials);
+
+  const fieldName = this.getNodeParameter("rootFieldName", itemIndex) as string;
+  const prompt = this.getNodeParameter("rootFieldPrompt", itemIndex) as string;
+  const systemOverride = this.getNodeParameter(
+    "rootFieldSystem",
+    itemIndex,
+    ""
+  ) as string;
+  const contentType = this.getNodeParameter(
+    "rootFieldContentType",
+    itemIndex,
+    "blog-post"
+  ) as string;
+  const model = this.getNodeParameter(
+    "rootFieldModel",
+    itemIndex,
+    "gpt-4o"
+  ) as string;
+
+  // Build system prompt
+  let system =
+    systemOverride ||
+    `You are an expert content writer. Generate content for the "${fieldName}" field of a ${contentType}.`;
+  system += `\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
+
+  // Resolve content type schema
+  const entry = registry.has(contentType)
+    ? registry.get(contentType)
+    : registry.page;
+
+  try {
+    const result = await generateRootFieldContent(client, {
+      system,
+      prompt,
+      contentTypeSchema: entry.schema,
+      fieldName,
+      contentType: entry.name,
+      model,
+    });
+
+    return {
+      fieldName: result.fieldName,
+      storyblokContent: result.storyblokContent,
+      designSystemProps: result.designSystemProps,
+      _meta: {
+        operation: "generateRootField",
+        fieldName,
+        contentType,
+        model,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Root field generation failed for "${fieldName}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeGenerateSeo(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const openAiCredentials = (await this.getCredentials(
+    "openAiApi",
+    itemIndex
+  )) as unknown as OpenAiCredentials;
+
+  const client = getOpenAiClient(openAiCredentials);
+
+  const prompt = this.getNodeParameter("seoPrompt", itemIndex) as string;
+  const contentType = this.getNodeParameter(
+    "seoContentType",
+    itemIndex,
+    "page"
+  ) as string;
+  const systemOverride = this.getNodeParameter(
+    "seoSystem",
+    itemIndex,
+    ""
+  ) as string;
+  const model = this.getNodeParameter(
+    "seoModel",
+    itemIndex,
+    "gpt-4o"
+  ) as string;
+
+  // Resolve content type schema
+  const entry = registry.has(contentType)
+    ? registry.get(contentType)
+    : registry.page;
+
+  try {
+    const result = await generateSeoContent(client, {
+      prompt,
+      contentTypeSchema: entry.schema,
+      contentType: entry.name,
+      model,
+      system: systemOverride || undefined,
+    });
+
+    return {
+      seo: result.storyblokContent,
+      designSystemProps: result.designSystemProps,
+      _meta: {
+        operation: "generateSeo",
+        contentType,
+        model,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `SEO generation failed: ${message}`,
       itemIndex,
     });
   }

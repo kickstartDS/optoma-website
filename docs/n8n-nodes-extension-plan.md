@@ -1,12 +1,12 @@
 # Plan: n8n Nodes Extension — From 2 Operations to Full Storyblok Toolkit
 
-> **Status:** ✅ IMPLEMENTED — All milestones (M8–M13) completed. The n8n node now provides 18 operations across 3 resources. See the [extension checklist](n8n-nodes-extension-checklist.md) for per-item tracking.
+> **Status:** ✅ IMPLEMENTED — All milestones (M8–M13) completed. The n8n node now provides 20 operations across 3 resources. See the [extension checklist](n8n-nodes-extension-checklist.md) for per-item tracking.
 
 ## Overview
 
-The n8n node currently exposes **18 operations** across **3 resources** (AI Content, Story, Space), covering the full MCP server tool surface. The [12 documented workflows](content-operations-workflows.md) can now use native n8n node operations directly.
+The n8n node currently exposes **20 operations** across **3 resources** (AI Content, Story, Space), covering the full MCP server tool surface. The [12 documented workflows](content-operations-workflows.md) can now use native n8n node operations directly.
 
-This plan adds **17 new operations** across **3 resources**, turning the node into a full Storyblok content operations toolkit while preserving full backward compatibility with existing workflows.
+This plan adds **19 new operations** across **3 resources**, turning the node into a full Storyblok content operations toolkit while preserving full backward compatibility with existing workflows.
 
 ---
 
@@ -20,13 +20,13 @@ n8n convention favors a single node with multiple resources when the operations 
 
 The existing single-resource node expands to **3 resources** within the same `StoryblokKickstartDs` node class:
 
-| Resource                  | Operations                                                                                     | Credentials Required              | Purpose                             |
-| ------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------- |
-| **AI Content** (existing) | Generate, Import, **Generate Section**, **Plan Page**, **Analyze Patterns**                    | Storyblok + OpenAI                | AI-powered content generation       |
-| **Story** (new)           | List, Get, Create, Create Page, Update, Delete, Search                                         | Storyblok only                    | Story CRUD & search                 |
-| **Space** (new)           | List Components, Get Component, List Assets, List Recipes, List Icons, Scrape URL, Ensure Path | Storyblok only (Scrape URL: none) | Read-only introspection + utilities |
+| Resource                  | Operations                                                                                                             | Credentials Required              | Purpose                             |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------- |
+| **AI Content** (existing) | Generate, Import, **Generate Section**, **Plan Page**, **Analyze Patterns**, **Generate Root Field**, **Generate SEO** | Storyblok + OpenAI                | AI-powered content generation       |
+| **Story** (new)           | List, Get, Create, Create Page, Update, Delete, Search                                                                 | Storyblok only                    | Story CRUD & search                 |
+| **Space** (new)           | List Components, Get Component, List Assets, List Recipes, List Icons, Scrape URL, Ensure Path                         | Storyblok only (Scrape URL: none) | Read-only introspection + utilities |
 
-The OpenAI credential stays conditionally required — only shown when resource = "AI Content" and operation ∈ {Generate, Generate Section, Plan Page}.
+The OpenAI credential stays conditionally required — only shown when resource = "AI Content" and operation ∈ {Generate, Generate Section, Plan Page, Generate Root Field, Generate SEO}.
 
 ### Version Strategy
 
@@ -541,8 +541,8 @@ Schedule Trigger (monthly)
 > **Goal:** Add Generate Section, Plan Page, and Analyze Content Patterns to AI Content resource.
 
 - [ ] Create `descriptions/GenerateSectionDescription.ts`, `PlanPageDescription.ts`, `AnalyzePatternsDescription.ts`
-- [ ] Add 3 new operations to AI Content resource
-- [ ] Implement `executeGenerateSection()`, `executePlanPage()`, `executeAnalyzePatterns()`
+- [ ] Add 5 new operations to AI Content resource
+- [ ] Implement `executeGenerateSection()`, `executePlanPage()`, `executeAnalyzePatterns()`, `executeGenerateRootField()`, `executeGenerateSeo()`
 - [ ] Bundle `section-recipes.json` in schemas directory
 - [ ] Write unit tests
 - [ ] Create workflow template: Section-by-Section Page Generation
@@ -591,7 +591,7 @@ Milestones 9–12 can be worked on in parallel after Milestone 8 is complete. Mi
 |                               | Before (v1)                     | After (v2)                         |
 | ----------------------------- | ------------------------------- | ---------------------------------- |
 | **Resources**                 | 1 (AI Content)                  | 3 (AI Content, Story, Space)       |
-| **Operations**                | 2 (Generate, Import)            | 19 (2 existing + 17 new)           |
+| **Operations**                | 2 (Generate, Import)            | 21 (2 existing + 19 new)           |
 | **Workflows enabled**         | 3 (manual generate → import)    | All 12 documented workflows        |
 | **Shared services functions** | 12                              | ~26                                |
 | **Credential flexibility**    | OpenAI always required          | OpenAI only for AI operations      |

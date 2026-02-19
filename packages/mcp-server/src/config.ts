@@ -476,6 +476,62 @@ export const schemas = {
           "are created automatically, like mkdir -p."
       ),
   }),
+
+  generateRootField: z.object({
+    fieldName: z
+      .string()
+      .describe(
+        "Name of the root-level field to generate (e.g. 'head', 'aside', 'cta'). " +
+          "Must be a valid root property on the content type schema."
+      ),
+    prompt: z
+      .string()
+      .describe(
+        "Content description for this field (e.g. 'Blog post about AI trends in 2026, author is Jane Doe')"
+      ),
+    system: z
+      .string()
+      .optional()
+      .describe(
+        "System prompt override. If omitted, a default content-writer prompt is used."
+      ),
+    contentType: z
+      .string()
+      .optional()
+      .default("blog-post")
+      .describe(
+        "Content type to generate for (e.g. 'blog-post', 'blog-overview'). Default: 'blog-post'."
+      ),
+    model: z
+      .string()
+      .optional()
+      .describe("OpenAI model to use (default: gpt-4o-2024-08-06)"),
+  }),
+
+  generateSeo: z.object({
+    prompt: z
+      .string()
+      .describe(
+        "Summary of the page content to derive SEO metadata from. Include key topics, target audience, and primary keywords."
+      ),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type (e.g. 'page', 'blog-post'). Determines which seo sub-schema to use. Default: 'page'."
+      ),
+    system: z
+      .string()
+      .optional()
+      .describe(
+        "System prompt override. If omitted, a default SEO-specialist prompt is used."
+      ),
+    model: z
+      .string()
+      .optional()
+      .describe("OpenAI model to use (default: gpt-4o-2024-08-06)"),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -503,3 +559,5 @@ export type ListRecipesInput = z.infer<typeof schemas.listRecipes>;
 export type PlanPageInput = z.infer<typeof schemas.planPage>;
 export type GenerateSectionInput = z.infer<typeof schemas.generateSection>;
 export type EnsurePathInput = z.infer<typeof schemas.ensurePath>;
+export type GenerateRootFieldInput = z.infer<typeof schemas.generateRootField>;
+export type GenerateSeoInput = z.infer<typeof schemas.generateSeo>;

@@ -48,12 +48,14 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Guided Generation & Planning
 
-| Tool                       | Description                                                                                                                                                                          |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes). Cached at startup; pass `refresh: true` after publishing new content |
-| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                 |
-| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns                                                                       |
-| `generate_section`         | Generate a single section with auto-injected site context, transition hints, and recipe-based best practices                                                                         |
+| Tool                       | Description                                                                                                                                                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes). Cached at startup; pass `refresh: true` after publishing new content                               |
+| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                                               |
+| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns. For hybrid types (blog-post, blog-overview) also returns `rootFieldMeta` with priority annotations |
+| `generate_section`         | Generate a single section with auto-injected site context, transition hints, and recipe-based best practices                                                                                                       |
+| `generate_root_field`      | Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types. Uses OpenAI structured output with field-specific sub-schema                                                 |
+| `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image) for any content type with a `seo` root field. Uses a specialized SEO-expert system prompt                                                           |
 
 ## Installation
 
@@ -578,9 +580,14 @@ The server also exposes MCP resources:
 The server supports a **section-by-section generation workflow** that produces higher-quality content than generating entire pages at once. The recommended flow:
 
 1. **Analyze** — `analyze_content_patterns` returns the site's structural patterns from a **startup cache** (instant, no API call). Pass `refresh: true` after publishing new content
-2. **Plan** — `plan_page` uses AI + site patterns to suggest a section sequence for a given page intent
+2. **Plan** — `plan_page` uses AI + site patterns to suggest a section sequence for a given page intent. For hybrid content types (blog-post, blog-overview), also returns `rootFieldMeta` with priority annotations for non-section root fields
 3. **Generate** — `generate_section` creates each section individually with site-aware context injection
-4. **Assemble** — `create_page_with_content` combines all sections into a page with validation and optional asset upload
+4. **Root Fields** (hybrid types only) — `generate_root_field` generates content for each root-level field (e.g. `head`, `aside`, `cta`)
+5. **SEO** — `generate_seo` generates SEO metadata (title, description, keywords, OG image) using a specialized SEO-expert prompt
+6. **Assemble** — `create_page_with_content` combines all sections and root fields into a page with validation and optional asset upload
+
+For standard pages, steps 4–5 can be skipped. For hybrid content types like `blog-post`, the full workflow is:
+`plan_page` → `generate_section` (per section) → `generate_root_field` (per root field) → `generate_seo` → `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`
 
 Alternatively, use `list_recipes` for a single-call overview of proven component combinations merged with the site's live patterns.
 
@@ -739,13 +746,13 @@ Error codes:
 
 For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes/).
 
-It provides **18 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
+It provides **20 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
 
-| Resource       | Operations | Covers MCP tools                                                                                             |
-| -------------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
-| **AI Content** | 5          | `generate_content`, `import_content`, `generate_section`, `plan_page`, `analyze_content_patterns`            |
-| **Story**      | 6          | `list_stories`, `get_story`, `create_page_with_content`, `update_story`, `delete_story`, `search_content`    |
-| **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path` |
+| Resource       | Operations | Covers MCP tools                                                                                                                         |
+| -------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **AI Content** | 7          | `generate_content`, `import_content`, `generate_section`, `plan_page`, `analyze_content_patterns`, `generate_root_field`, `generate_seo` |
+| **Story**      | 6          | `list_stories`, `get_story`, `create_page_with_content`, `update_story`, `delete_story`, `search_content`                                |
+| **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path`                             |
 
 Both packages consume the same shared service library (`@kickstartds/storyblok-services`), so validation, schema preparation, and content transformation behave identically. Nine ready-to-import workflow templates are included.
 
@@ -829,7 +836,7 @@ curl -s -X POST https://YOUR_DOMAIN/mcp \
   }'
 ```
 
-You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, etc.
+You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, etc.
 
 ### 4. Call a tool
 

@@ -105,6 +105,8 @@ Alle generierten Sektionen in einem Array zusammenführen.
 | `uploadAssets: true` vergessen                       | Bilder bleiben als externe URLs                         | Immer setzen                                         |
 | Zwei Hero-Sektionen auf einer Seite                  | Verwirrt die visuelle Hierarchie                        | Maximal eine Hero/Video-Curtain pro Seite            |
 | Gleiche Komponente in aufeinanderfolgenden Sektionen | Visuelle Monotonie                                      | Layout zwischen Sektionen variieren                  |
+| Root-Felder bei blog-post vergessen                  | head/aside/cta/seo fehlen im fertigen Artikel           | `plan_page` gibt `rootFieldMeta` zurück — befolgen   |
+| `generate_seo` übersprungen                          | Fehlende SEO-Metadaten (Titel, Beschreibung, OG-Image)  | Immer als letzten Schritt vor Seitenerstellung       |
 
 ## Vergleich: Sektion-für-Sektion vs. sectionCount
 
@@ -121,20 +123,81 @@ Alle generierten Sektionen in einem Array zusammenführen.
 
 Der Workflow funktioniert nicht nur für `page`, sondern auch für alle anderen Content-Typen:
 
-### Tier 1 (Sektions-basiert): `page`, `blog-post`, `blog-overview`
+### Tier 1 (Sektions-basiert): `page`
 
-Diese Content-Typen haben ein Sektions-Array und funktionieren identisch zum Standard-Workflow. Den `contentType`-Parameter bei allen Tools setzen:
+`page` hat ein reines Sektions-Array ohne zusätzliche Root-Felder. Der Standard-Workflow (Schritt 1–6) gilt direkt.
+
+### Hybrid (Sektionen + Root-Felder): `blog-post`, `blog-overview`
+
+Diese Content-Typen haben sowohl ein Sektions-Array als auch eigenständige Root-Felder (z.B. `head`, `aside`, `cta`, `seo`). `plan_page` erkennt Hybrid-Typen automatisch und gibt neben der Sektionsfolge auch `rootFieldMeta` mit Prioritäten zurück:
+
+- **required:** Muss immer generiert werden (z.B. `head`)
+- **recommended:** Sollte generiert werden (z.B. `aside`, `cta`, `seo`)
+- **optional:** Kann generiert werden
+
+#### Erweiterter Workflow für Hybrid-Typen
+
+Nach Schritt 4 (Sektionen generieren) zusätzlich:
+
+**Schritt 4b: Root-Felder generieren**
+
+Für jedes Root-Feld aus `rootFieldMeta` (Priorität `required` oder `recommended`):
+
+- **Tool:** `generate_root_field`
+- **Parameter:**
+  - `fieldName`: Name des Feldes (z.B. `"head"`, `"aside"`, `"cta"`)
+  - `prompt`: Beschreibung des gewünschten Inhalts
+  - `contentType`: Der Content-Typ (z.B. `"blog-post"`)
 
 ```
-analyze_content_patterns(contentType: "blog-post")
-plan_page(intent: "Tutorial-Artikel über KI", contentType: "blog-post")
-generate_section(componentType: "hero", prompt: "...", contentType: "blog-post")
-create_page_with_content(contentType: "blog-post", sections: [...], rootFields: { content: "..." })
+generate_root_field(fieldName: "head", prompt: "Blog-Artikel über KI-Trends, Autorin: Maria Schmidt", contentType: "blog-post")
+generate_root_field(fieldName: "aside", prompt: "Sidebar mit Autorin-Info und verwandten Artikeln", contentType: "blog-post")
+generate_root_field(fieldName: "cta", prompt: "Newsletter-Anmeldung mit Hinweis auf wöchentliche KI-Updates", contentType: "blog-post")
 ```
 
-**Wichtig bei blog-post:** Die Root-Objekte `head` (Titel/Datum/Autor), `aside` (Sidebar), `cta` und `seo` über den `rootFields`-Parameter setzen.
+**Schritt 4c: SEO-Metadaten generieren**
 
-**Wichtig bei blog-overview:** Root-Objekte `latest`, `list`, `more` und die Skalare `latestTitle`, `listTitle`, `moreTitle` über `rootFields` setzen.
+- **Tool:** `generate_seo`
+- **Parameter:**
+  - `prompt`: Zusammenfassung des Seiteninhalts mit Keywords und Zielgruppe
+  - `contentType`: Der Content-Typ
+
+```
+generate_seo(prompt: "Blog-Artikel über KI-Trends 2026, Zielgruppe: CTOs und Engineering-Leader. Keywords: KI, Machine Learning, Enterprise", contentType: "blog-post")
+```
+
+**Schritt 5: Seite zusammenbauen (erweitert)**
+
+Alle generierten Sektionen UND Root-Felder zusammenführen:
+
+```
+create_page_with_content(
+  contentType: "blog-post",
+  sections: [hero, features, ...],
+  rootFields: {
+    head: <Ergebnis von generate_root_field("head")>,
+    aside: <Ergebnis von generate_root_field("aside")>,
+    cta: <Ergebnis von generate_root_field("cta")>,
+    seo: <Ergebnis von generate_seo()>
+  },
+  uploadAssets: true
+)
+```
+
+#### Beispiel blog-post Workflow
+
+```
+1. analyze_content_patterns(contentType: "blog-post")
+2. plan_page(intent: "Tutorial-Artikel über KI", contentType: "blog-post")
+   → Gibt sections + rootFieldMeta zurück
+3. generate_section(componentType: "hero", ..., contentType: "blog-post")
+   generate_section(componentType: "text", ..., contentType: "blog-post")
+4. generate_root_field(fieldName: "head", prompt: "...", contentType: "blog-post")
+   generate_root_field(fieldName: "aside", prompt: "...", contentType: "blog-post")
+   generate_root_field(fieldName: "cta", prompt: "...", contentType: "blog-post")
+5. generate_seo(prompt: "...", contentType: "blog-post")
+6. create_page_with_content(contentType: "blog-post", sections: [...], rootFields: { head, aside, cta, seo })
+```
 
 ### Tier 2 (Flach): `event-detail`, `event-list`
 
@@ -144,8 +207,9 @@ Diese Content-Typen haben KEINE Sektionen. Stattdessen werden Root-Felder direkt
 plan_page(intent: "Workshop-Event", contentType: "event-detail")
 → Gibt einen Feld-Befüllungsplan zurück (fields statt sections)
 
-generate_content(contentType: "event-detail", prompt: "Workshop zu KI-Tools")
-→ Generiert den gesamten Content
+generate_root_field(fieldName: "title", prompt: "Workshop zu KI-Tools", contentType: "event-detail")
+generate_root_field(fieldName: "categories", prompt: "Kategorien: KI, Workshop, Fortbildung", contentType: "event-detail")
+→ Oder alternativ: generate_content(contentType: "event-detail", prompt: "Workshop zu KI-Tools")
 
 create_page_with_content(contentType: "event-detail", sections: [], rootFields: { title: "...", description: "...", categories: [...] })
 ```

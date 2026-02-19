@@ -26,6 +26,7 @@ import {
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type ContentPatternAnalysis,
   type SubComponentStats,
+  type RootFieldMeta,
 } from "./services.js";
 import {
   formatErrorResponse,
@@ -1038,6 +1039,91 @@ Requires OpenAI API key.`,
       },
     },
     {
+      name: "generate_root_field",
+      description: `Generate content for a single root-level field on a content type.
+
+Used for non-section root fields that exist alongside the section array on
+hybrid content types. For example, blog-post has root fields \`head\`, \`aside\`,
+\`cta\`, and \`seo\` alongside its \`section\` array.
+
+This tool extracts the field's sub-schema from the content type, prepares it
+for OpenAI structured output, generates content, and returns it ready for
+merging into \`rootFields\` on \`create_page_with_content\`.
+
+Typical workflow:
+1. \`plan_page\` → returns sections + rootFields to generate
+2. \`generate_section\` for each section
+3. \`generate_root_field\` for each root field (head, aside, cta)
+4. \`generate_seo\` for SEO metadata
+5. \`create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })\`
+
+Requires OpenAI API key.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          fieldName: {
+            type: "string",
+            description:
+              "Name of the root-level field to generate (e.g. 'head', 'aside', 'cta'). Must be a valid root property on the content type schema.",
+          },
+          prompt: {
+            type: "string",
+            description:
+              "Content description for this field (e.g. 'Blog post about AI trends, author Jane Doe, published 2026-02-19')",
+          },
+          system: {
+            type: "string",
+            description:
+              "System prompt override. If omitted, a default content-writer prompt is used.",
+          },
+          contentType: {
+            type: "string",
+            description:
+              "Content type (default: 'blog-post'). Determines which schema to extract the field from.",
+          },
+        },
+        required: ["fieldName", "prompt"],
+      },
+    },
+    {
+      name: "generate_seo",
+      description: `Generate optimized SEO metadata for a content type.
+
+Produces title, description, keywords, and optionally an OG image for the
+\`seo\` root field. Designed as a post-generation step: call it AFTER
+generating sections and root fields, and pass a summary of the page content
+so the SEO metadata accurately reflects the actual content.
+
+The generated SEO content can be merged into \`rootFields.seo\` when calling
+\`create_page_with_content\`.
+
+Works with any content type that has a \`seo\` field in its schema (page,
+blog-post, blog-overview).
+
+Requires OpenAI API key.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          prompt: {
+            type: "string",
+            description:
+              "Summary of the page content to derive SEO from. Include key topics, target audience, and primary keywords.",
+          },
+          contentType: {
+            type: "string",
+            description:
+              "Content type (default: 'page'). Determines which seo sub-schema to use.",
+          },
+          system: {
+            type: "string",
+            description:
+              "System prompt override for the SEO specialist. If omitted, a default SEO-optimized prompt is used.",
+          },
+        },
+        required: ["prompt"],
+      },
+    },
+    {
       name: "ensure_path",
       description: `Ensure a folder path exists in Storyblok, creating missing folders.
 
@@ -1873,6 +1959,13 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             componentNames = planRules.rootArrayFields;
           }
 
+          // Detect root fields that need generation (hybrid types)
+          const rootFieldMeta = planEntry.rootFieldMeta || [];
+          const generatableRootFields = rootFieldMeta.filter(
+            (f: RootFieldMeta) => f.priority !== "excluded" && !f.isSectionArray
+          );
+          const hasRootFields = generatableRootFields.length > 0;
+
           let planPrompt: string;
           let planSchema: {
             name: string;
@@ -1882,20 +1975,35 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
 
           if (isFlat) {
             // Tier 2 (flat content types): plan which root fields to populate
+            // Include ALL root fields (scalar + array + object), not just arrays
+            const allRootFieldNames = rootFieldMeta
+              .filter((f: RootFieldMeta) => f.priority !== "excluded")
+              .map((f: RootFieldMeta) => f.name);
+            const fieldDescriptions = rootFieldMeta
+              .filter((f: RootFieldMeta) => f.priority !== "excluded")
+              .map(
+                (f: RootFieldMeta) =>
+                  `- ${f.name} (${f.type}${
+                    f.schemaRequired ? ", required" : ""
+                  }): ${f.description || f.title || "no description"}`
+              )
+              .join("\n");
+
             planPrompt = `You are a content structure planner for "${planContentType}" content. Given an intent, suggest which root fields to populate and what content each should contain.
 
-Available root array fields: ${componentNames.join(", ")}
+Available root fields:
+${fieldDescriptions}
 ${patternsContext}
 
 Respond with a JSON object:
 {
   "fields": [
-    { "fieldName": "categories", "intent": "brief description of what this field should contain" }
+    { "fieldName": "title", "intent": "brief description of what this field should contain" }
   ],
   "reasoning": "brief explanation of the structure choices"
 }`;
             planSchema = {
-              name: `${planContentType}_plan`,
+              name: `${planContentType.replace(/-/g, "_")}_plan`,
               schema: {
                 type: "object",
                 properties: {
@@ -1906,7 +2014,10 @@ Respond with a JSON object:
                       properties: {
                         fieldName: {
                           type: "string",
-                          enum: componentNames,
+                          enum:
+                            allRootFieldNames.length > 0
+                              ? allRootFieldNames
+                              : componentNames,
                         },
                         intent: { type: "string" },
                       },
@@ -1923,6 +2034,20 @@ Respond with a JSON object:
             };
           } else {
             // Tier 1 (section-based): plan section sequence
+            // For hybrid types, also include root field information
+            let rootFieldsInstruction = "";
+            if (hasRootFields) {
+              const fieldDescriptions = generatableRootFields
+                .map(
+                  (f: RootFieldMeta) =>
+                    `- ${f.name} (${f.type}, priority: ${f.priority}): ${
+                      f.description || f.title || "no description"
+                    }`
+                )
+                .join("\n");
+              rootFieldsInstruction = `\n\nThis content type also has root-level fields that should be generated separately via generate_root_field:\n${fieldDescriptions}\n\nInclude these in your "rootFields" array — indicate which ones to generate and a brief intent for each. Fields with priority "required" must always be included.`;
+            }
+
             planPrompt = `You are a web page structure planner. Given a page intent, suggest an ordered list of sections for content type "${planContentType}".
 
 Available section component types: ${componentNames.join(", ")}
@@ -1939,38 +2064,72 @@ Rules:
               validated.sectionCount
                 ? `Target exactly ${validated.sectionCount} sections`
                 : "Choose an appropriate number of sections (typically 4-8)"
-            }
+            }${rootFieldsInstruction}
 
 Respond with a JSON object:
 {
   "sections": [
     { "componentType": "hero", "intent": "brief description of what this section should convey" }
-  ],
+  ],${
+    hasRootFields
+      ? `
+  "rootFields": [
+    { "fieldName": "head", "intent": "brief description of what this field should contain" }
+  ],`
+      : ""
+  }
   "reasoning": "brief explanation of the structure choices"
 }`;
+
+            // Build schema — include rootFields array for hybrid types
+            const planProperties: Record<string, unknown> = {
+              sections: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    componentType: {
+                      type: "string",
+                      enum: componentNames,
+                    },
+                    intent: { type: "string" },
+                  },
+                  required: ["componentType", "intent"],
+                  additionalProperties: false,
+                },
+              },
+              reasoning: { type: "string" },
+            };
+            const planRequired: string[] = ["sections", "reasoning"];
+
+            if (hasRootFields) {
+              const rootFieldNames = generatableRootFields.map(
+                (f: RootFieldMeta) => f.name
+              );
+              planProperties.rootFields = {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    fieldName: {
+                      type: "string",
+                      enum: rootFieldNames,
+                    },
+                    intent: { type: "string" },
+                  },
+                  required: ["fieldName", "intent"],
+                  additionalProperties: false,
+                },
+              };
+              planRequired.push("rootFields");
+            }
+
             planSchema = {
-              name: `${planContentType}_plan`,
+              name: `${planContentType.replace(/-/g, "_")}_plan`,
               schema: {
                 type: "object",
-                properties: {
-                  sections: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        componentType: {
-                          type: "string",
-                          enum: componentNames,
-                        },
-                        intent: { type: "string" },
-                      },
-                      required: ["componentType", "intent"],
-                      additionalProperties: false,
-                    },
-                  },
-                  reasoning: { type: "string" },
-                },
-                required: ["sections", "reasoning"],
+                properties: planProperties,
+                required: planRequired,
                 additionalProperties: false,
               },
               strict: true,
@@ -1985,6 +2144,19 @@ Respond with a JSON object:
             schema: planSchema,
           });
 
+          // Build usage instructions based on content type characteristics
+          let usage: string;
+          if (isFlat) {
+            usage =
+              "Use generate_root_field(fieldName=..., contentType=...) for each field, then create_page_with_content with rootFields.";
+          } else if (hasRootFields) {
+            usage =
+              "Use generate_section for each section, generate_root_field for each root field (head, aside, cta), and generate_seo for SEO metadata. Then assemble with create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo }).";
+          } else {
+            usage =
+              "Use generate_section or generate_content(componentType=...) for each section in order. Pass previousSection/nextSection for better transitions.";
+          }
+
           return {
             content: [
               {
@@ -1993,9 +2165,17 @@ Respond with a JSON object:
                   {
                     plan: response,
                     contentType: planContentType,
-                    usage: isFlat
-                      ? "Use generate_content(contentType=..., rootField=...) for each field, or generate_content(contentType=...) for the full content."
-                      : "Use generate_section or generate_content(componentType=...) for each section in order. Pass previousSection/nextSection for better transitions.",
+                    ...(hasRootFields && {
+                      rootFieldMeta: generatableRootFields.map(
+                        (f: RootFieldMeta) => ({
+                          name: f.name,
+                          type: f.type,
+                          priority: f.priority,
+                          title: f.title,
+                        })
+                      ),
+                    }),
+                    usage,
                   },
                   null,
                   2
@@ -2096,6 +2276,90 @@ Respond with a JSON object:
                     designSystemProps: result.designSystemProps,
                     componentType: validated.componentType,
                     note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains a single Storyblok-ready section object (with component: 'section' and nested components). Collect multiple section objects into an array and pass as 'sections' to create_page_with_content.",
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "generate_root_field": {
+          const validated = schemas.generateRootField.parse(args);
+          const rfContentType = validated.contentType || "blog-post";
+          console.error(
+            `[MCP] Generating root field "${validated.fieldName}" for ${rfContentType}...`
+          );
+
+          if (!contentService) {
+            throw new ConfigurationError(
+              "OpenAI API key is required for generate_root_field. Set OPENAI_API_KEY environment variable."
+            );
+          }
+
+          // Build system prompt with sensible defaults
+          let rfSystemPrompt =
+            validated.system ||
+            `You are an expert content writer. Generate content for the "${validated.fieldName}" field of a ${rfContentType}.`;
+          rfSystemPrompt += `\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
+
+          const rfResult = await contentService.generateRootField({
+            system: rfSystemPrompt,
+            prompt: validated.prompt,
+            fieldName: validated.fieldName,
+            contentType: rfContentType,
+            model: validated.model,
+          });
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    fieldName: rfResult.fieldName,
+                    storyblokContent: rfResult.storyblokContent,
+                    designSystemProps: rfResult.designSystemProps,
+                    note: `Root field "${rfResult.fieldName}" generated for ${rfContentType}. Pass this as rootFields.${rfResult.fieldName} to create_page_with_content.`,
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "generate_seo": {
+          const validated = schemas.generateSeo.parse(args);
+          const seoContentType = validated.contentType || "page";
+          console.error(
+            `[MCP] Generating SEO metadata for ${seoContentType}...`
+          );
+
+          if (!contentService) {
+            throw new ConfigurationError(
+              "OpenAI API key is required for generate_seo. Set OPENAI_API_KEY environment variable."
+            );
+          }
+
+          const seoResult = await contentService.generateSeo({
+            prompt: validated.prompt,
+            contentType: seoContentType,
+            model: validated.model,
+            system: validated.system,
+          });
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    seo: seoResult.storyblokContent,
+                    designSystemProps: seoResult.designSystemProps,
+                    note: `SEO metadata generated for ${seoContentType}. Pass this as rootFields.seo to create_page_with_content.`,
                   },
                   null,
                   2

@@ -14,10 +14,13 @@ import {
   generateStructuredContent,
   prepareSchemaForOpenAi,
   getComponentPresetSchema,
+  getRootFieldSchema,
   listAvailableComponents,
   processOpenAiResponse,
   processForStoryblok,
   generateAndPrepareContent,
+  generateRootFieldContent,
+  generateSeoContent,
   buildValidationRules,
   validateSections,
   validatePageContent,
@@ -45,6 +48,7 @@ import {
   type ValidationRules,
   type ValidationWarning,
   type ContentTypeEntry,
+  type RootFieldMeta,
   type ContentPatternAnalysis,
   type SubComponentStats,
   type AnalyzeContentPatternsOptions,
@@ -90,7 +94,7 @@ export {
   registry,
   checkCompositionalQuality,
 };
-export type { ValidationWarning, ContentTypeEntry };
+export type { ValidationWarning, ContentTypeEntry, RootFieldMeta };
 export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
 
 // ─── Content Pattern Analysis ─────────────────────────────────────────
@@ -566,6 +570,78 @@ export class ContentGenerationService {
       storyblokContent: result.storyblokContent,
       rawResponse: result.rawResponse,
     };
+  }
+
+  /**
+   * Generate content for a single root-level field on a content type.
+   *
+   * Used for non-section root fields like `head`, `aside`, `cta` on blog-post.
+   * Delegates to `@kickstartds/storyblok-services`.
+   */
+  async generateRootField(options: {
+    system: string;
+    prompt: string;
+    fieldName: string;
+    contentType?: string;
+    model?: string;
+  }): Promise<{
+    rawResponse: Record<string, any>;
+    designSystemProps: Record<string, any>;
+    storyblokContent: Record<string, any>;
+    fieldName: string;
+  }> {
+    if (!this.client) {
+      throw new Error(
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+      );
+    }
+
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+
+    return generateRootFieldContent(this.client as any, {
+      system: options.system,
+      prompt: options.prompt,
+      contentTypeSchema: entry.schema,
+      fieldName: options.fieldName,
+      contentType: entry.name,
+      model: options.model,
+    });
+  }
+
+  /**
+   * Generate SEO metadata for a content type.
+   *
+   * Delegates to `@kickstartds/storyblok-services`.
+   */
+  async generateSeo(options: {
+    prompt: string;
+    contentType?: string;
+    model?: string;
+    system?: string;
+  }): Promise<{
+    rawResponse: Record<string, any>;
+    designSystemProps: Record<string, any>;
+    storyblokContent: Record<string, any>;
+  }> {
+    if (!this.client) {
+      throw new Error(
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+      );
+    }
+
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+
+    return generateSeoContent(this.client as any, {
+      prompt: options.prompt,
+      contentTypeSchema: entry.schema,
+      contentType: entry.name,
+      model: options.model,
+      system: options.system,
+    });
   }
 }
 

@@ -2,13 +2,13 @@
 
 n8n community node package for **Storyblok CMS** with **kickstartDS Design System** — AI-powered content generation, story management, and space introspection.
 
-This package provides **18 operations** across **3 resources** as a single n8n node:
+This package provides **20 operations** across **3 resources** as a single n8n node:
 
-| Resource       | Operations | Description                                             |
-| -------------- | ---------- | ------------------------------------------------------- |
-| **AI Content** | 5          | Generate, import, plan, and analyze AI-powered content  |
-| **Story**      | 6          | Full CRUD + search for Storyblok stories                |
-| **Space**      | 7          | Scrape URLs, introspect components/assets/recipes/icons |
+| Resource       | Operations | Description                                                             |
+| -------------- | ---------- | ----------------------------------------------------------------------- |
+| **AI Content** | 7          | Generate, import, plan, analyze, and generate root fields & SEO with AI |
+| **Story**      | 6          | Full CRUD + search for Storyblok stories                                |
+| **Space**      | 7          | Scrape URLs, introspect components/assets/recipes/icons                 |
 
 Together they enable fully automated content pipelines: analyze → plan → generate → create → publish.
 
@@ -55,7 +55,7 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-storyblok-kickst
 | ----------- | --------------------------------------- |
 | **API Key** | Your OpenAI API key starting with `sk-` |
 
-> The OpenAI credential is only required for the **Generate**, **Generate Section**, and **Plan Page** operations.
+> The OpenAI credential is only required for the **Generate**, **Generate Section**, **Plan Page**, **Generate Root Field**, and **Generate SEO** operations.
 
 ---
 
@@ -222,6 +222,69 @@ Analyze content patterns across published stories. Returns component frequency, 
     ]
   },
   "_meta": { "contentType": "page", "timestamp": "..." }
+}
+```
+
+#### Operation: Generate Root Field
+
+Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types like `blog-post`. Uses OpenAI structured output with the field's sub-schema extracted from the content type schema.
+
+| Parameter         | Type   | Required | Description                                           |
+| ----------------- | ------ | -------- | ----------------------------------------------------- |
+| **Field Name**    | String | ✅       | Root field to generate (`head`, `aside`, `cta`, etc.) |
+| **Prompt**        | String | ✅       | Content description for this field                    |
+| **System Prompt** | String | No       | Override default content-writer system prompt         |
+| **Content Type**  | String | No       | Content type (default: `blog-post`)                   |
+| **Model**         | String | No       | OpenAI model (default: `gpt-4o`)                      |
+
+**Output:**
+
+```json
+{
+  "fieldName": "head",
+  "storyblokContent": {
+    "component": "blog-head",
+    "headline": "...",
+    "date": "..."
+  },
+  "designSystemProps": { "headline": "...", "date": "..." },
+  "_meta": {
+    "operation": "generateRootField",
+    "fieldName": "head",
+    "contentType": "blog-post",
+    "timestamp": "..."
+  }
+}
+```
+
+#### Operation: Generate SEO
+
+Generate SEO metadata (title, description, keywords, OG image) for any content type that has a `seo` root field. Uses a specialized SEO-expert system prompt.
+
+| Parameter         | Type   | Required | Description                                                            |
+| ----------------- | ------ | -------- | ---------------------------------------------------------------------- |
+| **Prompt**        | String | ✅       | Summary of page content with key topics, target audience, and keywords |
+| **Content Type**  | String | No       | Content type (default: `page`)                                         |
+| **System Prompt** | String | No       | Override default SEO-specialist system prompt                          |
+| **Model**         | String | No       | OpenAI model (default: `gpt-4o`)                                       |
+
+**Output:**
+
+```json
+{
+  "seo": {
+    "title": "...",
+    "description": "...",
+    "og_title": "...",
+    "og_description": "...",
+    "og_image": "..."
+  },
+  "designSystemProps": { "title": "...", "description": "..." },
+  "_meta": {
+    "operation": "generateSeo",
+    "contentType": "blog-post",
+    "timestamp": "..."
+  }
 }
 ```
 

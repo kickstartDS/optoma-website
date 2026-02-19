@@ -173,14 +173,16 @@ The `import_content`, `import_content_at_position`, and `create_page_with_conten
 
 The `list_icons` tool returns all available icon identifiers (e.g. `arrow-right`, `star`, `email`, `phone`) that can be used in component icon fields such as hero `cta_icon`, feature `icon`, or contact-info `icon`. Always call `list_icons` before generating or importing content that includes icon fields to ensure only valid identifiers are used.
 
-The MCP server supports **guided content generation** via four additional tools that produce higher-quality content than generating entire pages at once:
+The MCP server supports **guided content generation** via six tools that produce higher-quality content than generating entire pages at once:
 
 - **`analyze_content_patterns`** — Returns structural patterns (component frequency, section sequences, sub-component item counts, page archetypes) from a **startup cache** — instant, no API call. The cache is also used internally by `plan_page`, `generate_section`, and `list_recipes`. Pass `refresh: true` after publishing new content to re-fetch.
 - **`list_recipes`** — Returns curated section recipes, page templates, and anti-patterns, optionally merged with live patterns from `analyze_content_patterns`.
-- **`plan_page`** — AI-assisted page structure planning. Takes an intent (e.g. "product landing page") and returns a recommended section sequence based on available components and site patterns. Requires OpenAI API key.
+- **`plan_page`** — AI-assisted page structure planning. Takes an intent (e.g. "product landing page") and returns a recommended section sequence based on available components and site patterns. For **hybrid content types** (e.g. `blog-post`, `blog-overview`), also returns `rootFieldMeta` with priority annotations (`required`, `recommended`, `optional`) for non-section root fields. Requires OpenAI API key.
 - **`generate_section`** — Generates a single section with automatic site-aware context injection. Auto-injects sub-component counts, component frequency, transition context (`previousSection`/`nextSection`), and recipe best practices into the system prompt. Requires OpenAI API key.
+- **`generate_root_field`** — Generates content for a single root-level field on a content type (e.g. `head`, `aside`, `cta` on `blog-post`). Extracts the field's sub-schema, generates via OpenAI structured output, and returns Storyblok-ready content. Use after `plan_page` returns `rootFieldMeta` for hybrid types. Requires OpenAI API key.
+- **`generate_seo`** — Generates SEO metadata (title, description, keywords, OG image) for any content type that has a `seo` root field. Uses a specialized SEO-expert system prompt. Pass the page content summary as the prompt. Requires OpenAI API key.
 
-The recommended workflow for multi-section pages is: `analyze_content_patterns` → `plan_page` → `generate_section` (per section) → `create_page_with_content`. This section-by-section approach outperforms `generate_content(sectionCount=N)` for pages with 3+ sections. See [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) for the full workflow.
+The recommended workflow for multi-section pages is: `analyze_content_patterns` → `plan_page` → `generate_section` (per section) → `create_page_with_content`. For **hybrid content types** like `blog-post`, extend the workflow: `plan_page` → `generate_section` (per section) → `generate_root_field` (per root field) → `generate_seo` → `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`. See [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) for the full workflow.
 
 The `create_page_with_content` and `create_story` tools support **automatic folder creation** via the `path` parameter: provide a forward-slash-separated folder path (e.g. `path: "en/services/consulting"`) and missing intermediate folders are created automatically, like `mkdir -p`. The `path` parameter is mutually exclusive with `parentId` — use one or the other. A standalone `ensure_path` tool is also available for pre-creating folder hierarchies (useful for sitemap migration workflows where the folder tree should be established before pages are created in parallel).
 
@@ -231,13 +233,13 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **18 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **20 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
 
-| Resource       | Operations | Description                                                                             |
-| -------------- | ---------- | --------------------------------------------------------------------------------------- |
-| **AI Content** | 5          | generate, import, generateSection, planPage, analyzePatterns                            |
-| **Story**      | 6          | list, get, createPage, update, delete, search                                           |
-| **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath |
+| Resource       | Operations | Description                                                                                  |
+| -------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| **AI Content** | 7          | generate, import, generateSection, planPage, analyzePatterns, generateRootField, generateSeo |
+| **Story**      | 6          | list, get, createPage, update, delete, search                                                |
+| **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath      |
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 

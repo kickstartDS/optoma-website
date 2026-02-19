@@ -1,6 +1,6 @@
 # Guided Generation — Implementation Checklist
 
-> **Status: ✅ FULLY IMPLEMENTED** — All phases (1–4) complete. Subsequently extended with multi-content-type support (`contentType` parameter on all tools, content-type-specific recipes/templates).
+> **Status: ✅ FULLY IMPLEMENTED** — All phases (1–4) complete. Subsequently extended with multi-content-type support (`contentType` parameter on all tools, content-type-specific recipes/templates) and hybrid content type support (`generate_root_field`, `generate_seo` tools, `rootFieldMeta` in `plan_page`).
 
 Tracking document for implementing all four phases from
 [guided-generation-plan.md](guided-generation-plan.md).
@@ -38,6 +38,9 @@ Tracking document for implementing all four phases from
 ## Phase 4 — Polished Convenience
 
 - [x] **4.1** Implement `generate_section` tool (auto-injects site context, recipe hints, transition guidance)
+- [x] **4.2** Implement `generate_root_field` tool (generates content for a single root-level field on hybrid content types like blog-post)
+- [x] **4.3** Implement `generate_seo` tool (generates SEO metadata with specialized SEO-expert system prompt)
+- [x] **4.4** Extend `plan_page` to return `rootFieldMeta` with priority annotations for hybrid content types
 
 ---
 

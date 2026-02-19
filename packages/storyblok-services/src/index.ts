@@ -44,6 +44,7 @@ export { createOpenAiClient, generateStructuredContent } from "./openai.js";
 export {
   prepareSchemaForOpenAi,
   getComponentPresetSchema,
+  getRootFieldSchema,
   listAvailableComponents,
   getSchemaName,
   UNSUPPORTED_KEYWORDS,
@@ -85,11 +86,17 @@ export type {
 // ─── Pipeline (high-level orchestrator) ──────────────────────────────
 export {
   generateAndPrepareContent,
+  generateRootFieldContent,
+  generateSeoContent,
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
 } from "./pipeline.js";
 export type {
   GenerateAndPrepareOptions,
   GenerateAndPrepareResult,
+  GenerateRootFieldOptions,
+  GenerateRootFieldResult,
+  GenerateSeoOptions,
+  GenerateSeoResult,
 } from "./pipeline.js";
 
 // ─── Schema validation ──────────────────────────────────────────────
@@ -117,7 +124,12 @@ export {
   createRegistryFromSchemaDir,
   ROOT_CONTENT_TYPES,
 } from "./registry.js";
-export type { ContentTypeEntry, RootContentType } from "./registry.js";
+export type {
+  ContentTypeEntry,
+  RootContentType,
+  RootFieldMeta,
+  RootFieldPriority,
+} from "./registry.js";
 
 // ─── Story CRUD & search ────────────────────────────────────────────
 export {

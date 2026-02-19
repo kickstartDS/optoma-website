@@ -1,6 +1,6 @@
 # Plan: Guided Content Generation for the Storyblok MCP Server
 
-> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 18 recipes, 13 page templates, 10 anti-patterns (including content-type-specific entries for blog-post, event-detail, and event-list).
+> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools, including hybrid content type support where `plan_page` returns `rootFieldMeta` with priority annotations. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 18 recipes, 13 page templates, 10 anti-patterns (including content-type-specific entries for blog-post, event-detail, and event-list).
 
 ## Problem Statement
 
@@ -663,6 +663,45 @@ LLM:
      → Page created, assets uploaded
 
   6. Share editor link with user
+```
+
+### Hybrid Content Type Flow (blog-post)
+
+For content types with both sections and root fields (blog-post, blog-overview), the workflow extends:
+
+```
+User: "Create a blog post about AI trends in 2026"
+
+LLM:
+  1. analyze_content_patterns(contentType="blog-post")
+     → Learns: blog posts use hero→text→cta, head/aside/cta/seo root fields
+
+  2. plan_page(intent="AI trends blog post", contentType="blog-post")
+     → Returns: section plan + rootFieldMeta with priorities
+       rootFieldMeta: [
+         { name: "head", priority: "required" },
+         { name: "aside", priority: "recommended" },
+         { name: "cta", priority: "recommended" },
+         { name: "seo", priority: "recommended" }
+       ]
+
+  3. For each section:
+       generate_section(componentType="hero", prompt="...", contentType="blog-post")
+       generate_section(componentType="text", prompt="...", contentType="blog-post")
+
+  4. For each root field:
+       generate_root_field(fieldName="head", prompt="Author: Jane Doe...", contentType="blog-post")
+       generate_root_field(fieldName="aside", prompt="Author bio, related articles...", contentType="blog-post")
+       generate_root_field(fieldName="cta", prompt="Newsletter signup...", contentType="blog-post")
+
+  5. generate_seo(prompt="Blog about AI trends, targeting CTOs...", contentType="blog-post")
+
+  6. create_page_with_content(
+       contentType="blog-post",
+       sections=[...],
+       rootFields={ head, aside, cta, seo },
+       uploadAssets=true
+     )
 ```
 
 Compare this to the current flow:

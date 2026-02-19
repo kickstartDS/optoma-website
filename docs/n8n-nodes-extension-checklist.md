@@ -173,11 +173,13 @@
 - [x] Implement `executeGenerateSection()` — uses `generateAndPrepareContent()` with componentType-scoped schema + recipe context
 - [x] Implement `executePlanPage()` — uses `generateStructuredContent()` with dynamic plan schema from registry
 - [x] Implement `executeAnalyzePatterns()` — uses shared `analyzeContentPatterns()`
+- [x] Implement `executeGenerateRootField()` — uses shared `generateRootFieldContent()` for hybrid content type root fields
+- [x] Implement `executeGenerateSeo()` — uses shared `generateSeoContent()` for SEO metadata generation
 
 ### 11.4 Update node class
 
-- [x] Add 3 new operations to `aiContent` resource (generateSection, planPage, analyzePatterns)
-- [x] Update OpenAI credential display for new AI operations
+- [x] Add 5 new operations to `aiContent` resource (generateSection, planPage, analyzePatterns, generateRootField, generateSeo)
+- [x] Update OpenAI credential display for new AI operations (generate, generateSection, planPage, generateRootField, generateSeo)
 - [x] Bundle `section-recipes.json` in schemas directory
 
 ### 11.5 Verify
@@ -258,7 +260,7 @@
 | M8: Shared Services      | 🟢 Done        | 47      | 45      |
 | M9: Story Resource       | 🟢 Done        | 25      | 18      |
 | M10: Scrape + Search     | 🟢 Done        | 10      | 8       |
-| M11: Guided Generation   | 🟢 Done        | 15      | 12      |
+| M11: Guided Generation   | 🟢 Done        | 17      | 14      |
 | M12: Space Introspection | 🟢 Done        | 13      | 12      |
 | M13: Docs & Publish      | 🟡 In progress | 13      | 10      |
-| **Total**                |                | **123** | **105** |
+| **Total**                |                | **125** | **107** |

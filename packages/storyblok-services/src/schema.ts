@@ -579,15 +579,87 @@ export function listAvailableComponents(): string[] {
   return [...SUPPORTED_COMPONENTS];
 }
 
+/**
+ * Extract and prepare a single root-level field's sub-schema for OpenAI
+ * structured output.
+ *
+ * This is used by `generate_root_field` and `generate_seo` to generate
+ * content for individual root-level fields (e.g. `head`, `aside`, `cta`,
+ * `seo`) without needing the full page schema.
+ *
+ * @param pageSchema - The fully dereferenced content type schema.
+ * @param fieldName - Name of the root field to extract (e.g. `"head"`, `"seo"`).
+ * @param contentType - Content type name for the envelope (e.g. `"blog-post"`).
+ * @returns An OpenAI-compatible schema envelope, or `null` if the field
+ *   doesn't exist in the schema.
+ */
+export function getRootFieldSchema(
+  pageSchema: Record<string, any>,
+  fieldName: string,
+  contentType: string = "page"
+): OpenAiSchemaEnvelope | null {
+  const props = pageSchema.properties || {};
+  const fieldSchema = props[fieldName];
+  if (!fieldSchema) return null;
+
+  // Clone so we don't mutate the caller's object
+  const clonedFieldSchema = structuredClone(fieldSchema);
+
+  // Run the same OpenAI-compatibility transforms on the sub-schema
+  const cleanupPasses: TraverseCallback[] = [
+    // Remove unsupported keywords
+    (schema) => {
+      for (const key of UNSUPPORTED_KEYWORDS) {
+        if (Object.prototype.hasOwnProperty.call(schema, key)) {
+          delete schema[key];
+        }
+      }
+    },
+    // Deny additional properties
+    (schema) => {
+      if (schema.type === "object") {
+        schema.additionalProperties = false;
+      }
+    },
+    // Make all properties required
+    (schema) => {
+      if (schema.type === "object" && schema.properties) {
+        schema.required = Object.keys(schema.properties);
+      }
+    },
+  ];
+
+  for (const fn of cleanupPasses) {
+    schemaTraverse(clonedFieldSchema, fn);
+  }
+
+  // Wrap the field schema in a top-level object envelope
+  const envelopeName = `${contentType.replace(/-/g, "_")}_${fieldName.replace(
+    /-/g,
+    "_"
+  )}`;
+
+  return {
+    name: envelopeName,
+    strict: true,
+    schema: clonedFieldSchema,
+  };
+}
+
 // ─── Internal helpers ─────────────────────────────────────────────────
 
 /**
  * Auto-detect root-level properties that should be excluded from AI
- * generation. Properties named `header`, `footer`, `token`, `seo` are
+ * generation. Properties named `header`, `footer`, `token` are
  * typically layout / meta concerns that should not be generated.
+ *
+ * Note: `seo` is NOT excluded by default — it can be generated via the
+ * dedicated `generate_seo` tool. Callers that want to exclude seo should
+ * pass `rootPropertiesToExclude` explicitly or use the legacy behavior
+ * by adding `"seo"` to the list.
  */
 function detectDefaultExcludes(schema: Record<string, any>): string[] {
-  const DEFAULT_EXCLUDE_NAMES = ["header", "footer", "token", "seo"];
+  const DEFAULT_EXCLUDE_NAMES = ["header", "footer", "token"];
   const props = schema.properties || {};
   return DEFAULT_EXCLUDE_NAMES.filter((name) => name in props);
 }
