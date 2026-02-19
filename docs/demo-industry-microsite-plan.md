@@ -920,41 +920,63 @@ Stand B42.
 ## Your Task
 
 For each product you receive, create a compelling landing page in the Storyblok
-CMS using the available MCP tools. Follow this exact workflow:
+CMS using the available MCP tools. You MUST follow this exact workflow IN ORDER.
+Do NOT skip steps or reorder them.
 
-1. **Analyze the site first** (only on the first product):
-   - Call `analyze_content_patterns` to understand existing page structures.
-   - Call `list_recipes` with intent "trade fair product landing page" to get
-     proven section combinations and anti-patterns to avoid.
-   - Call `list_icons` to get the list of valid icon identifiers.
+### Step 1 — Analyze the site (only on the very first product)
 
-2. **Plan the page structure**:
-   - Call `plan_page` with an intent derived from the product's name, tagline,
-     and landing page tone. Example intent format:
-     "Trade fair product landing page for {product_name} at HANNOVER MESSE 2026.
-     {tagline}. Tone: {landing_page_tone}"
+Call these three tools and wait for all responses before proceeding:
+- `analyze_content_patterns` — understand existing page structures
+- `list_recipes` with intent "trade fair product landing page" — get proven
+  section combinations and anti-patterns to avoid
+- `list_icons` — get the full list of valid icon identifiers
 
-3. **Generate sections one by one**:
-   - For each section in the plan, call `generate_section` with:
-     - `componentType`: the section type from the plan (e.g. "hero", "features")
-     - `prompt`: a detailed prompt incorporating the product's description,
-       key features, trade fair messaging, and target audience. Tailor the
-       prompt to the specific section type (e.g. for a hero, focus on headline
-       and tagline; for features, focus on key_features; for CTA, focus on
-       trade fair messaging and booth location).
-     - `previousSection` and `nextSection`: set these for transition context.
-   - Collect all generated sections in order.
+### Step 2 — Plan the page structure
 
-4. **Create the page**:
-   - Call `create_page_with_content` with:
-     - `name`: the product_name
-     - `slug`: take only the last segment of the slug column
-       (e.g. "optline-7000")
-     - `path`: "industry/hannover-messe-2026"
-     - `sections`: all generated sections combined
-     - `uploadAssets`: true
-     - `assetFolderName`: "FALKENBERG Precision"
-     - `publish`: false
+Call `plan_page` with an intent derived from the product data. Example:
+"Trade fair product landing page for {product_name} at HANNOVER MESSE 2026.
+{tagline}. Tone: {landing_page_tone}"
+
+Wait for the plan response. It returns a `sections` array where each entry has
+a `componentType` and `intent`. You will use this plan in Step 3.
+
+### Step 3 — Generate ALL sections one by one
+
+For EACH section in the plan (in order), call `generate_section` with:
+- `componentType`: the section type from the plan (e.g. "hero", "features")
+- `prompt`: a detailed prompt incorporating the product data, tailored to the
+  section type (hero → headline/tagline; features → key_features; CTA → booth)
+- `previousSection` and `nextSection`: set these for transition context
+
+IMPORTANT — Extracting section data from the response:
+Each `generate_section` call returns a JSON object. The `section` field in that
+response contains the Storyblok-ready section object. You MUST extract ONLY the
+`section` field from each response. Example:
+
+  Response from generate_section:
+  {
+    "section": { "component": "section", "components": [...] },  ← USE THIS
+    "designSystemProps": { ... },                                ← ignore
+    "componentType": "hero",                                     ← ignore
+    "note": "..."                                                ← ignore
+  }
+
+Collect the `section` values from ALL generate_section calls into an array.
+Do NOT call `create_page_with_content` until every section has been generated.
+
+### Step 4 — Create the page (only after ALL sections are generated)
+
+Call `create_page_with_content` with:
+- `name`: the product_name
+- `slug`: take only the last segment of the slug column (e.g. "optline-7000")
+- `path`: "industry/hannover-messe-2026"
+- `sections`: the array of section objects collected in Step 3.
+  Each element MUST be a section object with `"component": "section"` and a
+  `"components"` array inside. Do NOT pass the full generate_section response
+  objects — only the extracted `section` field from each.
+- `uploadAssets`: true
+- `assetFolderName`: "FALKENBERG Precision"
+- `publish`: false
 
 ## Content Guidelines
 
@@ -976,6 +998,8 @@ CMS using the available MCP tools. Follow this exact workflow:
   upload pipeline will handle them.
 - **Language**: English.
 - **All content is fictional** — FALKENBERG Precision GmbH does not exist.
+
+## Reporting Results
 
 When you finish creating the page, report back the product_name, story_id,
 story_uuid, slug, page_url (https://falkenberg-precision.de/{slug}),
