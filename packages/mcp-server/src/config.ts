@@ -442,6 +442,13 @@ export const schemas = {
       .describe(
         "Content type to plan for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'."
       ),
+    startsWith: z
+      .string()
+      .optional()
+      .describe(
+        "Filter content patterns by slug prefix (e.g. 'case-studies/' or 'en/blog/'). " +
+          "When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache."
+      ),
   }),
 
   generateSection: z.object({
@@ -464,6 +471,13 @@ export const schemas = {
       .default("page")
       .describe(
         "Content type to generate for (e.g. 'page', 'blog-post'). Default: 'page'."
+      ),
+    startsWith: z
+      .string()
+      .optional()
+      .describe(
+        "Filter content patterns by slug prefix (e.g. 'case-studies/' or 'en/blog/'). " +
+          "When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache."
       ),
   }),
 

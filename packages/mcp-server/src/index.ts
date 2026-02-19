@@ -983,6 +983,11 @@ Requires OpenAI API key for the planning AI call.`,
             description:
               "Content type to plan for (default: 'page'). Use 'blog-post', 'blog-overview', 'event-detail', or 'event-list' for other content types. Tier 2 (flat) types return a field population plan instead of a section sequence.",
           },
+          startsWith: {
+            type: "string",
+            description:
+              "Filter content patterns by slug prefix (e.g. 'case-studies/' or 'en/blog/'). When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache. Useful for creating pages that match the style of a specific site section.",
+          },
         },
         required: ["intent"],
       },
@@ -1033,6 +1038,11 @@ Requires OpenAI API key.`,
             type: "string",
             description:
               "Content type context (default: 'page'). Affects which schema and component rules are used.",
+          },
+          startsWith: {
+            type: "string",
+            description:
+              "Filter content patterns by slug prefix (e.g. 'case-studies/' or 'en/blog/'). When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache. Useful for generating sections that match the style of a specific site section.",
           },
         },
         required: ["componentType", "prompt"],
@@ -1902,24 +1912,46 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             );
           }
 
-          // Gather site intelligence from startup cache
+          // Gather site intelligence — use filtered patterns if startsWith is provided,
+          // otherwise fall back to the global startup cache.
+          let patternsSource: ContentPatternAnalysis | null = null;
+          if (validated.startsWith) {
+            const planContentTypeForPatterns = validated.contentType || "page";
+            const patternRules = registry.has(planContentTypeForPatterns)
+              ? registry.get(planContentTypeForPatterns).rules
+              : PAGE_VALIDATION_RULES;
+            console.error(
+              `[MCP] plan_page: fetching filtered patterns (startsWith: ${validated.startsWith})...`
+            );
+            patternsSource = await analyzeContentPatterns(
+              storyblokService.getContentClient(),
+              patternRules,
+              {
+                contentType: planContentTypeForPatterns,
+                startsWith: validated.startsWith,
+              }
+            );
+          } else {
+            patternsSource = cachedPatterns;
+          }
+
           let patternsContext = "";
-          if (cachedPatterns) {
-            const topComponents = cachedPatterns.componentFrequency
+          if (patternsSource) {
+            const topComponents = patternsSource.componentFrequency
               .slice(0, 10)
               .map(
                 (c: { component: string; count: number }) =>
                   `${c.component} (used ${c.count}x)`
               )
               .join(", ");
-            const topSequences = cachedPatterns.commonSequences
+            const topSequences = patternsSource.commonSequences
               .slice(0, 8)
               .map(
                 (s: { from: string; to: string; count: number }) =>
                   `${s.from} → ${s.to} (${s.count}x)`
               )
               .join(", ");
-            const subItems = Object.entries(cachedPatterns.subComponentCounts)
+            const subItems = Object.entries(patternsSource.subComponentCounts)
               .map(
                 ([component, s]) =>
                   `${component}: median ${
@@ -2198,16 +2230,37 @@ Respond with a JSON object:
             );
           }
 
-          // Gather site-specific context from startup cache
+          // Gather site-specific context — use filtered patterns if startsWith
+          // is provided, otherwise fall back to the global startup cache.
+          let sectionPatternsSource: ContentPatternAnalysis | null = null;
+          if (validated.startsWith) {
+            const patternRules = registry.has(sectionContentType)
+              ? registry.get(sectionContentType).rules
+              : PAGE_VALIDATION_RULES;
+            console.error(
+              `[MCP] generate_section: fetching filtered patterns (startsWith: ${validated.startsWith})...`
+            );
+            sectionPatternsSource = await analyzeContentPatterns(
+              storyblokService.getContentClient(),
+              patternRules,
+              {
+                contentType: sectionContentType,
+                startsWith: validated.startsWith,
+              }
+            );
+          } else {
+            sectionPatternsSource = cachedPatterns;
+          }
+
           let siteContext = "";
-          if (cachedPatterns) {
-            const relevantStats = cachedPatterns.subComponentCounts[
+          if (sectionPatternsSource) {
+            const relevantStats = sectionPatternsSource.subComponentCounts[
               validated.componentType
             ] as SubComponentStats | undefined;
             if (relevantStats) {
               siteContext += `\nOn this site, ${validated.componentType} sections typically have ${relevantStats.median} sub-items (range: ${relevantStats.min}-${relevantStats.max}).`;
             }
-            const freq = cachedPatterns.componentFrequency.find(
+            const freq = sectionPatternsSource.componentFrequency.find(
               (c: { component: string }) =>
                 c.component === validated.componentType
             );

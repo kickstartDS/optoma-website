@@ -282,6 +282,21 @@ export class StoryblokKickstartDs implements INodeType {
         },
       },
       {
+        displayName: "Starts With",
+        name: "sectionStartsWith",
+        type: "string",
+        default: "",
+        description:
+          'Filter content patterns by slug prefix (e.g. "case-studies/" or "en/blog/"). When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache.',
+        placeholder: "case-studies/",
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["generateSection"],
+          },
+        },
+      },
+      {
         displayName: "Model",
         name: "sectionModel",
         type: "string",
@@ -335,6 +350,21 @@ export class StoryblokKickstartDs implements INodeType {
         default: "page",
         description:
           'Content type to plan for (e.g. "page", "blog-post", "event-detail"). Default: "page".',
+        displayOptions: {
+          show: {
+            resource: ["aiContent"],
+            operation: ["planPage"],
+          },
+        },
+      },
+      {
+        displayName: "Starts With",
+        name: "planStartsWith",
+        type: "string",
+        default: "",
+        description:
+          'Filter content patterns by slug prefix (e.g. "case-studies/" or "en/blog/"). When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache.',
+        placeholder: "case-studies/",
         displayOptions: {
           show: {
             resource: ["aiContent"],
@@ -1401,6 +1431,11 @@ async function executeGenerateSection(
     itemIndex,
     "page"
   ) as string;
+  const startsWith = this.getNodeParameter(
+    "sectionStartsWith",
+    itemIndex,
+    ""
+  ) as string;
   const model = this.getNodeParameter(
     "sectionModel",
     itemIndex,
@@ -1414,6 +1449,38 @@ async function executeGenerateSection(
 
   // Always inject placeholder image instructions so image fields are never left empty
   system += `\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
+
+  // If startsWith is provided, fetch filtered patterns and inject site context
+  if (startsWith) {
+    const storyblokCredentials = (await this.getCredentials(
+      "storyblokApi",
+      itemIndex
+    )) as unknown as StoryblokCredentials;
+    const contentClient = createContentClient({
+      spaceId: storyblokCredentials.spaceId,
+      apiToken: storyblokCredentials.apiToken,
+    });
+    const entry = registry.has(contentType)
+      ? registry.get(contentType)
+      : registry.page;
+    const filteredPatterns = await analyzeContentPatterns(
+      contentClient,
+      entry.rules,
+      { contentType, startsWith }
+    );
+    const relevantStats = filteredPatterns.subComponentCounts[componentType] as
+      | SubComponentStats
+      | undefined;
+    if (relevantStats) {
+      system += `\n\nOn this site section (${startsWith}), ${componentType} sections typically have ${relevantStats.median} sub-items (range: ${relevantStats.min}-${relevantStats.max}).`;
+    }
+    const freq = filteredPatterns.componentFrequency.find(
+      (c: { component: string }) => c.component === componentType
+    );
+    if (freq) {
+      system += `\nIn this site section (${startsWith}), this component is used ${freq.count} times.`;
+    }
+  }
 
   // Add transition context if provided
   if (previousSection) {
@@ -1470,6 +1537,7 @@ async function executeGenerateSection(
         componentType,
         contentType,
         model,
+        startsWith: startsWith || undefined,
         previousSection: previousSection || undefined,
         nextSection: nextSection || undefined,
         timestamp: new Date().toISOString(),
@@ -1638,6 +1706,11 @@ async function executePlanPage(
     itemIndex,
     "page"
   ) as string;
+  const startsWith = this.getNodeParameter(
+    "planStartsWith",
+    itemIndex,
+    ""
+  ) as string;
   const model = this.getNodeParameter(
     "planModel",
     itemIndex,
@@ -1661,6 +1734,47 @@ async function executePlanPage(
     }
   }
 
+  // Gather site intelligence — use filtered patterns if startsWith is provided
+  let patternsContext = "";
+  if (startsWith) {
+    const storyblokCredentials = (await this.getCredentials(
+      "storyblokApi",
+      itemIndex
+    )) as unknown as StoryblokCredentials;
+    const contentClient = createContentClient({
+      spaceId: storyblokCredentials.spaceId,
+      apiToken: storyblokCredentials.apiToken,
+    });
+    const filteredPatterns = await analyzeContentPatterns(
+      contentClient,
+      rules,
+      { contentType, startsWith }
+    );
+    const topComponents = filteredPatterns.componentFrequency
+      .slice(0, 10)
+      .map(
+        (c: { component: string; count: number }) =>
+          `${c.component} (used ${c.count}x)`
+      )
+      .join(", ");
+    const topSequences = filteredPatterns.commonSequences
+      .slice(0, 8)
+      .map(
+        (s: { from: string; to: string; count: number }) =>
+          `${s.from} → ${s.to} (${s.count}x)`
+      )
+      .join(", ");
+    const subItems = Object.entries(filteredPatterns.subComponentCounts)
+      .map(
+        ([component, s]) =>
+          `${component}: median ${(s as SubComponentStats).median} items (${
+            (s as SubComponentStats).min
+          }-${(s as SubComponentStats).max})`
+      )
+      .join(", ");
+    patternsContext = `\n\nSite patterns (from ${startsWith}):\n- Most used: ${topComponents}\n- Common sequences: ${topSequences}\n- Sub-item counts: ${subItems}`;
+  }
+
   // Build a planning prompt
   const systemPrompt = `You are a website content architect. Given a page intent, recommend a sequence of sections using the available component types.
 
@@ -1670,7 +1784,7 @@ ${
   sectionCount > 0
     ? `Target section count: ${sectionCount}`
     : "Choose an appropriate number of sections (typically 4-8)."
-}
+}${patternsContext}
 
 Return a JSON object with:
 - "sections": array of objects, each with "componentType" (one of the available types) and "intent" (brief description of what this section should contain)
@@ -1722,6 +1836,7 @@ Return a JSON object with:
         intent,
         contentType,
         model,
+        startsWith: startsWith || undefined,
         availableComponents: allowedComponents,
         timestamp: new Date().toISOString(),
       },

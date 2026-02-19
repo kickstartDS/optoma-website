@@ -140,6 +140,7 @@ Generate a single section with site-aware context injection. Automatically injec
 | **Previous Section** | String | No       | Component type before this one (for transition context)     |
 | **Next Section**     | String | No       | Component type after this one (for transition context)      |
 | **Content Type**     | String | No       | Content type (default: `page`)                              |
+| **Starts With**      | String | No       | Slug prefix filter for site patterns (e.g. `case-studies/`) |
 | **Model**            | String | No       | OpenAI model (default: `gpt-4o`)                            |
 
 **Output:**
@@ -168,6 +169,7 @@ AI-assisted page structure planning. Returns a recommended section sequence base
 | **Intent**        | String | ✅       | Page description (e.g. "Product landing page with pricing tiers") |
 | **Section Count** | Number | No       | Target number of sections (0 = auto-determined)                   |
 | **Content Type**  | String | No       | Content type (default: `page`)                                    |
+| **Starts With**   | String | No       | Slug prefix filter for site patterns (e.g. `case-studies/`)       |
 | **Model**         | String | No       | OpenAI model (default: `gpt-4o`)                                  |
 
 **Output:**

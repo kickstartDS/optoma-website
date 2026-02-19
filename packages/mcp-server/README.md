@@ -48,14 +48,14 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Guided Generation & Planning
 
-| Tool                       | Description                                                                                                                                                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes). Cached at startup; pass `refresh: true` after publishing new content                               |
-| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                                               |
-| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns. For hybrid types (blog-post, blog-overview) also returns `rootFieldMeta` with priority annotations |
-| `generate_section`         | Generate a single section with auto-injected site context, transition hints, and recipe-based best practices                                                                                                       |
-| `generate_root_field`      | Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types. Uses OpenAI structured output with field-specific sub-schema                                                 |
-| `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image) for any content type with a `seo` root field. Uses a specialized SEO-expert system prompt                                                           |
+| Tool                       | Description                                                                                                                                                                                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes). Cached at startup; pass `refresh: true` after publishing new content                                                                                                                    |
+| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                                                                                                                                    |
+| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns. Accepts optional `startsWith` to use filtered patterns from a specific site section. For hybrid types (blog-post, blog-overview) also returns `rootFieldMeta` with priority annotations |
+| `generate_section`         | Generate a single section with auto-injected site context, transition hints, and recipe-based best practices                                                                                                                                                                                            |
+| `generate_root_field`      | Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types. Uses OpenAI structured output with field-specific sub-schema                                                                                                                                      |
+| `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image) for any content type with a `seo` root field. Uses a specialized SEO-expert system prompt                                                                                                                                                |
 
 ## Installation
 
@@ -471,7 +471,7 @@ The response includes the full set of valid values:
 
 ### Analyze content patterns
 
-Pattern data is **cached at server startup** — this call returns instantly from memory. Other tools (`plan_page`, `generate_section`, `list_recipes`) also read from this cache automatically.
+Pattern data is **cached at server startup** — this call returns instantly from memory. Other tools (`plan_page`, `generate_section`, `list_recipes`) also read from this cache automatically. To use patterns from a specific site section instead, pass `startsWith` to `plan_page` or `generate_section` directly (they will fetch filtered patterns live).
 
 ```json
 {
@@ -510,6 +510,18 @@ Get an AI-assisted section plan based on site patterns:
 
 Returns a structured plan with `componentType` and `intent` per section. Use the plan to generate each section individually.
 
+To base the plan on patterns from a **specific site section** instead of the global cache, pass `startsWith`:
+
+```json
+{
+  "tool": "plan_page",
+  "arguments": {
+    "intent": "New case study for Acme Corp",
+    "startsWith": "case-studies/"
+  }
+}
+```
+
 For **Tier 2 (flat) content types**, `plan_page` returns a field population plan instead of a section sequence:
 
 ```json
@@ -540,6 +552,19 @@ Generate content for one section with automatic site-aware context injection:
 ```
 
 The tool auto-injects site-specific guidance (e.g. "this site typically uses 4 feature items") and transition context into the system prompt.
+
+To use patterns from a **specific site section** (e.g. only case studies), pass `startsWith`:
+
+```json
+{
+  "tool": "generate_section",
+  "arguments": {
+    "componentType": "features",
+    "prompt": "Key results from the Acme Corp engagement",
+    "startsWith": "case-studies/"
+  }
+}
+```
 
 ### List recipes with live patterns
 
@@ -580,8 +605,8 @@ The server also exposes MCP resources:
 The server supports a **section-by-section generation workflow** that produces higher-quality content than generating entire pages at once. The recommended flow:
 
 1. **Analyze** — `analyze_content_patterns` returns the site's structural patterns from a **startup cache** (instant, no API call). Pass `refresh: true` after publishing new content
-2. **Plan** — `plan_page` uses AI + site patterns to suggest a section sequence for a given page intent. For hybrid content types (blog-post, blog-overview), also returns `rootFieldMeta` with priority annotations for non-section root fields
-3. **Generate** — `generate_section` creates each section individually with site-aware context injection
+2. **Plan** — `plan_page` uses AI + site patterns to suggest a section sequence for a given page intent. Pass `startsWith` (e.g. `"case-studies/"`) to use patterns from a specific site section instead of the global cache. For hybrid content types (blog-post, blog-overview), also returns `rootFieldMeta` with priority annotations for non-section root fields
+3. **Generate** — `generate_section` creates each section individually with site-aware context injection. Also accepts `startsWith` for section-specific pattern filtering
 4. **Root Fields** (hybrid types only) — `generate_root_field` generates content for each root-level field (e.g. `head`, `aside`, `cta`)
 5. **SEO** — `generate_seo` generates SEO metadata (title, description, keywords, OG image) using a specialized SEO-expert prompt
 6. **Assemble** — `create_page_with_content` combines all sections and root fields into a page with validation and optional asset upload
@@ -673,7 +698,7 @@ packages/storyblok-services/
 └── src/                        # Core Storyblok + OpenAI logic
 ```
 
-Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. Both `plan_page` and `generate_section` accept an optional `startsWith` parameter to fetch filtered patterns live from a specific site section instead of the global cache. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 

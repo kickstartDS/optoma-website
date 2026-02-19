@@ -36,6 +36,8 @@ Wenn eine neue Seite mit 3 oder mehr Sektionen erstellt werden soll. Erzeugt deu
 Basierend auf dem Briefing des Editors + den Website-Mustern eine Sektionsfolge mit 4-7 Sektionen festlegen. Bevorzugt Komponentenabfolgen verwenden, die bereits auf der Website existieren.
 
 - **Tool (optional):** `plan_page` — KI-gestützte Planung auf Basis von Intent und Website-Mustern
+- **Tipp:** Wenn die neue Seite einem bestimmten Seitenbereich ähneln soll (z.B. Case Studies), den `startsWith`-Parameter verwenden:
+  `plan_page(intent: "...", startsWith: "case-studies/")` — nutzt dann nur Patterns aus diesem Bereich statt dem globalen Cache
 
 **Planungsheuristiken:**
 
@@ -69,6 +71,8 @@ Für JEDE geplannte Sektion `generate_section` separat aufrufen:
   - `prompt`: Eine Beschreibung für NUR diese Sektion — was soll sie kommunizieren?
   - `previousSection` / `nextSection`: Typ der Nachbar-Sektionen für Übergangshinweise
     (z.B. `previousSection: "hero"`, `nextSection: "testimonials"`)
+  - `startsWith` (optional): Slug-Präfix für gefilterte Patterns (z.B. `"case-studies/"`) —
+    gleicher Wert wie bei `plan_page` verwenden, damit Planung und Generierung konsistent sind
 
 **Vorteile von `generate_section`:** Site-Kontext (Sub-Item-Counts, Komponentenfrequenz, Rezept-Best-Practices) wird automatisch in den System-Prompt injiziert.
 
