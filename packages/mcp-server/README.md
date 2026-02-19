@@ -65,17 +65,18 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Setup
 
-1. Install dependencies:
+This package lives inside a **pnpm workspaces monorepo**. All commands are run from the **repository root**.
+
+1. Install dependencies (from repo root):
 
 ```bash
-cd mcp-server
-npm install
+pnpm install
 ```
 
 2. Create environment file:
 
 ```bash
-cp .env.example .env
+cp packages/mcp-server/.env.example packages/mcp-server/.env
 ```
 
 3. Configure environment variables in `.env`:
@@ -87,10 +88,11 @@ STORYBLOK_SPACE_ID=123456
 OPENAI_API_KEY=sk-your-openai-key  # Optional
 ```
 
-4. Build the server:
+4. Build the shared library and MCP server:
 
 ```bash
-npm run build
+pnpm --filter @kickstartds/storyblok-services run build
+pnpm --filter @kickstartds/storyblok-mcp-server run build
 ```
 
 ## Usage
@@ -104,7 +106,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
   "mcpServers": {
     "storyblok": {
       "command": "node",
-      "args": ["/path/to/mcp-server/dist/index.js"],
+      "args": ["/path/to/packages/mcp-server/dist/index.js"],
       "env": {
         "STORYBLOK_API_TOKEN": "your-preview-token",
         "STORYBLOK_OAUTH_TOKEN": "your-oauth-token",
@@ -118,10 +120,10 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 
 ### With Docker
 
-Build the Docker image (from the repository root):
+Build the Docker image (from the repository root — the build context must be the repo root so workspace packages are available):
 
 ```bash
-docker build -t storyblok-mcp-server -f mcp-server/Dockerfile .
+docker build -t storyblok-mcp-server -f packages/mcp-server/Dockerfile .
 ```
 
 Run locally in **stdio** mode (default):
@@ -179,10 +181,11 @@ Set these in your shell or CI environment before deploying:
 
 #### Deploy
 
+Run from the **repository root** — the Kamal config lives at `config/deploy-mcp.yml`:
+
 ```bash
-cd mcp-server
-kamal setup    # First-time setup
-kamal deploy   # Subsequent deployments
+kamal setup -c config/deploy-mcp.yml    # First-time setup
+kamal deploy -c config/deploy-mcp.yml   # Subsequent deployments
 ```
 
 #### Connecting Remote Clients
@@ -203,8 +206,8 @@ export STORYBLOK_API_TOKEN=your-token
 export STORYBLOK_OAUTH_TOKEN=your-oauth-token
 export STORYBLOK_SPACE_ID=123456
 
-# Run the server
-npm start
+# Run the server (from repo root)
+pnpm --filter @kickstartds/storyblok-mcp-server start
 ```
 
 ## Tool Examples
@@ -631,12 +634,19 @@ The same validation logic from `@kickstartds/storyblok-services` is also applied
 ### Project Structure
 
 ```
-mcp-server/
+# Monorepo root
+config/
+└── deploy-mcp.yml              # Kamal deployment configuration
+.kamal/
+└── secrets                     # Kamal secrets (reads from environment)
+
+# MCP server package
+packages/mcp-server/
 ├── src/
-│   ├── index.ts      # Main server with tool handlers (stdio + HTTP transport)
-│   ├── config.ts     # Configuration and Zod schemas
-│   ├── services.ts   # Storyblok and OpenAI service classes (delegates to shared lib)
-│   └── errors.ts     # Error types and handling
+│   ├── index.ts                # Main server with tool handlers (stdio + HTTP transport)
+│   ├── config.ts               # Configuration and Zod schemas
+│   ├── services.ts             # Storyblok and OpenAI service classes (delegates to shared lib)
+│   └── errors.ts               # Error types and handling
 ├── schemas/
 │   ├── page.schema.dereffed.json           # Design System page schema
 │   ├── blog-post.schema.dereffed.json      # Design System blog-post schema
@@ -644,44 +654,51 @@ mcp-server/
 │   ├── event-detail.schema.dereffed.json   # Design System event-detail schema
 │   ├── event-list.schema.dereffed.json     # Design System event-list schema
 │   └── section-recipes.json               # Curated section recipes, page templates, and anti-patterns
-├── config/
-│   └── deploy.yml    # Kamal deployment configuration
 ├── .kamal/
-│   └── secrets       # Kamal secrets (reads from environment)
+│   └── secrets                 # MCP-specific Kamal secrets (reads from environment)
 ├── package.json
 ├── tsconfig.json
 ├── Dockerfile
 └── README.md
+
+# Shared library (workspace dependency)
+packages/storyblok-services/
+└── src/                        # Core Storyblok + OpenAI logic
 ```
 
-Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../shared/storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 
-| Package                           | Version   | Purpose                                      |
-| --------------------------------- | --------- | -------------------------------------------- |
-| `@modelcontextprotocol/sdk`       | `^1.0.0`  | MCP protocol implementation                  |
-| `@kickstartds/storyblok-services` | `file:..` | Shared Storyblok + OpenAI service functions  |
-| `openai`                          | `^6.18.0` | OpenAI API client                            |
-| `storyblok-js-client`             | `^7.2.3`  | Storyblok Management API client              |
-| `turndown`                        | `^7.2.0`  | HTML-to-Markdown conversion for web scraping |
+| Package                           | Version       | Purpose                                                      |
+| --------------------------------- | ------------- | ------------------------------------------------------------ |
+| `@modelcontextprotocol/sdk`       | `^1.0.0`      | MCP protocol implementation                                  |
+| `@kickstartds/storyblok-services` | `workspace:*` | Shared Storyblok + OpenAI service functions (pnpm workspace) |
+| `openai`                          | `^6.18.0`     | OpenAI API client                                            |
+| `storyblok-js-client`             | `^7.2.3`      | Storyblok Management API client                              |
+| `turndown`                        | `^7.2.0`      | HTML-to-Markdown conversion for web scraping                 |
 
 ### Building
 
 ```bash
-npm run build
+# From repo root (builds shared lib + MCP server):
+pnpm --filter @kickstartds/storyblok-services run build
+pnpm --filter @kickstartds/storyblok-mcp-server run build
+
+# Or from packages/mcp-server/ (shared lib must already be built):
+pnpm run build
 ```
 
 ### Type Checking
 
 ```bash
-npm run typecheck
+pnpm --filter @kickstartds/storyblok-mcp-server run typecheck
 ```
 
 ### Development Mode
 
 ```bash
-npm run dev  # Watch mode
+pnpm --filter @kickstartds/storyblok-mcp-server run dev  # Watch mode
 ```
 
 ## Environment Variables
@@ -720,7 +737,7 @@ Error codes:
 
 ## n8n Integration
 
-For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/).
+For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes/).
 
 It provides **18 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
 
