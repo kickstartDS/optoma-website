@@ -1051,6 +1051,179 @@ The Google Sheets spreadsheet is updated in real-time as each page is created, s
 
 ---
 
+## Weekly Blog Workflow: Industry News Reaction Posts
+
+### Concept
+
+A weekly automated workflow that reads the latest industry news from a curated RSS feed, identifies a topic relevant to FALKENBERG's domain, and generates a blog post draft that "reacts" to the chosen article — positioning FALKENBERG as a thought leader who actively engages with industry developments.
+
+**Workflow Name:** `FALKENBERG — Weekly Industry News Blog Post`
+**Schedule:** Every Monday at 09:00 CET
+**Output:** One draft blog post in Storyblok under `industry/blog/{generated-slug}`
+
+### Industry News Source: Metrology News
+
+| Field                  | Value                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Publication**        | Metrology News                                                                                                            |
+| **Website**            | https://metrology.news                                                                                                    |
+| **RSS Feed**           | `https://metrology.news/feed/`                                                                                            |
+| **Update Frequency**   | Daily articles, hourly RSS updates                                                                                        |
+| **Publisher**          | E-Zine Media (Keith Mills, Publishing Editor)                                                                             |
+| **Running Since**      | 2016                                                                                                                      |
+| **Newsletter**         | "METROLOGY BREW" — weekly curated news bulletin                                                                           |
+| **Monthly Magazine**   | Free digital metrology magazine (PDF e-zine)                                                                              |
+| **Newsletter Sign-Up** | https://metrology.news/metrology-newsletter-sign-up/                                                                      |
+| **Description**        | The leading online magazine for dimensional metrology, inspection, and quality news from manufacturing industry worldwide |
+
+#### Why Metrology News?
+
+Metrology News is a near-perfect editorial match for FALKENBERG's niche:
+
+| FALKENBERG Focus                                   | Metrology News Coverage                                                         |
+| -------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Precision sensors (inductive, capacitive, optical) | Dedicated **Sensors** section (optical, laser, non-contact, machine tool probe) |
+| Measurement systems & quality inspection           | **CMMs**, **Optical & Video Metrology**, **Portable Metrology** sections        |
+| Industry 4.0 / IoT                                 | **Smart Manufacturing**, **Industry 4.0**, **Digital Twin** sections            |
+| Automotive, aerospace, pharma customers            | **Application Stories** with automotive inline inspection, aerospace, pharma QC |
+| Calibration services                               | Dedicated **Calibration News** section                                          |
+| AI in quality control                              | **Artificial Intelligence** section covering AI-driven inspection and metrology |
+
+The RSS feed is a standard WordPress feed providing full article summaries, categories, publication dates, and author info — ideal for automated ingestion and LLM-based topic selection.
+
+#### Alternative / Supplementary Sources (for future expansion)
+
+| Publication      | RSS / Feed                                                  | Focus                                          |
+| ---------------- | ----------------------------------------------------------- | ---------------------------------------------- |
+| Quality Magazine | https://www.qualitymag.com (no public RSS, newsletter only) | Manufacturing quality, inspection, metrology   |
+| Automation World | https://www.automationworld.com (newsletter)                | Industrial automation, IIoT, sensors, controls |
+
+### Workflow Architecture
+
+```
+Cron Trigger (Monday 09:00 CET)
+  → RSS Feed Read (https://metrology.news/feed/)
+    → Limit to 10 most recent items
+      → AI Agent
+          ├── LLM: OpenAI GPT-4o
+          ├── Tool: MCP Client → Storyblok MCP Server
+          └── Input: RSS items + FALKENBERG context
+        → Outputs: blog post story_id, slug, title, source_article_url
+      → Slack / Email notification with draft link
+```
+
+### Workflow Steps
+
+#### Step 1 — Read RSS Feed
+
+- **Node:** RSS Feed Read
+- **URL:** `https://metrology.news/feed/`
+- **Output:** Array of recent articles with `title`, `link`, `description`, `pubDate`, `categories`
+
+#### Step 2 — Limit to Recent Items
+
+- **Node:** Limit / Code
+- **Logic:** Take the 10 most recent items (published within the last 7 days). Concatenate them into a single text block for the AI agent prompt.
+
+#### Step 3 — AI Agent: Select Topic & Generate Blog Post
+
+The AI agent receives the list of recent articles and FALKENBERG's company context. It autonomously:
+
+1. **Selects** the most relevant article to react to — prioritizing topics that intersect with FALKENBERG's product portfolio, target industries, or strategic themes (Industry 4.0, precision measurement, AI in quality control, calibration)
+2. **Scrapes** the full article text using the `scrape_url` MCP tool for deeper context
+3. **Generates** a blog post draft that:
+   - References the source article and its key findings/announcements
+   - Connects the topic to FALKENBERG's expertise, products, or point of view
+   - Adds original insight, commentary, or a practical takeaway for FALKENBERG's audience
+   - Includes a CTA driving readers to a relevant FALKENBERG page (products, solutions, contact)
+4. **Creates** the blog post in Storyblok as a draft using `create_page_with_content` with `contentType: "blog-post"`
+
+#### AI Agent System Prompt
+
+```
+You are a content strategist for FALKENBERG Precision GmbH, a German
+manufacturer of precision sensors and measurement systems (founded 1983,
+Stuttgart, ~420 employees, €78M revenue).
+
+FALKENBERG's core competencies:
+- Precision sensors: inductive, capacitive, optical, confocal chromatic
+- Measurement systems for inline quality inspection
+- Industrial IoT (FalkenConnect Gateway) for Industry 4.0
+- ISO 17025 calibration services
+- Key industries: automotive, aerospace, pharma, energy
+
+## Your Task
+
+You will receive a list of recent industry news articles from Metrology News.
+Your job is to:
+
+1. SELECT the single most compelling article to react to. Choose one that:
+   - Directly relates to FALKENBERG's product categories or target industries
+   - Presents a trend, challenge, or innovation FALKENBERG can comment on
+   - Offers an opportunity to demonstrate thought leadership
+   - Is timely and likely to interest FALKENBERG's audience (production
+     managers, quality engineers, C-level in manufacturing)
+
+2. SCRAPE the full article using `scrape_url` to get the complete text
+
+3. GENERATE a blog post (800–1200 words) that:
+   - Opens with a reference to the source article ("A recent report by
+     Metrology News highlighted..." or similar)
+   - Summarizes the key point of the source article (2–3 sentences)
+   - Provides FALKENBERG's perspective or commentary (the core of the post)
+   - Connects to FALKENBERG's products/services where natural (not forced)
+   - Ends with a practical takeaway or forward-looking statement
+   - Includes a CTA to a relevant FALKENBERG page
+
+4. CREATE the blog post in Storyblok:
+   - Use `create_page_with_content` with `contentType: "blog-post"`
+   - Set `path: "industry/blog"`
+   - Generate a URL-friendly slug from the blog title
+   - Set `uploadAssets: true`, `assetFolderName: "FALKENBERG Precision"`
+   - Set `publish: false` (draft for human review)
+
+## Content Guidelines
+
+- **Tone:** Authoritative but approachable. FALKENBERG is a 40-year veteran
+  commenting on industry developments — knowledgeable, not salesy.
+- **Attribution:** Always credit the source article with title and publication.
+  Never plagiarize — summarize and react, don't copy.
+- **Balance:** ~30% source summary, ~50% FALKENBERG commentary/insight,
+  ~20% practical takeaway + CTA.
+- **Language:** English.
+- **All content is fictional** — FALKENBERG Precision GmbH does not exist.
+```
+
+#### AI Agent User Prompt (with n8n expressions)
+
+```
+Here are the 10 most recent articles from Metrology News (metrology.news):
+
+{{ $json.articles }}
+
+Please select the most relevant article for a FALKENBERG Precision blog post,
+scrape the full article, generate the blog post content, and create it as a
+draft in Storyblok.
+
+Report back:
+- Selected article title and URL
+- Generated blog post title
+- Storyblok story_id and slug
+- Brief summary of the angle you took
+```
+
+### Expected Output
+
+One draft blog post per week at `industry/blog/{generated-slug}`, for example:
+
+- `industry/blog/ai-quality-control-manufacturing-future` — reacting to "Breaking the Data Bottleneck: Synthetic Data Accelerates AI-Driven Quality Control"
+- `industry/blog/inline-metrology-speed-precision` — reacting to "Inline Metrology at the Speed of Production"
+- `industry/blog/zero-defect-manufacturing-sensor-role` — reacting to "The Pursuit of Zero-Defect Manufacturing"
+
+Each post is saved as a **draft** for human review before publishing. The Slack/email notification includes a direct link to the Storyblok Visual Editor for quick review and one-click publishing.
+
+---
+
 ## Notes for Content Creators
 
 - **Tone of voice:** Professional, technical but accessible. Think "confident German engineering firm speaking to technical decision-makers." Avoid jargon overload — the content should be understandable by both engineers and C-level executives.
