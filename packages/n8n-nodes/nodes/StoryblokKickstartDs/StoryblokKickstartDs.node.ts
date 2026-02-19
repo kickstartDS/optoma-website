@@ -39,6 +39,8 @@ import {
   listAssets,
   // Content pattern analysis
   analyzeContentPatterns,
+  // Field-level compositional guidance
+  assembleFieldGuidance,
   // Root field & SEO generation
   generateRootFieldContent,
   generateSeoContent,
@@ -1499,6 +1501,46 @@ async function executeGenerateSection(
     system += `\n\nBest practices for ${componentType}: ${
       (matchingRecipe as Record<string, unknown>).notes
     }`;
+  }
+
+  // Assemble field-level compositional guidance from patterns + recipes
+  if (startsWith) {
+    // We already fetched filtered patterns above — pass them for guidance
+    const storyblokCredentials2 = (await this.getCredentials(
+      "storyblokApi",
+      itemIndex
+    )) as unknown as StoryblokCredentials;
+    const contentClient2 = createContentClient({
+      spaceId: storyblokCredentials2.spaceId,
+      apiToken: storyblokCredentials2.apiToken,
+    });
+    const guidanceEntry = registry.has(contentType)
+      ? registry.get(contentType)
+      : registry.page;
+    const guidancePatterns = await analyzeContentPatterns(
+      contentClient2,
+      guidanceEntry.rules,
+      { contentType, startsWith, derefSchema: guidanceEntry.schema }
+    );
+    const fieldGuidance = assembleFieldGuidance({
+      componentType,
+      patterns: guidancePatterns,
+      recipes: sectionRecipesData as any,
+      scopeLabel: startsWith,
+    });
+    if (fieldGuidance) {
+      system += fieldGuidance;
+    }
+  } else {
+    // No startsWith — use recipes only (no cached patterns in n8n)
+    const fieldGuidance = assembleFieldGuidance({
+      componentType,
+      patterns: null,
+      recipes: sectionRecipesData as any,
+    });
+    if (fieldGuidance) {
+      system += fieldGuidance;
+    }
   }
 
   // Resolve content type for schema

@@ -44,6 +44,7 @@ import {
   listAssets as sharedListAssets,
   scrapeUrl as sharedScrapeUrl,
   analyzeContentPatterns as sharedAnalyzeContentPatterns,
+  assembleFieldGuidance,
   type PrepareSchemaOptions,
   type ValidationRules,
   type ValidationWarning,
@@ -52,6 +53,7 @@ import {
   type ContentPatternAnalysis,
   type SubComponentStats,
   type AnalyzeContentPatternsOptions,
+  type SectionRecipes,
 } from "@kickstartds/storyblok-services";
 
 // Load all content type schemas via the registry
@@ -101,7 +103,8 @@ export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services"
 // Re-exported from shared library. The function signature now takes a
 // content API client instead of a StoryblokService instance.
 export { sharedAnalyzeContentPatterns as analyzeContentPatterns };
-export type { ContentPatternAnalysis, SubComponentStats };
+export { assembleFieldGuidance };
+export type { ContentPatternAnalysis, SubComponentStats, SectionRecipes };
 
 /**
  * Wrapper class for Storyblok API operations.

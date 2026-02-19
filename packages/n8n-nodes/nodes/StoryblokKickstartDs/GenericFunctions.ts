@@ -45,6 +45,8 @@ import {
   generateRootFieldContent,
   generateSeoContent,
   getRootFieldSchema,
+  // Field-level guidance
+  assembleFieldGuidance,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
@@ -107,6 +109,8 @@ export {
   generateRootFieldContent,
   generateSeoContent,
   getRootFieldSchema,
+  // Field-level guidance
+  assembleFieldGuidance,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,

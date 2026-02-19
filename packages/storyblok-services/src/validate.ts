@@ -755,7 +755,7 @@ function buildNestingSuggestion(
  */
 export interface ValidationWarning {
   /** Severity level. */
-  level: "info" | "warning";
+  level: "info" | "warning" | "suggestion";
   /** Human-readable warning message. */
   message: string;
   /** JSON-path-like location, if applicable. */
@@ -932,6 +932,94 @@ export function checkCompositionalQuality(
       suggestion:
         'Consider adding a "cta" section near the end to drive conversions.',
     });
+  }
+
+  // ─── Field-level composition warnings ───────────────────────────
+
+  // Components whose own headline should take precedence over the section headline
+  const COMPONENTS_WITH_OWN_HEADLINE = new Set([
+    "hero",
+    "cta",
+    "video-curtain",
+  ]);
+  // Components whose own buttons should take precedence over section buttons
+  const COMPONENTS_WITH_OWN_BUTTONS = new Set(["hero", "cta", "video-curtain"]);
+
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i];
+    const sectionField = rules.rootArrayFields[0] || "section";
+
+    // Find child components in this section
+    const componentsKey = Object.keys(section).find(
+      (k) =>
+        Array.isArray(section[k]) &&
+        section[k].length > 0 &&
+        typeof section[k][0] === "object"
+    );
+    const components: Record<string, any>[] = componentsKey
+      ? section[componentsKey]
+      : [];
+    const childTypes = components
+      .map((c) => getComponentType(c, format))
+      .filter(Boolean) as string[];
+
+    // 6. Redundant section headline — section has headline_text AND contains
+    // a component that has its own headline
+    const sectionHasHeadline =
+      (typeof section.headline_text === "string" &&
+        section.headline_text.trim().length > 0) ||
+      (typeof section.headline === "string" &&
+        section.headline.trim().length > 0);
+    const childWithOwnHeadline = childTypes.find((t) =>
+      COMPONENTS_WITH_OWN_HEADLINE.has(t)
+    );
+    if (sectionHasHeadline && childWithOwnHeadline) {
+      warnings.push({
+        level: "suggestion",
+        message: `Section has headline_text but contains a ${childWithOwnHeadline} which has its own headline. Consider removing the section headline.`,
+        path: `${sectionField}[${i}].headline_text`,
+        suggestion: `Clear the section headline to avoid visual competition with the ${childWithOwnHeadline}'s headline.`,
+      });
+    }
+
+    // 7. Competing CTAs — section has buttons AND child has buttons
+    const sectionHasButtons =
+      Array.isArray(section.buttons) && section.buttons.length > 0;
+    const childWithOwnButtons = childTypes.find((t) =>
+      COMPONENTS_WITH_OWN_BUTTONS.has(t)
+    );
+    if (sectionHasButtons && childWithOwnButtons) {
+      warnings.push({
+        level: "suggestion",
+        message: `Section has buttons but its child ${childWithOwnButtons} also has buttons. Two CTA groups will render.`,
+        path: `${sectionField}[${i}].buttons`,
+        suggestion: `Remove section-level buttons when the child component already has CTAs.`,
+      });
+    }
+
+    // 8. Inappropriate content_mode — non-default mode with only 1 component
+    const contentMode = section.content_mode || section.contentMode;
+    if (contentMode && contentMode !== "default" && components.length <= 1) {
+      warnings.push({
+        level: "info",
+        message: `Section uses content_mode "${contentMode}" but contains only ${components.length} component. This mode is designed for multi-item layouts.`,
+        path: `${sectionField}[${i}].content_mode`,
+        suggestion: `Use content_mode "default" for single-component sections.`,
+      });
+    }
+
+    // 9. First section spacing — first section should use spaceBefore "none"
+    if (i === 0) {
+      const spaceBefore = section.spaceBefore ?? section.space_before;
+      if (spaceBefore && spaceBefore !== "none" && spaceBefore !== "") {
+        warnings.push({
+          level: "info",
+          message: `First section has spaceBefore "${spaceBefore}". The first section typically uses "none" to align with the page top.`,
+          path: `${sectionField}[0].spaceBefore`,
+          suggestion: `Consider setting spaceBefore to "none" for the opening section.`,
+        });
+      }
+    }
   }
 
   return warnings;

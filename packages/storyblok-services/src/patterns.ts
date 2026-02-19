@@ -12,6 +12,16 @@
 import type StoryblokClient from "storyblok-js-client";
 import { listStories } from "./stories.js";
 import type { ValidationRules } from "./validate.js";
+import {
+  discoverStylisticFields,
+  discoverPresenceFields,
+  computeFieldDistribution,
+  pruneFieldProfiles,
+  type StylisticFieldSpec,
+  type PresenceFieldSpec,
+  type FieldProfile,
+  type FieldProfileContext,
+} from "./guidance.js";
 
 // ─── Types ────────────────────────────────────────────────────────────
 
@@ -53,11 +63,18 @@ export interface ContentPatternAnalysis {
   subComponentCounts: Record<string, SubComponentStats>;
   pageArchetypes: PageArchetype[];
   unusedComponents: string[];
+  /** Field value distributions (empty when derefSchema not provided). */
+  fieldProfiles: FieldProfile[];
 }
 
 export interface AnalyzeContentPatternsOptions {
   contentType?: string;
   startsWith?: string;
+  /**
+   * Fully dereferenced root schema. When provided, field-level profiles
+   * are extracted alongside structural patterns.
+   */
+  derefSchema?: Record<string, any>;
 }
 
 // ─── Main function ────────────────────────────────────────────────────
@@ -118,6 +135,80 @@ export async function analyzeContentPatterns(
 
   const rootFields = validationRules.rootArrayFields;
 
+  // ── Field tracking setup ─────────────────────────────────────────
+  // Only active when derefSchema is provided
+  const stylisticFields: Map<string, StylisticFieldSpec[]> = options.derefSchema
+    ? discoverStylisticFields(options.derefSchema, validationRules)
+    : new Map();
+  const presenceFields: Map<string, PresenceFieldSpec[]> = options.derefSchema
+    ? discoverPresenceFields(options.derefSchema, validationRules)
+    : new Map();
+  const hasFieldTracking = stylisticFields.size > 0;
+
+  // Accumulators: Map<accKey, Map<field, Map<value, count>>>
+  // accKey format: "componentType" (Dim 1), "componentType|contains:child" (Dim 2A),
+  //   "componentType|containedIn:parent.field=value" (Dim 2B), "componentType|position:pos" (Dim 3)
+  type FieldAccumulators = Map<string, Map<string, Map<string, number>>>;
+  const fieldAccumulators: FieldAccumulators = new Map();
+  const fieldSampleCounts = new Map<string, number>();
+
+  /** Record a field value into an accumulator bucket. */
+  function trackField(accKey: string, field: string, value: string): void {
+    let fieldMap = fieldAccumulators.get(accKey);
+    if (!fieldMap) {
+      fieldMap = new Map();
+      fieldAccumulators.set(accKey, fieldMap);
+    }
+    let valueMap = fieldMap.get(field);
+    if (!valueMap) {
+      valueMap = new Map();
+      fieldMap.set(field, valueMap);
+    }
+    valueMap.set(value, (valueMap.get(value) || 0) + 1);
+  }
+
+  /** Increment sample count for an accumulator key. */
+  function trackSample(accKey: string): void {
+    fieldSampleCounts.set(accKey, (fieldSampleCounts.get(accKey) || 0) + 1);
+  }
+
+  /**
+   * Track all stylistic and presence fields for a component node.
+   */
+  function trackComponentFields(
+    accKey: string,
+    componentType: string,
+    node: Record<string, any>
+  ): void {
+    const sFields = stylisticFields.get(componentType) || [];
+    for (const spec of sFields) {
+      const rawValue = node[spec.field];
+      const value =
+        rawValue !== undefined && rawValue !== null
+          ? String(rawValue)
+          : spec.defaultValue ?? "";
+      trackField(accKey, spec.field, value);
+    }
+
+    const pFields = presenceFields.get(componentType) || [];
+    for (const pSpec of pFields) {
+      let presence: string;
+      if (pSpec.type === "array-presence") {
+        presence =
+          Array.isArray(node[pSpec.field]) && node[pSpec.field].length > 0
+            ? "non-empty"
+            : "empty";
+      } else {
+        presence =
+          typeof node[pSpec.field] === "string" &&
+          node[pSpec.field].trim().length > 0
+            ? "non-empty"
+            : "empty";
+      }
+      trackField(accKey, pSpec.field, presence);
+    }
+  }
+
   for (const story of allStories) {
     const allSectionTypes: string[][] = [];
 
@@ -158,6 +249,66 @@ export async function analyzeContentPatterns(
         }
 
         allSectionTypes.push(componentTypes);
+
+        // ── Field tracking (all 3 dimensions) ─────────────────────
+        if (hasFieldTracking) {
+          const sectionType = item.component || item.type;
+          const itemIndex = items.indexOf(item);
+          const position =
+            itemIndex === 0
+              ? "first"
+              : itemIndex === items.length - 1
+              ? "last"
+              : "middle";
+
+          if (typeof sectionType === "string") {
+            // Dim 1: Context-free section profile
+            const dim1Key = sectionType;
+            trackComponentFields(dim1Key, sectionType, item);
+            trackSample(dim1Key);
+
+            // Dim 3: Positional section profile
+            const dim3Key = `${sectionType}|position:${position}`;
+            trackComponentFields(dim3Key, sectionType, item);
+            trackSample(dim3Key);
+
+            // Dim 2A: Section scoped by child component types
+            const uniqueChildTypes = [...new Set(componentTypes)];
+            for (const childType of uniqueChildTypes) {
+              const dim2aKey = `${sectionType}|contains:${childType}`;
+              trackComponentFields(dim2aKey, sectionType, item);
+              trackSample(dim2aKey);
+            }
+          }
+
+          // Dim 1: Context-free child component profiles
+          for (const comp of components) {
+            const childType = comp.component || comp.type;
+            if (typeof childType === "string") {
+              const childDim1Key = childType;
+              trackComponentFields(childDim1Key, childType, comp);
+              trackSample(childDim1Key);
+
+              // Dim 2B: Child scoped by non-default section fields
+              if (typeof sectionType === "string") {
+                const sFields = stylisticFields.get(sectionType) || [];
+                for (const sSpec of sFields) {
+                  const sValue = item[sSpec.field];
+                  const sValStr =
+                    sValue !== undefined && sValue !== null
+                      ? String(sValue)
+                      : sSpec.defaultValue ?? "";
+                  // Only track non-default container settings
+                  if (sSpec.defaultValue && sValStr !== sSpec.defaultValue) {
+                    const dim2bKey = `${childType}|containedIn:${sectionType}.${sSpec.field}=${sValStr}`;
+                    trackComponentFields(dim2bKey, childType, comp);
+                    trackSample(dim2bKey);
+                  }
+                }
+              }
+            }
+          }
+        }
 
         if (componentTypes.length > 0) {
           const compositionKey = componentTypes.join(",");
@@ -250,6 +401,67 @@ export async function analyzeContentPatterns(
     .filter((c) => !usedComponents.has(c))
     .sort();
 
+  // ── 4. Aggregate field profiles ──────────────────────────────────
+  let fieldProfiles: FieldProfile[] = [];
+
+  if (hasFieldTracking) {
+    const rawProfiles: FieldProfile[] = [];
+
+    for (const [accKey, fieldMap] of fieldAccumulators) {
+      const samples = fieldSampleCounts.get(accKey) || 0;
+
+      // Parse accKey to extract component + context
+      const pipeIndex = accKey.indexOf("|");
+      const component = pipeIndex === -1 ? accKey : accKey.slice(0, pipeIndex);
+      const contextStr = pipeIndex === -1 ? null : accKey.slice(pipeIndex + 1);
+
+      let context: FieldProfileContext = null;
+      if (contextStr) {
+        if (contextStr.startsWith("contains:")) {
+          context = {
+            type: "contains",
+            childComponent: contextStr.slice("contains:".length),
+          };
+        } else if (contextStr.startsWith("containedIn:")) {
+          const rest = contextStr.slice("containedIn:".length);
+          const eqIndex = rest.indexOf("=");
+          context = {
+            type: "containedIn",
+            containerField: rest.slice(0, eqIndex),
+            containerValue: rest.slice(eqIndex + 1),
+          };
+        } else if (contextStr.startsWith("position:")) {
+          context = {
+            type: "position",
+            position: contextStr.slice("position:".length) as
+              | "first"
+              | "middle"
+              | "last",
+          };
+        }
+      }
+
+      // Build field distributions
+      const fields: import("./guidance.js").FieldDistribution[] = [];
+      for (const [field, valueMap] of fieldMap) {
+        const valueCounts: Record<string, number> = {};
+        for (const [v, c] of valueMap) {
+          valueCounts[v] = c;
+        }
+        // Look up the default value for this field
+        const allSpecs = stylisticFields.get(component) || [];
+        const spec = allSpecs.find((s) => s.field === field);
+        fields.push(
+          computeFieldDistribution(field, valueCounts, spec?.defaultValue)
+        );
+      }
+
+      rawProfiles.push({ component, context, fields, samples });
+    }
+
+    fieldProfiles = pruneFieldProfiles(rawProfiles);
+  }
+
   return {
     totalStoriesAnalyzed: allStories.length,
     componentFrequency,
@@ -258,5 +470,6 @@ export async function analyzeContentPatterns(
     subComponentCounts: subComponentCountsResult,
     pageArchetypes,
     unusedComponents,
+    fieldProfiles,
   };
 }

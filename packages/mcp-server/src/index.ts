@@ -23,10 +23,12 @@ import {
   registry,
   analyzeContentPatterns,
   checkCompositionalQuality,
+  assembleFieldGuidance,
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type ContentPatternAnalysis,
   type SubComponentStats,
   type RootFieldMeta,
+  type SectionRecipes,
 } from "./services.js";
 import {
   formatErrorResponse,
@@ -191,10 +193,10 @@ async function warmPatternCache(): Promise<ContentPatternAnalysis> {
   cachedPatterns = await analyzeContentPatterns(
     storyblokService.getContentClient(),
     PAGE_VALIDATION_RULES,
-    { contentType: "page" }
+    { contentType: "page", derefSchema: registry.page.schema }
   );
   console.error(
-    `[MCP] Pattern cache ready (${cachedPatterns.totalStoriesAnalyzed} stories, ${cachedPatterns.componentFrequency.length} components)`
+    `[MCP] Pattern cache ready (${cachedPatterns.totalStoriesAnalyzed} stories, ${cachedPatterns.componentFrequency.length} components, ${cachedPatterns.fieldProfiles.length} field profiles)`
   );
   return cachedPatterns;
 }
@@ -2237,6 +2239,9 @@ Respond with a JSON object:
             const patternRules = registry.has(sectionContentType)
               ? registry.get(sectionContentType).rules
               : PAGE_VALIDATION_RULES;
+            const patternSchema = registry.has(sectionContentType)
+              ? registry.get(sectionContentType).schema
+              : registry.page.schema;
             console.error(
               `[MCP] generate_section: fetching filtered patterns (startsWith: ${validated.startsWith})...`
             );
@@ -2246,6 +2251,7 @@ Respond with a JSON object:
               {
                 contentType: sectionContentType,
                 startsWith: validated.startsWith,
+                derefSchema: patternSchema,
               }
             );
           } else {
@@ -2294,6 +2300,17 @@ Respond with a JSON object:
           );
           if (recipe?.notes) {
             systemPrompt += `\n\nBest practices: ${recipe.notes}`;
+          }
+
+          // Assemble field-level compositional guidance from patterns + recipes
+          const fieldGuidance = assembleFieldGuidance({
+            componentType: validated.componentType,
+            patterns: sectionPatternsSource,
+            recipes: sectionRecipes as SectionRecipes,
+            scopeLabel: validated.startsWith || undefined,
+          });
+          if (fieldGuidance) {
+            systemPrompt += fieldGuidance;
           }
 
           // Generate via the content service (full pipeline with schema auto-derivation)

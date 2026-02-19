@@ -48,7 +48,7 @@ import {
 
 ### Schema Preparation
 
-Transforms kickstartDS Design System JSON Schemas into a format compatible with OpenAI's structured output (`response_format: json_schema`). Handles 13 transformation passes including `const` → discriminator replacement, unsupported keyword removal, and strict-mode enforcement.
+Transforms kickstartDS Design System JSON Schemas into a format compatible with OpenAI's structured output (`response_format: json_schema`). Handles 15 transformation passes including `const` → discriminator replacement, field annotation, unsupported keyword removal, and strict-mode enforcement.
 
 ```typescript
 import {
@@ -72,7 +72,9 @@ import {
 | `SUPPORTED_COMPONENTS`                                | (**deprecated** — use `ValidationRules.allKnownComponents` from registry) Array of component type names                                                               |
 | `SUB_COMPONENT_MAP`                                   | (**deprecated** — use `ValidationRules.containerSlots` from registry) Map of parent → sub-component key                                                               |
 | `UNSUPPORTED_KEYWORDS`                                | JSON Schema keywords stripped for OpenAI compatibility                                                                                                                |
-| `DEFAULT_PROPERTIES_TO_DROP`                          | Properties removed by default (icons, layout props, etc.)                                                                                                             |
+| `DEFAULT_PROPERTIES_TO_DROP`                          | Properties removed by default (visual styling: `backgroundColor`, `backgroundImage`, `spotlight`, `textColor`)                                                        |
+| `PROPERTIES_TO_ANNOTATE`                              | Properties kept in the schema but enriched with contextual descriptions (`spaceBefore`, `spaceAfter`, `variant`)                                                      |
+| `FIELD_ANNOTATIONS`                                   | Map of field names to contextual description strings for schema annotation                                                                                            |
 
 ### Content Transformation
 
@@ -161,13 +163,37 @@ import {
 } from "@kickstartds/storyblok-services";
 ```
 
-| Function                                              | Description                                                                                             |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `buildValidationRules(schema)`                        | Build validation rules from a dereffed schema (component hierarchy, container slots, root array fields) |
-| `validateSections(sections, rules)`                   | Validate an array of sections against rules. Returns `{ valid, errors }`                                |
-| `validatePageContent(content, rules)`                 | Validate full page content (detects `component` discriminator). Returns `{ valid, errors }`             |
-| `formatValidationErrors(errors)`                      | Format validation errors as human-readable string                                                       |
-| `checkCompositionalQuality(sections, rules, options)` | Non-blocking quality checks (duplicate heroes, sparse sub-items, missing CTAs). Returns warnings array  |
+| Function                                              | Description                                                                                                                                                                                                           |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------- |
+| `buildValidationRules(schema)`                        | Build validation rules from a dereffed schema (component hierarchy, container slots, root array fields)                                                                                                               |
+| `validateSections(sections, rules)`                   | Validate an array of sections against rules. Returns `{ valid, errors }`                                                                                                                                              |
+| `validatePageContent(content, rules)`                 | Validate full page content (detects `component` discriminator). Returns `{ valid, errors }`                                                                                                                           |
+| `formatValidationErrors(errors)`                      | Format validation errors as human-readable string                                                                                                                                                                     |
+| `checkCompositionalQuality(sections, rules, options)` | Non-blocking quality checks (duplicate heroes, sparse sub-items, missing CTAs, redundant headlines, competing CTAs, inappropriate content_mode, first section spacing). Returns warnings array with `level: "warning" | "info" | "suggestion"` |
+
+### Field-Level Compositional Guidance
+
+Discovers stylistic and presence fields from schemas, tracks their distributions across content, and assembles field-level guidance for content generation prompts:
+
+```typescript
+import {
+  discoverStylisticFields,
+  discoverPresenceFields,
+  computeFieldDistribution,
+  pruneFieldProfiles,
+  assembleFieldGuidance,
+} from "@kickstartds/storyblok-services";
+```
+
+| Function                                                 | Description                                                                                                                                       |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `discoverStylisticFields(derefSchema, rules)`            | Walk component schemas and classify enum/boolean properties as stylistic fields (e.g. `width`, `spaceBefore`, `content_mode`)                     |
+| `discoverPresenceFields(derefSchema, rules)`             | Identify headline/button fields where empty-vs-populated is compositionally significant                                                           |
+| `computeFieldDistribution(field, valueCounts, default?)` | Convert raw value→count map into a `FieldDistribution` with dominant value and percentage                                                         |
+| `pruneFieldProfiles(profiles, options?)`                 | Apply 5 pruning rules: min samples (≥3), dominance (>60%), default-only (>95%), positional delta (>15pp), top-N cap                               |
+| `assembleFieldGuidance(options)`                         | Assemble a field guidance prompt fragment from patterns + recipes, with 5 priority layers and ~800 token budget. Returns string for system prompt |
+
+The `analyzeContentPatterns()` function in `patterns.ts` now accepts an optional `derefSchema` parameter. When provided, it automatically discovers fields, tracks their distributions across all 3 dimensions (context-free, container-scoped/child-scoped, positional), and returns `fieldProfiles` in the analysis result.
 
 ### Schema Registry (Multi-Content-Type)
 
@@ -248,6 +274,16 @@ import type {
   SchemaRegistry,
   ContentTypeEntry,
   RootContentType,
+  // Guidance types
+  StylisticFieldSpec,
+  PresenceFieldSpec,
+  FieldDistribution,
+  FieldProfile,
+  FieldProfileContext,
+  SectionRecipe,
+  SectionRecipes,
+  PruneOptions,
+  AssembleFieldGuidanceOptions,
 } from "@kickstartds/storyblok-services";
 ```
 
@@ -269,6 +305,8 @@ shared/storyblok-services/
 │   ├── schema.ts          # Schema preparation for OpenAI structured output
 │   ├── transform.ts       # Content transformation (OpenAI ↔ DS ↔ Storyblok)
 │   ├── validate.ts        # Schema-driven content validation (nesting, hierarchy, compositional quality)
+│   ├── guidance.ts        # Field-level compositional guidance (discovery, pruning, prompt assembly)
+│   ├── patterns.ts        # Content pattern analysis (component frequency, sequences, field profiles)
 │   ├── registry.ts        # Schema registry for multi-content-type support
 │   ├── assets.ts          # Asset download, upload to Storyblok, URL rewriting
 │   └── pipeline.ts        # High-level orchestrator (schema prep → OpenAI → transform)

@@ -1,6 +1,6 @@
 # Plan: Field-Level Compositional Guidance for Content Generation
 
-> **Status: 📋 PLANNING** — This document describes a system for guiding LLMs toward better field-level decisions during content generation. It builds on top of the existing guided generation infrastructure (`analyze_content_patterns`, `generate_section`, `plan_page`, section recipes).
+> **Status: ✅ IMPLEMENTED** — This system is fully implemented across `storyblok-services`, `mcp-server`, and `n8n-nodes`. See [field-level-guidance-implementation.md](field-level-guidance-implementation.md) for the implementation checklist.
 
 ## Problem Statement
 

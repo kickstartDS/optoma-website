@@ -74,7 +74,7 @@ Für JEDE geplannte Sektion `generate_section` separat aufrufen:
   - `startsWith` (optional): Slug-Präfix für gefilterte Patterns (z.B. `"case-studies/"`) —
     gleicher Wert wie bei `plan_page` verwenden, damit Planung und Generierung konsistent sind
 
-**Vorteile von `generate_section`:** Site-Kontext (Sub-Item-Counts, Komponentenfrequenz, Rezept-Best-Practices) wird automatisch in den System-Prompt injiziert.
+**Vorteile von `generate_section`:** Site-Kontext (Sub-Item-Counts, Komponentenfrequenz, Rezept-Best-Practices) und **Field-Level Guidance** (Feldwert-Verteilungen aus bestehenden Inhalten, Composition Hints aus Rezepten) werden automatisch in den System-Prompt injiziert.
 
 **Wichtig:** Nicht alle Sektionen mit demselben generischen Prompt generieren — jede Sektion braucht eine spezifische Beschreibung für gute Ergebnisse.
 

@@ -49,6 +49,8 @@ export {
   getSchemaName,
   UNSUPPORTED_KEYWORDS,
   DEFAULT_PROPERTIES_TO_DROP,
+  PROPERTIES_TO_ANNOTATE,
+  FIELD_ANNOTATIONS,
   SUPPORTED_COMPONENTS,
   SUB_COMPONENT_MAP,
 } from "./schema.js";
@@ -163,3 +165,23 @@ export type {
   SubComponentStats,
   AnalyzeContentPatternsOptions,
 } from "./patterns.js";
+
+// ─── Field-level compositional guidance ─────────────────────────────
+export {
+  discoverStylisticFields,
+  discoverPresenceFields,
+  computeFieldDistribution,
+  pruneFieldProfiles,
+  assembleFieldGuidance,
+} from "./guidance.js";
+export type {
+  StylisticFieldSpec,
+  PresenceFieldSpec,
+  FieldDistribution,
+  FieldProfile,
+  FieldProfileContext,
+  SectionRecipe,
+  SectionRecipes,
+  PruneOptions,
+  AssembleFieldGuidanceOptions,
+} from "./guidance.js";

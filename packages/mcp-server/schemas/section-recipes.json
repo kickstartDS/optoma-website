@@ -7,7 +7,21 @@
       "subComponents": { "buttons": [1, 2] },
       "notes": "Use buttons sub-component for primary + secondary CTA. Set a compelling image or video. Write a concise, action-oriented headline.",
       "frequency": "very-common",
-      "goodFollowUps": ["features", "split", "stats", "logos-companies"]
+      "goodFollowUps": ["features", "split", "stats", "logos-companies"],
+      "compositionHints": {
+        "section": {
+          "headline": "Omit the section headline (headline_text) when the hero already has its own headline. Only use the section headline for a brief category label above the hero (rare).",
+          "buttons": "Do not use section-level buttons when the hero already has CTA buttons. Double CTAs confuse the user about what to click.",
+          "spaceBefore": "Use 'none' for the first section on a page (hero sections are typically first). Use 'default' when the hero is not the first section.",
+          "spaceAfter": "Use 'default' for most cases. Use 'small' only when the next section is visually tightly coupled.",
+          "width": "Use 'full' for full-bleed heroes with background images. Use 'default' for contained heroes without background imagery.",
+          "content_mode": "Always use 'default' for hero sections. Heroes are single-component."
+        },
+        "hero": {
+          "height": "Use 'fullImage' or 'fullScreen' when the section is full-width with a strong background image. Use 'default' for text-focused heroes.",
+          "textbox": "Use true (default) for heroes with background images to ensure text readability. Only set false when text has sufficient contrast."
+        }
+      }
     },
     {
       "name": "Video Opener",
@@ -16,7 +30,15 @@
       "subComponents": { "buttons": [1, 2] },
       "notes": "Full-width video background with overlay text and CTA. Use sparingly — one per page max. Alternative to hero for video-heavy pages.",
       "frequency": "occasional",
-      "goodFollowUps": ["features", "split", "stats"]
+      "goodFollowUps": ["features", "split", "stats"],
+      "compositionHints": {
+        "section": {
+          "headline": "Omit the section headline — the video-curtain has its own overlay text.",
+          "buttons": "Do not use section-level buttons — the video-curtain has its own CTA overlay.",
+          "spaceBefore": "Use 'none' when this is the page opener.",
+          "width": "Use 'full' for immersive video backgrounds."
+        }
+      }
     },
     {
       "name": "Feature Showcase",
@@ -25,7 +47,14 @@
       "subComponents": { "feature": [3, 4] },
       "notes": "3-4 feature items with icons. Keep text concise (1-2 sentences per feature). Use consistent icon style throughout. Icons must come from list_icons.",
       "frequency": "very-common",
-      "goodFollowUps": ["testimonials", "cta", "split", "stats"]
+      "goodFollowUps": ["testimonials", "cta", "split", "stats"],
+      "compositionHints": {
+        "section": {
+          "content_mode": "Use 'tile' for feature grids (3-4 items). Use 'default' if only 1-2 features.",
+          "content_tileWidth": "Use 'default' for most feature grids. Use 'narrow' for 4+ features in a compact grid.",
+          "width": "Use 'default' for most feature sections. Use 'wide' for full-width feature showcases."
+        }
+      }
     },
     {
       "name": "Content Split",
@@ -42,7 +71,12 @@
       "subComponents": { "testimonial": [2, 3] },
       "notes": "Include real names, job titles, and company names. Photos greatly increase trust. Keep quotes concise and specific — avoid vague praise.",
       "frequency": "common",
-      "goodFollowUps": ["cta", "stats", "faq"]
+      "goodFollowUps": ["cta", "stats", "faq"],
+      "compositionHints": {
+        "section": {
+          "content_mode": "Use 'slider' for 3+ testimonials to save vertical space. Use 'default' for 2 testimonials."
+        }
+      }
     },
     {
       "name": "Statistics Display",
@@ -51,7 +85,12 @@
       "subComponents": { "stat": [3, 4] },
       "notes": "3-4 stat items with large numbers. Use specific numbers (not rounded). Place before a CTA to establish credibility first. Each stat needs a label and value.",
       "frequency": "common",
-      "goodFollowUps": ["cta", "testimonials"]
+      "goodFollowUps": ["cta", "testimonials"],
+      "compositionHints": {
+        "section": {
+          "content_mode": "Use 'tile' for stats grids (3-4 items side by side). Use 'default' for vertically stacked stats."
+        }
+      }
     },
     {
       "name": "Call to Action",
@@ -60,7 +99,14 @@
       "subComponents": { "buttons": [1, 2] },
       "notes": "Clear, action-oriented headline. Primary + optional secondary button. Usually the last section on a conversion-oriented page. Keep text focused on a single action.",
       "frequency": "very-common",
-      "goodFollowUps": []
+      "goodFollowUps": [],
+      "compositionHints": {
+        "section": {
+          "headline": "Omit the section headline — the CTA component has its own headline. Only use the section headline for a brief label above the CTA (rare).",
+          "buttons": "Do not use section-level buttons — the CTA component has its own buttons.",
+          "width": "Use 'default' for focused CTAs. Use 'wide' for bold, attention-grabbing CTAs."
+        }
+      }
     },
     {
       "name": "FAQ Section",
@@ -69,7 +115,13 @@
       "subComponents": { "questions": [5, 8] },
       "notes": "5-8 questions is ideal. Keep answers concise but complete. Order questions by importance/frequency. Great for addressing purchase objections.",
       "frequency": "common",
-      "goodFollowUps": ["cta", "contact"]
+      "goodFollowUps": ["cta", "contact"],
+      "compositionHints": {
+        "section": {
+          "headline": "Use a section headline (e.g. 'Frequently Asked Questions') — FAQ components rarely have their own headline.",
+          "content_mode": "Use 'default' — FAQ items are vertically stacked by design."
+        }
+      }
     },
     {
       "name": "Logo Wall",
@@ -78,7 +130,13 @@
       "subComponents": { "logo": [5, 8] },
       "notes": "Minimum 5 logos for visual impact. Works best after hero or before CTA. All logos should have similar visual weight (size, contrast).",
       "frequency": "occasional",
-      "goodFollowUps": ["testimonials", "features", "cta"]
+      "goodFollowUps": ["testimonials", "features", "cta"],
+      "compositionHints": {
+        "section": {
+          "content_mode": "Use 'default' for logo walls — the logos-companies component handles its own grid layout.",
+          "width": "Use 'default' for most logo walls."
+        }
+      }
     },
     {
       "name": "Visual Portfolio / Team Grid",
@@ -95,7 +153,13 @@
       "components": ["blog-teaser", "blog-teaser", "blog-teaser"],
       "notes": "Always group 3 blog-teasers per section for visual balance. Each teaser must have a link_url — without it, teasers create dead-end content. Include tags and author info.",
       "frequency": "occasional",
-      "goodFollowUps": ["cta"]
+      "goodFollowUps": ["cta"],
+      "compositionHints": {
+        "section": {
+          "content_mode": "Use 'tile' for blog teaser grids (3 items). Use 'default' for a single featured teaser.",
+          "content_tileWidth": "Use 'default' for standard 3-column blog teaser grids."
+        }
+      }
     },
     {
       "name": "Contact Information",
@@ -111,7 +175,12 @@
       "components": ["slider"],
       "notes": "Minimum 3 slides for meaningful navigation. The slider accepts full components in its slots — use it to rotate through splits, features, or other content sections.",
       "frequency": "occasional",
-      "goodFollowUps": ["cta", "features"]
+      "goodFollowUps": ["cta", "features"],
+      "compositionHints": {
+        "section": {
+          "content_mode": "Use 'slider' — the slider component requires this mode to enable carousel behavior."
+        }
+      }
     },
     {
       "name": "Section Divider",

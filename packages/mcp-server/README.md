@@ -50,10 +50,10 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 | Tool                       | Description                                                                                                                                                                                                                                                                                             |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes). Cached at startup; pass `refresh: true` after publishing new content                                                                                                                    |
+| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes, field value distributions). Cached at startup; pass `refresh: true` after publishing new content                                                                                         |
 | `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                                                                                                                                    |
 | `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns. Accepts optional `startsWith` to use filtered patterns from a specific site section. For hybrid types (blog-post, blog-overview) also returns `rootFieldMeta` with priority annotations |
-| `generate_section`         | Generate a single section with auto-injected site context, transition hints, and recipe-based best practices                                                                                                                                                                                            |
+| `generate_section`         | Generate a single section with auto-injected site context, transition hints, recipe-based best practices, and **field-level compositional guidance** (field value distributions from existing content + composition hints from recipes)                                                                 |
 | `generate_root_field`      | Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types. Uses OpenAI structured output with field-specific sub-schema                                                                                                                                      |
 | `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image) for any content type with a `seo` root field. Uses a specialized SEO-expert system prompt                                                                                                                                                |
 
@@ -604,9 +604,9 @@ The server also exposes MCP resources:
 
 The server supports a **section-by-section generation workflow** that produces higher-quality content than generating entire pages at once. The recommended flow:
 
-1. **Analyze** — `analyze_content_patterns` returns the site's structural patterns from a **startup cache** (instant, no API call). Pass `refresh: true` after publishing new content
+1. **Analyze** — `analyze_content_patterns` returns the site's structural patterns and field value distributions from a **startup cache** (instant, no API call). Pass `refresh: true` after publishing new content
 2. **Plan** — `plan_page` uses AI + site patterns to suggest a section sequence for a given page intent. Pass `startsWith` (e.g. `"case-studies/"`) to use patterns from a specific site section instead of the global cache. For hybrid content types (blog-post, blog-overview), also returns `rootFieldMeta` with priority annotations for non-section root fields
-3. **Generate** — `generate_section` creates each section individually with site-aware context injection. Also accepts `startsWith` for section-specific pattern filtering
+3. **Generate** — `generate_section` creates each section individually with site-aware context injection, including field-level compositional guidance (field distributions + recipe composition hints). Also accepts `startsWith` for section-specific pattern filtering
 4. **Root Fields** (hybrid types only) — `generate_root_field` generates content for each root-level field (e.g. `head`, `aside`, `cta`)
 5. **SEO** — `generate_seo` generates SEO metadata (title, description, keywords, OG image) using a specialized SEO-expert prompt
 6. **Assemble** — `create_page_with_content` combines all sections and root fields into a page with validation and optional asset upload
@@ -620,13 +620,17 @@ Alternatively, use `list_recipes` for a single-call overview of proven component
 
 Write tools (`import_content`, `import_content_at_position`, `create_page_with_content`) return **compositional quality warnings** alongside successful results. These are non-blocking hints about content quality:
 
-| Warning                     | Example                                                            |
-| --------------------------- | ------------------------------------------------------------------ |
-| Duplicate heroes            | "Multiple hero-type components found (hero, video-curtain)"        |
-| Adjacent same-type sections | "Adjacent sections both use 'features'. This may look repetitive." |
-| Sparse sub-items            | "'stats' has only 2 stat items (minimum recommended: 3)"           |
-| Missing blog-teaser link    | "'blog-teaser' section has no link URL"                            |
-| No CTA on conversion page   | "This looks like a conversion page but has no CTA section"         |
+| Warning                     | Example                                                               |
+| --------------------------- | --------------------------------------------------------------------- |
+| Duplicate heroes            | "Multiple hero-type components found (hero, video-curtain)"           |
+| Adjacent same-type sections | "Adjacent sections both use 'features'. This may look repetitive."    |
+| Sparse sub-items            | "'stats' has only 2 stat items (minimum recommended: 3)"              |
+| Missing blog-teaser link    | "'blog-teaser' section has no link URL"                               |
+| No CTA on conversion page   | "This looks like a conversion page but has no CTA section"            |
+| Redundant section headline  | "Section has headline_text but contains a hero with its own headline" |
+| Competing CTAs              | "Section has buttons but child hero also has buttons"                 |
+| Inappropriate content_mode  | "content_mode is 'slider' but section has only 1 component"           |
+| First section spacing       | "First section has spaceBefore 'default' — consider 'none'"           |
 
 Warnings appear in the `warnings` array of the response. Content is still saved — warnings are advisory only.
 
@@ -698,7 +702,7 @@ packages/storyblok-services/
 └── src/                        # Core Storyblok + OpenAI logic
 ```
 
-Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. Both `plan_page` and `generate_section` accept an optional `startsWith` parameter to fetch filtered patterns live from a specific site section instead of the global cache. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
+Core Storyblok and OpenAI logic — including schema preparation for OpenAI, content transformation, validation, and the end-to-end generation pipeline — lives in the shared library [`@kickstartds/storyblok-services`](../storyblok-services/). The service classes in `services.ts` delegate to shared pure functions for client creation, story management, content import, schema preparation (`prepareSchemaForOpenAi`, `getComponentPresetSchema`), content transformation (`processOpenAiResponse`, `processForStoryblok`), content validation (`buildValidationRules`, `validateSections`, `validatePageContent`, `checkCompositionalQuality`), content pattern analysis (`analyzeContentPatterns`), field-level guidance assembly (`assembleFieldGuidance`), and the high-level pipeline (`generateAndPrepareContent`). Pattern analysis results — including field value distributions — are **cached at startup** and shared by `plan_page`, `generate_section`, and `list_recipes` to avoid redundant API calls. Both `plan_page` and `generate_section` accept an optional `startsWith` parameter to fetch filtered patterns live from a specific site section instead of the global cache. MCP-specific operations (tool registration, transport layer, resource listing) remain in this package.
 
 ### Key Dependencies
 
