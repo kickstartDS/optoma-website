@@ -161,11 +161,24 @@ export async function createStory(
       story,
     } as any);
     return (response as any).data.story;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new StoryblokApiError(
+  } catch (error: any) {
+    // Extract meaningful message from Storyblok API error responses
+    const apiMessage =
+      error?.response?.data?.error ||
+      error?.response?.data?.message ||
+      (typeof error?.response?.data === "string"
+        ? error.response.data
+        : undefined);
+    const status = error?.response?.status || error?.status;
+    const message =
+      apiMessage || error?.message || JSON.stringify(error) || String(error);
+    const err = new StoryblokApiError(
       `Failed to create story "${options.name}": ${message}`
     );
+    // Preserve the HTTP status for upstream error handling (e.g. ensurePath)
+    (err as any).status = status;
+    (err as any).response = error?.response;
+    throw err;
   }
 }
 
@@ -383,15 +396,31 @@ export async function ensurePath(
       });
       parentId = (folder as Record<string, any>).id;
     } catch (err: any) {
-      // Handle race conditions
-      const status = err?.response?.status || err?.status;
-      if (status === 409 || status === 422) {
-        const retried = await findBySlug(contentClient, currentFullSlug);
-        if (retried) {
-          parentId = retried.id;
+      // mkdir -p semantics: if creation failed (e.g. slug already exists due
+      // to race condition or CDN cache lag), try to look it up again. The CDN
+      // read in findBySlug may have returned stale data on the first attempt.
+      const retried = await findBySlug(contentClient, currentFullSlug);
+      if (retried) {
+        parentId = retried.id;
+        continue;
+      }
+
+      // Still not found — try the Management API directly as a last resort,
+      // since the CDN may have significant cache lag after a recent creation.
+      try {
+        const mgmtResponse = await managementClient.get(
+          `spaces/${spaceId}/stories`,
+          { by_slugs: currentFullSlug, per_page: 1 }
+        );
+        const mgmtStories = (mgmtResponse as any)?.data?.stories;
+        if (mgmtStories && mgmtStories.length > 0) {
+          parentId = mgmtStories[0].id;
           continue;
         }
+      } catch {
+        // Management API lookup failed too — fall through to throw
       }
+
       throw new Error(
         `Failed to create folder "${currentFullSlug}": ${err?.message || err}`
       );
