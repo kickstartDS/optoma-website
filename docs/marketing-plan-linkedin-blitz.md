@@ -65,6 +65,28 @@ Fokus: Awareness schaffen, Pain Points der manuellen Content-Arbeit zeigen.
 >
 > **CTA:** „Wie viele Seiten erstellt dein Team pro Woche – manuell?"
 
+**LinkedIn-Post-Text:**
+
+> 50 Landing Pages. 1 Marketingmanager. 3 Wochen Deadline.
+>
+> Klingt nach Burnout – oder nach einem Plan.
+>
+> Wir haben letzte Woche genau das gemacht: 50 Produktseiten für eine Messe erstellt. Nicht manuell. Nicht mit einem Freelancer-Team. Sondern mit einem n8n-Workflow, der aus einem Google Sheet voller Produktdaten automatisch fertige CMS-Seiten generiert.
+>
+> So funktioniert's:
+> 📋 Google Sheet mit Produktname, Beschreibung, Features, Tonalität
+> 🤖 KI plant die Seitenstruktur (Hero, Features, FAQ, CTA)
+> ⚡ Jede Sektion wird einzeln generiert – passend zum Design System
+> 🚀 Seite wird automatisch in Storyblok angelegt, inklusive Bilder
+>
+> 50 Seiten. 50 Minuten. Kein Copy-Paste.
+>
+> Das Entscheidende: Die KI generiert keine beliebigen Inhalte. Sie kennt unser Design System – jede Komponente, jede Eigenschaft, jede Verschachtelungsregel. Das Ergebnis sieht aus, als hätte ein Redakteur jede Seite einzeln gebaut.
+>
+> ↕️ Wischt durch das Carousel, um den Vorher/Nachher-Vergleich zu sehen.
+>
+> Wie viele Seiten erstellt dein Team pro Woche – manuell? 👇
+
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#ContentAutomation` `#n8n`
 
 ---
@@ -78,6 +100,26 @@ Fokus: Awareness schaffen, Pain Points der manuellen Content-Arbeit zeigen.
 > **Video-Inhalt:** Claude Desktop öffnen → Prompt eingeben („Erstelle eine Landing Page für unser neues Produkt X mit Hero, Features und FAQ") → `generate_content` läuft → Seite erscheint in Storyblok Visual Editor → kurzer Klick durch die fertige Seite.
 >
 > **CTA:** „Das ist kein Prototyp – das ist Produktion. Link zum Setup in den Kommentaren."
+
+**LinkedIn-Post-Text:**
+
+> Ich beschreibe eine Seite in einem Satz.
+> 90 Sekunden später ist sie live im CMS.
+>
+> Kein Template klonen. Kein Copy-Paste. Kein „lass mich mal eben die Komponenten zusammenklicken".
+>
+> Im Video seht ihr den kompletten Ablauf:
+>
+> 1️⃣ Ich öffne Claude Desktop und tippe: „Erstelle eine Landing Page für unser neues Produkt mit Hero, Features und FAQ"
+> 2️⃣ Die KI analysiert das Design System – welche Bausteine gibt es? Welche Felder hat jeder Baustein?
+> 3️⃣ Sie generiert Inhalte, die exakt zur Komponentenstruktur passen
+> 4️⃣ Die Seite erscheint fertig im Storyblok Visual Editor
+>
+> Das Geheimnis: Das Model Context Protocol (MCP). Es gibt der KI Zugriff auf das CMS – aber mit Leitplanken. Sie kann nur Komponenten nutzen, die das Design System definiert. Keine Halluzinationen, keine kaputten Layouts.
+>
+> Das ist kein Prototyp. Das läuft in Produktion.
+>
+> 🔗 Link zum Setup in den Kommentaren.
 
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#LiveDemo` `#MCP`
 
@@ -132,6 +174,29 @@ Fokus: Konkrete Workflows zeigen, technisches Vertrauen aufbauen.
 >
 > **CTA:** „Wie viele Stunden hat euer letzter Relaunch nur für Content-Migration gekostet?"
 
+**LinkedIn-Post-Text:**
+
+> Website-Relaunch geplant?
+> Alte Inhalte manuell rüberkopieren?
+>
+> Das war 2024.
+>
+> Wir haben einen Kunden-Relaunch begleitet: 120 Seiten von einem Legacy-CMS in eine neue Storyblok-Instanz migriert. Der Plan war: 3 Wochen Content-Migration, 2 Redakteure Vollzeit.
+>
+> Was tatsächlich passiert ist:
+>
+> 🔍 `scrape_url` hat jede Seite als sauberes Markdown extrahiert – inklusive Bilder, Struktur und Meta-Daten
+> 🧠 `generate_content` hat den Markdown in Design-System-konforme Komponenten konvertiert
+> 📦 `create_page_with_content` hat die neuen Seiten angelegt – mit automatischem Asset-Upload
+>
+> 120 Seiten. 2 Tage statt 3 Wochen.
+>
+> Natürlich hat ein Redakteur jede Seite reviewt und freigegeben. Aber das Grundgerüst? Automatisiert.
+>
+> ↕️ Im Carousel seht ihr den Vorher/Nachher-Vergleich und den technischen Ablauf.
+>
+> Wie viele Stunden hat euer letzter Relaunch nur für Content-Migration gekostet? 👇
+
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#WebsiteRelaunch` `#ContentMigration`
 
 ---
@@ -150,6 +215,32 @@ Fokus: Konkrete Workflows zeigen, technisches Vertrauen aufbauen.
 >
 > **CTA:** „Automatische Qualitätssicherung statt manueller Stichproben. Klingt gut?"
 
+**LinkedIn-Post-Text:**
+
+> Fehlende Alt-Texte. Verwaiste Bilder. Seiten ohne Meta-Description.
+>
+> Weißt du, wie viele davon gerade auf deiner Website sind?
+>
+> Ehrliche Antwort bei den meisten: Nein. Weil niemand Zeit hat, regelmäßig jede Seite durchzuklicken.
+>
+> Wir haben das automatisiert:
+>
+> ⏰ Jeden Montag um 7 Uhr läuft ein n8n-Workflow
+> 📊 Er inventarisiert JEDE Seite im CMS: Bilder, Texte, Meta-Daten, Komponentenstruktur
+> ✅ Ein Regelwerk prüft auf 15 Qualitätskriterien
+> 📩 Der Audit-Report landet als Slack-Nachricht beim Content-Team
+>
+> Letzter Report bei uns:
+> → 12 Seiten ohne Alt-Text
+> → 3 verwaiste Assets (hochgeladen, aber nirgends eingebunden)
+> → 5 Seiten unter 200 Wörter Content
+>
+> Behoben in einer halben Stunde. Statt nie.
+>
+> ↕️ Wischt durch das Carousel für den Vorher/Nachher-Vergleich.
+>
+> Automatische Qualitätssicherung statt manueller Stichproben. Klingt gut? 👇
+
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#ContentAudit` `#QualityAssurance`
 
 ---
@@ -163,6 +254,31 @@ Fokus: Konkrete Workflows zeigen, technisches Vertrauen aufbauen.
 > **Video-Inhalt:** n8n-Dashboard öffnen → RSS-Feed-Workflow zeigen → Trigger: neuer Artikel im Branchen-Feed → `scrape_url` holt Volltext → `generate_content` schreibt eigenen Blogpost → Draft in Storyblok → Slack-Notification „Neuer Entwurf wartet auf Review" → kurzer Blick in Storyblok: fertiger Draft mit Bildern.
 >
 > **CTA:** „80 % weniger Aufwand. 100 % Kontrolle. Der Redakteur prüft und publiziert – die KI liefert den Rohstoff."
+
+**LinkedIn-Post-Text:**
+
+> Unser Blog schreibt sich quasi selbst.
+>
+> Nicht 100 % – aber die ersten 80 % macht die KI. Hier seht ihr wie. 👇
+>
+> Der Workflow im Video:
+>
+> 📡 RSS-Feed eines Branchenmagazins als Trigger
+> 🔍 Neuer Artikel erscheint → `scrape_url` extrahiert den Volltext als Markdown
+> 🧠 `generate_content` schreibt einen eigenen Blogpost – in unserem Tone of Voice, mit unserer Komponentenstruktur
+> 📝 Draft landet als Entwurf in Storyblok
+> 🔔 Slack-Nachricht: „Neuer Blog-Entwurf wartet auf Review"
+>
+> Der Redakteur öffnet den Draft, passt Nuancen an, ergänzt die eigene Perspektive – und publiziert.
+>
+> Der Unterschied:
+> ❌ Vorher: Leere Seite, 3 Stunden pro Artikel
+> ✅ Nachher: Fertiger Entwurf, 30 Minuten für Review + Feinschliff
+>
+> 80 % weniger Aufwand. 100 % Kontrolle.
+> Die KI liefert den Rohstoff. Der Mensch liefert die Qualität.
+>
+> 🔗 Workflow-Template im GitHub-Repo (Link in den Kommentaren)
 
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#BlogAutomation` `#RSS`
 
@@ -187,6 +303,36 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 > **Slide 5:** „Das Design System ist der Schlüssel – die KI generiert keine beliebigen Inhalte, sondern solche, die exakt zu den verfügbaren Bausteinen passen."
 >
 > **CTA:** „Welcher dieser 12 Workflows würde bei euch am meisten Zeit sparen?"
+
+**LinkedIn-Post-Text:**
+
+> 12 Workflows. 1 MCP Server. 0 manuelle Copy-Paste-Orgien.
+>
+> In den letzten Wochen habe ich einzelne Workflows gezeigt: Bulk-Generierung, Content-Migration, Blog-Autopilot, Content-Audit.
+>
+> Heute das große Bild: Alles, was unser Content-Operations-Stack kann.
+>
+> 📋 Bulk-Seiten-Generierung (Google Sheet → 50 Seiten)
+> 🔄 Content-Migration (alte Website → neues CMS)
+> 📝 Blog-Autopilot (RSS → Draft → Review)
+> 🔍 Content-Audit (wöchentlicher Qualitätscheck)
+> 📈 SEO-Monitoring (Rankings tracken, Fixes vorschlagen)
+> 🖼️ Broken-Asset-Detektion (kaputte Bilder finden)
+> 👀 Competitor-Monitoring (Wettbewerber-Seiten beobachten)
+> 🎪 Event-Seiten (Messe-Landingpages aus Produktdaten)
+> 🌍 Übersetzung (Seiten in andere Sprachen)
+> ⏰ Freshness-Tracker (veraltete Inhalte aufspüren)
+> 📊 Content-Dashboard (KPIs auf einen Blick)
+> 🗄️ Archivierung (End-of-Life-Seiten sauber entfernen)
+>
+> Der Tech-Stack dahinter:
+> Storyblok (CMS) ↔ MCP Server (Intelligenz) ↔ n8n (Automation) ↔ GPT-4 + Design System (Qualität)
+>
+> Das Design System ist der Schlüssel: Die KI generiert keine beliebigen Inhalte – sondern solche, die exakt zu den verfügbaren Bausteinen passen. Validiert gegen ein JSON Schema. Keine Halluzinationen im Layout.
+>
+> ↕️ Wischt durch das Carousel für den kompletten Stack.
+>
+> Welcher dieser 12 Workflows würde bei euch am meisten Zeit sparen? 👇
 
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#DesignSystem` `#Automation`
 
