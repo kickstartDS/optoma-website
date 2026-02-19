@@ -1112,6 +1112,24 @@ Cron Trigger (Monday 09:00 CET)
       → Slack / Email notification with draft link
 ```
 
+### MCP Tools Used by the Agent
+
+The MCP Client exposes all Storyblok MCP tools. The agent uses these 7:
+
+| Tool                       | Purpose                                                                         | Called             |
+| -------------------------- | ------------------------------------------------------------------------------- | ------------------ |
+| `analyze_content_patterns` | Understand existing blog post structure (`contentType: "blog-post"`)            | Once (first run)   |
+| `list_recipes`             | Get section recipes and anti-patterns for blog posts                            | Once (first run)   |
+| `list_icons`               | Get valid icon identifiers for any section icons                                | Once (first run)   |
+| `scrape_url`               | Fetch and convert the selected source article to Markdown                       | Once per execution |
+| `plan_page`                | Get recommended section sequence for the blog post (`contentType: "blog-post"`) | Once per execution |
+| `generate_section`         | Generate each blog section with site-aware context                              | 3–5× per execution |
+| `create_page_with_content` | Assemble sections and create the blog post (`contentType: "blog-post"`)         | Once per execution |
+
+**Why these tools and not `generate_content`?** The section-by-section approach (`plan_page` → `generate_section` × N → `create_page_with_content`) produces higher-quality multi-section blog posts than a single `generate_content(sectionCount=N)` call, because each section gets full site-aware context injection and transition awareness via `previousSection`/`nextSection`. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md).
+
+**Key `contentType` parameter:** The `analyze_content_patterns`, `plan_page`, and `create_page_with_content` calls must all pass `contentType: "blog-post"` to use the blog post schema (not the default `"page"` schema). This ensures sections are validated against the blog-post composition rules and the plan reflects blog-specific patterns.
+
 ### Workflow Steps
 
 #### Step 1 — Read RSS Feed
@@ -1131,12 +1149,14 @@ The AI agent receives the list of recent articles and FALKENBERG's company conte
 
 1. **Selects** the most relevant article to react to — prioritizing topics that intersect with FALKENBERG's product portfolio, target industries, or strategic themes (Industry 4.0, precision measurement, AI in quality control, calibration)
 2. **Scrapes** the full article text using the `scrape_url` MCP tool for deeper context
-3. **Generates** a blog post draft that:
+3. **Plans** the blog post structure using `plan_page` with `contentType: "blog-post"` and an intent derived from the selected article
+4. **Generates** each section using `generate_section` with the article content as context
+5. **Creates** the blog post draft that:
    - References the source article and its key findings/announcements
    - Connects the topic to FALKENBERG's expertise, products, or point of view
    - Adds original insight, commentary, or a practical takeaway for FALKENBERG's audience
    - Includes a CTA driving readers to a relevant FALKENBERG page (products, solutions, contact)
-4. **Creates** the blog post in Storyblok as a draft using `create_page_with_content` with `contentType: "blog-post"`
+6. **Creates** the blog post in Storyblok as a draft using `create_page_with_content` with `contentType: "blog-post"`
 
 #### AI Agent System Prompt
 
@@ -1157,33 +1177,52 @@ FALKENBERG's core competencies:
 You will receive a list of recent industry news articles from Metrology News.
 Your job is to:
 
-1. SELECT the single most compelling article to react to. Choose one that:
+1. ANALYZE (only on the first execution): Call these three tools:
+   - `analyze_content_patterns` with `contentType: "blog-post"` — understand
+     existing blog post structures and patterns on the site
+   - `list_recipes` with `contentType: "blog-post"` — get proven section
+     combinations and anti-patterns for blog posts
+   - `list_icons` — get the full list of valid icon identifiers
+
+2. SELECT the single most compelling article to react to. Choose one that:
    - Directly relates to FALKENBERG's product categories or target industries
    - Presents a trend, challenge, or innovation FALKENBERG can comment on
    - Offers an opportunity to demonstrate thought leadership
    - Is timely and likely to interest FALKENBERG's audience (production
      managers, quality engineers, C-level in manufacturing)
 
-2. SCRAPE the full article using `scrape_url` to get the complete text
+3. SCRAPE the full article using `scrape_url` to get the complete text
 
-3. GENERATE a blog post (800–1200 words) that:
-   - Opens with a reference to the source article ("A recent report by
-     Metrology News highlighted..." or similar)
-   - Summarizes the key point of the source article (2–3 sentences)
-   - Provides FALKENBERG's perspective or commentary (the core of the post)
-   - Connects to FALKENBERG's products/services where natural (not forced)
-   - Ends with a practical takeaway or forward-looking statement
-   - Includes a CTA to a relevant FALKENBERG page
+4. PLAN the blog post structure using `plan_page` with:
+   - `contentType: "blog-post"`
+   - `intent`: a description derived from the selected article, e.g.
+     "Blog post reacting to '{article_title}' — discussing {topic} from
+     FALKENBERG's perspective as a precision sensor manufacturer"
 
-4. CREATE the blog post in Storyblok:
-   - Use `create_page_with_content` with `contentType: "blog-post"`
-   - Set `path: "industry/blog"`
+5. GENERATE each section using `generate_section` for each entry in the plan:
+   - Use the scraped article content in the `prompt` for context
+   - Set `previousSection` and `nextSection` for transition awareness
+   - Extract ONLY the `section` field from each response
+
+6. CREATE the blog post in Storyblok using `create_page_with_content` with:
+   - `contentType: "blog-post"`
+   - `path: "industry/blog"`
+   - `sections`: the array of section objects collected in Step 5
    - Generate a URL-friendly slug from the blog title
-   - Set `uploadAssets: true`, `assetFolderName: "FALKENBERG Precision"`
-   - Set `publish: false` (draft for human review)
+   - `uploadAssets: true`, `assetFolderName: "FALKENBERG Precision"`
+   - `publish: false` (draft for human review)
 
 ## Content Guidelines
 
+- **Blog post length:** 800–1200 words across all sections.
+- **Structure:** The generated sections should result in a post that:
+  - Opens with a reference to the source article ("A recent report by
+    Metrology News highlighted..." or similar)
+  - Summarizes the key point of the source article (2–3 sentences)
+  - Provides FALKENBERG's perspective or commentary (the core of the post)
+  - Connects to FALKENBERG's products/services where natural (not forced)
+  - Ends with a practical takeaway or forward-looking statement
+  - Includes a CTA to a relevant FALKENBERG page
 - **Tone:** Authoritative but approachable. FALKENBERG is a 40-year veteran
   commenting on industry developments — knowledgeable, not salesy.
 - **Attribution:** Always credit the source article with title and publication.
