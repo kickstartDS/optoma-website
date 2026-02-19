@@ -2071,16 +2071,31 @@ Respond with a JSON object:
             contentType: sectionContentType,
           });
 
+          // Unwrap the page-level envelope produced by processForStoryblok.
+          // The pipeline always returns a page wrapper like { section: [{ component: "section", ... }] }.
+          // For generate_section we need to return just the section object(s), not the wrapper.
+          const entry = registry.has(sectionContentType)
+            ? registry.get(sectionContentType)
+            : registry.page;
+          const rootField = entry.rootArrayFields[0] || "section";
+          const storyblokSections = result.storyblokContent[rootField] || [];
+
+          // Return the first section object (generate_section targets a single section)
+          const sectionContent =
+            Array.isArray(storyblokSections) && storyblokSections.length > 0
+              ? storyblokSections[0]
+              : result.storyblokContent;
+
           return {
             content: [
               {
                 type: "text",
                 text: JSON.stringify(
                   {
-                    section: result.storyblokContent,
+                    section: sectionContent,
                     designSystemProps: result.designSystemProps,
                     componentType: validated.componentType,
-                    note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains Storyblok-ready content.",
+                    note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains a single Storyblok-ready section object (with component: 'section' and nested components). Collect multiple section objects into an array and pass as 'sections' to create_page_with_content.",
                   },
                   null,
                   2

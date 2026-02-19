@@ -77,7 +77,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Collect all generated sections from the loop\nconst allItems = $('Generate Section').all();\nconst sections = allItems.map(item => item.json.storyblokContent);\n\nreturn [{ json: { sections } }];"
+        "jsCode": "// Collect all generated sections from the loop\n// Each generateSection result now returns a single section object\n// (with component: 'section' and nested components), not a page wrapper.\nconst allItems = $('Generate Section').all();\nconst sections = allItems.map(item => item.json.generatedContent);\n\nreturn [{ json: { sections } }];"
       },
       "id": "code-2",
       "name": "Collect All Sections",

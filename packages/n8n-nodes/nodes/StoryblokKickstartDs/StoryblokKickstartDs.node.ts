@@ -1283,8 +1283,18 @@ async function executeGenerateSection(
       model,
     });
 
+    // Unwrap the page-level envelope produced by processForStoryblok.
+    // The pipeline always returns a page wrapper like { section: [{ component: "section", ... }] }.
+    // For generateSection we return just the section object, not the wrapper.
+    const rootField = entry.rootArrayFields?.[0] || "section";
+    const storyblokSections = result.storyblokContent[rootField] || [];
+    const sectionContent =
+      Array.isArray(storyblokSections) && storyblokSections.length > 0
+        ? storyblokSections[0]
+        : result.storyblokContent;
+
     return {
-      generatedContent: result.storyblokContent,
+      generatedContent: sectionContent,
       designSystemProps: result.designSystemProps,
       rawResponse: result.rawResponse,
       _meta: {
