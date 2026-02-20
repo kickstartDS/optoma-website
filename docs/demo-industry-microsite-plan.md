@@ -1114,21 +1114,25 @@ Cron Trigger (Monday 09:00 CET)
 
 ### MCP Tools Used by the Agent
 
-The MCP Client exposes all Storyblok MCP tools. The agent uses these 7:
+The MCP Client exposes all Storyblok MCP tools. The agent uses these 9:
 
-| Tool                       | Purpose                                                                         | Called             |
-| -------------------------- | ------------------------------------------------------------------------------- | ------------------ |
-| `analyze_content_patterns` | Understand existing blog post structure (`contentType: "blog-post"`)            | Once (first run)   |
-| `list_recipes`             | Get section recipes and anti-patterns for blog posts                            | Once (first run)   |
-| `list_icons`               | Get valid icon identifiers for any section icons                                | Once (first run)   |
-| `scrape_url`               | Fetch and convert the selected source article to Markdown                       | Once per execution |
-| `plan_page`                | Get recommended section sequence for the blog post (`contentType: "blog-post"`) | Once per execution |
-| `generate_section`         | Generate each blog section with site-aware context                              | 3–5× per execution |
-| `create_page_with_content` | Assemble sections and create the blog post (`contentType: "blog-post"`)         | Once per execution |
+| Tool                       | Purpose                                                                   | Called             |
+| -------------------------- | ------------------------------------------------------------------------- | ------------------ |
+| `analyze_content_patterns` | Understand existing blog post structure (`contentType: "blog-post"`)      | Once (first run)   |
+| `list_recipes`             | Get section recipes and anti-patterns for blog posts                      | Once (first run)   |
+| `list_icons`               | Get valid icon identifiers for any section icons                          | Once (first run)   |
+| `scrape_url`               | Fetch and convert the selected source article to Markdown                 | Once per execution |
+| `plan_page`                | Get recommended section sequence AND `rootFieldMeta` for root fields      | Once per execution |
+| `generate_section`         | Generate each blog section with site-aware context & field-level guidance | 3–5× per execution |
+| `generate_root_field`      | Generate each root field (`head`, `aside`, `cta`) for the blog post       | 2–3× per execution |
+| `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image)            | Once per execution |
+| `create_page_with_content` | Assemble sections + root fields and create the blog post                  | Once per execution |
 
-**Why these tools and not `generate_content`?** The section-by-section approach (`plan_page` → `generate_section` × N → `create_page_with_content`) produces higher-quality multi-section blog posts than a single `generate_content(sectionCount=N)` call, because each section gets full site-aware context injection and transition awareness via `previousSection`/`nextSection`. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md).
+**Why these tools and not `generate_content`?** The section-by-section approach (`plan_page` → `generate_section` × N → `generate_root_field` × N → `generate_seo` → `create_page_with_content`) produces higher-quality blog posts than a single `generate_content(sectionCount=N)` call, because each section gets full site-aware context injection, field-level compositional guidance, and transition awareness via `previousSection`/`nextSection`. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md).
 
-**Key `contentType` parameter:** The `analyze_content_patterns`, `plan_page`, and `create_page_with_content` calls must all pass `contentType: "blog-post"` to use the blog post schema (not the default `"page"` schema). This ensures sections are validated against the blog-post composition rules and the plan reflects blog-specific patterns.
+**Key `contentType` parameter:** The `analyze_content_patterns`, `plan_page`, `generate_root_field`, `generate_seo`, and `create_page_with_content` calls must all pass `contentType: "blog-post"` to use the blog post schema (not the default `"page"` schema). This ensures sections are validated against the blog-post composition rules and the plan reflects blog-specific patterns.
+
+**Hybrid content type:** `blog-post` is a hybrid content type — it has both a `section` array (like `page`) AND root-level fields (`head`, `aside`, `cta`, `seo`). The `plan_page` tool automatically detects this and returns `rootFieldMeta` alongside the section plan, with priority annotations (`required`, `recommended`, `optional`) for each root field.
 
 ### Workflow Steps
 
@@ -1160,7 +1164,7 @@ The AI agent receives the list of recent articles and FALKENBERG's company conte
 
 #### AI Agent System Prompt
 
-```
+````
 You are a content strategist for FALKENBERG Precision GmbH, a German
 manufacturer of precision sensors and measurement systems (founded 1983,
 Stuttgart, ~420 employees, €78M revenue).
@@ -1198,16 +1202,50 @@ Your job is to:
    - `intent`: a description derived from the selected article, e.g.
      "Blog post reacting to '{article_title}' — discussing {topic} from
      FALKENBERG's perspective as a precision sensor manufacturer"
+   The response contains TWO important parts:
+   - `sections`: the recommended section sequence (used in Step 5)
+   - `rootFieldMeta`: root-level fields for the blog-post with priority
+     annotations (required/recommended/optional) — used in Steps 6 and 7
 
 5. GENERATE each section using `generate_section` for each entry in the plan:
    - Use the scraped article content in the `prompt` for context
    - Set `previousSection` and `nextSection` for transition awareness
    - Extract ONLY the `section` field from each response
 
-6. CREATE the blog post in Storyblok using `create_page_with_content` with:
+6. GENERATE ROOT FIELDS using `generate_root_field` for each field in
+   `rootFieldMeta` with priority "required" or "recommended":
+   - `generate_root_field(fieldName: "head", contentType: "blog-post",
+     prompt: "Blog post header: title '{blog_title}', author Dr. Lena
+     Falkenberg (CEO, FALKENBERG Precision), published today. Include a
+     relevant header image.")`
+   - `generate_root_field(fieldName: "aside", contentType: "blog-post",
+     prompt: "Sidebar with author info for Dr. Lena Falkenberg, CEO of
+     FALKENBERG Precision (precision sensor manufacturer since 1983).
+     Include related topics from FALKENBERG's expertise.")`
+   - `generate_root_field(fieldName: "cta", contentType: "blog-post",
+     prompt: "Newsletter signup CTA: Subscribe to FALKENBERG's industry
+     insights newsletter for weekly precision measurement updates.")`
+   Extract the generated content from each response.
+
+7. GENERATE SEO using `generate_seo` with:
+   - `contentType: "blog-post"`
+   - `prompt`: A summary of the blog post content, target keywords, and
+     audience. Include the blog title and main topic.
+
+8. CREATE the blog post in Storyblok using `create_page_with_content` with:
    - `contentType: "blog-post"`
    - `path: "industry/blog"`
    - `sections`: the array of section objects collected in Step 5
+   - `rootFields`: an object containing the root field content from Steps
+     6 and 7:
+     ```json
+     {
+       "head": <result from generate_root_field("head")>,
+       "aside": <result from generate_root_field("aside")>,
+       "cta": <result from generate_root_field("cta")>,
+       "seo": <result from generate_seo()>
+     }
+     ```
    - Generate a URL-friendly slug from the blog title
    - `uploadAssets: true`, `assetFolderName: "FALKENBERG Precision"`
    - `publish: false` (draft for human review)
@@ -1223,6 +1261,18 @@ Your job is to:
   - Connects to FALKENBERG's products/services where natural (not forced)
   - Ends with a practical takeaway or forward-looking statement
   - Includes a CTA to a relevant FALKENBERG page
+- **Root fields (CRITICAL for blog-post content type):**
+  - `head`: MUST be generated — contains the blog post title, author, date,
+    and header image. Use `generate_root_field(fieldName: "head")`.
+  - `aside`: SHOULD be generated — sidebar content with author bio and
+    related topics. Use `generate_root_field(fieldName: "aside")`.
+  - `cta`: SHOULD be generated — bottom call-to-action (newsletter signup
+    or link to relevant product/solution page). Use
+    `generate_root_field(fieldName: "cta")`.
+  - `seo`: SHOULD be generated — SEO metadata (title, description, keywords,
+    OG image). Use `generate_seo()`.
+  Without root fields, the blog post will render with missing header info,
+  no sidebar, and no SEO metadata.
 - **Tone:** Authoritative but approachable. FALKENBERG is a 40-year veteran
   commenting on industry developments — knowledgeable, not salesy.
 - **Attribution:** Always credit the source article with title and publication.
@@ -1231,7 +1281,7 @@ Your job is to:
   ~20% practical takeaway + CTA.
 - **Language:** English.
 - **All content is fictional** — FALKENBERG Precision GmbH does not exist.
-```
+````
 
 #### AI Agent User Prompt (with n8n expressions)
 
@@ -1241,8 +1291,18 @@ Here are the 10 most recent articles from Metrology News (metrology.news):
 {{ $json.articles }}
 
 Please select the most relevant article for a FALKENBERG Precision blog post,
-scrape the full article, generate the blog post content, and create it as a
-draft in Storyblok.
+scrape the full article, and generate a complete blog post following this
+exact workflow:
+
+1. Plan the page with `plan_page(contentType: "blog-post")`
+2. Generate each section with `generate_section`
+3. Generate root fields with `generate_root_field` for: head, aside, cta
+4. Generate SEO metadata with `generate_seo`
+5. Create the page with `create_page_with_content` passing BOTH sections
+   AND rootFields: { head, aside, cta, seo }
+
+Do NOT skip the root fields — without them the blog post will be incomplete
+(missing header, sidebar, and SEO metadata).
 
 Report back:
 - Selected article title and URL
