@@ -116,9 +116,11 @@ A "one call does it all" API for consumers who don't need fine-grained control.
 
 ### Exports
 
-| Function                                     | Description                                                                                                                                                                                     |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generateAndPrepareContent(client, options)` | End-to-end pipeline: user prompt → `prepareSchemaForOpenAi` → `generateStructuredContent` → `processOpenAiResponse` → `processForStoryblok`. Returns `{ designSystemProps, storyblokContent }`. |
+| Function                                     | Description                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `generateAndPrepareContent(client, options)` | End-to-end pipeline: user prompt → `prepareSchemaForOpenAi` → `generateStructuredContent` → `processOpenAiResponse` → `processForStoryblok`. Returns `{ designSystemProps, storyblokContent }`.                                                                                                  |
+| `generateRootFieldContent(client, options)`  | Generates a single root-level field (e.g. `head`, `aside`, `cta`). Extracts the field's sub-schema, generates via OpenAI, injects component types via `injectRootFieldComponentTypes`, runs `processForStoryblok`, and wraps in an array. Returns `{ designSystemProps, storyblokContent: [] }`. |
+| `generateSeoContent(client, options)`        | Generates SEO metadata for a content type's `seo` field. Delegates to `generateRootFieldContent` with a specialized SEO-expert system prompt.                                                                                                                                                    |
 
 ### Checklist
 

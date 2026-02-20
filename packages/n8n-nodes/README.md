@@ -244,11 +244,13 @@ Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on 
 ```json
 {
   "fieldName": "head",
-  "storyblokContent": {
-    "component": "blog-head",
-    "headline": "...",
-    "date": "..."
-  },
+  "storyblokContent": [
+    {
+      "component": "blog-head",
+      "headline": "...",
+      "date": "..."
+    }
+  ],
   "designSystemProps": { "headline": "...", "date": "..." },
   "_meta": {
     "operation": "generateRootField",

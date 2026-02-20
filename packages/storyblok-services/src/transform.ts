@@ -11,9 +11,16 @@
  *    Flattens nested objects into Storyblok's `key_subKey` convention,
  *    adds `component` fields, and marks sections as AI drafts.
  *
+ * 3. **Root field component injection** (`injectRootFieldComponentTypes`):
+ *    Adds `type` discriminator fields to root field content (head, aside,
+ *    cta, seo) so that `processForStoryblok` can convert them to
+ *    `component` fields. Also wraps single component objects in arrays
+ *    for Storyblok bloks fields.
+ *
  * Pure functions — no framework dependencies.
  */
 import { traverse as objectTraverse } from "object-traversal";
+import { getSchemaName } from "./schema.js";
 
 // ─── Types ────────────────────────────────────────────────────────────
 
@@ -174,6 +181,109 @@ export function processForStoryblok(
   );
 
   return result;
+}
+
+// ─── Root field component injection ───────────────────────────────────
+
+/**
+ * Inject `type` discriminator fields into root field content so that
+ * `processForStoryblok` can convert them to `component` fields.
+ *
+ * Root field schemas (head, aside, cta, seo on blog-post, etc.) are
+ * monomorphic — there's no `anyOf` discriminator. But Storyblok still
+ * requires a `component` identifier on every bloks-field object.
+ *
+ * This function walks the generated content alongside the **original**
+ * (pre-cleanup) field schema and:
+ *
+ * 1. **Root level** — Derives the component name from the schema's `$id`
+ *    (e.g. `blog-head.schema.json` → `type: "blog-head"`).
+ *
+ * 2. **Nested single objects with `$id`** — Adds `type` from `$id` and
+ *    wraps the object in an array (Storyblok bloks fields are always arrays).
+ *
+ * 3. **Nested array-of-objects items** — Adds `type` using the **property
+ *    name** as the component name. This matches the Storyblok convention
+ *    where sub-component bloks fields are named after their component
+ *    (e.g. `tags[]` items → `component: "tags"`, `buttons[]` items →
+ *    `component: "buttons"`).
+ *
+ * After this function, call `processForStoryblok()` to convert `type` →
+ * `component`, flatten nested value objects, and strip leftover `type`.
+ *
+ * @param content - The raw generated content (from OpenAI).
+ * @param fieldSchema - The **original** field schema with `$id` values
+ *   intact (before `UNSUPPORTED_KEYWORDS` cleanup).
+ * @returns A new object with `type` fields injected and single component
+ *   objects wrapped in arrays.
+ */
+export function injectRootFieldComponentTypes(
+  content: Record<string, any>,
+  fieldSchema: Record<string, any>
+): Record<string, any> {
+  const result = structuredClone(content);
+
+  // Root level: derive component name from $id
+  if (fieldSchema.$id) {
+    result.type = getSchemaName(fieldSchema.$id);
+  }
+
+  injectNestedComponentTypes(result, fieldSchema);
+
+  return result;
+}
+
+/**
+ * Recursively walk an object's properties and inject `type` fields for
+ * nested component objects / array items, based on their schema definitions.
+ *
+ * **Mutates** the object in place.
+ */
+function injectNestedComponentTypes(
+  obj: Record<string, any>,
+  schema: Record<string, any>
+): void {
+  const schemaProps = schema.properties || {};
+
+  for (const [propName, propSchema] of Object.entries<any>(schemaProps)) {
+    if (obj[propName] === undefined || obj[propName] === null) continue;
+
+    if (
+      propSchema.type === "array" &&
+      propSchema.items?.type === "object" &&
+      propSchema.items?.properties
+    ) {
+      // Array of objects → each item is a sub-component.
+      // Component name = property name (matches Storyblok bloks convention).
+      const items = obj[propName];
+      if (Array.isArray(items)) {
+        for (const item of items) {
+          if (typeof item === "object" && item !== null) {
+            item.type = propName;
+            // Recurse into item's own nested properties
+            injectNestedComponentTypes(item, propSchema.items);
+          }
+        }
+      }
+    } else if (
+      propSchema.type === "object" &&
+      propSchema.$id &&
+      propSchema.properties
+    ) {
+      // Single object that is a component (has $id) → inject type, wrap
+      // in array for Storyblok bloks fields.
+      const child = obj[propName];
+      if (typeof child === "object" && !Array.isArray(child)) {
+        child.type = getSchemaName(propSchema.$id);
+        injectNestedComponentTypes(child, propSchema);
+        // Storyblok bloks fields are always arrays
+        obj[propName] = [child];
+      }
+    }
+    // else: plain nested value object or scalar — left as-is.
+    // processForStoryblok will flatten plain nested objects via
+    // flattenNestedObjects.
+  }
 }
 
 // ─── Flatten / Unflatten utilities ────────────────────────────────────

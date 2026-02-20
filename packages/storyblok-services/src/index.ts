@@ -67,6 +67,7 @@ export {
   processForStoryblok,
   flattenNestedObjects,
   unflattenNestedObjects,
+  injectRootFieldComponentTypes,
 } from "./transform.js";
 export type { TransformedContent } from "./transform.js";
 

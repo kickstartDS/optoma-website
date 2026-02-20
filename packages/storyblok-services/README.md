@@ -84,17 +84,19 @@ Handles two directions of transformation between OpenAI output, Design System pr
 import {
   processOpenAiResponse,
   processForStoryblok,
+  injectRootFieldComponentTypes,
   flattenNestedObjects,
   unflattenNestedObjects,
 } from "@kickstartds/storyblok-services";
 ```
 
-| Function                                                         | Description                                                                                                                                                                           |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `processOpenAiResponse(response, schemaMap?, defaults?, merge?)` | Reverses `type__X` → `type: X` mangling, merges component defaults. Returns Design System–shaped props                                                                                |
-| `processForStoryblok(page)`                                      | Flattens nested objects to `key_subKey`, moves `type` → `component` (and removes `type`), adds `aiDraft: true`. Guarantees Storyblok output never carries both `type` and `component` |
-| `flattenNestedObjects(obj)`                                      | Utility: flattens one level of nested objects using `_` separator. Skips objects with `type` or `component` (component blocks)                                                        |
-| `unflattenNestedObjects(obj)`                                    | Reverse utility: `key_subKey` → `{ key: { subKey } }`                                                                                                                                 |
+| Function                                                         | Description                                                                                                                                                                                                                               |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `processOpenAiResponse(response, schemaMap?, defaults?, merge?)` | Reverses `type__X` → `type: X` mangling, merges component defaults. Returns Design System–shaped props                                                                                                                                    |
+| `processForStoryblok(page)`                                      | Flattens nested objects to `key_subKey`, moves `type` → `component` (and removes `type`), adds `aiDraft: true`. Guarantees Storyblok output never carries both `type` and `component`                                                     |
+| `injectRootFieldComponentTypes(content, fieldSchema)`            | Injects `type` discriminators into root field content using the original schema's `$id` values, so `processForStoryblok` can convert them to `component` identifiers. Wraps single component objects in arrays for Storyblok bloks fields |
+| `flattenNestedObjects(obj)`                                      | Utility: flattens one level of nested objects using `_` separator. Skips objects with `type` or `component` (component blocks)                                                                                                            |
+| `unflattenNestedObjects(obj)`                                    | Reverse utility: `key_subKey` → `{ key: { subKey } }`                                                                                                                                                                                     |
 
 ### Asset Management
 
@@ -129,12 +131,18 @@ import {
 End-to-end content generation pipeline for consumers who don't need fine-grained control:
 
 ```typescript
-import { generateAndPrepareContent } from "@kickstartds/storyblok-services";
+import {
+  generateAndPrepareContent,
+  generateRootFieldContent,
+  generateSeoContent,
+} from "@kickstartds/storyblok-services";
 ```
 
-| Function                                     | Description                                                                                                                                                                            |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema }` |
+| Function                                     | Description                                                                                                                                                                                                                  |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generateAndPrepareContent(client, options)` | User prompt → schema preparation → OpenAI generation → response post-processing → Storyblok flattening. Returns `{ designSystemProps, storyblokContent, rawResponse, preparedSchema }`                                       |
+| `generateRootFieldContent(client, options)`  | Generates a single root-level field (e.g. `head`, `aside`, `cta`). Injects component types from schema `$id`, runs full transform pipeline, wraps in array. Returns `{ designSystemProps, storyblokContent: [], fieldName }` |
+| `generateSeoContent(client, options)`        | Generates SEO metadata for a content type's `seo` field. Delegates to `generateRootFieldContent` with a specialized SEO-expert system prompt                                                                                 |
 
 ```typescript
 const result = await generateAndPrepareContent(openaiClient, {
@@ -262,6 +270,10 @@ import type {
   // Pipeline types
   GenerateAndPrepareOptions,
   GenerateAndPrepareResult,
+  GenerateRootFieldOptions,
+  GenerateRootFieldResult,
+  GenerateSeoOptions,
+  GenerateSeoResult,
   // Asset types
   UploadAssetsOptions,
   UploadAssetsSummary,

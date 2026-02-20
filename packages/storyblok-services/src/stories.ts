@@ -229,6 +229,7 @@ export async function createPageWithContent(
   if (options.uploadAssets) {
     const wrapper = {
       [options.rootArrayField]: sections,
+      ...(options.rootFields || {}),
     } as Record<string, any>;
     assetsSummary = await uploadAndReplaceAssets(client, wrapper, {
       spaceId,
@@ -241,12 +242,30 @@ export async function createPageWithContent(
     wrapAssetUrls(section as Record<string, any>);
   }
 
+  // 4b. Process root fields: ensure UIDs and wrap asset URLs
+  const processedRootFields: Record<string, unknown> = {};
+  if (options.rootFields) {
+    for (const [key, value] of Object.entries(options.rootFields)) {
+      const withUids = ensureUids(value);
+      if (Array.isArray(withUids)) {
+        for (const item of withUids) {
+          if (typeof item === "object" && item !== null) {
+            wrapAssetUrls(item as Record<string, any>);
+          }
+        }
+      } else if (typeof withUids === "object" && withUids !== null) {
+        wrapAssetUrls(withUids as Record<string, any>);
+      }
+      processedRootFields[key] = withUids;
+    }
+  }
+
   // 5. Build content envelope
   const content: Record<string, unknown> = {
     component: options.componentName,
     _uid: randomUUID(),
     [options.rootArrayField]: sections,
-    ...(options.rootFields || {}),
+    ...processedRootFields,
   };
 
   // 6. Create the story

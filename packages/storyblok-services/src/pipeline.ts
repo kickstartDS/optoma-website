@@ -20,6 +20,7 @@ import {
   processOpenAiResponse,
   processForStoryblok,
   flattenNestedObjects,
+  injectRootFieldComponentTypes,
   type TransformedContent,
 } from "./transform.js";
 
@@ -180,8 +181,15 @@ export interface GenerateRootFieldResult {
   rawResponse: Record<string, any>;
   /** The generated field content in Design System shape. */
   designSystemProps: Record<string, any>;
-  /** The generated field content flattened for Storyblok. */
-  storyblokContent: Record<string, any>;
+  /**
+   * The generated field content transformed for Storyblok.
+   *
+   * This is an **array** (matching Storyblok bloks field format), containing
+   * a single object with `component` identifier and flattened nested props.
+   *
+   * Example: `[{ component: "blog-head", headline: "...", tags: [...] }]`
+   */
+  storyblokContent: Record<string, any> | Record<string, any>[];
   /** The field name that was generated. */
   fieldName: string;
 }
@@ -191,9 +199,16 @@ export interface GenerateRootFieldResult {
  *
  * Used for non-section root fields like `head`, `aside`, `cta` on blog-post,
  * or `filter` on event-list. Extracts the field's sub-schema, prepares it
- * for OpenAI, generates content, and flattens for Storyblok.
+ * for OpenAI, generates content, and transforms for Storyblok.
+ *
+ * The generated content is processed through the same `processForStoryblok`
+ * pipeline as sections: `type` fields are injected based on the schema's
+ * `$id` values, then converted to `component` identifiers, and nested value
+ * objects are flattened. The result is wrapped in an array since Storyblok
+ * bloks fields are always arrays.
  *
  * @returns The generated content for the field, both in DS and Storyblok shapes.
+ *   `storyblokContent` is an **array** (matching Storyblok bloks field format).
  */
 export async function generateRootFieldContent(
   client: OpenAI,
@@ -208,7 +223,11 @@ export async function generateRootFieldContent(
     model,
   } = options;
 
-  // Extract the field's sub-schema
+  // Keep a reference to the original field schema (with $id values intact)
+  // before getRootFieldSchema strips them during OpenAI cleanup.
+  const originalFieldSchema = contentTypeSchema.properties?.[fieldName];
+
+  // Extract the field's sub-schema (cleaned for OpenAI)
   const fieldSchemaEnvelope = getRootFieldSchema(
     contentTypeSchema,
     fieldName,
@@ -234,14 +253,26 @@ export async function generateRootFieldContent(
   // The response IS the field content (no envelope to unwrap)
   const designSystemProps = structuredClone(rawResponse);
 
-  // Flatten nested objects for Storyblok
-  const storyblokContent = structuredClone(rawResponse);
-  if (
-    typeof storyblokContent === "object" &&
-    storyblokContent !== null &&
-    !Array.isArray(storyblokContent)
-  ) {
-    flattenNestedObjects(storyblokContent);
+  // Transform for Storyblok:
+  // 1. Inject `type` discriminators using the original schema ($id values)
+  // 2. Run processForStoryblok to convert type → component and flatten
+  // 3. Wrap in array (Storyblok bloks fields are always arrays)
+  let storyblokContent: Record<string, any> | Record<string, any>[];
+  if (originalFieldSchema && originalFieldSchema.$id) {
+    // Full pipeline: inject component types → processForStoryblok
+    const withTypes = injectRootFieldComponentTypes(
+      structuredClone(rawResponse),
+      originalFieldSchema
+    );
+    const processed = processForStoryblok(withTypes);
+    storyblokContent = [processed];
+  } else {
+    // Fallback for fields without $id: basic flattening + array wrap
+    const flat = structuredClone(rawResponse);
+    if (typeof flat === "object" && flat !== null && !Array.isArray(flat)) {
+      flattenNestedObjects(flat);
+    }
+    storyblokContent = [flat];
   }
 
   return {
@@ -276,8 +307,11 @@ export interface GenerateSeoResult {
   rawResponse: Record<string, any>;
   /** The generated SEO content in Design System shape. */
   designSystemProps: Record<string, any>;
-  /** The generated SEO content flattened for Storyblok. */
-  storyblokContent: Record<string, any>;
+  /**
+   * The generated SEO content transformed for Storyblok.
+   * Array format matching Storyblok bloks field convention.
+   */
+  storyblokContent: Record<string, any> | Record<string, any>[];
 }
 
 /** Default system prompt for SEO generation. */
