@@ -459,11 +459,11 @@ export const schemas = {
     system: z.string().optional().describe("System prompt override"),
     previousSection: z
       .string()
-      .optional()
+      .nullish()
       .describe("Component type of the section before this one (for context)"),
     nextSection: z
       .string()
-      .optional()
+      .nullish()
       .describe("Component type of the section after this one (for context)"),
     contentType: z
       .string()

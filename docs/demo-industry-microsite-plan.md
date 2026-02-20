@@ -120,7 +120,7 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
 | 1   | `hero`         | Brand introduction     |
 | 2   | `features`     | Key capabilities       |
 | 3   | `stats`        | Company achievements   |
-| 4   | `split`        | Industry 4.0 spotlight |
+| 4   | `split-even`   | Industry 4.0 spotlight |
 | 5   | `testimonials` | Customer validation    |
 | 6   | `logos`        | Client logo wall       |
 | 7   | `cta`          | Primary conversion     |
@@ -152,7 +152,7 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
   3. "±0.1 µm" — "Measurement Accuracy"
   4. "15+" — "Years Product Lifecycle Support"
 
-#### 4. Split — Industry 4.0 Spotlight
+#### 4. Split-Even — Industry 4.0 Spotlight
 
 - **Headline:** "Industry 4.0 Ready: From Sensor to Cloud"
 - **Text:** "Our Industrial IoT Gateways bridge the gap between legacy equipment and modern data platforms. Connect any sensor — ours or third-party — to your MES, ERP, or cloud analytics in minutes, not months. Open APIs, edge computing, and OPC UA support built in."
@@ -186,15 +186,15 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
 
 **Section Sequence:**
 
-| #   | Component  | Section Role                             |
-| --- | ---------- | ---------------------------------------- |
-| 1   | `hero`     | Products page opener                     |
-| 2   | `features` | Product range overview                   |
-| 3   | `split`    | Featured product deep-dive (Sensors)     |
-| 4   | `split`    | Featured product deep-dive (IoT Gateway) |
-| 5   | `stats`    | Product performance data                 |
-| 6   | `faq`      | Technical questions                      |
-| 7   | `cta`      | Request quote / catalog                  |
+| #   | Component    | Section Role                             |
+| --- | ------------ | ---------------------------------------- |
+| 1   | `hero`       | Products page opener                     |
+| 2   | `features`   | Product range overview                   |
+| 3   | `split-even` | Featured product deep-dive (Sensors)     |
+| 4   | `split-even` | Featured product deep-dive (IoT Gateway) |
+| 5   | `stats`      | Product performance data                 |
+| 6   | `faq`        | Technical questions                      |
+| 7   | `cta`        | Request quote / catalog                  |
 
 **Section Content Briefs:**
 
@@ -214,14 +214,14 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
   3. **Industrial IoT Gateways** — "Connect any sensor to any platform. OPC UA, MQTT, REST APIs. Edge computing built-in." — Icon: `upload`
   4. **Calibration Equipment** — "Reference standards and portable calibration tools for in-house metrology labs." — Icon: `file`
 
-#### 3. Split — Precision Sensors Deep-Dive
+#### 3. Split-Even — Precision Sensors Deep-Dive
 
 - **Headline:** "Precision Sensors: Accuracy Down to ±0.1 µm"
 - **Text:** "Our flagship sensor line covers inductive displacement sensors (eddy current), capacitive gap sensors, optical triangulation sensors, and confocal chromatic sensors. Each product line is optimized for specific measurement tasks — from nanometer-resolution surface profiling to millimeter-range displacement monitoring in harsh industrial environments. All sensors feature EMC-hardened electronics, IP67/IP69K housings, and operating temperatures from -40°C to +120°C."
 - **Image:** Close-up of a precision optical sensor mounted on a measurement rig
 - **Button:** "View Sensor Catalog" → (external link placeholder)
 
-#### 4. Split — IoT Gateway Deep-Dive
+#### 4. Split-Even — IoT Gateway Deep-Dive
 
 - **Headline:** "FalkenConnect IoT Gateway: Your Bridge to Industry 4.0"
 - **Text:** "The FalkenConnect IIoT Gateway transforms any sensor installation into a smart data source. Plug in up to 64 analog and digital sensors, configure data processing on the edge, and stream results to your MES, cloud platform, or data lake. Supports OPC UA, MQTT, REST, and Modbus protocols. Includes a web-based configuration UI — no programming required."
@@ -265,9 +265,9 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
 | --- | -------------- | ------------------------ |
 | 1   | `hero`         | Solutions page opener    |
 | 2   | `features`     | Industry overview        |
-| 3   | `split`        | Automotive use case      |
-| 4   | `split`        | Aerospace use case       |
-| 5   | `split`        | Pharma use case          |
+| 3   | `split-even`   | Automotive use case      |
+| 4   | `split-even`   | Aerospace use case       |
+| 5   | `split-even`   | Pharma use case          |
 | 6   | `testimonials` | Customer success stories |
 | 7   | `cta`          | Consultation booking     |
 
@@ -289,21 +289,21 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
   3. **Pharmaceuticals** — "Fill level monitoring, vial inspection, cleanroom-compatible sensors with FDA 21 CFR Part 11 support" — Icon: `file`
   4. **Energy** — "Wind turbine bearing monitoring, solar panel flatness inspection, battery cell quality control" — Icon: `upload`
 
-#### 3. Split — Automotive Use Case
+#### 3. Split-Even — Automotive Use Case
 
 - **Headline:** "Automotive: 100% Inline Inspection at Line Speed"
 - **Text:** "A leading European automotive OEM integrated 128 FALKENBERG optical sensors into their body-in-white welding line, enabling 100% gap and flush measurement at full production speed. The result: scrap reduction of 34%, warranty claims down by 22%, and complete digital traceability of every vehicle body produced. The FalkenConnect gateway streams all measurement data to the plant's MES in real time."
 - **Image:** Automotive production line with sensor equipment measuring a car body
 - **Button:** "Explore Automotive Solutions"
 
-#### 4. Split — Aerospace Use Case
+#### 4. Split-Even — Aerospace Use Case
 
 - **Headline:** "Aerospace: Micron-Level Precision for Turbine Blades"
 - **Text:** "A major turbine manufacturer uses FALKENBERG confocal chromatic sensors for 100% surface profiling of high-pressure turbine blades. With ±0.25 µm accuracy and non-contact measurement, the system inspects critical airfoil geometry without risk of surface damage. Integrated into a 5-axis robotic cell, the solution measures a complete blade in under 90 seconds."
 - **Image:** Close-up of a turbine blade being measured by an optical sensor system
 - **Button:** "Explore Aerospace Solutions"
 
-#### 5. Split — Pharmaceuticals Use Case
+#### 5. Split-Even — Pharmaceuticals Use Case
 
 - **Headline:** "Pharma: Reliable Measurement in Regulated Environments"
 - **Text:** "A global pharmaceutical company deployed FALKENBERG capacitive sensors for fill-level monitoring on their vial filling lines. The cleanroom-compatible sensors with FDA 21 CFR Part 11 data integrity ensure every single vial is filled to specification. Automated calibration verification runs every 4 hours, with all results logged for regulatory audit trails."
@@ -334,10 +334,10 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
 | #   | Component      | Section Role              |
 | --- | -------------- | ------------------------- |
 | 1   | `hero`         | Company story opener      |
-| 2   | `split`        | Company history & mission |
+| 2   | `split-even`   | Company history & mission |
 | 3   | `features`     | Core values               |
 | 4   | `stats`        | Company facts             |
-| 5   | `split`        | Leadership / R&D focus    |
+| 5   | `split-even`   | Leadership / R&D focus    |
 | 6   | `testimonials` | Employee perspectives     |
 | 7   | `cta`          | Careers / Contact         |
 
@@ -350,7 +350,7 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
 - **Image:** Aerial or wide-angle shot of the FALKENBERG headquarters campus in Stuttgart
 - **Buttons:** "Our History" (primary), "Join Our Team" (secondary)
 
-#### 2. Split — Company History & Mission
+#### 2. Split-Even — Company History & Mission
 
 - **Headline:** "From Workshop to World Stage"
 - **Text:** "In 1983, mechanical engineer Klaus Falkenberg left his position at a major sensor company with a vision: to build the most accurate industrial sensors in the world. Working from a converted garage in Stuttgart-Vaihingen, he developed the FP-100 — an inductive displacement sensor that achieved 10x better accuracy than the competition. Word spread quickly through Germany's automotive industry, and by 1990, FALKENBERG sensors were standard equipment in quality labs across the country. Today, under the leadership of Dr. Lena Falkenberg, the company has grown to 420 employees, two production sites, and customers in over 30 countries — while preserving the founder's obsession with precision."
@@ -373,7 +373,7 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
   3. "180+" — "Active Patents"
   4. "€78M" — "Annual Revenue (2025)"
 
-#### 5. Split — Leadership & R&D
+#### 5. Split-Even — Leadership & R&D
 
 - **Headline:** "Led by Engineering, Driven by Innovation"
 - **Text:** "Dr. Lena Falkenberg, CEO since 2015, holds a PhD in Optical Engineering from KIT (Karlsruhe Institute of Technology). Under her leadership, FALKENBERG has doubled its R&D investment, launched the FalkenConnect IoT platform, and expanded into confocal chromatic sensor technology — opening entirely new application fields in aerospace and medical device manufacturing. With 85 engineers in the R&D department and a state-of-the-art application laboratory, we develop tomorrow's measurement solutions in close collaboration with our customers and leading research institutions."
@@ -400,14 +400,14 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
 
 **Section Sequence:**
 
-| #   | Component  | Section Role              |
-| --- | ---------- | ------------------------- |
-| 1   | `hero`     | Service page opener       |
-| 2   | `features` | Service portfolio         |
-| 3   | `split`    | Calibration lab spotlight |
-| 4   | `split`    | Training programs         |
-| 5   | `faq`      | Service questions         |
-| 6   | `cta`      | Service request           |
+| #   | Component    | Section Role              |
+| --- | ------------ | ------------------------- |
+| 1   | `hero`       | Service page opener       |
+| 2   | `features`   | Service portfolio         |
+| 3   | `split-even` | Calibration lab spotlight |
+| 4   | `split-even` | Training programs         |
+| 5   | `faq`        | Service questions         |
+| 6   | `cta`        | Service request           |
 
 **Section Content Briefs:**
 
@@ -427,14 +427,14 @@ Each page plan includes: the page intent (for `plan_page`), the recommended sect
   3. **Training & Education** — "On-site and virtual training courses for sensor technology, measurement strategy, and FalkenConnect IoT setup." — Icon: `person`
   4. **Spare Parts & Repair** — "Genuine spare parts available for 15+ years. Factory repair with performance guarantee." — Icon: `download`
 
-#### 3. Split — Calibration Lab
+#### 3. Split-Even — Calibration Lab
 
 - **Headline:** "ISO 17025 Calibration Laboratory"
 - **Text:** "Our state-of-the-art calibration laboratory in Stuttgart is accredited by DAkkS (Deutsche Akkreditierungsstelle) to ISO/IEC 17025. We calibrate all major sensor types — inductive, capacitive, optical, and confocal — against national and international reference standards. Standard turnaround is 5 business days, with express service (24–48 hours) available for critical needs. Every calibration includes a comprehensive certificate with measurement uncertainty statements."
 - **Image:** Interior of a clean, temperature-controlled calibration laboratory with reference equipment
 - **Button:** "Request Calibration" → /industry/contact
 
-#### 4. Split — Training Programs
+#### 4. Split-Even — Training Programs
 
 - **Headline:** "Training That Empowers Your Team"
 - **Text:** "Our training programs are designed for measurement technicians, quality engineers, and production managers. Choose from standardized courses — 'Fundamentals of Industrial Sensing', 'Advanced Measurement Strategy', 'FalkenConnect IoT Administration' — or request a customized program tailored to your specific equipment and applications. All courses combine theory with hands-on practice using real sensor equipment, and are available on-site at your facility or at our Stuttgart training center."
@@ -562,7 +562,7 @@ Follow the workflow documented in [docs/skills/plan-page-structure.md](skills/pl
 
 This section defines the content for an **automated trade fair promotion workflow** built in n8n. The workflow demonstrates how a marketing team can rapidly generate product-specific landing pages for an upcoming trade fair using the `StoryblokKickstartDs` n8n node.
 
-**Workflow concept:** Given a trade fair and a set of demo products, n8n iterates over each product, generates a dedicated landing page (hero + features + split + cta), and publishes all pages under a shared trade fair folder — fully automated, no manual CMS work required.
+**Workflow concept:** Given a trade fair and a set of demo products, n8n iterates over each product, generates a dedicated landing page (hero + features + split-even + cta), and publishes all pages under a shared trade fair folder — fully automated, no manual CMS work required.
 
 ### Trade Fair: HANNOVER MESSE 2026
 
@@ -1134,7 +1134,7 @@ The MCP Client exposes all Storyblok MCP tools. The agent uses these 9:
 
 **Hybrid content type:** `blog-post` is a hybrid content type — it has both a `section` array (like `page`) AND root-level fields (`head`, `aside`, `cta`, `seo`). The `plan_page` tool automatically detects this and returns `rootFieldMeta` alongside the section plan, with priority annotations (`required`, `recommended`, `optional`) for each root field.
 
-**Blog-post section constraints:** Blog post sections should be predominantly `text` and `split` (image + text). Never use `hero` sections (the `head` root object handles title/date/author/featured image) or `cta` sections (the `cta` root object handles the post's call-to-action). Other components like `faq` are exceptions, only when the content naturally demands it.
+**Blog-post section constraints:** Blog post sections should be predominantly `text` and `split-even` (image + text). Never use `hero` sections (the `head` root object handles title/date/author/featured image) or `cta` sections (the `cta` root object handles the post's call-to-action). Other components like `faq` are exceptions, only when the content naturally demands it.
 
 ### Workflow Steps
 

@@ -42,8 +42,8 @@ Basierend auf dem Briefing des Editors + den Website-Mustern eine Sektionsfolge 
 **Planungsheuristiken:**
 
 - Mit `hero` oder `video-curtain` für visuellen Impact starten
-- `features`, `split` oder `mosaic` für den Kerninhalt folgen lassen
-- Social Proof über `testimonials`, `stats` oder `logos-companies` einbauen
+- `features`, `split-even` oder `mosaic` für den Kerninhalt folgen lassen
+- Social Proof über `testimonials`, `stats` oder `logos` einbauen
 - Einwände über `faq` adressieren
 - Mit `cta` für Conversion abschließen
 - `divider` sparsam zwischen thematischen Wechseln einsetzen
@@ -54,7 +54,7 @@ Basierend auf dem Briefing des Editors + den Website-Mustern eine Sektionsfolge 
 ```
 1. hero — Produkt mit starkem Visual vorstellen (2 Buttons)
 2. features — 4 Hauptvorteile mit Icons
-3. split — Detaillierte Demo mit Screenshot
+3. split-even — Detaillierte Demo mit Screenshot
 4. testimonials — 3 Kundenstimmen
 5. cta — Kostenlose Demo anfragen (1-2 Buttons)
 ```
@@ -177,7 +177,7 @@ Alle generierten Sektionen UND Root-Felder zusammenführen:
 ```
 create_page_with_content(
   contentType: "blog-post",
-  sections: [text, split, text, ...],
+  sections: [text, split-even, text, ...],
   rootFields: {
     head: <Ergebnis von generate_root_field("head")>,
     aside: <Ergebnis von generate_root_field("aside")>,
@@ -194,9 +194,9 @@ create_page_with_content(
 1. analyze_content_patterns(contentType: "blog-post")
 2. plan_page(intent: "Tutorial-Artikel über KI", contentType: "blog-post")
    → Gibt sections + rootFieldMeta zurück
-   → Sektionen sind text/split-fokussiert (KEIN hero, KEIN cta — die werden über Root-Felder abgedeckt)
+   → Sektionen sind text/split-even-fokussiert (KEIN hero, KEIN cta — die werden über Root-Felder abgedeckt)
 3. generate_section(componentType: "text", ..., contentType: "blog-post")
-   generate_section(componentType: "split", ..., contentType: "blog-post")
+   generate_section(componentType: "split-even", ..., contentType: "blog-post")
    generate_section(componentType: "text", ..., contentType: "blog-post")
 4. generate_root_field(fieldName: "head", prompt: "...", contentType: "blog-post")
    generate_root_field(fieldName: "aside", prompt: "...", contentType: "blog-post")
@@ -205,7 +205,7 @@ create_page_with_content(
 6. create_page_with_content(contentType: "blog-post", sections: [...], rootFields: { head, aside, cta, seo })
 ```
 
-**Wichtig für blog-post:** Sektionen sollten überwiegend aus `text` und `split` bestehen. Niemals `hero` oder `cta` als Sektionen verwenden — blog-posts haben dedizierte Root-Objekte dafür (`head` für Titel/Datum/Autor/Bild, `cta` für den Call-to-Action). Andere Komponenten wie `faq` sind nur ausnahmsweise erlaubt, wenn der Inhalt es erfordert.
+**Wichtig für blog-post:** Sektionen sollten überwiegend aus `text` und `split-even` bestehen. Niemals `hero` oder `cta` als Sektionen verwenden — blog-posts haben dedizierte Root-Objekte dafür (`head` für Titel/Datum/Autor/Bild, `cta` für den Call-to-Action). Andere Komponenten wie `faq` sind nur ausnahmsweise erlaubt, wenn der Inhalt es erfordert.
 
 ### Tier 2 (Flach): `event-detail`, `event-list`
 
@@ -226,6 +226,6 @@ create_page_with_content(contentType: "event-detail", sections: [], rootFields: 
 
 ```
 list_recipes(contentType: "blog-post")
-→ Gibt nur Blog-spezifische Rezepte zurück (text, split, faq) — KEINE Page-Rezepte (hero, cta, features etc.)
+→ Gibt nur Blog-spezifische Rezepte zurück (text, split-even, faq) — KEINE Page-Rezepte (hero, cta, features etc.)
 → Anti-Patterns werden ebenfalls nach Content-Typ gefiltert
 ```

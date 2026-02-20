@@ -37,15 +37,15 @@ Eine Liste von URLs der alten Website wird Seite für Seite gescrapt, per KI in 
 
 Externe Branchennews (RSS-Feeds, Newsletter) werden automatisch in Blogpost-Entwürfe umgewandelt – fertig zur redaktionellen Prüfung.
 
-| Schritt              | Tool                                                                                             | Zweck                                                                        |
-| -------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| RSS lesen            | _n8n RSS Feed Node_                                                                              | Neue Artikel erkennen                                                        |
-| Quelle scrapen       | `scrape_url`                                                                                     | Volltexte der Artikel extrahieren                                            |
-| Sektionen generieren | `generate_section` (pro Sektion, `contentType: "blog-post"`)                                     | KI erzeugt Sektionen (Text, Split) pro Artikel — kein Hero/CTA (Root-Felder) |
-| Root-Felder gen.     | `generate_root_field` für `head`, `aside`, `cta`                                                 | Titel/Autor, Sidebar, Blogpost-CTA generieren                                |
-| SEO generieren       | `generate_seo` mit `contentType: "blog-post"`                                                    | SEO-Metadaten (Titel, Description, Keywords) ableiten                        |
-| Entwurf anlegen      | `create_page_with_content` (`contentType: "blog-post"`, `rootFields: { head, aside, cta, seo }`) | Draft in Storyblok mit allen Feldern                                         |
-| Team benachrichtigen | _n8n Slack/E-Mail Node_                                                                          | „Neuer Entwurf wartet auf Review"                                            |
+| Schritt              | Tool                                                                                             | Zweck                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| RSS lesen            | _n8n RSS Feed Node_                                                                              | Neue Artikel erkennen                                                             |
+| Quelle scrapen       | `scrape_url`                                                                                     | Volltexte der Artikel extrahieren                                                 |
+| Sektionen generieren | `generate_section` (pro Sektion, `contentType: "blog-post"`)                                     | KI erzeugt Sektionen (Text, Split-Even) pro Artikel — kein Hero/CTA (Root-Felder) |
+| Root-Felder gen.     | `generate_root_field` für `head`, `aside`, `cta`                                                 | Titel/Autor, Sidebar, Blogpost-CTA generieren                                     |
+| SEO generieren       | `generate_seo` mit `contentType: "blog-post"`                                                    | SEO-Metadaten (Titel, Description, Keywords) ableiten                             |
+| Entwurf anlegen      | `create_page_with_content` (`contentType: "blog-post"`, `rootFields: { head, aside, cta, seo }`) | Draft in Storyblok mit allen Feldern                                              |
+| Team benachrichtigen | _n8n Slack/E-Mail Node_                                                                          | „Neuer Entwurf wartet auf Review"                                                 |
 
 ---
 

@@ -1492,11 +1492,18 @@ async function executeGenerateSection(
     system += `\n\nThis section will be followed by a "${nextSection}" section — set up a natural lead-in.`;
   }
 
-  // Look up recipe notes for this component type
-  const matchingRecipe = (sectionRecipesData.recipes || []).find(
-    (r: Record<string, unknown>) =>
-      Array.isArray(r.components) && r.components.includes(componentType)
-  );
+  // Look up recipe notes for this component type (prefer content-type-specific match)
+  const matchingRecipe =
+    (sectionRecipesData.recipes || []).find(
+      (r: Record<string, unknown>) =>
+        Array.isArray(r.components) &&
+        r.components.includes(componentType) &&
+        r.contentType === contentType
+    ) ||
+    (sectionRecipesData.recipes || []).find(
+      (r: Record<string, unknown>) =>
+        Array.isArray(r.components) && r.components.includes(componentType)
+    );
   if (matchingRecipe && (matchingRecipe as Record<string, unknown>).notes) {
     system += `\n\nBest practices for ${componentType}: ${
       (matchingRecipe as Record<string, unknown>).notes

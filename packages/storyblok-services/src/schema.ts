@@ -356,13 +356,49 @@ export function prepareSchemaForOpenAi(
 
   const filterComponents: TraverseCallback = (schema) => {
     if (schema && schema.anyOf) {
-      schema.anyOf = schema.anyOf.filter((component: any) => {
-        return (
-          component.properties?.type &&
-          component.properties.type.const &&
+      // Only filter anyOf arrays that contain items claimed by
+      // allowedComponents. Nested sub-component slots (e.g. inside
+      // split-even.firstComponents) won't have any matching type consts,
+      // so they are left untouched — preventing empty anyOf: [] errors.
+      const hasClaimedItems = schema.anyOf.some(
+        (component: any) =>
+          component.properties?.type?.const &&
           allowedComponents.includes(component.properties.type.const)
-        );
-      });
+      );
+      if (hasClaimedItems) {
+        schema.anyOf = schema.anyOf.filter((component: any) => {
+          return (
+            component.properties?.type &&
+            component.properties.type.const &&
+            allowedComponents.includes(component.properties.type.const)
+          );
+        });
+      }
+    }
+  };
+
+  // Safety net: remove any array properties whose items.anyOf became
+  // empty after filtering (should not happen with the guard above, but
+  // kept as a defensive measure). OpenAI rejects empty anyOf arrays.
+  const removeEmptyAnyOf: TraverseCallback = (
+    schema,
+    _jsonPtr,
+    _rootSchema,
+    _parentJsonPtr,
+    _parentKeyword,
+    parentSchema,
+    keyIndex
+  ) => {
+    if (
+      schema &&
+      schema.type === "array" &&
+      schema.items?.anyOf &&
+      Array.isArray(schema.items.anyOf) &&
+      schema.items.anyOf.length === 0 &&
+      keyIndex &&
+      parentSchema?.properties?.[keyIndex]
+    ) {
+      delete parentSchema.properties[keyIndex];
     }
   };
 
@@ -535,6 +571,7 @@ export function prepareSchemaForOpenAi(
   [
     addTypeConsts,
     filterComponents,
+    removeEmptyAnyOf,
     deleteConsts,
     removeImageFormatProperties,
     removeIconProperties,

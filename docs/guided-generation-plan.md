@@ -1,6 +1,6 @@
 # Plan: Guided Content Generation for the Storyblok MCP Server
 
-> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools, including hybrid content type support where `plan_page` returns `rootFieldMeta` with priority annotations. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 19 recipes, 14 page templates, 13 anti-patterns. All recipes and templates are tagged with a `contentType` (page, blog-post, blog-overview, event-detail, event-list) so that `list_recipes` returns only content-type-appropriate results. Blog-post recipes are text/split-focused (no hero or cta sections — those are handled by root objects). Anti-patterns are also filtered by content type.
+> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools, including hybrid content type support where `plan_page` returns `rootFieldMeta` with priority annotations. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 19 recipes, 14 page templates, 13 anti-patterns. All recipes and templates are tagged with a `contentType` (page, blog-post, blog-overview, event-detail, event-list) so that `list_recipes` returns only content-type-appropriate results. Blog-post recipes are text/split-even-focused (no hero or cta sections — those are handled by root objects). Anti-patterns are also filtered by content type.
 
 ## Problem Statement
 
@@ -19,7 +19,7 @@ Neither extreme is ideal. The automated path produces inconsistent component com
 
 ## Key Insight: Every Storyblok Space Is Its Own Style Guide
 
-Different websites built with the same Design System use components in very different ways. A SaaS landing page favors `hero → features → testimonials → cta`. A consulting firm's site might rely heavily on `split`, `business-card`, and `faq`. A portfolio site uses `mosaic` and `gallery` extensively.
+Different websites built with the same Design System use components in very different ways. A SaaS landing page favors `hero → features → testimonials → cta`. A consulting firm's site might rely heavily on `split-even`, `business-card`, and `faq`. A portfolio site uses `mosaic` and `gallery` extensively.
 
 **The existing stories in a Storyblok space _are_ the style guide.** By analyzing them, we can:
 
@@ -70,7 +70,7 @@ Component Frequency:
 
 Section Sequences (bigrams):
   hero → features: 6 times
-  hero → split: 3 times
+  hero → split-even: 3 times
   features → testimonials: 4 times
   testimonials → cta: 5 times
   stats → cta: 3 times
@@ -92,8 +92,8 @@ Sub-component Item Counts:
 
 Page Archetypes:
   "hero, features, testimonials, cta": 3 pages (Landing pattern)
-  "hero, split, split, cta": 2 pages (Detail pattern)
-  "hero, blog-teaser×3": 2 pages (Blog hub pattern)
+  "hero, split-even, split-even, cta": 2 pages (Detail pattern)
+  "hero, blog-teaser": 2 pages (Blog hub pattern)
   ...
 ```
 
@@ -127,7 +127,7 @@ Return a structured JSON summary that an LLM can directly use for planning:
       "exampleSlug": "home"
     }
   ],
-  "unusedComponents": ["gallery", "logos-companies", "event-list-teaser"]
+  "unusedComponents": ["gallery", "logos", "event-list-teaser"]
 }
 ```
 
@@ -193,8 +193,8 @@ When creating a page with 3+ sections. Produces higher-quality results than
 ## Section Planning Heuristics
 
 - Start with `hero` or `video-curtain` for visual impact
-- Follow with `features`, `split`, or `mosaic` to present core content
-- Add social proof via `testimonials`, `stats`, or `logos-companies`
+- Follow with `features`, `split-even`, or `mosaic` to present core content
+- Add social proof via `testimonials`, `stats`, or `logos`
 - Address objections with `faq`
 - End with `cta` for conversion
 - Use `divider` sparingly between thematic shifts
@@ -238,7 +238,7 @@ A lightweight tool that returns a recommended section sequence without generatin
     },
     { "component": "features", "intent": "3 key capabilities", "subItems": 3 },
     {
-      "component": "split",
+      "component": "split-even",
       "intent": "Detailed demo with screenshot",
       "subItems": 0
     },
@@ -277,7 +277,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
       "subComponents": { "buttons": 2 },
       "notes": "Use buttons sub-component for primary + secondary CTA. Set image or video.",
       "frequency": "very-common",
-      "goodFollowUps": ["features", "split", "stats"]
+      "goodFollowUps": ["features", "split-even", "stats"]
     },
     {
       "name": "Feature Showcase",
@@ -286,7 +286,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
       "subComponents": { "feature": [3, 4] },
       "notes": "3-4 feature items with icons. Keep text concise. Use consistent icon style.",
       "frequency": "very-common",
-      "goodFollowUps": ["testimonials", "cta", "split"]
+      "goodFollowUps": ["testimonials", "cta", "split-even"]
     },
     {
       "name": "Social Proof Block",
@@ -309,7 +309,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
     {
       "name": "Content Split",
       "intent": "Side-by-side detail: image + text, before/after, feature deep-dive",
-      "components": ["split"],
+      "components": ["split-even"],
       "notes": "Visual on one side, text + buttons on the other. Alternate sides across sections.",
       "frequency": "common",
       "goodFollowUps": ["features", "testimonials", "cta"]
@@ -343,7 +343,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
     {
       "name": "Logo Wall",
       "intent": "Client logos, partner brands, trust signals",
-      "components": ["logos-companies"],
+      "components": ["logos"],
       "subComponents": { "logo": [5, 8] },
       "notes": "Minimum 5 logos. Works best after hero or before CTA.",
       "frequency": "occasional",
@@ -356,7 +356,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
       "subComponents": { "buttons": [1, 2] },
       "notes": "Full-width video background with overlay text and CTA.",
       "frequency": "occasional",
-      "goodFollowUps": ["features", "split"]
+      "goodFollowUps": ["features", "split-even"]
     }
   ],
   "pageTemplates": [
@@ -367,7 +367,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
     },
     {
       "name": "Company About Page",
-      "sequence": ["hero", "split", "mosaic", "testimonials", "cta"],
+      "sequence": ["hero", "split-even", "mosaic", "testimonials", "cta"],
       "intent": "Tell the company story with visual elements"
     },
     {
@@ -377,7 +377,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
     },
     {
       "name": "Blog / Content Hub",
-      "sequence": ["hero", "blog-teaser×3", "blog-teaser×3", "cta"],
+      "sequence": ["hero", "blog-teaser", "blog-teaser", "cta"],
       "intent": "Showcase articles and drive engagement"
     },
     {
@@ -392,7 +392,7 @@ A curated JSON file of proven component combinations, exposed as an MCP resource
     "Don't use slider with fewer than 3 items",
     "blog-teaser without link_url creates dead-end content",
     "stats with fewer than 3 stat items looks sparse",
-    "logos-companies with fewer than 4 logos looks empty",
+    "logos with fewer than 4 logos looks empty",
     "Don't repeat the same component type in adjacent sections (except blog-teaser groups)",
     "Always end a conversion-oriented page with a cta section"
   ]
@@ -422,7 +422,7 @@ Augment the `list_components` annotations with a `typicalUsage` field per compon
   "name": "hero",
   "allowedIn": ["section.components"],
   "isSubComponent": false,
-  "typicalUsage": "Page opener. Usually the first section. Include 1-2 CTA buttons. Pair with features or split below.",
+  "typicalUsage": "Page opener. Usually the first section. Include 1-2 CTA buttons. Pair with features or split-even below.",
   "typicalSubItemCount": { "buttons": [1, 2] }
 }
 ```
@@ -483,7 +483,7 @@ The validation layer in `shared/storyblok-services/src/validate.ts` currently va
 | `features` with <2 `feature` items         | "Features section has only {n} items — 3-4 recommended"                |
 | `testimonials` with <2 items               | "Testimonials section has only {n} items — 2-3 recommended"            |
 | `slider` with <3 items                     | "Slider has only {n} items — 3+ recommended for meaningful navigation" |
-| `logos-companies` with <4 `logo` items     | "Logo wall has only {n} logos — 5+ recommended"                        |
+| `logos` with <4 `logo` items               | "Logo wall has only {n} logos — 5+ recommended"                        |
 | `blog-teaser` without `link_url`           | "Blog teaser '{headline}' has no link — creates dead-end content"      |
 | Same component in adjacent sections        | "Adjacent sections both use '{type}' — consider varying the layout"    |
 | No `cta` section on page                   | "Page has no CTA section — consider adding one for conversion"         |
@@ -685,9 +685,9 @@ LLM:
          { name: "seo", priority: "recommended" }
        ]
 
-  3. For each section (blog-post: predominantly text and split, no hero/cta):
+  3. For each section (blog-post: predominantly text and split-even, no hero/cta):
        generate_section(componentType="text", prompt="...", contentType="blog-post")
-       generate_section(componentType="split", prompt="...", contentType="blog-post")
+       generate_section(componentType="split-even", prompt="...", contentType="blog-post")
 
   4. For each root field:
        generate_root_field(fieldName="head", prompt="Author: Jane Doe...", contentType="blog-post")

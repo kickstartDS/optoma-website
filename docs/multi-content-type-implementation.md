@@ -189,9 +189,9 @@ _Note: Numbered as Phase 7 per the PRD, depends on Phases 3 & 4 for content-type
 
 ### 7.1 Content-type-specific recipes
 
-- [x] **7.1.1** Add blog-post recipes to `section-recipes.json`: "Blog Article Body" (text), "Blog Image + Text" (split), "Blog FAQ" (faq, exception only). Blog recipes are text/split-focused — no hero or cta sections (those are handled by root objects `head` and `cta`)
+- [x] **7.1.1** Add blog-post recipes to `section-recipes.json`: "Blog Article Body" (text), "Blog Image + Text" (split-even), "Blog FAQ" (faq, exception only). Blog recipes are text/split-even-focused — no hero or cta sections (those are handled by root objects `head` and `cta`)
 - [ ] **7.1.2** Add event-detail recipes: "Workshop", "Conference talk", "Webinar"
-- [x] **7.1.3** Add content-type-specific anti-patterns: "Never use hero in blog-post", "Never use cta in blog-post", "Blog sections should be predominantly text/split". All generic recipes/templates tagged with `contentType: "page"` so they don't leak into other content types
+- [x] **7.1.3** Add content-type-specific anti-patterns: "Never use hero in blog-post", "Never use cta in blog-post", "Blog sections should be predominantly text/split-even". All generic recipes/templates tagged with `contentType: "page"` so they don't leak into other content types
 
 ### 7.2 `list_recipes` content type filter
 

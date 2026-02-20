@@ -2301,11 +2301,16 @@ Respond with a JSON object:
             systemPrompt += `\n\nThis section precedes a "${validated.nextSection}" section. Set up the transition naturally.`;
           }
 
-          // Check anti-patterns from recipes
-          const recipe = sectionRecipes.recipes?.find(
-            (r: { components: string[] }) =>
+          // Check best practices from recipes — prefer content-type-specific match
+          const recipe =
+            sectionRecipes.recipes?.find(
+              (r: { components: string[]; contentType?: string }) =>
+                r.components.includes(validated.componentType) &&
+                r.contentType === sectionContentType
+            ) ||
+            sectionRecipes.recipes?.find((r: { components: string[] }) =>
               r.components.includes(validated.componentType)
-          );
+            );
           if (recipe?.notes) {
             systemPrompt += `\n\nBest practices: ${recipe.notes}`;
           }
