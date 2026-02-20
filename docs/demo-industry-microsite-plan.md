@@ -1134,6 +1134,8 @@ The MCP Client exposes all Storyblok MCP tools. The agent uses these 9:
 
 **Hybrid content type:** `blog-post` is a hybrid content type — it has both a `section` array (like `page`) AND root-level fields (`head`, `aside`, `cta`, `seo`). The `plan_page` tool automatically detects this and returns `rootFieldMeta` alongside the section plan, with priority annotations (`required`, `recommended`, `optional`) for each root field.
 
+**Blog-post section constraints:** Blog post sections should be predominantly `text` and `split` (image + text). Never use `hero` sections (the `head` root object handles title/date/author/featured image) or `cta` sections (the `cta` root object handles the post's call-to-action). Other components like `faq` are exceptions, only when the content naturally demands it.
+
 ### Workflow Steps
 
 #### Step 1 — Read RSS Feed

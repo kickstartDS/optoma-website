@@ -415,7 +415,7 @@ List assets (images, files) in the Storyblok space.
 
 #### Operation: List Recipes
 
-List curated section recipes, page templates, and anti-patterns for content planning. Includes 18 recipes, 13 page templates, and 10 anti-patterns.
+List curated section recipes, page templates, and anti-patterns for content planning. Includes 19 recipes, 14 page templates, and 13 anti-patterns. All entries are tagged with a `contentType` — filtering returns only content-type-appropriate results (e.g. blog-post recipes are text/split-focused, no hero or cta). Anti-patterns are also filtered by content type.
 
 | Parameter                 | Type    | Required | Description                                          |
 | ------------------------- | ------- | -------- | ---------------------------------------------------- |

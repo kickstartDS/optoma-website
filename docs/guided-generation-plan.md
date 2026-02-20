@@ -1,6 +1,6 @@
 # Plan: Guided Content Generation for the Storyblok MCP Server
 
-> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools, including hybrid content type support where `plan_page` returns `rootFieldMeta` with priority annotations. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 18 recipes, 13 page templates, 10 anti-patterns (including content-type-specific entries for blog-post, event-detail, and event-list).
+> **Status: ✅ FULLY IMPLEMENTED** — All proposals (1–8) and all phases (1–4) have been implemented. The MCP server now supports `analyze_content_patterns`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `list_recipes`, compositional warnings, and section recipes. Multi-content-type support (`contentType` parameter) has also been added across all tools, including hybrid content type support where `plan_page` returns `rootFieldMeta` with priority annotations. See [docs/skills/plan-page-structure.md](skills/plan-page-structure.md) for the current workflow guide. Recipe counts are now 19 recipes, 14 page templates, 13 anti-patterns. All recipes and templates are tagged with a `contentType` (page, blog-post, blog-overview, event-detail, event-list) so that `list_recipes` returns only content-type-appropriate results. Blog-post recipes are text/split-focused (no hero or cta sections — those are handled by root objects). Anti-patterns are also filtered by content type.
 
 ## Problem Statement
 
@@ -685,9 +685,9 @@ LLM:
          { name: "seo", priority: "recommended" }
        ]
 
-  3. For each section:
-       generate_section(componentType="hero", prompt="...", contentType="blog-post")
+  3. For each section (blog-post: predominantly text and split, no hero/cta):
        generate_section(componentType="text", prompt="...", contentType="blog-post")
+       generate_section(componentType="split", prompt="...", contentType="blog-post")
 
   4. For each root field:
        generate_root_field(fieldName="head", prompt="Author: Jane Doe...", contentType="blog-post")

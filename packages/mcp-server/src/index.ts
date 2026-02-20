@@ -1868,10 +1868,18 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
               )
             : sectionRecipes.pageTemplates;
 
+          const filteredAntiPatterns = filterContentType
+            ? (
+                sectionRecipes.antiPatterns as Array<Record<string, unknown>>
+              ).filter(
+                (a) => !a.contentType || a.contentType === filterContentType
+              )
+            : sectionRecipes.antiPatterns;
+
           const result: Record<string, unknown> = {
             recipes: filteredRecipes,
             pageTemplates: filteredTemplates,
-            antiPatterns: sectionRecipes.antiPatterns,
+            antiPatterns: filteredAntiPatterns,
           };
 
           // Optionally merge live patterns from the space (uses startup cache)

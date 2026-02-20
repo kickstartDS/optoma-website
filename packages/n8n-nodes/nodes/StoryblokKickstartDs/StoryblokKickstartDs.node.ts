@@ -2180,10 +2180,17 @@ async function executeListRecipes(
       )
     : pageTemplates;
 
+  const filteredAntiPatterns = contentType
+    ? antiPatterns.filter(
+        (a: Record<string, unknown>) =>
+          !a.contentType || a.contentType === contentType
+      )
+    : antiPatterns;
+
   const result: Record<string, unknown> = {
     recipes: filteredRecipes,
     pageTemplates: filteredTemplates,
-    antiPatterns,
+    antiPatterns: filteredAntiPatterns,
   };
 
   // Note: live patterns require analyzeContentPatterns which is not yet
@@ -2202,7 +2209,7 @@ async function executeListRecipes(
       contentType: contentType || undefined,
       recipesCount: (filteredRecipes as unknown[]).length,
       templatesCount: (filteredTemplates as unknown[]).length,
-      antiPatternsCount: (antiPatterns as unknown[]).length,
+      antiPatternsCount: (filteredAntiPatterns as unknown[]).length,
       timestamp: new Date().toISOString(),
     },
   };

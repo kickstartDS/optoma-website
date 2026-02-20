@@ -189,15 +189,15 @@ _Note: Numbered as Phase 7 per the PRD, depends on Phases 3 & 4 for content-type
 
 ### 7.1 Content-type-specific recipes
 
-- [ ] **7.1.1** Add blog-post recipes to `section-recipes.json` (or new file): "Technical tutorial", "Thought leadership", "Case study"
+- [x] **7.1.1** Add blog-post recipes to `section-recipes.json`: "Blog Article Body" (text), "Blog Image + Text" (split), "Blog FAQ" (faq, exception only). Blog recipes are text/split-focused — no hero or cta sections (those are handled by root objects `head` and `cta`)
 - [ ] **7.1.2** Add event-detail recipes: "Workshop", "Conference talk", "Webinar"
-- [ ] **7.1.3** Add content-type-specific anti-patterns: "Blog post without CTA", "Event without locations", "Blog overview with 0 teasers"
+- [x] **7.1.3** Add content-type-specific anti-patterns: "Never use hero in blog-post", "Never use cta in blog-post", "Blog sections should be predominantly text/split". All generic recipes/templates tagged with `contentType: "page"` so they don't leak into other content types
 
 ### 7.2 `list_recipes` content type filter
 
-- [ ] **7.2.1** Add optional `contentType` param to `list_recipes` Zod schema
-- [ ] **7.2.2** Filter returned recipes by content type when specified
-- [ ] **7.2.3** Update tool description
+- [x] **7.2.1** Add optional `contentType` param to `list_recipes` Zod schema
+- [x] **7.2.2** Filter returned recipes, templates, AND anti-patterns by content type when specified
+- [x] **7.2.3** Update tool description
 
 ### 7.3 Pattern cache per content type
 

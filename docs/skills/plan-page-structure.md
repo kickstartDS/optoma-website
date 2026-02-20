@@ -177,7 +177,7 @@ Alle generierten Sektionen UND Root-Felder zusammenführen:
 ```
 create_page_with_content(
   contentType: "blog-post",
-  sections: [hero, features, ...],
+  sections: [text, split, text, ...],
   rootFields: {
     head: <Ergebnis von generate_root_field("head")>,
     aside: <Ergebnis von generate_root_field("aside")>,
@@ -194,7 +194,9 @@ create_page_with_content(
 1. analyze_content_patterns(contentType: "blog-post")
 2. plan_page(intent: "Tutorial-Artikel über KI", contentType: "blog-post")
    → Gibt sections + rootFieldMeta zurück
-3. generate_section(componentType: "hero", ..., contentType: "blog-post")
+   → Sektionen sind text/split-fokussiert (KEIN hero, KEIN cta — die werden über Root-Felder abgedeckt)
+3. generate_section(componentType: "text", ..., contentType: "blog-post")
+   generate_section(componentType: "split", ..., contentType: "blog-post")
    generate_section(componentType: "text", ..., contentType: "blog-post")
 4. generate_root_field(fieldName: "head", prompt: "...", contentType: "blog-post")
    generate_root_field(fieldName: "aside", prompt: "...", contentType: "blog-post")
@@ -202,6 +204,8 @@ create_page_with_content(
 5. generate_seo(prompt: "...", contentType: "blog-post")
 6. create_page_with_content(contentType: "blog-post", sections: [...], rootFields: { head, aside, cta, seo })
 ```
+
+**Wichtig für blog-post:** Sektionen sollten überwiegend aus `text` und `split` bestehen. Niemals `hero` oder `cta` als Sektionen verwenden — blog-posts haben dedizierte Root-Objekte dafür (`head` für Titel/Datum/Autor/Bild, `cta` für den Call-to-Action). Andere Komponenten wie `faq` sind nur ausnahmsweise erlaubt, wenn der Inhalt es erfordert.
 
 ### Tier 2 (Flach): `event-detail`, `event-list`
 
@@ -222,5 +226,6 @@ create_page_with_content(contentType: "event-detail", sections: [], rootFields: 
 
 ```
 list_recipes(contentType: "blog-post")
-→ Gibt nur Universal- und Blog-spezifische Rezepte zurück
+→ Gibt nur Blog-spezifische Rezepte zurück (text, split, faq) — KEINE Page-Rezepte (hero, cta, features etc.)
+→ Anti-Patterns werden ebenfalls nach Content-Typ gefiltert
 ```
