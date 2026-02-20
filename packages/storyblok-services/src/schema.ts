@@ -268,6 +268,36 @@ export function prepareSchemaForOpenAi(
     : (SUPPORTED_COMPONENTS as unknown as string[]);
   const allowedComponents = options.allowedComponents || defaultComponents;
 
+  // ── Resolve nested container slot types ─────────────────────────
+  // When a specific componentType is requested (e.g. "split-even"), the
+  // allowedComponents list only contains that type + "section". But
+  // container components like split-even and split-weighted have nested
+  // polymorphic slots (firstComponents, mainComponents, etc.) whose
+  // child components also need type const injection. Without this,
+  // child components get no `type` discriminator and end up missing
+  // their `component` identifier in Storyblok.
+  //
+  // We build a separate expanded set for type const injection while
+  // keeping the original allowedComponents for section-level filtering,
+  // so that only the requested component appears at the top level.
+  let nestedSlotTypes: Set<string> | null = null;
+  if (options.allowedComponents && validationRules?.containerSlots) {
+    nestedSlotTypes = new Set<string>();
+    for (const componentName of allowedComponents) {
+      for (const [slotPath, slotTypes] of validationRules.containerSlots) {
+        // Match slots owned by this component (e.g. "split-even.firstComponents")
+        if (slotPath.startsWith(`${componentName}.`)) {
+          for (const childType of slotTypes) {
+            if (!allowedComponents.includes(childType)) {
+              nestedSlotTypes.add(childType);
+            }
+          }
+        }
+      }
+    }
+    if (nestedSlotTypes.size === 0) nestedSlotTypes = null;
+  }
+
   // Use schema-derived sub-component map when available
   const subComponentMap: Record<string, string> = validationRules
     ? validationRules.subComponentMap
@@ -344,7 +374,8 @@ export function prepareSchemaForOpenAi(
         if (component.$id) {
           const componentName = getSchemaName(component.$id);
           if (
-            allowedComponents.includes(componentName) &&
+            (allowedComponents.includes(componentName) ||
+              nestedSlotTypes?.has(componentName)) &&
             !component.properties?.type
           ) {
             component.properties.type = { const: componentName };
@@ -357,9 +388,11 @@ export function prepareSchemaForOpenAi(
   const filterComponents: TraverseCallback = (schema) => {
     if (schema && schema.anyOf) {
       // Only filter anyOf arrays that contain items claimed by
-      // allowedComponents. Nested sub-component slots (e.g. inside
-      // split-even.firstComponents) won't have any matching type consts,
-      // so they are left untouched — preventing empty anyOf: [] errors.
+      // allowedComponents. Nested container slots (e.g. inside
+      // split-even.firstComponents) have type consts from nestedSlotTypes
+      // but those don't match allowedComponents, so hasClaimedItems
+      // returns false and the nested anyOf is left untouched — all child
+      // components remain available for generation.
       const hasClaimedItems = schema.anyOf.some(
         (component: any) =>
           component.properties?.type?.const &&
