@@ -12,7 +12,8 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["node", "jest"]
   },
   "include": ["credentials/**/*.ts", "nodes/**/*.ts"],
   "exclude": ["node_modules", "dist", "test"]
