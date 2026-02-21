@@ -771,6 +771,36 @@ Error codes:
 - `OPENAI_API_ERROR` - OpenAI API errors
 - `NOT_FOUND` - Resource not found
 
+## Token Budget & Response Sizes
+
+When using this MCP server with LLM clients that have limited context windows (e.g. Claude Web), large tool responses can cause truncation or generation failures (`"Claude's response could not be fully generated"`). The table below provides rough token estimates per tool call to help with capacity planning.
+
+| Tool                          | Typical Response | Est. Tokens       | Notes                                      |
+| ----------------------------- | ---------------- | ----------------- | ------------------------------------------ |
+| `list_stories` (default, 25)  | ~500 KB          | **~125,000**      | 🔴 Returns full nested content per story   |
+| `list_stories` (perPage: 5)   | ~100 KB          | **~25,000**       | Still large due to full content            |
+| `list_stories` (perPage: 100) | ~2 MB            | **~500,000**      | Will overflow most context windows         |
+| `analyze_content_patterns`    | ~50 KB           | **~12,500**       | Large due to ~80 contextual field profiles |
+| `list_components`             | ~30–50 KB        | **~7,500–12,500** | All component schemas + composition rules  |
+| `list_recipes`                | ~15 KB           | **~3,750**        | Reasonable                                 |
+| `get_story` (single page)     | ~20 KB           | **~5,000**        | Scales with number of sections             |
+| `scrape_url`                  | ~5–50 KB         | **~1,250–12,500** | Varies by page content                     |
+| `generate_content`            | ~10–30 KB        | **~2,500–7,500**  | Depends on section count                   |
+| `generate_section`            | ~5–15 KB         | **~1,250–3,750**  | Single section                             |
+| `plan_page`                   | ~3–5 KB          | **~750–1,250**    | Small, well-scoped                         |
+| `generate_root_field`         | ~2–5 KB          | **~500–1,250**    | Single field                               |
+| `generate_seo`                | ~1–2 KB          | **~250–500**      | Small                                      |
+| `list_icons`                  | ~0.5 KB          | **~125**          | Tiny                                       |
+
+> **Why is `list_stories` so large?** The Storyblok Content Delivery API returns the full `content` tree for every story — all sections, all nested components, and all asset objects. A single Storyblok asset field alone is ~150 tokens of boilerplate (`id`, `alt`, `name`, `focus`, `title`, `source`, `filename`, `copyright`, `fieldtype`, `meta_data`, `is_external_url`). A content-rich page with 6 sections easily reaches 5,000+ tokens per story.
+
+### Recommendations for constrained contexts
+
+- **Use small page sizes:** `list_stories(perPage: 5)` instead of the default 25.
+- **Always filter:** Use `startsWith` and/or `contentType` to narrow results.
+- **Prefer `analyze_content_patterns`** over `list_stories` when you need a structural overview — it returns aggregated statistics instead of raw content.
+- **Use `plan_page` → `generate_section`** workflow instead of `generate_content(sectionCount: N)` to keep each tool call small and incremental.
+
 ## n8n Integration
 
 For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes/).

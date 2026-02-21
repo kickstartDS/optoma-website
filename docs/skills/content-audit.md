@@ -1,4 +1,4 @@
-# Skill: Content-Audit einer Seite durchführen
+# Content-Audit einer Seite durchführen
 
 ## Wann verwenden
 

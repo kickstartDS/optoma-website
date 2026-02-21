@@ -1,4 +1,4 @@
-# Skill: Seite Sektion für Sektion planen und erstellen
+# Seite Sektion für Sektion planen und erstellen
 
 ## Wann verwenden
 

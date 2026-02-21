@@ -1,4 +1,4 @@
-# Skill: Bestehende Seite erweitern
+# Bestehende Seite erweitern
 
 ## Wann verwenden
 

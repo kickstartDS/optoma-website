@@ -1,4 +1,4 @@
-# Skill: Webseite migrieren (URL → Storyblok-Seite)
+# Webseite migrieren (URL → Storyblok-Seite)
 
 ## Wann verwenden
 

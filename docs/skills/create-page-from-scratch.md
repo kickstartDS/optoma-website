@@ -1,4 +1,4 @@
-# Skill: Neue Seite von Grund auf erstellen
+# Neue Seite von Grund auf erstellen
 
 ## Wann verwenden
 

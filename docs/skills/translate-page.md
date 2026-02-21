@@ -1,4 +1,4 @@
-# Skill: Seite übersetzen
+# Seite übersetzen
 
 ## Wann verwenden
 
