@@ -55,20 +55,31 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 - **Ergebnis dem Editor zeigen** und fragen, ob Anpassungen nötig sind
 - ⚠️ Bei Bedarf `generate_content` mit angepasstem Prompt erneut aufrufen
 
-### Schritt 3: Seite in Storyblok anlegen
+### Schritt 3: SEO-Metadaten generieren
+
+- **Tool:** `generate_seo`
+- **Zweck:** Optimierte SEO-Metadaten (Titel, Beschreibung, Keywords, OG-Image) für die Seite erzeugen
+- **Parameter:**
+  - `prompt`: Zusammenfassung des Seiteninhalts — Thema, Zielgruppe, wichtige Keywords einbeziehen
+  - `contentType`: Den Content-Typ angeben (z.B. `"page"`, `"blog-post"`)
+- **Wann:** Immer als letzten Generierungsschritt aufrufen, NACHDEM alle Sektionen generiert wurden — so kann der Prompt den tatsächlichen Seiteninhalt widerspiegeln
+- **Ergebnis:** Wird als `rootFields.seo` an `create_page_with_content` übergeben
+
+### Schritt 4: Seite in Storyblok anlegen
 
 - **Tool:** `create_page_with_content`
 - **Parameter:**
   - `name`: Seitenname (vom Editor erfragen oder aus Kontext ableiten)
   - `slug`: URL-Slug vorschlagen (z.B. aus dem Seitennamen, Kleinbuchstaben, Bindestriche)
   - `sections`: Die generierten Sektionen aus Schritt 2
+  - `rootFields`: `{ seo: <Ergebnis von generate_seo()> }` — SEO-Metadaten aus Schritt 3
   - `uploadAssets: true` ← **immer setzen**, damit KI-generierte Bilder nach Storyblok hochgeladen werden
   - `assetFolderName`: Sinnvollen Ordnernamen vorschlagen (z.B. _„Landing Page - [Thema]"_)
   - `publish: false` ← **immer als Draft**, der Editor soll im Visual Editor prüfen
 - ⚠️ `parentId` nur setzen, wenn der Editor explizit einen Ordner nennt
 - 💡 Alternativ: `path` verwenden (z.B. `"en/services"`), um Ordner automatisch anlegen zu lassen (wie `mkdir -p`). `path` und `parentId` sind gegenseitig exklusiv.
 
-### Schritt 4: Bestätigung
+### Schritt 5: Bestätigung
 
 - Dem Editor den Slug / Link zur neuen Seite nennen
 - Darauf hinweisen, dass die Seite als **Draft** vorliegt und im Storyblok Visual Editor geprüft werden sollte
@@ -85,10 +96,11 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 | Slug nicht abgestimmt          | Doppelte Slugs → Storyblok-Fehler                                       | Slug mit Editor besprechen                                                                                    |
 | Zu viele Sektionen auf einmal  | Ergebnis schwer zu überblicken                                          | Bei > 4 Sektionen den Sektion-für-Sektion Ansatz verwenden (siehe Skill _„Seite Sektion für Sektion planen"_) |
 | Bestehende Muster ignoriert    | Neuer Content passt nicht zum Rest der Website                          | Immer zuerst `analyze_content_patterns` oder Rezepte prüfen                                                   |
+| `generate_seo` übersprungen    | Fehlende SEO-Metadaten (Titel, Beschreibung, Keywords, OG-Image)        | Immer als letzten Generierungsschritt vor Seitenerstellung aufrufen                                           |
 
 ## Varianten
 
 - **Nur eine einzelne Sektion generieren:** `componentType` statt `sectionCount` verwenden
 - **Seite in einem Unterordner:** `path` verwenden (z.B. `"en/services/consulting"`) — Ordner werden automatisch erstellt. Alternativ `parentId` des Zielordners angeben (über `list_stories` mit `startsWith` ermitteln).
-- **Blogpost statt Seite:** `contentType: "blog-post"` bei allen Tools übergeben. Blog-Posts sind Hybrid-Typen mit Sektionen UND Root-Feldern (`head`, `aside`, `cta`, `seo`). **Wichtig:** Blog-Sektionen sollten überwiegend aus `text` und `split-even` bestehen — niemals `hero` oder `cta` als Sektionen verwenden (diese werden über die Root-Felder `head` und `cta` abgedeckt). Andere Komponenten wie `faq` nur ausnahmsweise. Nach den Sektionen `generate_root_field` für jedes Root-Feld und `generate_seo` für SEO-Metadaten aufrufen. Dann `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`. Siehe Skill _„Seite Sektion für Sektion planen und erstellen"_ → Abschnitt Hybrid-Typen.
+- **Blogpost statt Seite:** `contentType: "blog-post"` bei allen Tools übergeben. Blog-Posts sind Hybrid-Typen mit Sektionen UND Root-Feldern (`head`, `aside`, `cta`, `seo`). **Wichtig:** Blog-Sektionen sollten überwiegend aus `text` und `split-even` bestehen — niemals `hero` oder `cta` als Sektionen verwenden (diese werden über die Root-Felder `head` und `cta` abgedeckt). Andere Komponenten wie `faq` nur ausnahmsweise. Nach den Sektionen `generate_root_field` für jedes Root-Feld (`head`, `aside`, `cta`) aufrufen. `generate_seo` wird wie bei regulären Seiten in Schritt 3 aufgerufen (mit `contentType: "blog-post"`). Dann `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`. Siehe Skill _„Seite Sektion für Sektion planen und erstellen"_ → Abschnitt Hybrid-Typen.
 - **Events:** `contentType: "event-detail"` verwenden. Bei Tier-2-Typen (event-detail, event-list) `rootFields` für die Wurzel-Felder setzen, da keine Sektionen vorhanden sind.
