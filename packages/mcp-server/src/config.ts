@@ -289,6 +289,13 @@ export const schemas = {
       .optional()
       .default(25)
       .describe("Number of stories per page"),
+    excludeContent: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe(
+        "Exclude story content from response. When true (default), only metadata is returned. Set to false for full content."
+      ),
   }),
 
   getStory: z.object({

@@ -38,6 +38,65 @@ export function createContentClient(
   });
 }
 
+// ─── Asset stripping ──────────────────────────────────────────────────
+
+/**
+ * Values that are considered "empty" for Storyblok asset fields and should
+ * be stripped to reduce token overhead. Only applies to objects with
+ * `fieldtype: "asset"`.
+ */
+function isEmptyValue(value: unknown): boolean {
+  if (value === null || value === undefined || value === false) return true;
+  if (value === "") return true;
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return Object.keys(value as Record<string, unknown>).length === 0;
+  }
+  return false;
+}
+
+/**
+ * Recursively strip empty/null/default fields from Storyblok asset objects.
+ *
+ * Storyblok asset objects contain ~12 fields, most of which are empty by default
+ * (empty strings, null, `false`, `{}`). Each asset takes ~150 tokens raw but
+ * only ~15–20 tokens when stripped to non-empty fields.
+ *
+ * Only objects with `fieldtype: "asset"` are affected — all other objects are
+ * left untouched. The `filename` and `fieldtype` fields are always preserved.
+ *
+ * This function returns a deep copy — the original object is not mutated.
+ */
+export function stripEmptyAssetFields<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== "object") return obj;
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => stripEmptyAssetFields(item)) as T;
+  }
+
+  const record = obj as Record<string, unknown>;
+
+  // Asset object: strip empty fields, keep filename + fieldtype always
+  if (record.fieldtype === "asset") {
+    const stripped: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(record)) {
+      if (key === "filename" || key === "fieldtype") {
+        stripped[key] = value;
+      } else if (!isEmptyValue(value)) {
+        stripped[key] = value;
+      }
+    }
+    return stripped as T;
+  }
+
+  // Non-asset object: recurse into values
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    result[key] = stripEmptyAssetFields(value);
+  }
+  return result as T;
+}
+
 // ─── List Stories ─────────────────────────────────────────────────────
 
 /**
@@ -64,6 +123,10 @@ export async function listStories(
 
   if (options.contentType) {
     params.content_type = options.contentType;
+  }
+
+  if (options.excludeContent) {
+    params.excluding_fields = "content";
   }
 
   const response = await client.get("cdn/stories", params);

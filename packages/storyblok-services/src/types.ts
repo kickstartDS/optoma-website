@@ -183,6 +183,13 @@ export interface ListStoriesOptions {
   page?: number;
   /** Results per page. @default 25 */
   perPage?: number;
+  /**
+   * Exclude the `content` field from each story in the response.
+   * When `true`, uses Storyblok's `excluding_fields=content` parameter
+   * so only metadata (id, slug, name, timestamps, etc.) is returned.
+   * @default false (for backward compatibility with internal consumers)
+   */
+  excludeContent?: boolean;
 }
 
 /**

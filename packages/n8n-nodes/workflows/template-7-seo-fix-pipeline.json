@@ -14,7 +14,8 @@
         "resource": "story",
         "operation": "list",
         "contentType": "page",
-        "perPage": 100
+        "perPage": 100,
+        "excludeContent": false
       },
       "id": "list-1",
       "name": "List All Pages",

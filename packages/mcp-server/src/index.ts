@@ -29,6 +29,7 @@ import {
   type SubComponentStats,
   type RootFieldMeta,
   type SectionRecipes,
+  stripEmptyAssetFields,
 } from "./services.js";
 import {
   formatErrorResponse,
@@ -554,12 +555,9 @@ This tool retrieves all ideas in the space for review or processing.`,
 
 Use this to browse content, find stories by type, or paginate through large collections.
 
-Returns story metadata including:
-- ID, UUID, slug
-- Name and full_slug
-- Content type
-- Created/updated timestamps
-- Published status`,
+Returns story metadata by default (id, slug, name, timestamps, published status).
+Pass excludeContent: false to include the full content tree — use sparingly, as
+it significantly increases response size (~5,000 tokens per story).`,
       inputSchema: {
         type: "object",
         properties: {
@@ -580,6 +578,12 @@ Returns story metadata including:
           perPage: {
             type: "number",
             description: "Stories per page (default: 25, max: 100)",
+          },
+          excludeContent: {
+            type: "boolean",
+            description:
+              "Exclude story content from the response. When true (default), only metadata is returned (id, slug, name, timestamps, published status). Set to false to include the full content tree.",
+            default: true,
           },
         },
         required: [],
@@ -1404,7 +1408,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             content: [
               {
                 type: "text",
-                text: JSON.stringify(result, null, 2),
+                text: JSON.stringify(stripEmptyAssetFields(result), null, 2),
               },
             ],
           };
@@ -1421,7 +1425,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             content: [
               {
                 type: "text",
-                text: JSON.stringify(result, null, 2),
+                text: JSON.stringify(stripEmptyAssetFields(result), null, 2),
               },
             ],
           };
@@ -1763,7 +1767,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             content: [
               {
                 type: "text",
-                text: JSON.stringify(result, null, 2),
+                text: JSON.stringify(stripEmptyAssetFields(result), null, 2),
               },
             ],
           };

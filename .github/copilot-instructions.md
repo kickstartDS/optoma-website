@@ -173,6 +173,8 @@ The `import_content`, `import_content_at_position`, and `create_page_with_conten
 
 The `list_icons` tool returns all available icon identifiers (e.g. `arrow-right`, `star`, `email`, `phone`) that can be used in component icon fields such as hero `cta_icon`, feature `icon`, or contact-info `icon`. Always call `list_icons` before generating or importing content that includes icon fields to ensure only valid identifiers are used.
 
+The `list_stories` tool **returns metadata-only by default** (`excludeContent: true`): IDs, slugs, names, timestamps, and published status — no `content` field. This keeps responses small (~1,250 tokens for 25 stories vs ~125,000 with full content). Pass `excludeContent: false` only when your workflow needs to inspect `story.content` (e.g. content audits, SEO analysis, broken asset detection). The `get_story` and `search_content` tools automatically strip empty Storyblok asset boilerplate fields to further reduce response size.
+
 The MCP server supports **guided content generation** via six tools that produce higher-quality content than generating entire pages at once:
 
 - **`analyze_content_patterns`** — Returns structural patterns (component frequency, section sequences, sub-component item counts, page archetypes, field value distributions) from a **startup cache** — instant, no API call. The cache is also used internally by `plan_page`, `generate_section`, and `list_recipes`. Pass `refresh: true` after publishing new content to re-fetch.

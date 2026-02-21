@@ -1003,6 +1003,11 @@ async function executeListStories(
   ) as string;
   const page = this.getNodeParameter("page", itemIndex, 1) as number;
   const perPage = this.getNodeParameter("perPage", itemIndex, 25) as number;
+  const excludeContent = this.getNodeParameter(
+    "excludeContent",
+    itemIndex,
+    true
+  ) as boolean;
 
   try {
     const result = await listStories(client, {
@@ -1010,6 +1015,7 @@ async function executeListStories(
       startsWith: startsWith || undefined,
       page,
       perPage,
+      excludeContent,
     });
 
     return {

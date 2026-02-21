@@ -146,6 +146,7 @@ export {
   deleteStory,
   ensurePath,
   ensureUids,
+  stripEmptyAssetFields,
 } from "./stories.js";
 
 // ─── Component & asset introspection ────────────────────────────────

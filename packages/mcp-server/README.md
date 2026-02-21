@@ -6,15 +6,15 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Content Management Tools
 
-| Tool             | Description                                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `list_stories`   | List stories with filtering by slug prefix or content type                                                         |
-| `get_story`      | Get a single story by slug, ID, or UUID                                                                            |
-| `create_story`   | Create a new story with content (validates against Design System schema). Supports `path` for auto-folder creation |
-| `update_story`   | Update an existing story (validates against Design System schema)                                                  |
-| `delete_story`   | Delete a story                                                                                                     |
-| `search_content` | Full-text search across stories                                                                                    |
-| `ensure_path`    | Ensure a folder path exists (like `mkdir -p`), creating missing intermediate folders. Returns the folder ID        |
+| Tool             | Description                                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_stories`   | List stories with filtering by slug prefix or content type. Returns metadata-only by default; pass `excludeContent: false` for full content |
+| `get_story`      | Get a single story by slug, ID, or UUID (asset boilerplate auto-stripped)                                                                   |
+| `create_story`   | Create a new story with content (validates against Design System schema). Supports `path` for auto-folder creation                          |
+| `update_story`   | Update an existing story (validates against Design System schema)                                                                           |
+| `delete_story`   | Delete a story                                                                                                                              |
+| `search_content` | Full-text search across stories (asset boilerplate auto-stripped)                                                                           |
+| `ensure_path`    | Ensure a folder path exists (like `mkdir -p`), creating missing intermediate folders. Returns the folder ID                                 |
 
 ### AI Content Generation
 
@@ -777,13 +777,14 @@ When using this MCP server with LLM clients that have limited context windows (e
 
 | Tool                          | Typical Response | Est. Tokens       | Notes                                      |
 | ----------------------------- | ---------------- | ----------------- | ------------------------------------------ |
-| `list_stories` (default, 25)  | ~500 KB          | **~125,000**      | 🔴 Returns full nested content per story   |
-| `list_stories` (perPage: 5)   | ~100 KB          | **~25,000**       | Still large due to full content            |
-| `list_stories` (perPage: 100) | ~2 MB            | **~500,000**      | Will overflow most context windows         |
+| `list_stories` (default)      | ~5 KB            | **~1,250**        | ✅ Metadata-only (excludeContent: true)    |
+| `list_stories` (full content) | ~500 KB          | **~125,000**      | 🔴 Pass excludeContent: false for content  |
+| `list_stories` (perPage: 5)   | ~1 KB            | **~250**          | Metadata-only, small page                  |
 | `analyze_content_patterns`    | ~50 KB           | **~12,500**       | Large due to ~80 contextual field profiles |
 | `list_components`             | ~30–50 KB        | **~7,500–12,500** | All component schemas + composition rules  |
 | `list_recipes`                | ~15 KB           | **~3,750**        | Reasonable                                 |
-| `get_story` (single page)     | ~20 KB           | **~5,000**        | Scales with number of sections             |
+| `get_story` (single page)     | ~15 KB           | **~3,750**        | Asset fields stripped of empty boilerplate |
+| `search_content`              | ~10–40 KB        | **~2,500–10,000** | Asset fields stripped of empty boilerplate |
 | `scrape_url`                  | ~5–50 KB         | **~1,250–12,500** | Varies by page content                     |
 | `generate_content`            | ~10–30 KB        | **~2,500–7,500**  | Depends on section count                   |
 | `generate_section`            | ~5–15 KB         | **~1,250–3,750**  | Single section                             |
@@ -792,11 +793,12 @@ When using this MCP server with LLM clients that have limited context windows (e
 | `generate_seo`                | ~1–2 KB          | **~250–500**      | Small                                      |
 | `list_icons`                  | ~0.5 KB          | **~125**          | Tiny                                       |
 
-> **Why is `list_stories` so large?** The Storyblok Content Delivery API returns the full `content` tree for every story — all sections, all nested components, and all asset objects. A single Storyblok asset field alone is ~150 tokens of boilerplate (`id`, `alt`, `name`, `focus`, `title`, `source`, `filename`, `copyright`, `fieldtype`, `meta_data`, `is_external_url`). A content-rich page with 6 sections easily reaches 5,000+ tokens per story.
+> **`list_stories` is metadata-only by default.** It returns only story IDs, slugs, names, timestamps, and published status — no `content` field. Pass `excludeContent: false` to include the full content tree (needed for content audits, SEO analysis, broken asset detection). Additionally, `get_story` and `search_content` automatically strip empty Storyblok asset boilerplate (empty `alt`, `title`, `copyright`, etc.) to further reduce token usage.
 
 ### Recommendations for constrained contexts
 
-- **Use small page sizes:** `list_stories(perPage: 5)` instead of the default 25.
+- **Metadata is the default:** `list_stories` no longer returns content — most listing/discovery workflows just work.
+- **Opt in to content explicitly:** Pass `excludeContent: false` only when your workflow inspects `story.content` (e.g. SEO audits, broken asset detection).
 - **Always filter:** Use `startsWith` and/or `contentType` to narrow results.
 - **Prefer `analyze_content_patterns`** over `list_stories` when you need a structural overview — it returns aggregated statistics instead of raw content.
 - **Use `plan_page` → `generate_section`** workflow instead of `generate_content(sectionCount: N)` to keep each tool call small and incremental.

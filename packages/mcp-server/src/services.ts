@@ -38,6 +38,7 @@ import {
   deleteStory as sharedDeleteStory,
   ensurePath as sharedEnsurePath,
   ensureUids as sharedEnsureUids,
+  stripEmptyAssetFields,
   createContentClient,
   listComponents as sharedListComponents,
   getComponent as sharedGetComponent,
@@ -98,6 +99,7 @@ export {
 };
 export type { ValidationWarning, ContentTypeEntry, RootFieldMeta };
 export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
+export { stripEmptyAssetFields };
 
 // ─── Content Pattern Analysis ─────────────────────────────────────────
 // Re-exported from shared library. The function signature now takes a
@@ -157,6 +159,7 @@ export class StoryblokService {
     contentType?: string;
     page?: number;
     perPage?: number;
+    excludeContent?: boolean;
   }): Promise<unknown> {
     return sharedListStories(this.contentClient, options);
   }

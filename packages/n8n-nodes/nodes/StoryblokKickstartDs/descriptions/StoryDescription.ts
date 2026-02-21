@@ -125,6 +125,20 @@ export const storyFields: INodeProperties[] = [
       },
     },
   },
+  {
+    displayName: "Exclude Content",
+    name: "excludeContent",
+    type: "boolean",
+    default: true,
+    description:
+      "When enabled (default), only story metadata is returned (id, slug, name, timestamps). Disable to include the full content tree — needed for content inspection workflows but significantly increases response size.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["list"],
+      },
+    },
+  },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // Get operation fields

@@ -320,6 +320,7 @@ shared/storyblok-services/
 │   ├── guidance.ts        # Field-level compositional guidance (discovery, pruning, prompt assembly)
 │   ├── patterns.ts        # Content pattern analysis (component frequency, sequences, field profiles)
 │   ├── registry.ts        # Schema registry for multi-content-type support
+│   ├── stories.ts         # Story CRUD, listStories (excludeContent), stripEmptyAssetFields
 │   ├── assets.ts          # Asset download, upload to Storyblok, URL rewriting
 │   └── pipeline.ts        # High-level orchestrator (schema prep → OpenAI → transform)
 └── test/

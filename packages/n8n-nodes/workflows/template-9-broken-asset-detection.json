@@ -29,7 +29,8 @@
         "resource": "story",
         "operation": "list",
         "contentType": "page",
-        "perPage": 100
+        "perPage": 100,
+        "excludeContent": false
       },
       "id": "stories-1",
       "name": "List All Stories",

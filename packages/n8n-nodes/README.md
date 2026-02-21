@@ -300,12 +300,13 @@ Generate SEO metadata (title, description, keywords, OG image) for any content t
 
 List stories with optional filtering and pagination.
 
-| Parameter        | Type   | Required | Description                              |
-| ---------------- | ------ | -------- | ---------------------------------------- |
-| **Content Type** | String | No       | Filter by content type (default: `page`) |
-| **Starts With**  | String | No       | Filter by slug prefix (e.g. `en/`)       |
-| **Page**         | Number | No       | Page number (default: 1)                 |
-| **Per Page**     | Number | No       | Items per page, max 100 (default: 25)    |
+| Parameter           | Type    | Required | Description                                                                                                                                        |
+| ------------------- | ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Content Type**    | String  | No       | Filter by content type (default: `page`)                                                                                                           |
+| **Starts With**     | String  | No       | Filter by slug prefix (e.g. `en/`)                                                                                                                 |
+| **Page**            | Number  | No       | Page number (default: 1)                                                                                                                           |
+| **Per Page**        | Number  | No       | Items per page, max 100 (default: 25)                                                                                                              |
+| **Exclude Content** | Boolean | No       | Exclude story content from response (default: `true`). When true, only metadata is returned. Set to `false` for content audits, SEO analysis, etc. |
 
 #### Operation: Get
 

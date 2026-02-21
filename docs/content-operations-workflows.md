@@ -55,36 +55,36 @@ Externe Branchennews (RSS-Feeds, Newsletter) werden automatisch in Blogpost-Entw
 
 Einmal pro Woche crawlt n8n alle Stories und prüft auf typische Probleme: fehlende Bilder, leere Alt-Texte, zu kurze Texte, verwaiste Seiten.
 
-| Schritt            | Tool                         | Zweck                                                        |
-| ------------------ | ---------------------------- | ------------------------------------------------------------ |
-| Alle Stories laden | `list_stories` (paginiert)   | Komplettes Content-Inventar erfassen                         |
-| Details pro Story  | `get_story`                  | Vollständige Inhalte inspizieren                             |
-| Schema prüfen      | `get_component`              | Erwartete Felder pro Komponente kennen                       |
-| Regeln anwenden    | _n8n Code/Function Node_     | Prüfungen: leere Felder, Alt-Texte, Textlänge, defekte Links |
-| Report erstellen   | _n8n Spreadsheet/Slack Node_ | Audit-Report ans Team senden                                 |
+| Schritt            | Tool                                                | Zweck                                                        |
+| ------------------ | --------------------------------------------------- | ------------------------------------------------------------ |
+| Alle Stories laden | `list_stories` (paginiert, `excludeContent: false`) | Komplettes Content-Inventar erfassen                         |
+| Details pro Story  | `get_story`                                         | Vollständige Inhalte inspizieren                             |
+| Schema prüfen      | `get_component`                                     | Erwartete Felder pro Komponente kennen                       |
+| Regeln anwenden    | _n8n Code/Function Node_                            | Prüfungen: leere Felder, Alt-Texte, Textlänge, defekte Links |
+| Report erstellen   | _n8n Spreadsheet/Slack Node_                        | Audit-Report ans Team senden                                 |
 
 ### 5. SEO-Monitoring & -Optimierung
 
 Stories werden gegen SEO-Regeln geprüft (Meta-Titel, Description, Heading-Hierarchie, Bildoptimierung). Bei Verstößen wird automatisch ein Fix vorgeschlagen.
 
-| Schritt              | Tool                         | Zweck                                                     |
-| -------------------- | ---------------------------- | --------------------------------------------------------- |
-| Stories laden        | `list_stories` + `get_story` | Inhalte pro Seite holen                                   |
-| SEO analysieren      | _n8n Code Node_              | H1-Existenz, Meta-Länge, Alt-Texte, Keyword-Dichte prüfen |
-| Fix generieren       | `generate_content`           | KI schlägt verbesserte Meta-Texte / Headlines vor         |
-| Optional: einspielen | `update_story`               | Automatisch SEO-Fixes als Draft speichern                 |
-| Report               | _n8n E-Mail/Notion Node_     | SEO-Scorecard pro Seite                                   |
+| Schritt              | Tool                                                   | Zweck                                                     |
+| -------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
+| Stories laden        | `list_stories` (`excludeContent: false`) + `get_story` | Inhalte pro Seite holen                                   |
+| SEO analysieren      | _n8n Code Node_                                        | H1-Existenz, Meta-Länge, Alt-Texte, Keyword-Dichte prüfen |
+| Fix generieren       | `generate_content`                                     | KI schlägt verbesserte Meta-Texte / Headlines vor         |
+| Optional: einspielen | `update_story`                                         | Automatisch SEO-Fixes als Draft speichern                 |
+| Report               | _n8n E-Mail/Notion Node_                               | SEO-Scorecard pro Seite                                   |
 
 ### 6. Broken-Asset-Detektion
 
 Alle verwendeten Bilder in Stories werden mit der Asset-Library abgeglichen – fehlende oder verwaiste Assets werden erkannt.
 
-| Schritt       | Tool                         | Zweck                                         |
-| ------------- | ---------------------------- | --------------------------------------------- |
-| Stories laden | `list_stories` + `get_story` | Alle Bild-URLs aus Content extrahieren        |
-| Assets listen | `list_assets` (paginiert)    | Komplettes Asset-Inventar                     |
-| Abgleich      | _n8n Code Node_              | Verwaiste Assets & fehlende Referenzen finden |
-| Report        | _n8n Slack/Spreadsheet Node_ | Cleanup-Liste fürs Team                       |
+| Schritt       | Tool                                                   | Zweck                                         |
+| ------------- | ------------------------------------------------------ | --------------------------------------------- |
+| Stories laden | `list_stories` (`excludeContent: false`) + `get_story` | Alle Bild-URLs aus Content extrahieren        |
+| Assets listen | `list_assets` (paginiert)                              | Komplettes Asset-Inventar                     |
+| Abgleich      | _n8n Code Node_                                        | Verwaiste Assets & fehlende Referenzen finden |
+| Report        | _n8n Slack/Spreadsheet Node_                           | Cleanup-Liste fürs Team                       |
 
 ---
 
@@ -131,23 +131,23 @@ Bestehende Stories werden automatisch in andere Sprachen übersetzt und als neue
 
 Stories, die seit X Monaten nicht aktualisiert wurden, werden identifiziert. Optional generiert die KI Aktualisierungsvorschläge.
 
-| Schritt             | Tool                   | Zweck                                 |
-| ------------------- | ---------------------- | ------------------------------------- |
-| Alle Stories laden  | `list_stories`         | Timestamps aller Stories prüfen       |
-| Veraltete filtern   | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate       |
-| Refresh vorschlagen | `generate_content`     | KI schlägt aktualisierte Inhalte vor  |
-| Report              | _n8n E-Mail Node_      | „Diese 12 Seiten brauchen ein Update" |
+| Schritt             | Tool                   | Zweck                                                               |
+| ------------------- | ---------------------- | ------------------------------------------------------------------- |
+| Alle Stories laden  | `list_stories`         | Timestamps aller Stories prüfen (Metadata-only-Standard reicht aus) |
+| Veraltete filtern   | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate                                     |
+| Refresh vorschlagen | `generate_content`     | KI schlägt aktualisierte Inhalte vor                                |
+| Report              | _n8n E-Mail Node_      | „Diese 12 Seiten brauchen ein Update"                               |
 
 ### 11. Content-Statistik-Dashboard
 
 Regelmäßig wird ein Snapshot erstellt: Wie viele Stories pro Typ, wie viele Assets, durchschnittliche Sektionen pro Seite etc.
 
-| Schritt             | Tool                                 | Zweck                                                |
-| ------------------- | ------------------------------------ | ---------------------------------------------------- |
-| Stories zählen      | `list_stories` (pro `contentType`)   | Content-Inventar nach Typ                            |
-| Assets zählen       | `list_assets`                        | Medien-Statistiken                                   |
-| Komponenten-Nutzung | `analyze_content_patterns`           | Komponentenfrequenz, Sektionsfolgen, Sub-Item-Counts |
-| Dashboard           | _n8n Google Sheets / Dashboard Node_ | Wöchentlicher Content-KPI-Report                     |
+| Schritt             | Tool                                 | Zweck                                                         |
+| ------------------- | ------------------------------------ | ------------------------------------------------------------- |
+| Stories zählen      | `list_stories` (pro `contentType`)   | Content-Inventar nach Typ (Metadata-only-Standard reicht aus) |
+| Assets zählen       | `list_assets`                        | Medien-Statistiken                                            |
+| Komponenten-Nutzung | `analyze_content_patterns`           | Komponentenfrequenz, Sektionsfolgen, Sub-Item-Counts          |
+| Dashboard           | _n8n Google Sheets / Dashboard Node_ | Wöchentlicher Content-KPI-Report                              |
 
 ### 12. Automatische Archivierung
 
@@ -166,31 +166,31 @@ Abgelaufene Event-Seiten oder veraltete Kampagnen-Seiten werden automatisch depu
 
 Alle im MCP Server verfügbaren Tools auf einen Blick:
 
-| Kategorie          | Tool                         | Beschreibung                                                                                                       |
-| ------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern                                            |
-|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                                                    |
-|                    | `create_story`               | Neue Story mit Basisinhalt anlegen (unterstützt `path` für automatische Ordnererstellung)                          |
-|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren (unterstützt `path`)                       |
-|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                                                                |
-|                    | `delete_story`               | Story dauerhaft löschen                                                                                            |
-|                    | `search_content`             | Volltextsuche über alle Stories                                                                                    |
-|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                                                                |
-|                    | `ensure_path`                | Ordnerpfad sicherstellen (wie `mkdir -p`), fehlende Zwischenordner anlegen, Ordner-ID zurückgeben                  |
-| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                                   |
-|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                                    |
-| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                                    |
-| **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish)               |
-|                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space                           |
-|                    | `plan_page`                  | KI-gestützte Seitenstruktur-Planung anhand von Intent und Website-Mustern (bei Hybrid-Typen inkl. `rootFieldMeta`) |
-|                    | `generate_section`           | Einzelne Sektion generieren mit automatischer Site-Kontext-Injektion und Übergangshinweisen                        |
-|                    | `generate_root_field`        | Einzelnes Root-Feld für Hybrid-Content-Typen generieren (z.B. `head`, `aside`, `cta` bei blog-post)                |
-|                    | `generate_seo`               | SEO-Metadaten (Titel, Description, Keywords, OG-Image) für beliebigen Content-Typ generieren                       |
-| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                                                        |
-|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                                                            |
-| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                                                     |
-| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)                                        |
-| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                                                       |
+| Kategorie          | Tool                         | Beschreibung                                                                                                                                           |
+| ------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Stories**        | `list_stories`               | Stories im Space auflisten, optional nach Content-Typ oder Slug filtern. Standardmäßig nur Metadaten; `excludeContent: false` für vollständigen Inhalt |
+|                    | `get_story`                  | Einzelne Story mit vollständigem Inhalt abrufen                                                                                                        |
+|                    | `create_story`               | Neue Story mit Basisinhalt anlegen (unterstützt `path` für automatische Ordnererstellung)                                                              |
+|                    | `create_page_with_content`   | Neue Seite mit vorgefertigten Sektionen erstellen, UIDs auto-generieren (unterstützt `path`)                                                           |
+|                    | `update_story`               | Bestehende Story aktualisieren (Inhalt, Name, Slug)                                                                                                    |
+|                    | `delete_story`               | Story dauerhaft löschen                                                                                                                                |
+|                    | `search_content`             | Volltextsuche über alle Stories                                                                                                                        |
+|                    | `get_ideas`                  | Ideen/Notizen aus dem Space abrufen                                                                                                                    |
+|                    | `ensure_path`                | Ordnerpfad sicherstellen (wie `mkdir -p`), fehlende Zwischenordner anlegen, Ordner-ID zurückgeben                                                      |
+| **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                                                                       |
+|                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                                                                        |
+| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                                                                        |
+| **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish)                                                   |
+|                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space                                                               |
+|                    | `plan_page`                  | KI-gestützte Seitenstruktur-Planung anhand von Intent und Website-Mustern (bei Hybrid-Typen inkl. `rootFieldMeta`)                                     |
+|                    | `generate_section`           | Einzelne Sektion generieren mit automatischer Site-Kontext-Injektion und Übergangshinweisen                                                            |
+|                    | `generate_root_field`        | Einzelnes Root-Feld für Hybrid-Content-Typen generieren (z.B. `head`, `aside`, `cta` bei blog-post)                                                    |
+|                    | `generate_seo`               | SEO-Metadaten (Titel, Description, Keywords, OG-Image) für beliebigen Content-Typ generieren                                                           |
+| **Komponenten**    | `list_components`            | Alle Komponenten-Schemas im Space auflisten                                                                                                            |
+|                    | `get_component`              | Detailliertes Schema einer einzelnen Komponente abrufen                                                                                                |
+| **Assets**         | `list_assets`                | Medien-Assets (Bilder, Dateien) auflisten mit optionaler Suche                                                                                         |
+| **Icons**          | `list_icons`                 | Alle verfügbaren Icon-Bezeichner auflisten (für Icon-Felder in Komponenten)                                                                            |
+| **Web-Scraping**   | `scrape_url`                 | Webseite herunterladen und in sauberes Markdown konvertieren                                                                                           |
 
 ---
 
