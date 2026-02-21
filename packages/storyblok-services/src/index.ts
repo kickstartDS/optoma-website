@@ -79,6 +79,7 @@ export {
   stripStoryblokImageService,
   createAssetObject,
   wrapAssetUrls,
+  normalizeAssetFieldNames,
 } from "./assets.js";
 export type {
   UploadAssetsOptions,

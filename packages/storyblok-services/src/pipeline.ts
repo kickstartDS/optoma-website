@@ -73,6 +73,12 @@ export interface GenerateAndPrepareOptions {
    * When provided, used for merging defaults into generated content.
    */
   deepMerge?: (a: any, b: any) => any;
+  /**
+   * Optional map of component name → set of flat asset field names.
+   * When provided, these fields are skipped during `flattenNestedObjects`
+   * so that scalar URL fields are not incorrectly underscore-split.
+   */
+  flatAssetFields?: Map<string, Set<string>>;
 }
 
 /** Result of the end-to-end pipeline. */
@@ -107,6 +113,7 @@ export async function generateAndPrepareContent(
     model,
     defaultObjectForSchema,
     deepMerge,
+    flatAssetFields,
   } = options;
 
   // 1. Prepare schema
@@ -147,7 +154,10 @@ export async function generateAndPrepareContent(
   );
 
   // 4. Flatten for Storyblok
-  const storyblokContent = processForStoryblok(designSystemProps);
+  const storyblokContent = processForStoryblok(
+    designSystemProps,
+    flatAssetFields
+  );
 
   return {
     rawResponse,

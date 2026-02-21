@@ -70,6 +70,21 @@ export interface ValidationRules {
    * (i.e. it's not a top-level container slot like `section.components`).
    */
   subComponentMap: Record<string, string>;
+
+  /**
+   * Maps component names to the set of property names that are "flat asset
+   * fields" — i.e. `{ type: "string", format: "image" | "video" }` in the
+   * Design System JSON Schema.
+   *
+   * These fields hold a single URL string (not a nested object with `src`,
+   * `alt`, etc.). They must NOT be flattened by underscore splitting and
+   * must be distinguished from nested image objects during content
+   * normalization.
+   *
+   * Example: `"teaser-card"` → `Set(["image"])`,
+   *          `"cta"` → `Set(["backgroundImage"])`
+   */
+  flatAssetFields: Map<string, Set<string>>;
 }
 
 /** Describes a single validation error. */
@@ -128,6 +143,7 @@ export function buildValidationRules(
   const containerSlots = new Map<string, Set<string>>();
   const allKnownComponents = new Set<string>();
   const rootArrayFields: string[] = [];
+  const flatAssetFields = new Map<string, Set<string>>();
 
   // ── Discover top-level array properties that hold containers ────
   const rootProps = derefSchema.properties || {};
@@ -146,7 +162,13 @@ export function buildValidationRules(
         rootArrayFields.push(key);
 
         // Walk the items to discover container slots inside
-        walkSchemaNode(value.items, key, containerSlots, allKnownComponents);
+        walkSchemaNode(
+          value.items,
+          key,
+          containerSlots,
+          allKnownComponents,
+          flatAssetFields
+        );
       }
     }
   }
@@ -198,6 +220,7 @@ export function buildValidationRules(
     allKnownComponents,
     rootArrayFields,
     subComponentMap,
+    flatAssetFields,
   };
 }
 
@@ -217,11 +240,32 @@ function walkSchemaNode(
   schemaNode: Record<string, any>,
   contextPath: string,
   containerSlots: Map<string, Set<string>>,
-  allKnownComponents: Set<string>
+  allKnownComponents: Set<string>,
+  flatAssetFields?: Map<string, Set<string>>
 ): void {
   if (!schemaNode || typeof schemaNode !== "object") return;
 
   const properties = schemaNode.properties || {};
+
+  // ── Discover flat asset fields (type: "string", format: "image"|"video") ──
+  // These are scalar URL fields that must NOT be underscore-split during
+  // flattening. Collected per component name (contextPath).
+  if (flatAssetFields) {
+    const componentName = extractComponentName(schemaNode);
+    if (componentName) {
+      for (const [propKey, propValue] of Object.entries<any>(properties)) {
+        if (
+          propValue &&
+          propValue.type === "string" &&
+          (propValue.format === "image" || propValue.format === "video")
+        ) {
+          const existing = flatAssetFields.get(componentName) || new Set();
+          existing.add(propKey);
+          flatAssetFields.set(componentName, existing);
+        }
+      }
+    }
+  }
 
   for (const [propKey, propValue] of Object.entries<any>(properties)) {
     if (!propValue || typeof propValue !== "object") continue;
@@ -241,7 +285,13 @@ function walkSchemaNode(
             allowedTypes.add(name);
             allKnownComponents.add(name);
             // Recurse into the variant to find nested containers
-            walkSchemaNode(variant, name, containerSlots, allKnownComponents);
+            walkSchemaNode(
+              variant,
+              name,
+              containerSlots,
+              allKnownComponents,
+              flatAssetFields
+            );
           }
         }
 
@@ -257,7 +307,13 @@ function walkSchemaNode(
           containerSlots.set(slotPath, new Set([name]));
           allKnownComponents.add(name);
           // Recurse into the item schema
-          walkSchemaNode(items, name, containerSlots, allKnownComponents);
+          walkSchemaNode(
+            items,
+            name,
+            containerSlots,
+            allKnownComponents,
+            flatAssetFields
+          );
         } else {
           // The items don't have a component name but may contain
           // nested container arrays — recurse anyway
@@ -265,7 +321,8 @@ function walkSchemaNode(
             items,
             `${contextPath}.${propKey}`,
             containerSlots,
-            allKnownComponents
+            allKnownComponents,
+            flatAssetFields
           );
         }
       }

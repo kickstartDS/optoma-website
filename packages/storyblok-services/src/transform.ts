@@ -130,10 +130,15 @@ export function processOpenAiResponse(
  * with user-facing `type` props in Storyblok (e.g. CTA variant).
  *
  * @param page - Design System page props (with nested objects and `type` fields).
+ * @param flatAssetFields - Optional map of component name → set of flat asset
+ *   field names (from `ValidationRules.flatAssetFields`). When provided, these
+ *   fields are skipped during flattening — they are scalar URL strings, not
+ *   nested objects that should be underscore-split.
  * @returns A new object with Storyblok-compatible flat props.
  */
 export function processForStoryblok(
-  page: Record<string, any>
+  page: Record<string, any>,
+  flatAssetFields?: Map<string, Set<string>>
 ): Record<string, any> {
   const result = structuredClone(page);
 
@@ -146,9 +151,11 @@ export function processForStoryblok(
         !Array.isArray(value) &&
         value.type
       ) {
-        value.component = value.type;
+        const componentName = value.type;
+        value.component = componentName;
         delete value.type;
-        flattenNestedObjects(value);
+        const skipFields = flatAssetFields?.get(componentName);
+        flattenNestedObjects(value, skipFields);
       }
     },
     { traversalType: "breadth-first" }
@@ -159,7 +166,8 @@ export function processForStoryblok(
     section.aiDraft = true;
     section.component = "section";
     delete section.type;
-    flattenNestedObjects(section);
+    const sectionSkipFields = flatAssetFields?.get("section");
+    flattenNestedObjects(section, sectionSkipFields);
   }
 
   // Final safety pass: strip `type` from any node that already has
@@ -297,10 +305,22 @@ function injectNestedComponentTypes(
  * Objects that have a `type` or `component` property are left intact
  * (they are component blocks, not nested plain objects).
  *
+ * Properties listed in `skipFields` are also left intact — used for flat
+ * asset fields (`{ type: "string", format: "image" }` in the schema) that
+ * should remain as scalar URL strings rather than being flattened.
+ *
  * **Mutates** the input object in place.
+ *
+ * @param value - The object to flatten.
+ * @param skipFields - Optional set of property names to skip (e.g. flat
+ *   asset fields that must not be underscore-split).
  */
-export function flattenNestedObjects(value: Record<string, any>): void {
+export function flattenNestedObjects(
+  value: Record<string, any>,
+  skipFields?: Set<string>
+): void {
   for (const prop of Object.keys(value)) {
+    if (skipFields?.has(prop)) continue;
     const child = value[prop];
     if (
       child &&

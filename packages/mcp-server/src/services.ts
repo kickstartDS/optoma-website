@@ -11,6 +11,7 @@ import {
   importAtPosition,
   uploadAndReplaceAssets,
   wrapAssetUrls,
+  normalizeAssetFieldNames,
   generateStructuredContent,
   prepareSchemaForOpenAi,
   getComponentPresetSchema,
@@ -311,6 +312,14 @@ export class StoryblokService {
     const rootArrayField = entry.rootArrayFields[0] || "section";
     let sections = options.page.content.section;
 
+    // Normalize wrongly-flattened asset field names before validation
+    if (entry.rules.flatAssetFields?.size) {
+      normalizeAssetFieldNames(
+        sections as Record<string, any>[],
+        entry.rules.flatAssetFields
+      );
+    }
+
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
       const validationResult = validateSections(
@@ -323,7 +332,10 @@ export class StoryblokService {
     }
 
     if (!options.skipTransform) {
-      const transformed = processForStoryblok({ [rootArrayField]: sections });
+      const transformed = processForStoryblok(
+        { [rootArrayField]: sections },
+        entry.rules.flatAssetFields
+      );
       sections = transformed[rootArrayField];
     }
     return importByPrompterReplacement(this.managementClient, this.spaceId, {
@@ -363,6 +375,14 @@ export class StoryblokService {
       options.targetField || entry.rootArrayFields[0] || "section";
     let sections = options.page.content.section;
 
+    // Normalize wrongly-flattened asset field names before validation
+    if (entry.rules.flatAssetFields?.size) {
+      normalizeAssetFieldNames(
+        sections as Record<string, any>[],
+        entry.rules.flatAssetFields
+      );
+    }
+
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
       const validationResult = validateSections(
@@ -375,7 +395,10 @@ export class StoryblokService {
     }
 
     if (!options.skipTransform) {
-      const transformed = processForStoryblok({ [rootArrayField]: sections });
+      const transformed = processForStoryblok(
+        { [rootArrayField]: sections },
+        entry.rules.flatAssetFields
+      );
       sections = transformed[rootArrayField];
     }
     return importAtPosition(this.managementClient, this.spaceId, {
@@ -569,6 +592,7 @@ export class ContentGenerationService {
       prompt: options.prompt,
       pageSchema: schema,
       schemaOptions,
+      flatAssetFields: entry.rules.flatAssetFields,
     });
 
     return {

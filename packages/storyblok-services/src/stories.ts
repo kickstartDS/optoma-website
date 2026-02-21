@@ -15,7 +15,11 @@ import type {
   CreatePageWithContentOptions,
   UpdateStoryOptions,
 } from "./types.js";
-import { uploadAndReplaceAssets, wrapAssetUrls } from "./assets.js";
+import {
+  uploadAndReplaceAssets,
+  wrapAssetUrls,
+  normalizeAssetFieldNames,
+} from "./assets.js";
 import {
   validateSections,
   validatePageContent,
@@ -270,6 +274,25 @@ export async function createPageWithContent(
     rootArrayField: string;
   }
 ): Promise<Record<string, any>> {
+  // 0. Normalize wrongly-flattened asset field names (e.g. image_src → image)
+  // Must run before validation and asset wrapping so field names are correct.
+  if (options.validationRules.flatAssetFields?.size) {
+    normalizeAssetFieldNames(
+      options.sections as Record<string, any>[],
+      options.validationRules.flatAssetFields
+    );
+    if (options.rootFields) {
+      for (const value of Object.values(options.rootFields)) {
+        if (value && typeof value === "object") {
+          normalizeAssetFieldNames(
+            value as Record<string, any>,
+            options.validationRules.flatAssetFields
+          );
+        }
+      }
+    }
+  }
+
   // 1. Validate sections
   if (!options.skipValidation) {
     const validationResult = validateSections(
@@ -374,11 +397,21 @@ export async function updateStory(
   validationRules?: ValidationRules
 ): Promise<Record<string, any>> {
   // Validate updated content if applicable
-  if (!options.skipValidation && options.content && validationRules) {
-    const content = options.content as Record<string, any>;
-    const validationResult = validatePageContent(content, validationRules);
-    if (!validationResult.valid) {
-      throw new Error(formatValidationErrors(validationResult.errors));
+  if (options.content && validationRules) {
+    // Normalize wrongly-flattened asset field names before validation
+    if (validationRules.flatAssetFields?.size) {
+      normalizeAssetFieldNames(
+        options.content as Record<string, any>,
+        validationRules.flatAssetFields
+      );
+    }
+
+    if (!options.skipValidation) {
+      const content = options.content as Record<string, any>;
+      const validationResult = validatePageContent(content, validationRules);
+      if (!validationResult.valid) {
+        throw new Error(formatValidationErrors(validationResult.errors));
+      }
     }
   }
 

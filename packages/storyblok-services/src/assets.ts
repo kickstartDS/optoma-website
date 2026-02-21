@@ -518,6 +518,10 @@ export function createAssetObject(
  *
  * These fields have `"type": "asset"` in the Storyblok component definitions
  * and expect a structured asset object rather than a plain URL string.
+ *
+ * @deprecated Prefer passing `flatAssetFields` from `ValidationRules` to
+ *   the schema-aware `wrapAssetUrlsWithSchema` function instead of relying
+ *   on this hardcoded set. This fallback will be removed in a future version.
  */
 const KNOWN_ASSET_FIELDS = new Set([
   "author_image",
@@ -570,4 +574,123 @@ export function wrapAssetUrls(content: Record<string, any>): void {
       parent[key] = createAssetObject(value);
     }
   });
+}
+
+// ─── Asset field normalization ────────────────────────────────────────
+
+/**
+ * Normalize wrongly-flattened asset field names in a Storyblok content tree.
+ *
+ * When LLMs manually construct content (outside the generation pipeline),
+ * they may follow the pattern of components that use nested image objects
+ * (`{ image: { src, alt } }` → `image_src`, `image_alt`) and apply it to
+ * components where `image` is a flat `{ type: "string", format: "image" }`
+ * field. This produces `image_src` instead of the correct `image` — which
+ * causes rendering failures on the frontend (`unflatten()` would split
+ * `image_src` into `{ image: { src } }`, but the component expects a string).
+ *
+ * This function walks the content tree and, for each component node:
+ * 1. Looks up its `flatAssetFields` from the schema-derived map.
+ * 2. For each flat asset field name (e.g. `"image"`):
+ *    a. If a wrongly-flattened variant exists (e.g. `image_src`), renames it.
+ *    b. If the field contains a nested object `{ src: "url" }` instead of a
+ *       plain string, extracts the `src` (or `filename`) value.
+ *
+ * **Mutates** the content tree in place.
+ *
+ * @param content - The Storyblok content tree (sections array or single node).
+ * @param flatAssetFields - Map of component name → set of flat asset field
+ *   names, from `ValidationRules.flatAssetFields`.
+ */
+export function normalizeAssetFieldNames(
+  content: Record<string, any> | Record<string, any>[],
+  flatAssetFields: Map<string, Set<string>>
+): void {
+  if (!flatAssetFields || flatAssetFields.size === 0) return;
+
+  const nodes = Array.isArray(content) ? content : [content];
+  for (const node of nodes) {
+    normalizeNode(node, flatAssetFields);
+  }
+}
+
+/**
+ * Recursively normalize a single content node and its children.
+ */
+function normalizeNode(
+  node: Record<string, any>,
+  flatAssetFields: Map<string, Set<string>>
+): void {
+  if (!node || typeof node !== "object" || Array.isArray(node)) return;
+
+  const componentName = node.component;
+  if (typeof componentName === "string") {
+    const flatFields = flatAssetFields.get(componentName);
+    if (flatFields) {
+      for (const fieldName of flatFields) {
+        // Case 1: The correct field is missing but a flattened variant exists.
+        // E.g. `image_src` exists but the schema expects `image` as a flat string.
+        if (
+          node[fieldName] === undefined ||
+          node[fieldName] === null ||
+          node[fieldName] === ""
+        ) {
+          const srcKey = `${fieldName}_src`;
+          if (node[srcKey] !== undefined) {
+            // Extract the URL value from the wrongly-named field
+            node[fieldName] = extractUrlValue(node[srcKey]);
+            delete node[srcKey];
+
+            // Also clean up other flattened sub-properties (e.g. image_alt)
+            for (const key of Object.keys(node)) {
+              if (key.startsWith(`${fieldName}_`) && key !== fieldName) {
+                delete node[key];
+              }
+            }
+          }
+        }
+
+        // Case 2: The field exists but contains a nested object instead of a string.
+        // E.g. `image: { src: "url", alt: "text" }` instead of `image: "url"`.
+        if (
+          node[fieldName] !== undefined &&
+          typeof node[fieldName] === "object" &&
+          node[fieldName] !== null &&
+          !Array.isArray(node[fieldName]) &&
+          node[fieldName].fieldtype !== "asset"
+        ) {
+          node[fieldName] = extractUrlValue(node[fieldName]);
+        }
+      }
+    }
+  }
+
+  // Recurse into child properties
+  for (const value of Object.values(node)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item === "object" && item !== null) {
+          normalizeNode(item, flatAssetFields);
+        }
+      }
+    } else if (typeof value === "object" && value !== null) {
+      normalizeNode(value, flatAssetFields);
+    }
+  }
+}
+
+/**
+ * Extract a URL string from a value that may be a plain string, a nested
+ * object with `src`/`filename`, or a Storyblok asset object.
+ */
+function extractUrlValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+    const obj = value as Record<string, any>;
+    // Storyblok asset object
+    if (obj.filename) return obj.filename;
+    // Nested image object from Design System
+    if (obj.src) return obj.src;
+  }
+  return "";
 }
