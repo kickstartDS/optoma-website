@@ -1824,13 +1824,15 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           } else {
             // Use the correct validation rules for the content type
             const contentTypeForAnalysis = validated.contentType || "page";
-            const rules = registry.has(contentTypeForAnalysis)
-              ? registry.get(contentTypeForAnalysis).rules
-              : PAGE_VALIDATION_RULES;
+            const registryEntry = registry.has(contentTypeForAnalysis)
+              ? registry.get(contentTypeForAnalysis)
+              : null;
+            const rules = registryEntry?.rules ?? PAGE_VALIDATION_RULES;
+            const derefSchema = registryEntry?.schema;
             analysis = await analyzeContentPatterns(
               storyblokService.getContentClient(),
               rules,
-              validated
+              { ...validated, derefSchema }
             );
             // Update the cache when this is the default query
             if (isDefaultQuery) {
@@ -1931,9 +1933,13 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
           let patternsSource: ContentPatternAnalysis | null = null;
           if (validated.startsWith) {
             const planContentTypeForPatterns = validated.contentType || "page";
-            const patternRules = registry.has(planContentTypeForPatterns)
-              ? registry.get(planContentTypeForPatterns).rules
-              : PAGE_VALIDATION_RULES;
+            const planRegistryEntry = registry.has(planContentTypeForPatterns)
+              ? registry.get(planContentTypeForPatterns)
+              : null;
+            const patternRules =
+              planRegistryEntry?.rules ?? PAGE_VALIDATION_RULES;
+            const patternSchema =
+              planRegistryEntry?.schema ?? registry.page.schema;
             console.error(
               `[MCP] plan_page: fetching filtered patterns (startsWith: ${validated.startsWith})...`
             );
@@ -1943,6 +1949,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
               {
                 contentType: planContentTypeForPatterns,
                 startsWith: validated.startsWith,
+                derefSchema: patternSchema,
               }
             );
           } else {
