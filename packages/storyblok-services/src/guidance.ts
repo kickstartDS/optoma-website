@@ -155,8 +155,53 @@ export function discoverStylisticFields(
         continue;
       // Skip nested arrays (sub-component slots)
       if (propSchema.type === "array") continue;
-      // Skip object fields (nested structures)
-      if (propSchema.type === "object") continue;
+
+      // Recurse into object fields (e.g. section.headline, section.content)
+      // to discover nested enum/boolean properties, using Storyblok's flat
+      // naming convention (parent_child).
+      if (propSchema.type === "object") {
+        if (propSchema.properties) {
+          for (const [subPropName, subPropSchema] of Object.entries<any>(
+            propSchema.properties
+          )) {
+            if (!subPropSchema || typeof subPropSchema !== "object") continue;
+            if (
+              subPropName === "type" ||
+              subPropName === "component" ||
+              subPropName === "_uid"
+            )
+              continue;
+
+            const flatKey = `${propName}_${subPropName}`;
+
+            if (
+              subPropSchema.type === "string" &&
+              Array.isArray(subPropSchema.enum)
+            ) {
+              fields.push({
+                field: flatKey,
+                type: "enum",
+                values: subPropSchema.enum.map(String),
+                defaultValue:
+                  subPropSchema.default !== undefined
+                    ? String(subPropSchema.default)
+                    : undefined,
+              });
+            } else if (subPropSchema.type === "boolean") {
+              fields.push({
+                field: flatKey,
+                type: "boolean",
+                values: ["true", "false"],
+                defaultValue:
+                  subPropSchema.default !== undefined
+                    ? String(subPropSchema.default)
+                    : undefined,
+              });
+            }
+          }
+        }
+        continue;
+      }
 
       if (propSchema.type === "string" && Array.isArray(propSchema.enum)) {
         fields.push({
@@ -228,6 +273,37 @@ export function discoverPresenceFields(
           propName.includes("cta");
         if (isCTALike) {
           fields.push({ field: propName, type: "array-presence" });
+        }
+      }
+
+      // Recurse into object fields (e.g. section.headline, section.content)
+      // using Storyblok's flat naming convention (parent_child).
+      if (propSchema.type === "object" && propSchema.properties) {
+        for (const [subPropName, subPropSchema] of Object.entries<any>(
+          propSchema.properties
+        )) {
+          if (!subPropSchema || typeof subPropSchema !== "object") continue;
+
+          const flatKey = `${propName}_${subPropName}`;
+
+          if (subPropSchema.type === "string") {
+            const isHeadlineLike =
+              flatKey.includes("headline") || subPropName.includes("sub");
+            const isMarkdown = subPropSchema.format === "markdown";
+            if (isHeadlineLike || isMarkdown) {
+              fields.push({ field: flatKey, type: "string-presence" });
+            }
+          }
+
+          if (subPropSchema.type === "array") {
+            const isCTALike =
+              subPropName === "buttons" ||
+              subPropName.includes("button") ||
+              subPropName.includes("cta");
+            if (isCTALike) {
+              fields.push({ field: flatKey, type: "array-presence" });
+            }
+          }
         }
       }
     }
