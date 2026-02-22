@@ -183,11 +183,11 @@ export async function analyzeContentPatterns(
     const sFields = stylisticFields.get(componentType) || [];
     for (const spec of sFields) {
       const rawValue = node[spec.field];
-      const value =
-        rawValue !== undefined && rawValue !== null
-          ? String(rawValue)
-          : spec.defaultValue ?? "";
-      trackField(accKey, spec.field, value);
+      // Skip tracking when the value is absent from the content node.
+      // Absent values should not be counted as the schema default —
+      // only explicitly-set values inform the guidance distribution.
+      if (rawValue === undefined || rawValue === null) continue;
+      trackField(accKey, spec.field, String(rawValue));
     }
 
     const pFields = presenceFields.get(componentType) || [];
@@ -294,10 +294,9 @@ export async function analyzeContentPatterns(
                 const sFields = stylisticFields.get(sectionType) || [];
                 for (const sSpec of sFields) {
                   const sValue = item[sSpec.field];
-                  const sValStr =
-                    sValue !== undefined && sValue !== null
-                      ? String(sValue)
-                      : sSpec.defaultValue ?? "";
+                  // Skip absent container fields — only explicitly-set values
+                  if (sValue === undefined || sValue === null) continue;
+                  const sValStr = String(sValue);
                   // Only track non-default container settings
                   if (sSpec.defaultValue && sValStr !== sSpec.defaultValue) {
                     const dim2bKey = `${childType}|containedIn:${sectionType}.${sSpec.field}=${sValStr}`;
