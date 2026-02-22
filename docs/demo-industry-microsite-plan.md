@@ -587,7 +587,7 @@ HANNOVER MESSE is the natural flagship event for FALKENBERG Precision. Its "Auto
 
 ### Demo Products for HANNOVER MESSE 2026
 
-FALKENBERG will showcase 5 products at HANNOVER MESSE 2026. Each product gets a dedicated promo landing page generated via the n8n workflow under the path `industry/hannover-messe-2026/{product-slug}`.
+FALKENBERG will showcase 6 products at HANNOVER MESSE 2026. Each product gets a dedicated promo landing page generated via the n8n workflow under the path `industry/hannover-messe-2026/{product-slug}`.
 
 ---
 
@@ -745,6 +745,38 @@ The FalkenSense CapLine CS-350 Hygienic is a capacitive proximity and displaceme
 **Target Audience:** Pharmaceutical production engineers and quality/compliance managers; food & beverage process engineers; semiconductor fab equipment designers; cleanroom equipment OEMs.
 
 **Landing Page Tone:** Clean, precise, compliance-aware. Emphasize certifications (EHEDG, FDA, ISO) and hygienic design. Speak the language of regulated industries — validation, traceability, audit trails. Professional trust-building.
+
+---
+
+#### Product 6: FalkenInspect MultiScan M-3000
+
+| Field            | Value                                           |
+| ---------------- | ----------------------------------------------- |
+| **Product Name** | FalkenInspect MultiScan M-3000                  |
+| **Category**     | Automated Multi-Sensor Measurement System       |
+| **Slug**         | `industry/hannover-messe-2026/multiscan-m-3000` |
+| **Tagline**      | "One Station. Every Dimension. Zero Defects."   |
+| **Status**       | New Product Launch — Turnkey Inline Inspection  |
+
+**Description:**
+The FalkenInspect MultiScan M-3000 is FALKENBERG's first turnkey automated measurement station, combining optical, inductive, and capacitive sensors in a single inspection cell. Designed for 100% inline quality inspection on production lines, the M-3000 measures up to 48 dimensional features per part in under 3 seconds — replacing manual CMM sampling that catches only 1–2% of production. The system uses a 6-axis robotic sensor arm, automatic part recognition via integrated vision, and real-time SPC dashboards streamed through FalkenConnect. Pre-configured measurement recipes for automotive, medical device, and electronics applications reduce commissioning time from weeks to days.
+
+**Key Features:**
+
+- Multi-sensor fusion: optical (±0.1 µm), inductive (±0.5 µm), and capacitive (±1 µm) sensors in one cell
+- 48 measurement features per part in under 3 seconds cycle time
+- 6-axis robotic sensor arm with automatic tool change between sensor types
+- Integrated 2D/3D vision for automatic part recognition and alignment — no fixtures required
+- Real-time SPC dashboards and trend analysis via FalkenConnect IoT Gateway
+- Pre-configured measurement recipes for common part families (reduce commissioning from weeks to days)
+- Compact footprint (1.8 × 1.2 m) fits into existing production lines without layout changes
+
+**Trade Fair Messaging:**
+"Meet the future of inline quality inspection at HANNOVER MESSE 2026. The new FalkenInspect MultiScan M-3000 replaces slow CMM sampling with 100% automated measurement — 48 features per part in under 3 seconds. Watch a live demo of our multi-sensor robotic inspection cell at Hall 11, Stand B42 and see how three sensor technologies work together in one compact station."
+
+**Target Audience:** Quality managers transitioning from CMM sampling to 100% inline inspection; production engineers seeking to reduce scrap and rework costs; automotive Tier-1 suppliers facing OEM mandates for 100% traceability; plant managers evaluating ROI of automated inspection vs. manual quality control.
+
+**Landing Page Tone:** Transformational, ROI-focused. Lead with the business case (100% inspection vs. 1–2% sampling, scrap reduction, traceability). Show the live demo as proof. Speak to both the quality engineer (specs, accuracy) and the plant manager (ROI, footprint, commissioning speed).
 
 ---
 
