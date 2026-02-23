@@ -538,7 +538,10 @@ function formatPresenceLine(
   prescriptive: boolean,
   suffix: string
 ): string {
-  const verb = fd.dominantValue === "empty" ? "left empty" : "populated with meaningful content";
+  const verb =
+    fd.dominantValue === "empty"
+      ? "left empty"
+      : "populated with meaningful content";
   if (prescriptive) {
     return `  - ${fieldName}: MUST be ${verb} — ${fd.dominantPct}% of ${fd.total} existing examples do this. Do NOT deviate unless the user explicitly requests otherwise.${suffix}`;
   }
@@ -547,7 +550,9 @@ function formatPresenceLine(
     ? Math.round((fd.values["empty"] / fd.total) * 100)
     : 0;
   const pctFilled = 100 - pctEmpty;
-  return `  - ${fieldName}: prefer ${fd.dominantValue === "empty" ? "leaving empty" : "populating"} (empty ${pctEmpty}%, filled ${pctFilled}%, ${fd.total} samples)${suffix}`;
+  return `  - ${fieldName}: prefer ${
+    fd.dominantValue === "empty" ? "leaving empty" : "populating"
+  } (empty ${pctEmpty}%, filled ${pctFilled}%, ${fd.total} samples)${suffix}`;
 }
 
 function formatFieldLine(
@@ -603,6 +608,28 @@ export function assembleFieldGuidance(
 
   const layers: { priority: number; text: string }[] = [];
 
+  // ─── Pre-compute site-pattern field set ─────────────────────
+  // Collect all field names that have site-pattern data (Dim 2A + Dim 1).
+  // Recipe hints for these fields will be suppressed — site patterns are
+  // authoritative and should not be contradicted by generic best practices.
+  const sitePatternFieldKeys = new Set<string>();
+  for (const p of fieldProfiles) {
+    if (
+      p.context?.type === "contains" &&
+      (p.context as { childComponent: string }).childComponent ===
+        componentType
+    ) {
+      for (const fd of p.fields) {
+        sitePatternFieldKeys.add(`${p.component}.${fd.field}`);
+      }
+    }
+    if (p.context === null && p.component === componentType) {
+      for (const fd of p.fields) {
+        sitePatternFieldKeys.add(fd.field);
+      }
+    }
+  }
+
   // ─── Layer 1: Editorial hints from recipes ──────────────────
   const recipe = recipes.recipes?.find(
     (r) =>
@@ -611,17 +638,19 @@ export function assembleFieldGuidance(
   );
   if (recipe?.compositionHints) {
     const lines: string[] = [];
-    // Component-specific hints
+    // Component-specific hints — skip fields covered by site patterns
     const compHints = recipe.compositionHints[componentType];
     if (compHints) {
       for (const [field, hint] of Object.entries(compHints)) {
+        if (sitePatternFieldKeys.has(field)) continue;
         lines.push(`  - ${field}: ${hint}`);
       }
     }
-    // Section-level hints (for the container)
+    // Section-level hints — skip fields covered by site patterns
     const sectionHints = recipe.compositionHints["section"];
     if (sectionHints) {
       for (const [field, hint] of Object.entries(sectionHints)) {
+        if (sitePatternFieldKeys.has(`section.${field}`)) continue;
         lines.push(`  - section.${field}: ${hint}`);
       }
     }

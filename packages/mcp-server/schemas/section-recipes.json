@@ -53,7 +53,7 @@
       "goodFollowUps": ["testimonials", "cta", "split-even", "stats"],
       "compositionHints": {
         "section": {
-          "content_mode": "Use 'tile' for feature grids (3-4 items). Use 'default' if only 1-2 features.",
+          "content_mode": "Use 'list' for feature sections (schema default). Only use 'tile' if the user explicitly requests a card-grid layout.",
           "content_tileWidth": "Use 'default' for most feature grids. Use 'narrow' for 4+ features in a compact grid.",
           "width": "Use 'default' for most feature sections. Use 'wide' for full-width feature showcases."
         }
@@ -79,7 +79,7 @@
       "goodFollowUps": ["cta", "stats", "faq"],
       "compositionHints": {
         "section": {
-          "content_mode": "Use 'slider' for 3+ testimonials to save vertical space. Use 'default' for 2 testimonials."
+          "content_mode": "Use 'list' for testimonial sections (schema default). Only use 'slider' if the user explicitly requests carousel behavior."
         }
       }
     },
@@ -94,7 +94,7 @@
       "goodFollowUps": ["cta", "testimonials"],
       "compositionHints": {
         "section": {
-          "content_mode": "Use 'tile' for stats grids (3-4 items side by side). Use 'default' for vertically stacked stats."
+          "content_mode": "Use 'list' for stats sections (schema default). Only use 'tile' if the user explicitly requests a side-by-side grid."
         }
       }
     },
@@ -167,7 +167,7 @@
       "goodFollowUps": ["cta"],
       "compositionHints": {
         "section": {
-          "content_mode": "Use 'tile' for blog teaser grids (3 items). Use 'default' for a single featured teaser.",
+          "content_mode": "Use 'list' for blog teaser sections (schema default). Only use 'tile' if the user explicitly requests a card-grid layout.",
           "content_tileWidth": "Use 'default' for standard 3-column blog teaser grids."
         }
       }
