@@ -8,6 +8,7 @@ import {
 import {
   fetchPageProps,
   fetchPaths,
+  INDEX_SLUG,
   resolvableRelations,
   storyProcessing,
 } from "@/helpers/storyblok";
@@ -67,7 +68,7 @@ export const getStaticProps = (async ({ params, previewData }) => {
     (mod) => mod.default
   );
   const previewStoryblokApi = new StoryblokClient({ accessToken: previewData });
-  const slug = params?.slug?.join("/");
+  const slug = params?.slug?.join("/") || INDEX_SLUG;
 
   try {
     const { pageData, settingsData } = await fetchPageProps(

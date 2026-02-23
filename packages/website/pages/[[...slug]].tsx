@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { StoryblokComponent, ISbStory, ISbStoryData } from "@storyblok/react";
 import { Cache } from "file-system-cache";
-import { fetchPageProps, fetchPaths } from "@/helpers/storyblok";
+import { fetchPageProps, fetchPaths, INDEX_SLUG } from "@/helpers/storyblok";
 import { traverse } from "object-traversal";
 import { isImgUrl } from "@/helpers/apiUtils";
 import { fontClassNames } from "@/helpers/fonts";
@@ -44,7 +44,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 export const getStaticProps = (async ({ params }) => {
-  const slug = params?.slug?.join("/");
+  const slug = params?.slug?.join("/") || INDEX_SLUG;
 
   try {
     const { pageData, settingsData } = await fetchPageProps(slug);
