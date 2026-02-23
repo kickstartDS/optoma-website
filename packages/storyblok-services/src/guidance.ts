@@ -519,20 +519,56 @@ const PRESCRIPTIVE_THRESHOLD = 80;
  * @param fd        The field distribution data
  * @param suffix    Optional trailing text (e.g. "(when section.width=\"wide\")")
  */
+/**
+ * Check whether a value→count map uses presence-tracking synthetic values
+ * ("empty" / "non-empty").  These must never be passed verbatim to the LLM.
+ */
+function isPresenceTracked(values: Record<string, number>): boolean {
+  const keys = Object.keys(values);
+  return keys.every((k) => k === "empty" || k === "non-empty");
+}
+
+/**
+ * Render a presence-tracked distribution as natural language.
+ * E.g. "MUST be left empty" or "MUST be populated with meaningful content".
+ */
+function formatPresenceLine(
+  fieldName: string,
+  fd: FieldDistribution,
+  prescriptive: boolean,
+  suffix: string
+): string {
+  const verb = fd.dominantValue === "empty" ? "left empty" : "populated with meaningful content";
+  if (prescriptive) {
+    return `  - ${fieldName}: MUST be ${verb} — ${fd.dominantPct}% of ${fd.total} existing examples do this. Do NOT deviate unless the user explicitly requests otherwise.${suffix}`;
+  }
+  // Suggestive
+  const pctEmpty = fd.values["empty"]
+    ? Math.round((fd.values["empty"] / fd.total) * 100)
+    : 0;
+  const pctFilled = 100 - pctEmpty;
+  return `  - ${fieldName}: prefer ${fd.dominantValue === "empty" ? "leaving empty" : "populating"} (empty ${pctEmpty}%, filled ${pctFilled}%, ${fd.total} samples)${suffix}`;
+}
+
 function formatFieldLine(
   fieldName: string,
   fd: FieldDistribution,
   suffix?: string
 ): string {
   const suffixStr = suffix ? ` ${suffix}` : "";
-  const sorted = Object.entries(fd.values).sort(([, a], [, b]) => b - a);
+  const prescriptive = fd.dominantPct >= PRESCRIPTIVE_THRESHOLD;
 
-  if (fd.dominantPct >= PRESCRIPTIVE_THRESHOLD) {
-    // Prescriptive — almost binding
+  // Handle presence-tracked fields — never output literal "empty" / "non-empty"
+  if (isPresenceTracked(fd.values)) {
+    return formatPresenceLine(fieldName, fd, prescriptive, suffixStr);
+  }
+
+  if (prescriptive) {
     return `  - ${fieldName}: MUST be "${fd.dominantValue}" — ${fd.dominantPct}% of ${fd.total} existing examples use this value. Do NOT deviate unless the user explicitly requests otherwise.${suffixStr}`;
   }
 
   // Suggestive — show distribution
+  const sorted = Object.entries(fd.values).sort(([, a], [, b]) => b - a);
   const topValues = sorted
     .slice(0, 3)
     .map(([v, c]) => `"${v}" ${Math.round((c / fd.total) * 100)}%`)

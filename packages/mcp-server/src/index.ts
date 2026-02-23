@@ -2337,6 +2337,11 @@ Respond with a JSON object:
             systemPrompt += fieldGuidance;
           }
 
+          // Log the full system prompt so we can inspect what guidance reaches OpenAI
+          console.error(
+            `[MCP] generate_section system prompt for "${validated.componentType}":\n${systemPrompt}`
+          );
+
           // Generate via the content service (full pipeline with schema auto-derivation)
           const result = await contentService.generateWithSchema({
             system: systemPrompt,
