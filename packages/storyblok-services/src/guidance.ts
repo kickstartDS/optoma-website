@@ -505,6 +505,41 @@ function estimateTokens(text: string): number {
   return Math.ceil(text.length / 4);
 }
 
+/** Dominance threshold above which guidance becomes prescriptive ("MUST use"). */
+const PRESCRIPTIVE_THRESHOLD = 80;
+
+/**
+ * Format a field distribution line for the system prompt.
+ *
+ * - ≥80% dominance → prescriptive: "MUST be \"list\"" — makes guidance
+ *   nearly binding so the LLM doesn't override site conventions.
+ * - 60–79% dominance → suggestive: "prefer \"list\"" — allows flexibility.
+ *
+ * @param fieldName  Display name (e.g. "section.content_mode" or "height")
+ * @param fd        The field distribution data
+ * @param suffix    Optional trailing text (e.g. "(when section.width=\"wide\")")
+ */
+function formatFieldLine(
+  fieldName: string,
+  fd: FieldDistribution,
+  suffix?: string
+): string {
+  const suffixStr = suffix ? ` ${suffix}` : "";
+  const sorted = Object.entries(fd.values).sort(([, a], [, b]) => b - a);
+
+  if (fd.dominantPct >= PRESCRIPTIVE_THRESHOLD) {
+    // Prescriptive — almost binding
+    return `  - ${fieldName}: MUST be "${fd.dominantValue}" — ${fd.dominantPct}% of ${fd.total} existing examples use this value. Do NOT deviate unless the user explicitly requests otherwise.${suffixStr}`;
+  }
+
+  // Suggestive — show distribution
+  const topValues = sorted
+    .slice(0, 3)
+    .map(([v, c]) => `"${v}" ${Math.round((c / fd.total) * 100)}%`)
+    .join(", ");
+  return `  - ${fieldName}: prefer ${topValues} (${fd.total} samples)${suffixStr}`;
+}
+
 /** Max total token budget for field guidance. */
 const MAX_GUIDANCE_TOKENS = 800;
 
@@ -573,14 +608,7 @@ export function assembleFieldGuidance(
     const scopeNote = scopeLabel ? ` (in ${scopeLabel})` : "";
     for (const profile of dim2aProfiles) {
       for (const fd of profile.fields) {
-        const topValues = Object.entries(fd.values)
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 3)
-          .map(([v, c]) => `"${v}" ${Math.round((c / fd.total) * 100)}%`)
-          .join(", ");
-        lines.push(
-          `  - ${profile.component}.${fd.field}: ${topValues} (${fd.total} samples)`
-        );
+        lines.push(formatFieldLine(`${profile.component}.${fd.field}`, fd));
       }
     }
     if (lines.length > 0) {
@@ -602,12 +630,7 @@ export function assembleFieldGuidance(
     const scopeNote = scopeLabel ? ` (in ${scopeLabel})` : "";
     for (const profile of dim1Profiles) {
       for (const fd of profile.fields) {
-        const topValues = Object.entries(fd.values)
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 3)
-          .map(([v, c]) => `"${v}" ${Math.round((c / fd.total) * 100)}%`)
-          .join(", ");
-        lines.push(`  - ${fd.field}: ${topValues} (${fd.total} samples)`);
+        lines.push(formatFieldLine(fd.field, fd));
       }
     }
     if (lines.length > 0) {
@@ -631,12 +654,7 @@ export function assembleFieldGuidance(
       const lines: string[] = [];
       for (const profile of dim3Profiles) {
         for (const fd of profile.fields) {
-          const topValues = Object.entries(fd.values)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 2)
-            .map(([v, c]) => `"${v}" ${Math.round((c / fd.total) * 100)}%`)
-            .join(", ");
-          lines.push(`  - ${profile.component}.${fd.field}: ${topValues}`);
+          lines.push(formatFieldLine(`${profile.component}.${fd.field}`, fd));
         }
       }
       if (lines.length > 0) {
@@ -662,13 +680,12 @@ export function assembleFieldGuidance(
         containerValue: string;
       };
       for (const fd of profile.fields) {
-        const topValues = Object.entries(fd.values)
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 2)
-          .map(([v, c]) => `"${v}" ${Math.round((c / fd.total) * 100)}%`)
-          .join(", ");
         lines.push(
-          `  - ${fd.field}: ${topValues} (when section.${ctx.containerField}="${ctx.containerValue}")`
+          formatFieldLine(
+            fd.field,
+            fd,
+            `(when section.${ctx.containerField}="${ctx.containerValue}")`
+          )
         );
       }
     }
