@@ -1,6 +1,6 @@
 # Prompter Reactivation Implementation Progress
 
-> **Status: 🟡 IN PROGRESS** — Phase 1 & Phase 2 complete. Phase 3 (API Routes) next.
+> **Status: 🟡 IN PROGRESS** — Phases 1–3 complete. Phase 4 (Component Rewrite) next.
 > Companion PRD: [prompter-reactivation-prd.md](./prompter-reactivation-prd.md)
 
 ## Phase 1: Cleanup & Reactivation (Low Risk) ✅
@@ -57,19 +57,21 @@
 - [ ] 2.6.1 Add unit tests for `planPageContent()` in `storyblok-services/test/`
 - [ ] 2.6.2 Add unit tests for `generateSectionContent()` in `storyblok-services/test/`
 
-### 2.7 Patterns cache initialization
+### 2.7 Patterns cache initialization ✅
 
-- [ ] 2.7.1 Ensure `analyzeContentPatterns()` can be called from Next.js API routes (not just long-running servers)
-- [ ] 2.7.2 Add lazy-init caching helper for API route context
+- [x] 2.7.1 Ensure `analyzeContentPatterns()` can be called from Next.js API routes (not just long-running servers)
+- [x] 2.7.2 Add lazy-init caching helper for API route context — implemented in `pages/api/prompter/_helpers.ts` (lazy registry singleton) and `patterns.ts` (in-memory cache keyed by `contentType:startsWith`)
 
-## Phase 3: New API Routes (Medium Risk)
+## Phase 3: New API Routes (Medium Risk) ✅
 
-- [ ] 3.1 Create `/api/prompter/patterns` route (GET, wraps `analyzeContentPatterns()`)
-- [ ] 3.2 Create `/api/prompter/recipes` route (GET, serves `section-recipes.json`)
-- [ ] 3.3 Create `/api/prompter/plan` route (POST, wraps `planPage()`)
-- [ ] 3.4 Create `/api/prompter/generate-section` route (POST, wraps `generateSection()`)
-- [ ] 3.5 Create `/api/prompter/import` route (POST, wraps `importByPrompterReplacement()` with asset upload)
-- [ ] 3.6 Create `/api/prompter/ideas` route (GET, move from `/api/ideas`)
+Shared helpers in `pages/api/prompter/_helpers.ts`: CORS middleware, env validation, client factories (OpenAI, Storyblok Management/Content), lazy SchemaRegistry singleton, unified error handler.
+
+- [x] 3.1 Create `/api/prompter/patterns` route — `pages/api/prompter/patterns.ts` (GET, wraps `analyzeContentPatterns()`, in-memory cache by `contentType:startsWith`)
+- [x] 3.2 Create `/api/prompter/recipes` route — `pages/api/prompter/recipes.ts` (GET, loads `section-recipes.json` from MCP server package, filters by `contentType`)
+- [x] 3.3 Create `/api/prompter/plan` route — `pages/api/prompter/plan.ts` (POST, wraps `planPageContent()`)
+- [x] 3.4 Create `/api/prompter/generate-section` route — `pages/api/prompter/generate-section.ts` (POST, wraps `generateSectionContent()`)
+- [x] 3.5 Create `/api/prompter/import` route — `pages/api/prompter/import.ts` (POST, wraps `importByPrompterReplacement()` with validation + compositional warnings + asset upload)
+- [x] 3.6 Create `/api/prompter/ideas` route — `pages/api/prompter/ideas.ts` (GET, wraps Storyblok Ideas API)
 
 ## Phase 4: Component Rewrite (High Effort)
 
