@@ -6,12 +6,12 @@
  */
 import { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import { dirname, resolve } from "path";
+import { resolve } from "path";
 import {
   createOpenAiClient,
   createStoryblokClient,
   createContentClient,
-  createRegistryFromDirectory,
+  createRegistryFromSchemaDir,
   ServiceError,
   type SchemaRegistry,
 } from "@kickstartds/storyblok-services";
@@ -101,19 +101,17 @@ export function getStoryblokContentClient() {
 let _registry: SchemaRegistry | null = null;
 
 /**
- * Get or create the schema registry from the Design System package.
+ * Get or create the schema registry from the MCP server's schemas directory.
  *
- * Uses `createRegistryFromDirectory` which loads
- * `{name}/{name}.schema.dereffed.json` from the DS components directory.
+ * Uses `createRegistryFromSchemaDir` which loads flat
+ * `{name}.schema.dereffed.json` files from the MCP server's schemas dir.
+ * This avoids webpack path resolution issues with the DS package.
  * Cached as a module-level singleton.
  */
 export function getRegistry(): SchemaRegistry {
   if (!_registry) {
-    const dsPackageJson = require.resolve(
-      "@kickstartds/ds-agency-premium/package.json"
-    );
-    const componentsDir = resolve(dirname(dsPackageJson), "dist", "components");
-    _registry = createRegistryFromDirectory(componentsDir);
+    const schemasDir = resolve(process.cwd(), "..", "mcp-server", "schemas");
+    _registry = createRegistryFromSchemaDir(schemasDir);
   }
   return _registry;
 }

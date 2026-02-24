@@ -1,15 +1,22 @@
 import { FC, HTMLAttributes, forwardRef, useEffect } from "react";
-import { ThreeDots } from "react-loader-spinner";
 
 import { Section } from "@kickstartds/ds-agency-premium/section";
 import { SplitEven } from "@kickstartds/ds-agency-premium/split-even";
 import { SplitWeighted } from "@kickstartds/ds-agency-premium/split-weighted";
 
-import { BlogTeaser } from "@kickstartds/ds-agency-premium/blog-teaser";
+import {
+  BlogTeaser,
+  BlogTeaserContext,
+  BlogTeaserContextDefault,
+} from "@kickstartds/ds-agency-premium/blog-teaser";
 import { BusinessCard } from "@kickstartds/ds-agency-premium/business-card";
 import { Contact } from "@kickstartds/ds-agency-premium/contact";
 import { ContentNav } from "@kickstartds/ds-agency-premium/content-nav";
-import { Cta } from "@kickstartds/ds-agency-premium/cta";
+import {
+  Cta,
+  CtaContext,
+  CtaContextDefault,
+} from "@kickstartds/ds-agency-premium/cta";
 import { Divider } from "@kickstartds/ds-agency-premium/divider";
 import { Downloads } from "@kickstartds/ds-agency-premium/downloads";
 import { Faq } from "@kickstartds/ds-agency-premium/faq";
@@ -27,6 +34,31 @@ import { TeaserCard } from "@kickstartds/ds-agency-premium/teaser-card";
 import { Testimonials } from "@kickstartds/ds-agency-premium/testimonials";
 import { Text } from "@kickstartds/ds-agency-premium/text";
 import { VideoCurtain } from "@kickstartds/ds-agency-premium/video-curtain";
+
+import {
+  FeatureContext,
+  FeatureContextDefault,
+} from "@kickstartds/ds-agency-premium/feature";
+import {
+  StatContext,
+  StatContextDefault,
+} from "@kickstartds/ds-agency-premium/stat";
+import {
+  TestimonialContext,
+  TestimonialContextDefault,
+} from "@kickstartds/ds-agency-premium/testimonial";
+import {
+  BlogHeadContext,
+  BlogHeadContextDefault,
+} from "@kickstartds/ds-agency-premium/blog-head";
+import {
+  BlogAsideContext,
+  BlogAsideContextDefault,
+} from "@kickstartds/ds-agency-premium/blog-aside";
+import {
+  BlogAuthorContext,
+  BlogAuthorContextDefault,
+} from "@kickstartds/ds-agency-premium/blog-author";
 
 import { InfoTable } from "../info-table/InfoTableComponent";
 
@@ -81,6 +113,38 @@ function isComponentMapKey(key: string): key is ComponentMapKeys {
   return key in componentMap;
 }
 
+// ─── Preview context providers ────────────────────────────────────────
+
+/**
+ * Resets sub-component contexts to their DS defaults for preview rendering.
+ *
+ * In normal Storyblok rendering, sub-component contexts (FeatureContext, etc.)
+ * are set to StoryblokSubComponent which resolves via the `component` field.
+ * In preview mode, generated content uses DS-format props with `type` as the
+ * discriminator — StoryblokSubComponent can't resolve these and renders empty
+ * divs. By providing the original DS default renderers, sub-components render
+ * correctly using their native DS props.
+ */
+const PreviewProviders: FC<{ children: React.ReactNode }> = ({ children }) => (
+  <FeatureContext.Provider value={FeatureContextDefault}>
+    <StatContext.Provider value={StatContextDefault}>
+      <TestimonialContext.Provider value={TestimonialContextDefault}>
+        <CtaContext.Provider value={CtaContextDefault}>
+          <BlogTeaserContext.Provider value={BlogTeaserContextDefault}>
+            <BlogHeadContext.Provider value={BlogHeadContextDefault}>
+              <BlogAsideContext.Provider value={BlogAsideContextDefault}>
+                <BlogAuthorContext.Provider value={BlogAuthorContextDefault}>
+                  {children}
+                </BlogAuthorContext.Provider>
+              </BlogAsideContext.Provider>
+            </BlogHeadContext.Provider>
+          </BlogTeaserContext.Provider>
+        </CtaContext.Provider>
+      </TestimonialContext.Provider>
+    </StatContext.Provider>
+  </FeatureContext.Provider>
+);
+
 // ─── Preview renderer ─────────────────────────────────────────────────
 
 /**
@@ -102,13 +166,9 @@ const SectionPreview: FC<{
   if (!sectionArray.length || isRegenerating) {
     return (
       <div className="prompter-section-preview prompter-section-preview--loading">
-        <ThreeDots
-          height="20"
-          width="50"
-          radius="9"
-          color="var(--prompter-color)"
-          ariaLabel="regenerating"
-          visible={true}
+        <span
+          className="prompter-dots prompter-dots--small"
+          aria-label="Regenerating"
         />
       </div>
     );
@@ -131,13 +191,13 @@ const SectionPreview: FC<{
         return (
           <Section key={sIdx} {...sectionProps}>
             {components?.map((component: any, cIdx: number) => {
-              const type = component.type;
+              const { type, ...componentProps } = component;
               if (!type || !isComponentMapKey(type)) {
                 console.warn("Unknown component type in preview:", type);
                 return null;
               }
               const Component = componentMap[type];
-              return <Component key={cIdx} {...component} />;
+              return <Component key={cIdx} {...componentProps} />;
             })}
           </Section>
         );
@@ -154,7 +214,7 @@ const PagePreview: FC<{
   onRegenerate?: (index: number) => void;
 }> = ({ sections, onRegenerate }) => {
   return (
-    <>
+    <PreviewProviders>
       {sections.map((gen, index) => (
         <SectionPreview
           key={`${gen.componentType}-${index}`}
@@ -164,7 +224,7 @@ const PagePreview: FC<{
           isRegenerating={Object.keys(gen.designSystemProps || {}).length === 0}
         />
       ))}
-    </>
+    </PreviewProviders>
   );
 };
 
@@ -295,13 +355,9 @@ export const PrompterComponent = forwardRef<
                 {/* Initialization loading indicator */}
                 {isInitializing && (
                   <div className="prompter-init-loading">
-                    <ThreeDots
-                      height="16"
-                      width="40"
-                      radius="9"
-                      color="var(--prompter-color)"
-                      ariaLabel="loading"
-                      visible={true}
+                    <span
+                      className="prompter-dots prompter-dots--small"
+                      aria-label="Loading"
                     />
                     <span>Loading context…</span>
                   </div>
@@ -395,15 +451,9 @@ export const PrompterComponent = forwardRef<
 
             {/* ── Planning (page mode loading) ───────────────────── */}
             {isPlanning && (
-              <ThreeDots
-                height="30"
-                width="80"
-                radius="9"
-                color="var(--prompter-color)"
-                ariaLabel="planning"
-                wrapperClass="prompter-loading-indicator"
-                visible={true}
-              />
+              <div className="prompter-loading-indicator">
+                <span className="prompter-dots" aria-label="Planning" />
+              </div>
             )}
 
             {/* ── Plan review (page mode) ────────────────────────── */}
@@ -447,15 +497,7 @@ export const PrompterComponent = forwardRef<
                       : componentTypes[currentSectionIndex]
                   }
                 />
-                <ThreeDots
-                  height="30"
-                  width="80"
-                  radius="9"
-                  color="var(--prompter-color)"
-                  ariaLabel="generating"
-                  wrapperClass="prompter-loading-indicator"
-                  visible={true}
-                />
+                <span className="prompter-dots" aria-label="Generating" />
               </>
             )}
 
@@ -483,15 +525,9 @@ export const PrompterComponent = forwardRef<
 
             {/* ── Importing ──────────────────────────────────────── */}
             {isImporting && (
-              <ThreeDots
-                height="30"
-                width="80"
-                radius="9"
-                color="var(--prompter-color)"
-                ariaLabel="importing"
-                wrapperClass="prompter-loading-indicator"
-                visible={true}
-              />
+              <div className="prompter-loading-indicator">
+                <span className="prompter-dots" aria-label="Importing" />
+              </div>
             )}
 
             {/* ── Submitted ──────────────────────────────────────── */}

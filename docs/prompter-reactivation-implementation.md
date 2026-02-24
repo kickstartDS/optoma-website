@@ -67,6 +67,7 @@
 Shared helpers in `pages/api/prompter/_helpers.ts`: CORS middleware, env validation, client factories (OpenAI, Storyblok Management/Content), lazy SchemaRegistry singleton, unified error handler.
 
 - [x] 3.1 Create `/api/prompter/patterns` route — `pages/api/prompter/patterns.ts` (GET, wraps `analyzeContentPatterns()`, in-memory cache by `contentType:startsWith`)
+- [x] 3.1a Create `/api/prompter/story` route — `pages/api/prompter/story.ts` (GET, server-side proxy for story fetch by UID, keeps preview token off the client)
 - [x] 3.2 Create `/api/prompter/recipes` route — `pages/api/prompter/recipes.ts` (GET, loads `section-recipes.json` from MCP server package, filters by `contentType`)
 - [x] 3.3 Create `/api/prompter/plan` route — `pages/api/prompter/plan.ts` (POST, wraps `planPageContent()`)
 - [x] 3.4 Create `/api/prompter/generate-section` route — `pages/api/prompter/generate-section.ts` (POST, wraps `generateSectionContent()`)

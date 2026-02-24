@@ -145,7 +145,6 @@ Required in `packages/website/.env.local`:
 - `NEXT_STORYBLOK_OAUTH_TOKEN` - Management API token
 - `NEXT_STORYBLOK_SPACE_ID` - Space ID (without #)
 - `NEXT_OPENAI_API_KEY` - OpenAI API key (required for Prompter AI generation)
-- `NEXT_PUBLIC_STORYBLOK_API_TOKEN` - Public preview token (used by Prompter client-side story fetch)
 - `NEXT_PUBLIC_SITE_URL` - Public site URL (used for API route calls in the Visual Editor)
 
 ## Prompter Architecture
@@ -178,6 +177,7 @@ All Prompter API routes live under `packages/website/pages/api/prompter/`:
 
 | Route                            | Method | Purpose                                                                 |
 | -------------------------------- | ------ | ----------------------------------------------------------------------- |
+| `/api/prompter/story`            | GET    | Fetch a story by UID (server-side proxy, keeps token off the client)    |
 | `/api/prompter/patterns`         | GET    | Fetch content patterns (component frequency, section sequences)         |
 | `/api/prompter/recipes`          | GET    | Fetch section recipes and anti-patterns                                 |
 | `/api/prompter/plan`             | POST   | AI-assisted page structure planning (requires OpenAI key)               |

@@ -6,9 +6,8 @@
  * import → submission.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
+import type { ISbStoryData } from "@storyblok/react";
 import { traverse as objectTraverse } from "object-traversal";
-import { fetchStory, initStoryblok } from "@/helpers/storyblok";
 import { unflatten } from "@/helpers/unflatten";
 
 // ─── Types ────────────────────────────────────────────────────────────
@@ -326,22 +325,11 @@ export function usePrompter(options: UsePrompterOptions = {}) {
       return;
     }
 
-    const token = process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN;
-    if (!token) {
-      console.error("Missing NEXT_PUBLIC_STORYBLOK_API_TOKEN env var");
-      setStoryError(
-        "Storyblok API token is missing — story context unavailable."
-      );
-      setIsStoryLoading(false);
-      return;
-    }
-
-    initStoryblok(token);
-    const storyblokApi = getStoryblokApi();
-
-    fetchStory(storyUid, false, storyblokApi)
-      .then((response) => {
-        const raw = response.data.story;
+    fetchJson(
+      `${BASE_URL}/api/prompter/story?uid=${encodeURIComponent(storyUid)}`
+    )
+      .then((json) => {
+        const raw = json.story as ISbStoryData;
         setRawStory(raw);
         const processed = processStory(raw);
         setStory(processed);
