@@ -1,9 +1,4 @@
-import {
-  FC,
-  HTMLAttributes,
-  forwardRef,
-  useEffect,
-} from "react";
+import { FC, HTMLAttributes, forwardRef, useEffect } from "react";
 import { ThreeDots } from "react-loader-spinner";
 
 import { Section } from "@kickstartds/ds-agency-premium/section";
@@ -166,9 +161,7 @@ const PagePreview: FC<{
           generated={gen}
           index={index}
           onRegenerate={onRegenerate}
-          isRegenerating={
-            Object.keys(gen.designSystemProps || {}).length === 0
-          }
+          isRegenerating={Object.keys(gen.designSystemProps || {}).length === 0}
         />
       ))}
     </>
@@ -201,23 +194,32 @@ export const PrompterComponent = forwardRef<
 >(
   (
     {
+      mode: defaultMode = "section",
+      componentTypes: defaultComponentTypes,
       sections: _sections,
       includeStory = true,
       useIdea = true,
       relatedStories = [],
       userPrompt = "",
       systemPrompt,
+      contentType: defaultContentType,
+      startsWith,
+      uploadAssets = true,
       ...props
     },
     ref
   ) => {
     const prompter = usePrompter({
-      defaultMode: "section",
+      defaultMode,
       includeStory,
       useIdea,
       userPrompt,
       systemPrompt,
       relatedStories,
+      defaultComponentTypes: defaultComponentTypes || [],
+      defaultContentType,
+      startsWith,
+      uploadAssets,
     });
 
     // Detect the prompter UID once mounted
@@ -238,6 +240,9 @@ export const PrompterComponent = forwardRef<
       currentSectionIndex,
       totalSections,
       warnings,
+      isInitializing,
+      storyError,
+      ideasError,
       canGenerate,
       canPlan,
       canStartPageGeneration,
@@ -287,6 +292,29 @@ export const PrompterComponent = forwardRef<
             {/* ── Step 1: Configure ──────────────────────────────── */}
             {isConfiguring && (
               <>
+                {/* Initialization loading indicator */}
+                {isInitializing && (
+                  <div className="prompter-init-loading">
+                    <ThreeDots
+                      height="16"
+                      width="40"
+                      radius="9"
+                      color="var(--prompter-color)"
+                      ariaLabel="loading"
+                      visible={true}
+                    />
+                    <span>Loading context…</span>
+                  </div>
+                )}
+
+                {/* Non-blocking warnings from init */}
+                {storyError && (
+                  <div className="prompter-init-warning">⚠ {storyError}</div>
+                )}
+                {ideasError && (
+                  <div className="prompter-init-warning">⚠ {ideasError}</div>
+                )}
+
                 {/* Mode toggle */}
                 <PrompterModeToggle mode={mode} onModeChange={setMode} />
 
@@ -482,13 +510,28 @@ export const PrompterComponent = forwardRef<
             {isError && error && (
               <>
                 <div className="prompter-error">
-                  <strong>Error:</strong> {error}
+                  <svg
+                    className="prompter-error__icon"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  <span>{error}</span>
                 </div>
-                <PrompterButton
-                  variant="secondary"
-                  label="Try Again"
-                  onClick={discard}
-                />
+                <div className="prompter-section__button-row">
+                  <PrompterButton
+                    variant="secondary"
+                    label="Start Over"
+                    onClick={discard}
+                  />
+                </div>
               </>
             )}
           </PrompterSection>
@@ -503,16 +546,6 @@ export const PrompterComponent = forwardRef<
               onRegenerate={isPreview ? regenerateSection : undefined}
             />
           </div>
-        )}
-
-        {/* ── Story JSON debug panel ───────────────────────────────── */}
-        {prompter.story && (
-          <details className="prompter__story">
-            <summary>Story JSON</summary>
-            <pre className="prompter__story-code">
-              <code>{JSON.stringify(prompter.story, null, 2)}</code>
-            </pre>
-          </details>
         )}
       </div>
     );

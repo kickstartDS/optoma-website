@@ -68,9 +68,7 @@ const PrompterPlanReview: React.FC<PrompterPlanReviewProps> = ({
             className="prompter-plan-review__item"
           >
             <div className="prompter-plan-review__header">
-              <span className="prompter-plan-review__index">
-                {index + 1}
-              </span>
+              <span className="prompter-plan-review__index">{index + 1}</span>
               <span className="prompter-plan-review__type">
                 {getLabel(section.componentType)}
               </span>

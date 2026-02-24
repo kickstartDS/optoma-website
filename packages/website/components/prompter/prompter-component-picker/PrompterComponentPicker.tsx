@@ -60,9 +60,7 @@ const PrompterComponentPicker: React.FC<PrompterComponentPickerProps> = ({
   };
 
   const getLabel = (type: string): string => {
-    return (
-      SECTION_COMPONENT_TYPES.find((t) => t.value === type)?.label || type
-    );
+    return SECTION_COMPONENT_TYPES.find((t) => t.value === type)?.label || type;
   };
 
   return (

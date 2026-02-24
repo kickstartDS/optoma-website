@@ -15,10 +15,11 @@
 
 :root {
   --prompter-color: #800080;
-  --prompter-font-family:
-    system-ui, -apple-system, BlinkMacSystemFont, "Avenir Next", "Avenir", "Segoe UI", "Lucida Grande",
-    "Helvetica Neue", "Helvetica", "Fira Sans", "Roboto", "Noto", "Droid Sans", "Cantarell", "Oxygen", "Ubuntu",
-    "Franklin Gothic Medium", "Century Gothic", "Liberation Sans", sans-serif;
+  --prompter-font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Avenir Next", "Avenir", "Segoe UI", "Lucida Grande", "Helvetica Neue",
+    "Helvetica", "Fira Sans", "Roboto", "Noto", "Droid Sans", "Cantarell",
+    "Oxygen", "Ubuntu", "Franklin Gothic Medium", "Century Gothic",
+    "Liberation Sans", sans-serif;
 
   .prompter {
     position: relative;
@@ -37,37 +38,27 @@
         left: 1rem;
       }
     }
+  }
 
-    &__story {
-      position: relative;
-      background-color: rgb(27, 22, 29) !important;
-      color: white;
+  .prompter-init-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--prompter-font-family);
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5rem 0;
+  }
 
-      summary {
-        box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        cursor: pointer;
-        top: 0;
-        transform: translateY(calc(-100% - 0.75em));
-        right: 1em;
-        z-index: 99;
-        border-radius: 99px;
-        padding: 0.35em 1.125em;
-        position: absolute;
-        background-color: rgb(27, 22, 29);
-        width: fit-content;
-        font: var(--ks-font-interface-s);
-        font-weight: var(--ks-font-weight-semi-bold);
-      }
-    }
-
-    &__story-code {
-      background-color: rgb(34, 29, 36);
-      padding-left: 40px;
-      margin: 0;
-      padding-top: 1em;
-      overflow-x: auto;
-    }
+  .prompter-init-warning {
+    font-family: var(--prompter-font-family);
+    font-size: 0.85rem;
+    color: #996600;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem 0;
   }
 
   .prompter-prompt-textarea {
@@ -140,6 +131,9 @@
   }
 
   .prompter-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
     width: 100%;
     font-family: var(--prompter-font-family);
     font-size: 1rem;
@@ -152,8 +146,9 @@
     margin: 0.5rem 0;
     word-break: break-word;
 
-    strong {
-      font-weight: 700;
+    &__icon {
+      flex-shrink: 0;
+      margin-top: 2px;
     }
   }
 }

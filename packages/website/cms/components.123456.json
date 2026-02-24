@@ -198,9 +198,7 @@
           "display_name": "PreviewImage",
           "key": "previewImage",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "A URL to an image that previews the file.",
           "required": false
         },
@@ -318,11 +316,7 @@
           "pos": 0,
           "display_name": "Cta",
           "key": "tab-bd32a5bd-74df-4d0f-b0ee-59261d3f10e4",
-          "keys": [
-            "cta_url",
-            "cta_label",
-            "cta_icon"
-          ],
+          "keys": ["cta_url", "cta_label", "cta_icon"],
           "type": "tab",
           "required": false
         },
@@ -386,9 +380,7 @@
           "display_name": "Src",
           "key": "src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "The source of the image",
           "required": false
         },
@@ -429,9 +421,7 @@
           "display_name": "Src",
           "key": "src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "The URL of the logo image",
           "required": false
         },
@@ -489,10 +479,7 @@
           "pos": 0,
           "display_name": "Image",
           "key": "tab-f33f0a34-7b50-4859-b907-ab52a683e61d",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
+          "keys": ["image_src", "image_alt"],
           "type": "tab",
           "description": "Ein Bild, das in der Kachel angezeigt wird, um den Inhalt visuell zu unterstützen.",
           "required": false
@@ -503,9 +490,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Picture source",
           "required": false
         },
@@ -596,9 +581,7 @@
           "display_name": "BackgroundImage",
           "key": "backgroundImage",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Ein optionales Hintergrundbild, das hinter dem Inhalt der Kachel angezeigt wird.",
           "required": false
         },
@@ -712,10 +695,7 @@
           "pos": 0,
           "display_name": "Image",
           "key": "tab-2f6a5723-2898-4534-a33c-e0293fbf00b0",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
+          "keys": ["image_src", "image_alt"],
           "type": "tab",
           "required": false
         },
@@ -725,9 +705,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "The image to display with the testimonial",
           "required": false
         },
@@ -815,9 +793,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ],
+          "component_whitelist": ["buttons"],
           "description": "Button"
         },
         "backgroundColor": {
@@ -835,9 +811,7 @@
           "display_name": "BackgroundImage",
           "key": "backgroundImage",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Hintergrundbild für den Call-to-Action",
           "required": false
         },
@@ -846,12 +820,7 @@
           "pos": 0,
           "display_name": "Image",
           "key": "tab-268db7c7-6b27-42b8-8cb3-fb6fdff175ae",
-          "keys": [
-            "image_src",
-            "image_padding",
-            "image_alt",
-            "image_align"
-          ],
+          "keys": ["image_src", "image_padding", "image_alt", "image_align"],
           "type": "tab",
           "description": "Bild welches nebem dem Infotext angezeigt wird",
           "required": false
@@ -862,9 +831,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Image source to use",
           "required": false
         },
@@ -919,10 +886,7 @@
           "pos": 0,
           "display_name": "Order",
           "key": "tab-f595210a-003c-4015-9420-88053d377cf3",
-          "keys": [
-            "order_mobileImageLast",
-            "order_desktopImageLast"
-          ],
+          "keys": ["order_mobileImageLast", "order_desktopImageLast"],
           "type": "tab",
           "description": "Reihenfolge von Bild und Infotext",
           "required": false
@@ -1088,10 +1052,7 @@
           "pos": 0,
           "display_name": "Ctas",
           "key": "tab-7e90367a-a713-4cdc-a0fb-00eb44da94af",
-          "keys": [
-            "ctas_toggle",
-            "ctas_style"
-          ],
+          "keys": ["ctas_toggle", "ctas_style"],
           "type": "tab",
           "description": "Übergreifende Einstellungen für Handlungsaufrufen, die den Benutzer zu Aktionen auffordern, wie z.B. 'Mehr erfahren' oder 'Jetzt kaufen'.",
           "required": false
@@ -1140,9 +1101,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "feature"
-          ],
+          "component_whitelist": ["feature"],
           "description": "Feature"
         }
       },
@@ -1168,9 +1127,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "images"
-          ]
+          "component_whitelist": ["images"]
         },
         "layout": {
           "id": 0,
@@ -1359,9 +1316,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ],
+          "component_whitelist": ["buttons"],
           "description": "Button für das Hero Element"
         },
         "skipButton": {
@@ -1405,9 +1360,7 @@
           "display_name": "SrcMobile",
           "key": "image_srcMobile",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Background image source for small screens",
           "required": false
         },
@@ -1417,9 +1370,7 @@
           "display_name": "SrcTablet",
           "key": "image_srcTablet",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Background image source for medium screens",
           "required": false
         },
@@ -1429,9 +1380,7 @@
           "display_name": "SrcDesktop",
           "key": "image_srcDesktop",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Background image source for large screens",
           "required": false
         },
@@ -1441,9 +1390,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Override for img tag of picture element, if needed",
           "required": false
         },
@@ -1568,10 +1515,7 @@
           "pos": 0,
           "display_name": "Image",
           "key": "tab-aef4da96-b97c-4211-9f50-08dbf4bc2be7",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
+          "keys": ["image_src", "image_alt"],
           "type": "tab",
           "description": "Das Bild, das neben dem Text angezeigt wird.",
           "required": false
@@ -1582,9 +1526,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "URL of the image to display",
           "required": false
         },
@@ -1660,9 +1602,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "logo"
-          ],
+          "component_whitelist": ["logo"],
           "description": "Logo entry for Logos component"
         },
         "align": {
@@ -1797,9 +1737,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "stat"
-          ]
+          "component_whitelist": ["stat"]
         }
       },
       "is_nestable": true,
@@ -1892,11 +1830,7 @@
           "pos": 0,
           "display_name": "Button",
           "key": "tab-7170ba7e-c663-459f-9091-461a35ae2fc9",
-          "keys": [
-            "button_label",
-            "button_chevron",
-            "button_hidden"
-          ],
+          "keys": ["button_label", "button_chevron", "button_hidden"],
           "type": "tab",
           "description": "Ein optionaler Button, als explizites Element zum das Öffnen der hinterlegten Seite.",
           "required": false
@@ -1934,9 +1868,7 @@
           "display_name": "Image",
           "key": "image",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Ein Bild, das die Teaser-Karte visuell unterstützt. Dies kann ein Hauptbild oder ein Hintergrundbild sein.",
           "required": false
         },
@@ -2049,9 +1981,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "testimonial"
-          ],
+          "component_whitelist": ["testimonial"],
           "description": "Testimonial entry of Testimonials component"
         }
       },
@@ -2164,9 +2094,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "tags"
-          ]
+          "component_whitelist": ["tags"]
         },
         "headline": {
           "id": 0,
@@ -2192,9 +2120,7 @@
           "display_name": "Image",
           "key": "image",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Hauptbild des Blogbeitrags",
           "required": false
         },
@@ -2212,10 +2138,7 @@
           "pos": 0,
           "display_name": "Link",
           "key": "tab-c3ba9bf2-df74-4b82-8648-92a4ec80d525",
-          "keys": [
-            "link_url",
-            "link_text"
-          ],
+          "keys": ["link_url", "link_text"],
           "type": "tab",
           "description": "Link zum Blogbeitrag",
           "required": false
@@ -2257,11 +2180,7 @@
           "pos": 0,
           "display_name": "Author",
           "key": "tab-fdb1a15e-bfb4-4a1a-9161-595981f5cc73",
-          "keys": [
-            "author_name",
-            "author_title",
-            "author_image"
-          ],
+          "keys": ["author_name", "author_title", "author_image"],
           "type": "tab",
           "description": "Autor des Blogbeitrags",
           "required": false
@@ -2290,9 +2209,7 @@
           "display_name": "Image",
           "key": "author_image",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "The image URL of the author",
           "required": false
         },
@@ -2334,10 +2251,7 @@
           "pos": 0,
           "display_name": "Image",
           "key": "tab-efb73481-5747-4a7d-a203-3ab6f27a360b",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
+          "keys": ["image_src", "image_alt"],
           "type": "tab",
           "description": "A background or feature image displayed on the business card.",
           "required": false
@@ -2369,11 +2283,7 @@
           "pos": 0,
           "display_name": "Logo",
           "key": "tab-8d197e93-02fa-4905-8d29-9eb5dcd3cb35",
-          "keys": [
-            "logo_src",
-            "logo_alt",
-            "logo_url"
-          ],
+          "keys": ["logo_src", "logo_alt", "logo_url"],
           "type": "tab",
           "description": "The logo of the company or organization displayed on the business card.",
           "required": false
@@ -2436,10 +2346,7 @@
           "pos": 0,
           "display_name": "Avatar",
           "key": "tab-fe7e9d98-2f5b-483d-be3f-4c888fb83f34",
-          "keys": [
-            "avatar_src",
-            "avatar_alt"
-          ],
+          "keys": ["avatar_src", "avatar_alt"],
           "type": "tab",
           "description": "A profile image or avatar representing the person on the business card.",
           "required": false
@@ -2474,9 +2381,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "contact"
-          ]
+          "component_whitelist": ["contact"]
         },
         "buttons": {
           "id": 0,
@@ -2486,9 +2391,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ]
+          "component_whitelist": ["buttons"]
         }
       },
       "is_nestable": true,
@@ -2510,10 +2413,7 @@
           "pos": 0,
           "display_name": "Image",
           "key": "tab-2a4940ab-4312-4117-87d0-86f47e99ef91",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
+          "keys": ["image_src", "image_alt"],
           "type": "tab",
           "required": false
         },
@@ -2556,9 +2456,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "links"
-          ]
+          "component_whitelist": ["links"]
         },
         "initiallyShown": {
           "id": 0,
@@ -2648,9 +2546,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "download"
-          ]
+          "component_whitelist": ["download"]
         }
       },
       "is_nestable": true,
@@ -2682,10 +2578,7 @@
           "pos": 0,
           "display_name": "Calendar",
           "key": "tab-ae888716-6c03-4b25-9d2d-dedbc2861b3d",
-          "keys": [
-            "calendar_month",
-            "calendar_day"
-          ],
+          "keys": ["calendar_month", "calendar_day"],
           "type": "tab",
           "description": "Calendar icon to display the date",
           "required": false
@@ -2831,10 +2724,7 @@
           "pos": 0,
           "display_name": "Location",
           "key": "tab-d490efe0-93b4-47f5-b7e6-6776b39d99a9",
-          "keys": [
-            "location_name",
-            "location_address"
-          ],
+          "keys": ["location_name", "location_address"],
           "type": "tab",
           "description": "Location of the event",
           "required": false
@@ -2865,19 +2755,14 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "tags"
-          ]
+          "component_whitelist": ["tags"]
         },
         "tab-51a004e8-dfd5-4968-8b28-76c9413dc7ac": {
           "id": 0,
           "pos": 0,
           "display_name": "Image",
           "key": "tab-51a004e8-dfd5-4968-8b28-76c9413dc7ac",
-          "keys": [
-            "image_src",
-            "image_alt"
-          ],
+          "keys": ["image_src", "image_alt"],
           "type": "tab",
           "description": "Image to display in the teaser",
           "required": false
@@ -2888,9 +2773,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "URL of the image to display",
           "required": false
         },
@@ -2965,9 +2848,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "questions"
-          ],
+          "component_whitelist": ["questions"],
           "description": "Question"
         }
       },
@@ -3027,9 +2908,7 @@
           "display_name": "ConsentBackgroundImage",
           "key": "consentBackgroundImage",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Bild, das im Hintergrund des Einwilligungsdialogs angezeigt wird. Wird nur angezeigt, wenn 'Einwilligung' aktiviert ist.",
           "required": false
         },
@@ -3182,9 +3061,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ]
+          "component_whitelist": ["buttons"]
         },
         "tab-d1ca4038-6c80-4e00-a0cb-5440b11fb994": {
           "id": 0,
@@ -3207,9 +3084,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Image source to use",
           "required": false
         },
@@ -3362,9 +3237,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "tile"
-          ]
+          "component_whitelist": ["tile"]
         }
       },
       "is_nestable": true,
@@ -3475,9 +3348,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "ab810e22-a464-4876-9f50-9a126b0cbb16"
-          ],
+          "component_group_whitelist": ["ab810e22-a464-4876-9f50-9a126b0cbb16"],
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         }
@@ -3549,9 +3420,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ],
+          "component_whitelist": ["buttons"],
           "description": "Button"
         },
         "overlay": {
@@ -3568,11 +3437,7 @@
           "pos": 0,
           "display_name": "Video",
           "key": "tab-563cd973-a3f5-4b74-8eb9-d8ea5758c5d5",
-          "keys": [
-            "video_srcMobile",
-            "video_srcTablet",
-            "video_srcDesktop"
-          ],
+          "keys": ["video_srcMobile", "video_srcTablet", "video_srcDesktop"],
           "type": "tab",
           "description": "Das Video, das im Vorhang angezeigt wird. Es kann von einer URL oder einer eingebetteten Quelle stammen.",
           "required": false
@@ -3583,9 +3448,7 @@
           "display_name": "SrcMobile",
           "key": "video_srcMobile",
           "type": "asset",
-          "filetypes": [
-            "videos"
-          ],
+          "filetypes": ["videos"],
           "description": "Background video source for small screens",
           "required": false
         },
@@ -3595,9 +3458,7 @@
           "display_name": "SrcTablet",
           "key": "video_srcTablet",
           "type": "asset",
-          "filetypes": [
-            "videos"
-          ],
+          "filetypes": ["videos"],
           "description": "Background video source for medium screens",
           "required": false
         },
@@ -3607,9 +3468,7 @@
           "display_name": "SrcDesktop",
           "key": "video_srcDesktop",
           "type": "asset",
-          "filetypes": [
-            "videos"
-          ],
+          "filetypes": ["videos"],
           "description": "Background video source for large screens",
           "required": false
         },
@@ -3837,9 +3696,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "d6dc36ea-6625-4103-8784-af891d6b18bb"
-          ],
+          "component_group_whitelist": ["d6dc36ea-6625-4103-8784-af891d6b18bb"],
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         },
@@ -3851,9 +3708,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "2d07c612-ca3d-4f44-bd27-68ac1a725d16"
-          ],
+          "component_group_whitelist": ["2d07c612-ca3d-4f44-bd27-68ac1a725d16"],
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         }
@@ -3973,10 +3828,7 @@
           "pos": 0,
           "display_name": "MainLayout",
           "key": "tab-676845d5-c523-4ef2-b606-6a4e1c2a9569",
-          "keys": [
-            "mainLayout_gutter",
-            "mainLayout_minWidth"
-          ],
+          "keys": ["mainLayout_gutter", "mainLayout_minWidth"],
           "type": "tab",
           "description": "Main Layout",
           "required": false
@@ -4045,10 +3897,7 @@
           "pos": 0,
           "display_name": "AsideLayout",
           "key": "tab-ca1421d0-03ba-4dac-945d-182b1f65e4ae",
-          "keys": [
-            "asideLayout_gutter",
-            "asideLayout_minWidth"
-          ],
+          "keys": ["asideLayout_gutter", "asideLayout_minWidth"],
           "type": "tab",
           "description": "Layout settings for the aside section of the split layout",
           "required": false
@@ -4117,10 +3966,7 @@
           "pos": 0,
           "display_name": "Order",
           "key": "tab-52643b9d-1951-4607-b97d-30cd9a762a6d",
-          "keys": [
-            "order_mobile",
-            "order_desktop"
-          ],
+          "keys": ["order_mobile", "order_desktop"],
           "type": "tab",
           "description": "Sets the order of the main and aside sections in the split layout",
           "required": false
@@ -4177,9 +4023,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "0ba8037d-2795-4806-b0eb-1fb7d6bb50ce"
-          ],
+          "component_group_whitelist": ["0ba8037d-2795-4806-b0eb-1fb7d6bb50ce"],
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         },
@@ -4191,9 +4035,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "029a2a48-fdc2-4b81-ade3-721f13f95c21"
-          ],
+          "component_group_whitelist": ["029a2a48-fdc2-4b81-ade3-721f13f95c21"],
           "description": "Abstracts a blog overview concept into JSON schema",
           "required": false
         }
@@ -4370,9 +4212,7 @@
           "display_name": "BackgroundImage",
           "key": "backgroundImage",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Ein optionales Hintergrundbild für die Sektion.",
           "required": false
         },
@@ -4799,9 +4639,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "buttons"
-          ]
+          "component_whitelist": ["buttons"]
         }
       },
       "is_nestable": true,
@@ -4849,9 +4687,7 @@
           "display_name": "Image",
           "key": "image",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Ein Bild, das in den Suchergebnissen oder sozialen Medien als Vorschaubild verwendet wird.",
           "required": false
         },
@@ -4861,9 +4697,7 @@
           "display_name": "CardImage",
           "key": "cardImage",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Ein Bild, das speziell für die Darstellung in sozialen Medien verwendet wird, wenn die Seite geteilt wird.",
           "required": false
         }
@@ -4898,9 +4732,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "tags"
-          ]
+          "component_whitelist": ["tags"]
         },
         "headline": {
           "id": 0,
@@ -4917,9 +4749,7 @@
           "display_name": "Image",
           "key": "image",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Hauptbild des Blogbeitrags",
           "required": false
         },
@@ -4984,9 +4814,7 @@
           "display_name": "Src",
           "key": "image_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "URL of the image to display",
           "required": false
         },
@@ -5043,9 +4871,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "links"
-          ]
+          "component_whitelist": ["links"]
         }
       },
       "is_nestable": true,
@@ -5119,9 +4945,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "blog-author"
-          ],
+          "component_whitelist": ["blog-author"],
           "maximum": 1,
           "minimum": 0
         },
@@ -5133,9 +4957,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "socialSharing"
-          ],
+          "component_whitelist": ["socialSharing"],
           "description": "Link zum Teilen des Blogbeitrags"
         },
         "readingTime": {
@@ -5284,9 +5106,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "dates"
-          ],
+          "component_whitelist": ["dates"],
           "description": "Event Appointment"
         },
         "locationName": {
@@ -5337,9 +5157,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "links"
-          ]
+          "component_whitelist": ["links"]
         }
       },
       "is_nestable": true,
@@ -5405,10 +5223,7 @@
           "pos": 0,
           "display_name": "DateFromInput",
           "key": "datePicker_tab-e923cddf-868d-4fed-8d94-49d708720368",
-          "keys": [
-            "dateFromInput_label",
-            "dateFromInput_placeholder"
-          ],
+          "keys": ["dateFromInput_label", "dateFromInput_placeholder"],
           "type": "tab",
           "objectFields": [
             {
@@ -5439,10 +5254,7 @@
           "pos": 0,
           "display_name": "DateToInput",
           "key": "datePicker_tab-b4351e65-3f99-40aa-a145-a4eb0ef35146",
-          "keys": [
-            "dateToInput_label",
-            "dateToInput_placeholder"
-          ],
+          "keys": ["dateToInput_label", "dateToInput_placeholder"],
           "type": "tab",
           "objectFields": [
             {
@@ -5509,9 +5321,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "categoryCheckboxes"
-          ]
+          "component_whitelist": ["categoryCheckboxes"]
         },
         "categories_toggle": {
           "id": 0,
@@ -5528,10 +5338,7 @@
           "pos": 0,
           "display_name": "ApplyButton",
           "key": "tab-72f12cb9-5804-4674-bdc2-234fc10f134d",
-          "keys": [
-            "applyButton_label",
-            "applyButton_onClick"
-          ],
+          "keys": ["applyButton_label", "applyButton_onClick"],
           "type": "tab",
           "required": false
         },
@@ -5559,10 +5366,7 @@
           "pos": 0,
           "display_name": "ResetButton",
           "key": "tab-e3d635b9-49a8-4718-b473-774e91c2184c",
-          "keys": [
-            "resetButton_label",
-            "resetButton_onClick"
-          ],
+          "keys": ["resetButton_label", "resetButton_onClick"],
           "type": "tab",
           "required": false
         },
@@ -5858,9 +5662,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "categories"
-          ]
+          "component_whitelist": ["categories"]
         }
       },
       "is_nestable": true,
@@ -5986,9 +5788,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "matches"
-          ],
+          "component_whitelist": ["matches"],
           "description": "Search Result Match"
         },
         "showLink": {
@@ -6091,9 +5891,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "items"
-          ]
+          "component_whitelist": ["items"]
         }
       },
       "is_nestable": true,
@@ -6131,9 +5929,7 @@
           "display_name": "Src",
           "key": "logo_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Picture source",
           "required": false
         },
@@ -6143,9 +5939,7 @@
           "display_name": "SrcInverted",
           "key": "logo_srcInverted",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Picture source",
           "required": false
         },
@@ -6233,9 +6027,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "navItems"
-          ]
+          "component_whitelist": ["navItems"]
         }
       },
       "is_nestable": true,
@@ -6273,9 +6065,7 @@
           "display_name": "Src",
           "key": "logo_src",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Picture source",
           "required": false
         },
@@ -6285,9 +6075,7 @@
           "display_name": "SrcInverted",
           "key": "logo_srcInverted",
           "type": "asset",
-          "filetypes": [
-            "images"
-          ],
+          "filetypes": ["images"],
           "description": "Picture source",
           "required": false
         },
@@ -6358,9 +6146,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "navItems"
-          ]
+          "component_whitelist": ["navItems"]
         }
       },
       "is_nestable": true,
@@ -6384,9 +6170,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "section"
-          ]
+          "component_whitelist": ["section"]
         },
         "latestTitle": {
           "id": 0,
@@ -6406,9 +6190,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "blog-teaser"
-          ],
+          "component_whitelist": ["blog-teaser"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6430,9 +6212,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "blog-teaser"
-          ]
+          "component_whitelist": ["blog-teaser"]
         },
         "moreTitle": {
           "id": 0,
@@ -6452,9 +6232,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "blog-teaser"
-          ]
+          "component_whitelist": ["blog-teaser"]
         },
         "cta": {
           "id": 0,
@@ -6464,9 +6242,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "cta"
-          ],
+          "component_whitelist": ["cta"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6478,9 +6254,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "seo"
-          ],
+          "component_whitelist": ["seo"],
           "maximum": 1,
           "minimum": 0
         }
@@ -6504,9 +6278,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "blog-head"
-          ],
+          "component_whitelist": ["blog-head"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6518,9 +6290,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "blog-aside"
-          ],
+          "component_whitelist": ["blog-aside"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6541,9 +6311,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "section"
-          ]
+          "component_whitelist": ["section"]
         },
         "cta": {
           "id": 0,
@@ -6553,9 +6321,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "cta"
-          ],
+          "component_whitelist": ["cta"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6567,9 +6333,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "seo"
-          ],
+          "component_whitelist": ["seo"],
           "maximum": 1,
           "minimum": 0
         }
@@ -6602,9 +6366,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "categories"
-          ]
+          "component_whitelist": ["categories"]
         },
         "intro": {
           "id": 0,
@@ -6623,9 +6385,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "locations"
-          ],
+          "component_whitelist": ["locations"],
           "description": "Event Location"
         },
         "download": {
@@ -6636,9 +6396,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "download"
-          ]
+          "component_whitelist": ["download"]
         },
         "description": {
           "id": 0,
@@ -6657,19 +6415,14 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "images"
-          ]
+          "component_whitelist": ["images"]
         },
         "tab-008caa33-14df-401f-ad48-e6a83bcf300e": {
           "id": 0,
           "pos": 0,
           "display_name": "Button",
           "key": "tab-008caa33-14df-401f-ad48-e6a83bcf300e",
-          "keys": [
-            "button_label",
-            "button_url"
-          ],
+          "keys": ["button_label", "button_url"],
           "type": "tab",
           "description": "Button at the bottom of the event detail",
           "required": false
@@ -6716,9 +6469,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "event-filter"
-          ],
+          "component_whitelist": ["event-filter"],
           "maximum": 1,
           "minimum": 0,
           "description": "Event Filter"
@@ -6731,9 +6482,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "event-list-teaser"
-          ],
+          "component_whitelist": ["event-list-teaser"],
           "description": "Display an event teaser with date, title and location"
         }
       },
@@ -6756,19 +6505,14 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "section"
-          ]
+          "component_whitelist": ["section"]
         },
         "tab-19b9bc1d-7fe8-4949-a340-3260c16b6ee6": {
           "id": 0,
           "pos": 0,
           "display_name": "Header",
           "key": "tab-19b9bc1d-7fe8-4949-a340-3260c16b6ee6",
-          "keys": [
-            "header_floating",
-            "header_inverted"
-          ],
+          "keys": ["header_floating", "header_inverted"],
           "type": "tab",
           "description": "Header settings for the page",
           "required": false
@@ -6796,9 +6540,7 @@
           "pos": 0,
           "display_name": "Footer",
           "key": "tab-ec027649-f8a1-4353-a6db-3e5a21ceb915",
-          "keys": [
-            "footer_inverted"
-          ],
+          "keys": ["footer_inverted"],
           "type": "tab",
           "description": "Footer settings for the page",
           "required": false
@@ -6820,9 +6562,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "seo"
-          ],
+          "component_whitelist": ["seo"],
           "maximum": 1,
           "minimum": 0
         }
@@ -6846,9 +6586,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "headline"
-          ],
+          "component_whitelist": ["headline"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6860,9 +6598,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "search-bar"
-          ],
+          "component_whitelist": ["search-bar"],
           "maximum": 1,
           "minimum": 0,
           "description": "Search Bar"
@@ -6875,9 +6611,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "search-filter"
-          ],
+          "component_whitelist": ["search-filter"],
           "maximum": 1,
           "minimum": 0,
           "description": "Search Filter"
@@ -6890,9 +6624,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "searchResults"
-          ],
+          "component_whitelist": ["searchResults"],
           "description": "Search Result"
         }
       },
@@ -6915,9 +6647,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "header"
-          ],
+          "component_whitelist": ["header"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6929,9 +6659,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "footer"
-          ],
+          "component_whitelist": ["footer"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6943,9 +6671,7 @@
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "seo"
-          ],
+          "component_whitelist": ["seo"],
           "maximum": 1,
           "minimum": 0
         },
@@ -6984,9 +6710,7 @@
           "type": "bloks",
           "restrict_type": "groups",
           "restrict_components": true,
-          "component_group_whitelist": [
-            "ab810e22-a464-4876-9f50-9a126b0cbb16"
-          ]
+          "component_group_whitelist": ["ab810e22-a464-4876-9f50-9a126b0cbb16"]
         }
       },
       "is_root": true,
@@ -7022,19 +6746,42 @@
       "updated_at": "2026-01-15T19:48:55.723Z",
       "id": 299,
       "schema": {
+        "mode": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Mode",
+          "key": "mode",
+          "type": "option",
+          "description": "Generation mode. 'section' generates editor-selected sections. 'page' uses AI-planned full-page generation.",
+          "default_value": "section",
+          "options": [
+            { "name": "Section", "value": "section" },
+            { "name": "Page", "value": "page" }
+          ],
+          "required": false
+        },
+        "componentTypes": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Component Types",
+          "key": "componentTypes",
+          "type": "textarea",
+          "description": "Ordered list of component types to pre-select (section mode only), as comma-separated values. E.g. 'faq,features,cta'. Ignored in page mode.",
+          "required": false
+        },
         "sections": {
           "id": 0,
           "pos": 0,
-          "display_name": "Sections",
+          "display_name": "Sections (deprecated)",
           "key": "sections",
           "type": "number",
-          "description": "Number of sections to generate",
+          "description": "Deprecated — section count is now determined by componentTypes (section mode) or plan_page (page mode). Kept for backward compat.",
           "required": false
         },
         "includeStory": {
           "id": 0,
           "pos": 0,
-          "display_name": "IncludeStory",
+          "display_name": "Include Story?",
           "key": "includeStory",
           "type": "boolean",
           "default_value": true,
@@ -7044,7 +6791,7 @@
         "useIdea": {
           "id": 0,
           "pos": 0,
-          "display_name": "UseIdea",
+          "display_name": "Use Idea?",
           "key": "useIdea",
           "type": "boolean",
           "default_value": true,
@@ -7054,32 +6801,64 @@
         "relatedStories": {
           "id": 0,
           "pos": 0,
-          "display_name": "RelatedStories",
+          "display_name": "Related Stories",
           "key": "relatedStories",
           "type": "bloks",
           "restrict_type": "",
           "restrict_components": true,
-          "component_whitelist": [
-            "relatedStories"
-          ]
+          "component_whitelist": ["relatedStories"]
         },
         "userPrompt": {
           "id": 0,
           "pos": 0,
-          "display_name": "UserPrompt",
+          "display_name": "User Prompt",
           "key": "userPrompt",
           "type": "text",
-          "description": "Custom prompt to guide content generation",
+          "description": "In section mode: prompt describing the section(s) content. In page mode: intent for page planning.",
           "required": false
         },
         "systemPrompt": {
           "id": 0,
           "pos": 0,
-          "display_name": "SystemPrompt",
+          "display_name": "System Prompt",
           "key": "systemPrompt",
           "type": "text",
           "default_value": "You are a helpful assistant that generates high-quality website content based on the provided context and user instructions. Ensure the content is engaging, relevant, and well-structured.",
-          "description": "System-level instructions for content generation",
+          "description": "Optional system prompt override (default: auto-generated with site context)",
+          "required": false
+        },
+        "contentType": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Content Type",
+          "key": "contentType",
+          "type": "option",
+          "description": "Content type for generation. Auto-detected from story if not set.",
+          "default_value": "page",
+          "options": [
+            { "name": "Page", "value": "page" },
+            { "name": "Blog Post", "value": "blog-post" },
+            { "name": "Blog Overview", "value": "blog-overview" }
+          ],
+          "required": false
+        },
+        "startsWith": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Pattern Slug Prefix",
+          "key": "startsWith",
+          "type": "text",
+          "description": "Optional slug prefix filter for pattern analysis (e.g. 'case-studies/' to match style of that section)",
+          "required": false
+        },
+        "uploadAssets": {
+          "id": 0,
+          "pos": 0,
+          "display_name": "Upload Assets?",
+          "key": "uploadAssets",
+          "type": "boolean",
+          "default_value": true,
+          "description": "Upload generated image URLs to Storyblok CDN on save",
           "required": false
         }
       },

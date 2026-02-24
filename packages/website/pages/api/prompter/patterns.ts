@@ -36,8 +36,7 @@ export default async function handler(
   await corsGET(req, res);
 
   try {
-    const contentType =
-      (req.query.contentType as string | undefined) || "page";
+    const contentType = (req.query.contentType as string | undefined) || "page";
     const startsWith = req.query.startsWith as string | undefined;
     const refresh = req.query.refresh === "true";
 

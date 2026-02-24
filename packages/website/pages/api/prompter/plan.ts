@@ -13,7 +13,13 @@
  */
 import type { NextApiRequest, NextApiResponse } from "next";
 import { planPageContent } from "@kickstartds/storyblok-services";
-import { corsPOST, getOpenAiClient, getRegistry, handleError } from "./_helpers";
+import {
+  corsPOST,
+  getOpenAiClient,
+  getRegistry,
+  hasEnv,
+  handleError,
+} from "./_helpers";
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,8 +32,16 @@ export default async function handler(
   await corsPOST(req, res);
 
   try {
-    const body =
-      typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    // Pre-flight: check for OpenAI key before doing any work
+    if (!hasEnv("NEXT_OPENAI_API_KEY")) {
+      return res.status(503).json({
+        error:
+          "OpenAI API key is not configured. Page planning requires an AI model.",
+        code: "ENV_MISSING",
+      });
+    }
+
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
     const { intent, contentType = "page", sectionCount, patterns } = body;
 

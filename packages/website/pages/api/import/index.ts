@@ -58,6 +58,14 @@ export default async function handler(
   if (req.method === "POST") {
     await runMiddleware(req, res, cors);
 
+    // Deprecation notice — use /api/prompter/import instead
+    res.setHeader("Deprecation", "true");
+    res.setHeader("Sunset", "2026-06-01");
+    res.setHeader("Link", '</api/prompter/import>; rel="successor-version"');
+    console.warn(
+      "[DEPRECATED] /api/import is deprecated. Use /api/prompter/import instead."
+    );
+
     try {
       const { storyUid, prompterUid, page } = JSON.parse(req.body);
 

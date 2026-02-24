@@ -46,8 +46,29 @@ export function corsPOST(req: NextApiRequest, res: NextApiResponse) {
 
 export function requireEnv(name: string): string {
   const value = process.env[name];
-  if (!value) throw new Error(`Missing environment variable ${name}`);
+  if (!value) throw new EnvMissingError(name);
   return value;
+}
+
+/**
+ * Custom error for missing environment variables.
+ * Allows handleError to return a more specific 503 status.
+ */
+export class EnvMissingError extends Error {
+  public readonly envVar: string;
+  constructor(name: string) {
+    super(`Missing environment variable ${name}`);
+    this.name = "EnvMissingError";
+    this.envVar = name;
+  }
+}
+
+/**
+ * Check whether a specific env var is set (non-throwing).
+ * Useful for pre-flight checks before calling OpenAI.
+ */
+export function hasEnv(name: string): boolean {
+  return !!process.env[name];
 }
 
 // ─── Client factories ─────────────────────────────────────────────────
@@ -100,15 +121,41 @@ export function getRegistry(): SchemaRegistry {
 // ─── Error handling ───────────────────────────────────────────────────
 
 export function handleError(res: NextApiResponse, err: unknown) {
+  if (err instanceof EnvMissingError) {
+    const friendly = err.envVar.includes("OPENAI")
+      ? "OpenAI API key is not configured. Please set the NEXT_OPENAI_API_KEY environment variable."
+      : err.envVar.includes("STORYBLOK")
+      ? "Storyblok credentials are not configured. Please check your environment variables."
+      : err.message;
+    console.error(`EnvMissingError: ${err.message}`);
+    return res.status(503).json({ error: friendly, code: "ENV_MISSING" });
+  }
   if (err instanceof ServiceError) {
     console.error(`ServiceError [${err.code}]: ${err.message}`);
     return res.status(500).json({ error: err.message, code: err.code });
   }
   if (err instanceof Error) {
-    // Missing env var or validation error
-    if (err.message.startsWith("Missing environment variable")) {
-      console.error(err.message);
-      return res.status(500).json({ error: err.message });
+    // Detect OpenAI rate limit / quota errors
+    if (
+      err.message.includes("429") ||
+      err.message.toLowerCase().includes("rate limit")
+    ) {
+      console.error("Rate limit error:", err.message);
+      return res.status(429).json({
+        error: "Rate limit exceeded. Please wait a moment and try again.",
+        code: "RATE_LIMITED",
+      });
+    }
+    // Detect OpenAI auth errors
+    if (
+      err.message.includes("401") ||
+      err.message.toLowerCase().includes("invalid api key")
+    ) {
+      console.error("Auth error:", err.message);
+      return res.status(503).json({
+        error: "OpenAI API key is invalid. Please check your configuration.",
+        code: "AUTH_ERROR",
+      });
     }
     console.error(err);
     return res.status(500).json({ error: err.message });

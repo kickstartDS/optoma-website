@@ -1,6 +1,6 @@
 # Prompter Reactivation Implementation Progress
 
-> **Status: 🟡 IN PROGRESS** — Phases 1–4 complete. Phase 5 (Polish & Testing) next.
+> **Status: � COMPLETE** — Phases 1–5 complete. Manual testing (5.1) and documentation (5.6) remain as follow-up.
 > Companion PRD: [prompter-reactivation-prd.md](./prompter-reactivation-prd.md)
 
 ## Phase 1: Cleanup & Reactivation (Low Risk) ✅
@@ -112,11 +112,66 @@ Complete rewrite of PrompterComponent with new sub-components and state machine 
 - **`components/prompter/prompter.scss`** (MODIFIED) — Added 5 sub-component imports + new styles
 - **`components/prompter/prompter-select-field/PrompterSelectField.tsx`** (MODIFIED) — Fixed `forwardRef` props type
 
-## Phase 5: Polish & Testing (Medium Risk)
+## Phase 5: Polish & Testing (Medium Risk) ✅
 
-- [ ] 5.1 End-to-end testing in Storyblok Visual Editor
-- [ ] 5.2 Add loading states and error handling for each API call
-- [ ] 5.3 Handle edge cases: no OpenAI key, no patterns, empty plan
-- [ ] 5.4 Deprecate old `/api/content`, `/api/import`, `/api/ideas` routes
-- [ ] 5.5 Update CMS component schema with new fields (`mode`, `componentTypes`, `contentType`, etc.)
+### 5.1 End-to-end testing — ⬜ Manual
+
+- [ ] 5.1 End-to-end testing in Storyblok Visual Editor (requires manual testing)
+
+### 5.2 Loading states & error handling ✅
+
+- [x] 5.2.1 Add `isInitializing`, `isStoryLoading`, `isIdeasLoading` states in `usePrompter.ts`
+- [x] 5.2.2 Add `storyError`, `ideasError` non-blocking warning states
+- [x] 5.2.3 Add initialization loading indicator in `PrompterComponent.tsx` (ThreeDots + "Loading context…")
+- [x] 5.2.4 Display non-blocking init warnings (story/ideas fetch failures)
+- [x] 5.2.5 Disable Generate/Plan buttons during initialization via `isInitializing` guard
+- [x] 5.2.6 Improve error display with icon and "Start Over" button
+- [x] 5.2.7 Remove debug panel (`<details>` Story JSON element)
+
+### 5.3 Edge case handling ✅
+
+- [x] 5.3.1 Add `PrompterApiError` class with HTTP status + error code parsing
+- [x] 5.3.2 Add `friendlyErrorMessage()` mapping error codes to user-friendly messages (ENV_MISSING, RATE_LIMITED, AUTH_ERROR, 400)
+- [x] 5.3.3 Add `EnvMissingError` class in `_helpers.ts` with 503 status code
+- [x] 5.3.4 Add pre-flight OpenAI key check in `/api/prompter/plan` (returns 503 with clear message)
+- [x] 5.3.5 Add pre-flight OpenAI key check in `/api/prompter/generate-section` (returns 503 with clear message)
+- [x] 5.3.6 Add `hasEnv()` non-throwing env check helper in `_helpers.ts`
+- [x] 5.3.7 Detect OpenAI rate limit (429) and auth (401) errors in `handleError()`
+- [x] 5.3.8 Handle missing Storyblok token gracefully in story fetch (sets `storyError`, doesn't block generation)
+- [x] 5.3.9 Handle empty plan (sectionList.length === 0) — already guarded in `generate()`
+
+### 5.4 Deprecate old routes ✅
+
+- [x] 5.4.1 Add `Deprecation`, `Sunset`, and `Link` headers to `/api/content`
+- [x] 5.4.2 Add `Deprecation`, `Sunset`, and `Link` headers to `/api/import`
+- [x] 5.4.3 Add `Deprecation`, `Sunset`, and `Link` headers to `/api/ideas`
+- [x] 5.4.4 Add `console.warn()` deprecation notices to all three old routes
+
+### 5.5 Update CMS component schema ✅
+
+- [x] 5.5.1 Add `mode`, `componentTypes`, `contentType`, `startsWith`, `uploadAssets` to `prompter.schema.json`
+- [x] 5.5.2 Update `PrompterProps.ts` with new types + JSDoc
+- [x] 5.5.3 Update `PrompterDefaults.ts` with new default values
+- [x] 5.5.4 Update CMS component definition in `components.123456.json` — added `mode` (option), `componentTypes` (textarea), `contentType` (option), `startsWith` (text), `uploadAssets` (boolean)
+- [x] 5.5.5 Wire new props through `PrompterComponent.tsx` → `usePrompter()` hook
+- [x] 5.5.6 `defaultContentType` prop overrides auto-detection from story
+
+### 5.6 Documentation — ⬜ Follow-up
+
 - [ ] 5.6 Documentation update (`docs/skills/`, `README.md`, `copilot-instructions.md`)
+
+### Key Files Modified
+
+- **`pages/api/prompter/_helpers.ts`** — `EnvMissingError` class, `hasEnv()`, improved `handleError()` (503 for env, 429 for rate limit, 401 for auth)
+- **`pages/api/prompter/plan.ts`** — Pre-flight OpenAI key check, imports `hasEnv`
+- **`pages/api/prompter/generate-section.ts`** — Pre-flight OpenAI key check, imports `hasEnv`
+- **`components/prompter/usePrompter.ts`** — `PrompterApiError`, `friendlyErrorMessage()`, init tracking states, `defaultComponentTypes`/`defaultContentType`/`startsWith`/`uploadAssets` options
+- **`components/prompter/PrompterComponent.tsx`** — Init loading indicator, init warnings, improved error display, removed debug panel, new prop destructuring
+- **`components/prompter/PrompterProps.ts`** — New types: `PrompterMode`, `ComponentTypes`, `ContentType`, `StartsWith`, `UploadAssets`
+- **`components/prompter/PrompterDefaults.ts`** — New defaults for `mode`, `componentTypes`, `contentType`, `uploadAssets`
+- **`components/prompter/prompter.schema.json`** — 5 new fields with enums, defaults, descriptions
+- **`components/prompter/prompter.scss`** — New `.prompter-init-loading`, `.prompter-init-warning` styles; updated `.prompter-error` with icon layout; removed debug panel styles
+- **`cms/components.123456.json`** — 5 new Storyblok component fields
+- **`pages/api/content/index.ts`** — Deprecation headers + console.warn
+- **`pages/api/import/index.ts`** — Deprecation headers + console.warn
+- **`pages/api/ideas/index.ts`** — Deprecation headers + console.warn

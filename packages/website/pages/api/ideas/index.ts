@@ -29,6 +29,14 @@ export default async function handler(
   if (req.method === "GET") {
     await runMiddleware(req, res, cors);
 
+    // Deprecation notice — use /api/prompter/ideas instead
+    res.setHeader("Deprecation", "true");
+    res.setHeader("Sunset", "2026-06-01");
+    res.setHeader("Link", '</api/prompter/ideas>; rel="successor-version"');
+    console.warn(
+      "[DEPRECATED] /api/ideas is deprecated. Use /api/prompter/ideas instead."
+    );
+
     try {
       const Storyblok = new StoryblokClient({
         oauthToken: process.env.NEXT_STORYBLOK_OAUTH_TOKEN,

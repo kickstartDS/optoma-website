@@ -40,6 +40,17 @@ export default async function handler(
 ) {
   await runMiddleware(req, res, cors);
 
+  // Deprecation notice — use /api/prompter/generate-section instead
+  res.setHeader("Deprecation", "true");
+  res.setHeader("Sunset", "2026-06-01");
+  res.setHeader(
+    "Link",
+    '</api/prompter/generate-section>; rel="successor-version"'
+  );
+  console.warn(
+    "[DEPRECATED] /api/content is deprecated. Use /api/prompter/generate-section instead."
+  );
+
   const openAiKey = process.env.NEXT_OPENAI_API_KEY;
 
   try {

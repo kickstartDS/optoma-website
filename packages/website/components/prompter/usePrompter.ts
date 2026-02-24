@@ -64,6 +64,14 @@ export interface UsePrompterOptions {
   systemPrompt?: string;
   /** Related story slugs (from CMS). */
   relatedStories?: string[];
+  /** Pre-selected component types from CMS (section mode). */
+  defaultComponentTypes?: string[];
+  /** Override content type detection. */
+  defaultContentType?: string;
+  /** Slug prefix filter for pattern analysis. */
+  startsWith?: string;
+  /** Upload generated image URLs to Storyblok CDN on save. */
+  uploadAssets?: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────
@@ -73,6 +81,18 @@ const BASE_URL =
     ? window.location.origin
     : process.env.NEXT_PUBLIC_SITE_URL || "";
 
+/** Error with optional code from API responses. */
+class PrompterApiError extends Error {
+  public readonly code?: string;
+  public readonly status: number;
+  constructor(message: string, status: number, code?: string) {
+    super(message);
+    this.name = "PrompterApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
 async function fetchJson<T = any>(
   url: string,
   options?: RequestInit
@@ -80,9 +100,31 @@ async function fetchJson<T = any>(
   const res = await fetch(url, options);
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Request failed: ${res.status}`);
+    throw new PrompterApiError(
+      body.error || `Request failed: ${res.status}`,
+      res.status,
+      body.code
+    );
   }
   return res.json();
+}
+
+/** User-friendly error message based on API error codes. */
+function friendlyErrorMessage(err: unknown, context: string): string {
+  if (err instanceof PrompterApiError) {
+    if (err.code === "ENV_MISSING") return err.message;
+    if (err.code === "RATE_LIMITED")
+      return "Rate limit exceeded — please wait a moment and try again.";
+    if (err.code === "AUTH_ERROR")
+      return "AI service authentication failed. Please check the API key configuration.";
+    if (err.status === 400) return `Invalid request: ${err.message}`;
+    return err.message;
+  }
+  if (err instanceof Error) {
+    if (err.name === "AbortError") return "";
+    return err.message || `${context} failed`;
+  }
+  return `${context} failed`;
 }
 
 const storyblokKeys = ["_uid", "_editable", "component"];
@@ -168,10 +210,7 @@ function getSurroundingContext(
 
   // Get the section array from the story
   const sections: any[] =
-    story?.content?.section ||
-    story?.content?.sections ||
-    story?.section ||
-    [];
+    story?.content?.section || story?.content?.sections || story?.section || [];
   if (!Array.isArray(sections) || sections.length === 0) return {};
 
   const prompterIndex = sections.findIndex(
@@ -207,21 +246,33 @@ export function usePrompter(options: UsePrompterOptions = {}) {
     userPrompt: initialPrompt = "",
     systemPrompt,
     relatedStories = [],
+    defaultComponentTypes = [],
+    defaultContentType,
+    startsWith,
+    uploadAssets = true,
   } = options;
 
   // ── Core state ────────────────────────────────────────────────────
   const [mode, setMode] = useState<PrompterMode>(defaultMode);
   const [step, setStep] = useState<PrompterStep>("configure");
   const [prompt, setPrompt] = useState(initialPrompt);
-  const [contentType, setContentType] = useState("page");
+  const [contentType, setContentType] = useState(defaultContentType || "page");
   const [error, setError] = useState<string | null>(null);
+
+  // ── Initialization tracking ───────────────────────────────────────
+  const [isStoryLoading, setIsStoryLoading] = useState(includeStory);
+  const [isIdeasLoading, setIsIdeasLoading] = useState(useIdea);
+  const [storyError, setStoryError] = useState<string | null>(null);
+  const [ideasError, setIdeasError] = useState<string | null>(null);
 
   // ── Ideas ─────────────────────────────────────────────────────────
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [selectedIdea, setSelectedIdea] = useState("");
 
   // ── Section mode: selected component types ────────────────────────
-  const [componentTypes, setComponentTypes] = useState<string[]>([]);
+  const [componentTypes, setComponentTypes] = useState<string[]>(
+    defaultComponentTypes
+  );
 
   // ── Page mode: plan ───────────────────────────────────────────────
   const [plan, setPlan] = useState<PagePlan | null>(null);
@@ -270,11 +321,18 @@ export function usePrompter(options: UsePrompterOptions = {}) {
 
   // ── Fetch current story ───────────────────────────────────────────
   useEffect(() => {
-    if (!storyUid || !includeStory) return;
+    if (!storyUid || !includeStory) {
+      setIsStoryLoading(false);
+      return;
+    }
 
     const token = process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN;
     if (!token) {
       console.error("Missing NEXT_PUBLIC_STORYBLOK_API_TOKEN env var");
+      setStoryError(
+        "Storyblok API token is missing — story context unavailable."
+      );
+      setIsStoryLoading(false);
       return;
     }
 
@@ -287,19 +345,37 @@ export function usePrompter(options: UsePrompterOptions = {}) {
         setRawStory(raw);
         const processed = processStory(raw);
         setStory(processed);
-        setContentType(detectContentType(raw));
+        // Only auto-detect content type if not explicitly set via CMS prop
+        if (!defaultContentType) {
+          setContentType(detectContentType(raw));
+        }
+        setStoryError(null);
       })
-      .catch((err) => console.error("Failed to fetch story:", err));
-  }, [storyUid, includeStory]);
+      .catch((err) => {
+        console.error("Failed to fetch story:", err);
+        setStoryError(
+          "Failed to load story context. Generation will proceed without it."
+        );
+      })
+      .finally(() => setIsStoryLoading(false));
+  }, [storyUid, includeStory, defaultContentType]);
 
   // ── Fetch ideas ───────────────────────────────────────────────────
   useEffect(() => {
-    if (!useIdea) return;
+    if (!useIdea) {
+      setIsIdeasLoading(false);
+      return;
+    }
     fetchJson(`${BASE_URL}/api/prompter/ideas`)
       .then((json) => {
         setIdeas(json.response?.data?.ideas || json.ideas || []);
+        setIdeasError(null);
       })
-      .catch((err) => console.error("Failed to fetch ideas:", err));
+      .catch((err) => {
+        console.error("Failed to fetch ideas:", err);
+        setIdeasError("Ideas could not be loaded.");
+      })
+      .finally(() => setIsIdeasLoading(false));
   }, [useIdea]);
 
   // ── Build prompt with idea and story context ──────────────────────
@@ -329,7 +405,15 @@ export function usePrompter(options: UsePrompterOptions = {}) {
     }
 
     return fullPrompt;
-  }, [prompt, useIdea, selectedIdea, ideas, includeStory, rawStory, relatedStories]);
+  }, [
+    prompt,
+    useIdea,
+    selectedIdea,
+    ideas,
+    includeStory,
+    rawStory,
+    relatedStories,
+  ]);
 
   // ── Section mode: manage component type list ──────────────────────
   const addComponentType = useCallback((type: string) => {
@@ -370,7 +454,7 @@ export function usePrompter(options: UsePrompterOptions = {}) {
       setPlan(result.plan);
       setStep("plan-review");
     } catch (err: any) {
-      setError(err.message || "Failed to plan page");
+      setError(friendlyErrorMessage(err, "Page planning"));
       setStep("error");
     }
   }, [buildPrompt, contentType]);
@@ -410,18 +494,15 @@ export function usePrompter(options: UsePrompterOptions = {}) {
     [prompt]
   );
 
-  const movePlanSection = useCallback(
-    (fromIndex: number, toIndex: number) => {
-      setPlan((prev) => {
-        if (!prev?.sections) return prev;
-        const sections = [...prev.sections];
-        const [moved] = sections.splice(fromIndex, 1);
-        sections.splice(toIndex, 0, moved);
-        return { ...prev, sections };
-      });
-    },
-    []
-  );
+  const movePlanSection = useCallback((fromIndex: number, toIndex: number) => {
+    setPlan((prev) => {
+      if (!prev?.sections) return prev;
+      const sections = [...prev.sections];
+      const [moved] = sections.splice(fromIndex, 1);
+      sections.splice(toIndex, 0, moved);
+      return { ...prev, sections };
+    });
+  }, []);
 
   // ── Generate sections ─────────────────────────────────────────────
   const generate = useCallback(async () => {
@@ -512,9 +593,7 @@ export function usePrompter(options: UsePrompterOptions = {}) {
         setGeneratedSections([...generated]);
       } catch (err: any) {
         if (err.name === "AbortError") break;
-        setError(
-          `Failed to generate ${ct} section: ${err.message || "Unknown error"}`
-        );
+        setError(friendlyErrorMessage(err, `Generating ${ct} section`));
         setStep("error");
         return;
       }
@@ -604,7 +683,7 @@ export function usePrompter(options: UsePrompterOptions = {}) {
       } catch (err: any) {
         // Restore previous section on failure
         setGeneratedSections(prevSections);
-        setError(`Failed to regenerate section: ${err.message}`);
+        setError(friendlyErrorMessage(err, "Regenerating section"));
       }
     },
     [
@@ -643,7 +722,7 @@ export function usePrompter(options: UsePrompterOptions = {}) {
           sections,
           contentType,
           publish: true,
-          uploadAssets: true,
+          uploadAssets,
         }),
       });
 
@@ -653,10 +732,10 @@ export function usePrompter(options: UsePrompterOptions = {}) {
 
       setStep("submitted");
     } catch (err: any) {
-      setError(err.message || "Failed to save content");
+      setError(friendlyErrorMessage(err, "Saving content"));
       setStep("error");
     }
-  }, [storyUid, prompterUid, generatedSections, contentType]);
+  }, [storyUid, prompterUid, generatedSections, contentType, uploadAssets]);
 
   // ── Discard & reset ───────────────────────────────────────────────
   const discard = useCallback(() => {
@@ -671,18 +750,20 @@ export function usePrompter(options: UsePrompterOptions = {}) {
   }, []);
 
   // ── Can-proceed guards ────────────────────────────────────────────
+  const isInitializing = isStoryLoading || isIdeasLoading;
+
   const canGenerate =
     mode === "section"
-      ? componentTypes.length > 0 && prompt.trim().length > 0
+      ? componentTypes.length > 0 && prompt.trim().length > 0 && !isInitializing
       : false;
 
-  const canPlan = mode === "page" && prompt.trim().length > 0;
+  const canPlan =
+    mode === "page" && prompt.trim().length > 0 && !isInitializing;
 
   const canStartPageGeneration =
     mode === "page" && plan !== null && (plan.sections?.length || 0) > 0;
 
-  const canImport =
-    step === "preview" && generatedSections.length > 0;
+  const canImport = step === "preview" && generatedSections.length > 0;
 
   // ── Return ────────────────────────────────────────────────────────
   return {
@@ -703,6 +784,13 @@ export function usePrompter(options: UsePrompterOptions = {}) {
     story,
     storyUid,
     prompterUid,
+
+    // Loading / init states
+    isInitializing,
+    isStoryLoading,
+    isIdeasLoading,
+    storyError,
+    ideasError,
 
     // Guards
     canGenerate,

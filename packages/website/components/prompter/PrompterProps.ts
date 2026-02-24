@@ -6,7 +6,12 @@
  */
 
 /**
- * Number of sections to generate
+ * Generation mode. 'section' generates editor-selected sections.
+ * 'page' uses plan_page for AI-planned full-page generation.
+ */
+export type PrompterMode = "section" | "page";
+/**
+ * @deprecated Determined by componentTypes length or plan_page. Kept for backward compat.
  */
 export type SectionCount = number;
 /**
@@ -22,22 +27,44 @@ export type UseIdea = boolean;
  */
 export type RelatedStories = string[];
 /**
- * Custom prompt to guide content generation
+ * Prompt describing the content or page intent
  */
 export type UserPrompt = string;
 /**
- * System-level instructions for content generation
+ * Optional system prompt override
  */
 export type SystemPrompt = string;
+/**
+ * Ordered list of component types to generate (section mode only)
+ */
+export type ComponentTypes = string[];
+/**
+ * Content type for generation. Auto-detected from story if not set.
+ */
+export type ContentType = "page" | "blog-post" | "blog-overview";
+/**
+ * Optional slug prefix filter for pattern analysis
+ */
+export type StartsWith = string;
+/**
+ * Upload generated image URLs to Storyblok CDN on save
+ */
+export type UploadAssets = boolean;
 
 /**
  * Component used to create new website content using AI prompts
  */
 export interface PrompterProps {
+  mode?: PrompterMode;
+  componentTypes?: ComponentTypes;
+  /** @deprecated */
   sections?: SectionCount;
   includeStory?: IncludeStory;
   useIdea?: UseIdea;
   relatedStories?: RelatedStories;
   userPrompt?: UserPrompt;
   systemPrompt?: SystemPrompt;
+  contentType?: ContentType;
+  startsWith?: StartsWith;
+  uploadAssets?: UploadAssets;
 }
