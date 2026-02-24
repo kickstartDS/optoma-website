@@ -1,6 +1,6 @@
 # PRD: Prompter Component Reactivation & Guided Generation Integration
 
-**Status:** Draft
+**Status:** In Progress — Phase 1 (Cleanup & Reactivation) and Phase 2 (Service Extraction) complete. Phase 3 (API Routes) next.
 **Date:** 2026-02-24
 **Author:** Generated from codebase analysis
 
@@ -112,27 +112,27 @@ Replace the three existing API routes with a richer set that mirrors the MCP ser
 
 The existing `/api/content`, `/api/import`, and `/api/ideas` routes should be preserved for backward compatibility but can be deprecated.
 
-### 3.2 Shared Service Extraction
+### 3.2 Shared Service Extraction (✅ Complete)
 
-Currently, the MCP server's `plan_page` and `generate_section` logic lives inline in `packages/mcp-server/src/index.ts` (lines ~1937–2340). To share with the Prompter's API routes:
+The MCP server's `plan_page` and `generate_section` logic has been extracted into the shared services library:
 
-1. **Extract `planPage()`** into `packages/storyblok-services/src/plan.ts`
+1. **`planPageContent()`** — extracted to `packages/storyblok-services/src/plan.ts`
 
-   - Inputs: intent string, content type, optional `startsWith` filter, OpenAI client, Storyblok client
+   - Inputs: OpenAI client, `ContentTypeEntry` from registry, options (intent, patterns, recipes, sectionCount)
    - Outputs: section sequence plan, rootFieldMeta (for hybrid types)
-   - Internally calls `analyzeContentPatterns()`, loads recipes, builds prompt, calls OpenAI
+   - Internally resolves components/fields from registry, builds dynamic OpenAI schema, handles Tier 1 vs Tier 2 content types
 
-2. **Extract `generateSection()`** into `packages/storyblok-services/src/generate-section.ts`
+2. **`generateSectionContent()`** — extracted to `packages/storyblok-services/src/generate-section.ts`
 
-   - Inputs: component type, prompt, previousSection, nextSection, content type, OpenAI client, patterns cache
-   - Outputs: generated section object (Design System format)
-   - Internally calls `buildFieldGuidance()`, injects sub-item counts, recipe best practices, transition context
+   - Inputs: OpenAI client, `ContentTypeEntry`, options (componentType, prompt, previousSection, nextSection, patterns, recipes)
+   - Outputs: generated section object (Design System format + Storyblok-ready format)
+   - Internally builds layered system prompt with site context, transition awareness, recipe best practices, and field-level guidance
 
-3. **Extract `generateRootField()`** into `packages/storyblok-services/src/generate-root-field.ts` (already partially extracted to `pipeline.ts`)
+3. **`generateRootFieldContent()`** — already in `packages/storyblok-services/src/pipeline.ts`
 
-4. **Extract `generateSeo()`** into `packages/storyblok-services/src/generate-seo.ts` (already partially extracted to `pipeline.ts`)
+4. **`generateSeoContent()`** — already in `packages/storyblok-services/src/pipeline.ts`
 
-After extraction, the MCP server's tool handlers become thin wrappers around these shared functions (just like `importByPrompterReplacement` already is).
+The MCP server's tool handlers are now thin wrappers (~40 lines each) around these shared functions. Both the Prompter's API routes and the n8n node can call the same shared functions directly.
 
 ### 3.3 Generation Modes
 
@@ -280,17 +280,17 @@ The current Prompter runs `prepareSchemaForOpenAi` client-side on every render. 
 | 1.4 | Replace German-language UI strings with English (or add i18n)                       | `PrompterComponent.tsx`, sub-components                      | S      |
 | 1.5 | Verify the Prompter renders in Storyblok Visual Editor with the existing (old) flow | Manual testing                                               | S      |
 
-### Phase 2: Service Extraction (Medium Risk)
+### Phase 2: Service Extraction (✅ Complete)
 
-| #   | Task                                                                                          | Files                                            | Effort |
-| --- | --------------------------------------------------------------------------------------------- | ------------------------------------------------ | ------ |
-| 2.1 | Extract `planPage()` from MCP server into `storyblok-services/src/plan.ts`                    | New file + MCP server refactor                   | L      |
-| 2.2 | Extract `generateSection()` from MCP server into `storyblok-services/src/generate-section.ts` | New file + MCP server refactor                   | L      |
-| 2.3 | Verify `generateRootField()` and `generateSeo()` are already extractable from `pipeline.ts`   | `storyblok-services/src/pipeline.ts`             | M      |
-| 2.4 | Update MCP server tool handlers to use extracted shared functions                             | `packages/mcp-server/src/index.ts`               | M      |
-| 2.5 | Update n8n node operations to use extracted shared functions                                  | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | M      |
-| 2.6 | Add tests for extracted functions                                                             | `packages/storyblok-services/test/`              | M      |
-| 2.7 | Ensure patterns cache can be initialized from API routes (not just MCP server startup)        | `storyblok-services/src/patterns.ts`             | M      |
+| #   | Task                                                                                        | Files                                            | Status |
+| --- | ------------------------------------------------------------------------------------------- | ------------------------------------------------ | ------ |
+| 2.1 | Extract `planPageContent()` from MCP server into `storyblok-services/src/plan.ts`           | New file + MCP server refactor                   | ✅     |
+| 2.2 | Extract `generateSectionContent()` into `storyblok-services/src/generate-section.ts`        | New file + MCP server refactor                   | ✅     |
+| 2.3 | Verify `generateRootField()` and `generateSeo()` are already extractable from `pipeline.ts` | `storyblok-services/src/pipeline.ts`             | ✅     |
+| 2.4 | Update MCP server tool handlers to use extracted shared functions                           | `packages/mcp-server/src/index.ts`               | ✅     |
+| 2.5 | Update n8n node operations to use extracted shared functions                                | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | ⬜     |
+| 2.6 | Add tests for extracted functions                                                           | `packages/storyblok-services/test/`              | ⬜     |
+| 2.7 | Ensure patterns cache can be initialized from API routes (not just MCP server startup)      | `storyblok-services/src/patterns.ts`             | ⬜     |
 
 ### Phase 3: New API Routes (Medium Risk)
 
@@ -465,7 +465,7 @@ The Phase 2 extraction is a **refactor, not a behavior change**. After extractio
 
 ## 9. Dependencies
 
-- `@kickstartds/storyblok-services` — must export new shared functions (`planPage`, `generateSection`)
+- `@kickstartds/storyblok-services` — exports `planPageContent`, `generateSectionContent` (extracted in Phase 2), plus existing `generateRootFieldContent`, `generateSeoContent`, `importByPrompterReplacement`
 - `@kickstartds/ds-agency-premium` — component library (already a dependency)
 - OpenAI API key — required for generation (already configured via `NEXT_OPENAI_API_KEY`)
 - Storyblok Management API credentials — required for import (already configured)
@@ -504,15 +504,17 @@ The Phase 2 extraction is a **refactor, not a behavior change**. After extractio
 
 ### Shared Services (Prompter-relevant exports)
 
-| Function                        | File           | Used By                                |
-| ------------------------------- | -------------- | -------------------------------------- |
-| `prepareSchemaForOpenAi()`      | `schema.ts`    | Prompter (client-side), MCP            |
-| `generateStructuredContent()`   | `pipeline.ts`  | Prompter (via `/api/content`), MCP     |
-| `processOpenAiResponse()`       | `transform.ts` | Prompter (client-side), MCP            |
-| `processForStoryblok()`         | `transform.ts` | Prompter (client-side), MCP, n8n       |
-| `importByPrompterReplacement()` | `import.ts`    | Prompter (via `/api/import`), MCP, n8n |
-| `validateSections()`            | `validate.ts`  | Prompter (via `/api/import`), MCP, n8n |
-| `analyzeContentPatterns()`      | `patterns.ts`  | MCP only (needs Prompter route)        |
-| `buildFieldGuidance()`          | `guidance.ts`  | MCP only (needs extraction)            |
-| `createOpenAiClient()`          | `pipeline.ts`  | Prompter (via `/api/content`), MCP     |
-| `createStoryblokClient()`       | `client.ts`    | Prompter (via `/api/import`), MCP, n8n |
+| Function                        | File                  | Used By                                |
+| ------------------------------- | --------------------- | -------------------------------------- |
+| `prepareSchemaForOpenAi()`      | `schema.ts`           | Prompter (client-side), MCP            |
+| `generateStructuredContent()`   | `pipeline.ts`         | Prompter (via `/api/content`), MCP     |
+| `processOpenAiResponse()`       | `transform.ts`        | Prompter (client-side), MCP            |
+| `processForStoryblok()`         | `transform.ts`        | Prompter (client-side), MCP, n8n       |
+| `importByPrompterReplacement()` | `import.ts`           | Prompter (via `/api/import`), MCP, n8n |
+| `validateSections()`            | `validate.ts`         | Prompter (via `/api/import`), MCP, n8n |
+| `analyzeContentPatterns()`      | `patterns.ts`         | MCP, Prompter (via API route)          |
+| `assembleFieldGuidance()`       | `guidance.ts`         | MCP (needs Prompter route)             |
+| `planPageContent()`             | `plan.ts`             | MCP, Prompter (via API route), n8n     |
+| `generateSectionContent()`      | `generate-section.ts` | MCP, Prompter (via API route), n8n     |
+| `createOpenAiClient()`          | `openai.ts`           | Prompter (via `/api/content`), MCP     |
+| `createStoryblokClient()`       | `storyblok.ts`        | Prompter (via `/api/import`), MCP, n8n |

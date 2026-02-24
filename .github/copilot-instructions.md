@@ -228,6 +228,8 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-services/src/assets.ts](packages/storyblok-services/src/assets.ts) - Asset download, upload to Storyblok, and URL rewriting
 - [packages/storyblok-services/src/patterns.ts](packages/storyblok-services/src/patterns.ts) - Content pattern analysis (component frequency, section sequences, sub-component counts, page archetypes, field profiles)
 - [packages/storyblok-services/src/guidance.ts](packages/storyblok-services/src/guidance.ts) - Field-level compositional guidance (field discovery, distribution tracking, pruning, prompt assembly)
+- [packages/storyblok-services/src/plan.ts](packages/storyblok-services/src/plan.ts) - Page planning (`planPageContent()`) — AI-assisted section sequence via OpenAI, extracted from MCP server
+- [packages/storyblok-services/src/generate-section.ts](packages/storyblok-services/src/generate-section.ts) - Single-section generation (`generateSectionContent()`) with site-aware context injection, extracted from MCP server
 - [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (20 operations across 3 resources)
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node

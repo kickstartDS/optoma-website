@@ -47,6 +47,8 @@ import {
   scrapeUrl as sharedScrapeUrl,
   analyzeContentPatterns as sharedAnalyzeContentPatterns,
   assembleFieldGuidance,
+  planPageContent,
+  generateSectionContent,
   type PrepareSchemaOptions,
   type ValidationRules,
   type ValidationWarning,
@@ -56,6 +58,10 @@ import {
   type SubComponentStats,
   type AnalyzeContentPatternsOptions,
   type SectionRecipes,
+  type PlanPageOptions,
+  type PlanPageResult,
+  type GenerateSectionOptions,
+  type GenerateSectionResult,
 } from "@kickstartds/storyblok-services";
 
 // Load all content type schemas via the registry
@@ -101,6 +107,10 @@ export {
 export type { ValidationWarning, ContentTypeEntry, RootFieldMeta };
 export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
 export { stripEmptyAssetFields };
+
+// ─── Page planning & section generation ───────────────────────────────
+export { planPageContent, generateSectionContent };
+export type { PlanPageResult, GenerateSectionResult };
 
 // ─── Content Pattern Analysis ─────────────────────────────────────────
 // Re-exported from shared library. The function signature now takes a
@@ -523,6 +533,19 @@ export class ContentGenerationService {
    */
   isConfigured(): boolean {
     return this.client !== null;
+  }
+
+  /**
+   * Get the underlying OpenAI client instance.
+   * Throws if the service is not configured.
+   */
+  getClient(): OpenAI {
+    if (!this.client) {
+      throw new Error(
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+      );
+    }
+    return this.client;
   }
 
   /**

@@ -10,7 +10,7 @@ const PrompterBadge: React.FC<PrompterBadgeProps> = ({ state, label }) => {
   return (
     <span className={classnames("prompter-badge", `prompter-badge--${state}`)}>
       {label}
-      {state === "unsaved" && " (ungespeichert)"}
+      {state === "unsaved" && " (unsaved)"}
     </span>
   );
 };

@@ -188,3 +188,21 @@ export type {
   PruneOptions,
   AssembleFieldGuidanceOptions,
 } from "./guidance.js";
+
+// ─── Page planning ──────────────────────────────────────────────────
+export { planPageContent, formatPatternsContext } from "./plan.js";
+export type {
+  PlanPageOptions,
+  PlanPageResult,
+  PagePlan,
+  PlannedSection,
+  PlannedRootField,
+  PlannedField,
+} from "./plan.js";
+
+// ─── Section generation ─────────────────────────────────────────────
+export { generateSectionContent } from "./generate-section.js";
+export type {
+  GenerateSectionOptions,
+  GenerateSectionResult,
+} from "./generate-section.js";

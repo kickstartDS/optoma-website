@@ -160,7 +160,7 @@ Single-section generation with automatic site-aware context injection.
 
 **n8n composability:** This is where n8n's **Split In Batches** node shines. Plan Page outputs an array of section descriptors → Split In Batches → Generate Section (per item, with `previousSection`/`nextSection` wired via expressions) → Merge → Create Page with Content. This mirrors the MCP server's recommended guided generation workflow.
 
-**Shared services used:** `generateAndPrepareContent()` from shared pipeline, plus pattern analysis cache for sub-component counts and recipe injection (needs `analyzeContentPatterns()` and `getRecipesForComponent()` extracted to shared services).
+**Shared services used:** `generateSectionContent()` from `@kickstartds/storyblok-services/generate-section` (extracted from MCP server), plus `generateAndPrepareContent()` from shared pipeline. Pattern analysis and recipe injection are handled internally by `generateSectionContent()`.
 
 ##### Operation: Plan Page
 
@@ -176,7 +176,7 @@ AI-assisted page structure planning.
 
 **n8n composability:** Output array feeds into Split In Batches → Generate Section. The `componentType` field maps to Generate Section's Component Type parameter, and `purpose`/`notes` enrich the prompt.
 
-**Shared services used:** Needs `planPage()` extracted from MCP server `services.ts` into shared services. Uses `prepareSchemaForOpenAi()` for schema-aware planning and `analyzeContentPatterns()` for site-aware recommendations.
+**Shared services used:** `planPageContent()` from `@kickstartds/storyblok-services/plan` (extracted from MCP server). Uses `prepareSchemaForOpenAi()` for schema-aware planning and `analyzeContentPatterns()` for site-aware recommendations.
 
 ##### Operation: Analyze Content Patterns
 
@@ -192,7 +192,7 @@ Read-only structural analysis across all published stories. No OpenAI required.
 
 **n8n composability:** First step in audit and generation workflows. Output feeds into Code nodes for custom analysis, or stored in variables for use in downstream Generate Section prompts.
 
-**Shared services used:** Needs `analyzeContentPatterns()` extracted from MCP server `services.ts` into shared services. Currently implemented as a startup cache in the MCP server — for n8n, it should be callable on-demand with optional caching.
+**Shared services used:** `analyzeContentPatterns()` from `@kickstartds/storyblok-services/patterns` (already extracted). Callable on-demand with optional caching.
 
 ---
 
@@ -318,20 +318,20 @@ Several MCP server functions need to be extracted into `@kickstartds/storyblok-s
 | `listAssets(client, spaceId, options)`            | MCP `services.ts` inline | With search/filter/pagination                       |
 | `ensurePath(client, spaceId, path)`               | MCP `services.ts` inline | Idempotent folder creation                          |
 
-### New Functions for a new `patterns.ts`
+### New Functions for `patterns.ts` / `plan.ts` / `generate-section.ts`
 
-| Function                                           | Source                   | Notes                                     |
-| -------------------------------------------------- | ------------------------ | ----------------------------------------- |
-| `analyzeContentPatterns(client, spaceId, options)` | MCP `services.ts` inline | Structural analysis with optional caching |
-| `planPage(openAiClient, options)`                  | MCP `services.ts` inline | AI page planning                          |
-| `generateSection(openAiClient, options)`           | MCP `services.ts` inline | Single section with context injection     |
-| `loadRecipes(options)`                             | MCP `services.ts` inline | Load and filter section recipes           |
+| Function                                               | Source                   | Status                                                              |
+| ------------------------------------------------------ | ------------------------ | ------------------------------------------------------------------- |
+| `analyzeContentPatterns(client, spaceId, options)`     | MCP `services.ts` inline | ✅ Extracted to `patterns.ts`                                       |
+| `planPageContent(openAiClient, entry, options)`        | MCP `services.ts` inline | ✅ Extracted to `plan.ts` (as `planPageContent`)                    |
+| `generateSectionContent(openAiClient, entry, options)` | MCP `services.ts` inline | ✅ Extracted to `generate-section.ts` (as `generateSectionContent`) |
+| `loadRecipes(options)`                                 | MCP `services.ts` inline | Load and filter section recipes                                     |
 
 ### New Module: `scrape.ts`
 
-| Function                  | Source                   | Notes                                     |
-| ------------------------- | ------------------------ | ----------------------------------------- |
-| `scrapeUrl(url, options)` | MCP `services.ts` inline | Readability + Turndown + image extraction |
+| Function                  | Source                   | Status                      |
+| ------------------------- | ------------------------ | --------------------------- |
+| `scrapeUrl(url, options)` | MCP `services.ts` inline | ✅ Extracted to `scrape.ts` |
 
 ### Impact on MCP Server
 

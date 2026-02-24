@@ -4,11 +4,11 @@ Shared Storyblok CMS, OpenAI content generation, and Design System schema servic
 
 This package provides pure, framework-agnostic functions consumed by three different runtimes:
 
-| Consumer                                            | Module format | Description                                                               |
-| --------------------------------------------------- | ------------- | ------------------------------------------------------------------------- |
-| [MCP Server](../../mcp-server/)                     | ESM           | Model Context Protocol server for AI assistants (stdio + Streamable HTTP) |
-| [n8n Nodes](../../n8n-nodes-storyblok-kickstartds/) | CJS           | n8n community nodes for workflow automation                               |
-| [Next.js API Routes](../../pages/api/)              | ESM (bundled) | REST endpoints for the Storyblok starter site                             |
+| Consumer                                    | Module format | Description                                                               |
+| ------------------------------------------- | ------------- | ------------------------------------------------------------------------- |
+| [MCP Server](../mcp-server/)                | ESM           | Model Context Protocol server for AI assistants (stdio + Streamable HTTP) |
+| [n8n Nodes](../n8n-nodes/)                  | CJS           | n8n community nodes for workflow automation                               |
+| [Next.js API Routes](../website/pages/api/) | ESM (bundled) | REST endpoints for the Storyblok starter site                             |
 
 ## API
 
@@ -224,6 +224,57 @@ import {
 | `SchemaRegistry`                              | Registry class with `get(type)`, `has(type)`, `listContentTypes()`, `listSectionBasedTypes()`, `listFlatTypes()`, `detectContentType(content)` |
 | `ContentTypeEntry`                            | `{ name, schema, rules, hasSections, rootArrayFields }` for each registered content type                                                       |
 
+### Page Planning
+
+AI-assisted page structure planning, extracted from the MCP server's `plan_page` handler:
+
+```typescript
+import {
+  planPageContent,
+  formatPatternsContext,
+} from "@kickstartds/storyblok-services";
+```
+
+| Function                                  | Description                                                                                                                                                                                                                |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `planPageContent(client, entry, options)` | Takes an OpenAI client, a `ContentTypeEntry` from the registry, and options (intent, patterns, recipes, sectionCount). Returns a structured plan with section sequence and optional rootFieldMeta for hybrid content types |
+| `formatPatternsContext(patterns)`         | Formats a `ContentPatternAnalysis` into a human-readable prompt fragment (component frequency, section sequences, sub-item counts)                                                                                         |
+
+```typescript
+const plan = await planPageContent(openaiClient, entry, {
+  intent: "Product landing page for our new AI feature",
+  patterns: cachedPatterns,
+  recipes: loadedRecipes,
+  sectionCount: 5,
+});
+// plan.plan.sections → [{ componentType: "hero", intent: "..." }, ...]
+```
+
+### Section Generation
+
+Single-section generation with automatic site-aware context injection, extracted from the MCP server's `generate_section` handler:
+
+```typescript
+import { generateSectionContent } from "@kickstartds/storyblok-services";
+```
+
+| Function                                         | Description                                                                                                                                                                                                                          |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `generateSectionContent(client, entry, options)` | Takes an OpenAI client, a `ContentTypeEntry`, and options (componentType, prompt, previousSection, nextSection, patterns, recipes). Builds a layered system prompt with site context, transition awareness, and field-level guidance |
+
+```typescript
+const result = await generateSectionContent(openaiClient, entry, {
+  componentType: "features",
+  prompt: "4 key capabilities of our AI consulting service",
+  previousSection: "hero",
+  nextSection: "testimonials",
+  patterns: cachedPatterns,
+  recipes: loadedRecipes,
+});
+// result.designSystemProps → { type: "features", ... }
+// result.storyblokContent → { component: "features", ... }
+```
+
 ```typescript
 const result = await importByPrompterReplacement(storyblokClient, {
   storyId: "home",
@@ -296,6 +347,16 @@ import type {
   SectionRecipes,
   PruneOptions,
   AssembleFieldGuidanceOptions,
+  // Page planning types
+  PlanPageOptions,
+  PlanPageResult,
+  PagePlan,
+  PlannedSection,
+  PlannedRootField,
+  PlannedField,
+  // Section generation types
+  GenerateSectionOptions,
+  GenerateSectionResult,
 } from "@kickstartds/storyblok-services";
 ```
 
@@ -322,7 +383,11 @@ shared/storyblok-services/
 │   ├── registry.ts        # Schema registry for multi-content-type support
 │   ├── stories.ts         # Story CRUD, listStories (excludeContent), stripEmptyAssetFields
 │   ├── assets.ts          # Asset download, upload to Storyblok, URL rewriting
-│   └── pipeline.ts        # High-level orchestrator (schema prep → OpenAI → transform)
+│   ├── pipeline.ts        # High-level orchestrator (schema prep → OpenAI → transform)
+│   ├── plan.ts            # Page planning (AI-assisted section sequence via OpenAI)
+│   ├── generate-section.ts # Single-section generation with site-aware context injection
+│   ├── components.ts      # Component & asset introspection (listComponents, getComponent, listAssets)
+│   └── scrape.ts          # URL scraping (Readability + Turndown + image extraction)
 └── test/
     ├── storyblok.test.ts  # 15 tests
     └── openai.test.ts     # 6 tests

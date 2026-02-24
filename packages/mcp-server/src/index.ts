@@ -24,11 +24,15 @@ import {
   analyzeContentPatterns,
   checkCompositionalQuality,
   assembleFieldGuidance,
+  planPageContent,
+  generateSectionContent,
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type ContentPatternAnalysis,
   type SubComponentStats,
   type RootFieldMeta,
   type SectionRecipes,
+  type PlanPageResult,
+  type GenerateSectionResult,
   stripEmptyAssetFields,
 } from "./services.js";
 import {
@@ -1918,6 +1922,7 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
 
         case "plan_page": {
           const validated = schemas.planPage.parse(args);
+          const planContentType = validated.contentType || "page";
           console.error(
             `[MCP] Planning page structure for: "${validated.intent}"...`
           );
@@ -1928,287 +1933,44 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
             );
           }
 
-          // Gather site intelligence — use filtered patterns if startsWith is provided,
+          // Resolve patterns — use filtered patterns if startsWith is provided,
           // otherwise fall back to the global startup cache.
           let patternsSource: ContentPatternAnalysis | null = null;
           if (validated.startsWith) {
-            const planContentTypeForPatterns = validated.contentType || "page";
-            const planRegistryEntry = registry.has(planContentTypeForPatterns)
-              ? registry.get(planContentTypeForPatterns)
-              : null;
-            const patternRules =
-              planRegistryEntry?.rules ?? PAGE_VALIDATION_RULES;
-            const patternSchema =
-              planRegistryEntry?.schema ?? registry.page.schema;
+            const planEntry = registry.has(planContentType)
+              ? registry.get(planContentType)
+              : registry.page;
             console.error(
               `[MCP] plan_page: fetching filtered patterns (startsWith: ${validated.startsWith})...`
             );
             patternsSource = await analyzeContentPatterns(
               storyblokService.getContentClient(),
-              patternRules,
+              planEntry.rules,
               {
-                contentType: planContentTypeForPatterns,
+                contentType: planContentType,
                 startsWith: validated.startsWith,
-                derefSchema: patternSchema,
+                derefSchema: planEntry.schema,
               }
             );
           } else {
             patternsSource = cachedPatterns;
           }
 
-          let patternsContext = "";
-          if (patternsSource) {
-            const topComponents = patternsSource.componentFrequency
-              .slice(0, 10)
-              .map(
-                (c: { component: string; count: number }) =>
-                  `${c.component} (used ${c.count}x)`
-              )
-              .join(", ");
-            const topSequences = patternsSource.commonSequences
-              .slice(0, 8)
-              .map(
-                (s: { from: string; to: string; count: number }) =>
-                  `${s.from} → ${s.to} (${s.count}x)`
-              )
-              .join(", ");
-            const subItems = Object.entries(patternsSource.subComponentCounts)
-              .map(
-                ([component, s]) =>
-                  `${component}: median ${
-                    (s as SubComponentStats).median
-                  } items (${(s as SubComponentStats).min}-${
-                    (s as SubComponentStats).max
-                  })`
-              )
-              .join(", ");
-            patternsContext = `\n\nSite patterns:\n- Most used: ${topComponents}\n- Common sequences: ${topSequences}\n- Sub-item counts: ${subItems}`;
-          }
-
-          // Get available components from the content type's container slots
-          const planContentType = validated.contentType || "page";
+          // Resolve content type entry
           const planEntry = registry.has(planContentType)
             ? registry.get(planContentType)
             : registry.page;
-          const planRules = planEntry.rules;
 
-          // For section-based types: look up the primary container slot
-          // For flat types: list the root array field names as "fields"
-          let componentNames: string[];
-          let isFlat = false;
-          if (planEntry.hasSections) {
-            const primaryArrayField = planRules.rootArrayFields[0];
-            const sectionSlot = primaryArrayField
-              ? [...planRules.containerSlots.entries()].find(([path]) =>
-                  path.startsWith(`${primaryArrayField}.`)
-                )?.[1]
-              : undefined;
-            componentNames = sectionSlot
-              ? [...sectionSlot]
-              : [...planRules.allKnownComponents];
-          } else {
-            // Tier 2 (flat): list root fields as planning targets
-            isFlat = true;
-            componentNames = planRules.rootArrayFields;
-          }
-
-          // Detect root fields that need generation (hybrid types)
-          const rootFieldMeta = planEntry.rootFieldMeta || [];
-          const generatableRootFields = rootFieldMeta.filter(
-            (f: RootFieldMeta) => f.priority !== "excluded" && !f.isSectionArray
+          // Delegate to shared planning function
+          const planResult: PlanPageResult = await planPageContent(
+            contentService.getClient(),
+            planEntry,
+            {
+              intent: validated.intent,
+              sectionCount: validated.sectionCount,
+              patterns: patternsSource,
+            }
           );
-          const hasRootFields = generatableRootFields.length > 0;
-
-          let planPrompt: string;
-          let planSchema: {
-            name: string;
-            schema: Record<string, unknown>;
-            strict: boolean;
-          };
-
-          if (isFlat) {
-            // Tier 2 (flat content types): plan which root fields to populate
-            // Include ALL root fields (scalar + array + object), not just arrays
-            const allRootFieldNames = rootFieldMeta
-              .filter((f: RootFieldMeta) => f.priority !== "excluded")
-              .map((f: RootFieldMeta) => f.name);
-            const fieldDescriptions = rootFieldMeta
-              .filter((f: RootFieldMeta) => f.priority !== "excluded")
-              .map(
-                (f: RootFieldMeta) =>
-                  `- ${f.name} (${f.type}${
-                    f.schemaRequired ? ", required" : ""
-                  }): ${f.description || f.title || "no description"}`
-              )
-              .join("\n");
-
-            planPrompt = `You are a content structure planner for "${planContentType}" content. Given an intent, suggest which root fields to populate and what content each should contain.
-
-Available root fields:
-${fieldDescriptions}
-${patternsContext}
-
-Respond with a JSON object:
-{
-  "fields": [
-    { "fieldName": "title", "intent": "brief description of what this field should contain" }
-  ],
-  "reasoning": "brief explanation of the structure choices"
-}`;
-            planSchema = {
-              name: `${planContentType.replace(/-/g, "_")}_plan`,
-              schema: {
-                type: "object",
-                properties: {
-                  fields: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        fieldName: {
-                          type: "string",
-                          enum:
-                            allRootFieldNames.length > 0
-                              ? allRootFieldNames
-                              : componentNames,
-                        },
-                        intent: { type: "string" },
-                      },
-                      required: ["fieldName", "intent"],
-                      additionalProperties: false,
-                    },
-                  },
-                  reasoning: { type: "string" },
-                },
-                required: ["fields", "reasoning"],
-                additionalProperties: false,
-              },
-              strict: true,
-            };
-          } else {
-            // Tier 1 (section-based): plan section sequence
-            // For hybrid types, also include root field information
-            let rootFieldsInstruction = "";
-            if (hasRootFields) {
-              const fieldDescriptions = generatableRootFields
-                .map(
-                  (f: RootFieldMeta) =>
-                    `- ${f.name} (${f.type}, priority: ${f.priority}): ${
-                      f.description || f.title || "no description"
-                    }`
-                )
-                .join("\n");
-              rootFieldsInstruction = `\n\nThis content type also has root-level fields that should be generated separately via generate_root_field:\n${fieldDescriptions}\n\nInclude these in your "rootFields" array — indicate which ones to generate and a brief intent for each. Fields with priority "required" must always be included.`;
-            }
-
-            planPrompt = `You are a web page structure planner. Given a page intent, suggest an ordered list of sections for content type "${planContentType}".
-
-Available section component types: ${componentNames.join(", ")}
-${patternsContext}
-
-Recipes resource is also available with proven combinations.
-
-Rules:
-- Start most pages with "hero" or "video-curtain"
-- End conversion pages with a CTA section
-- Use "divider" sparingly, only between thematically different blocks
-- Prefer variety: don't repeat the same component type in adjacent sections
-- ${
-              validated.sectionCount
-                ? `Target exactly ${validated.sectionCount} sections`
-                : "Choose an appropriate number of sections (typically 4-8)"
-            }${rootFieldsInstruction}
-
-Respond with a JSON object:
-{
-  "sections": [
-    { "componentType": "hero", "intent": "brief description of what this section should convey" }
-  ],${
-    hasRootFields
-      ? `
-  "rootFields": [
-    { "fieldName": "head", "intent": "brief description of what this field should contain" }
-  ],`
-      : ""
-  }
-  "reasoning": "brief explanation of the structure choices"
-}`;
-
-            // Build schema — include rootFields array for hybrid types
-            const planProperties: Record<string, unknown> = {
-              sections: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    componentType: {
-                      type: "string",
-                      enum: componentNames,
-                    },
-                    intent: { type: "string" },
-                  },
-                  required: ["componentType", "intent"],
-                  additionalProperties: false,
-                },
-              },
-              reasoning: { type: "string" },
-            };
-            const planRequired: string[] = ["sections", "reasoning"];
-
-            if (hasRootFields) {
-              const rootFieldNames = generatableRootFields.map(
-                (f: RootFieldMeta) => f.name
-              );
-              planProperties.rootFields = {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    fieldName: {
-                      type: "string",
-                      enum: rootFieldNames,
-                    },
-                    intent: { type: "string" },
-                  },
-                  required: ["fieldName", "intent"],
-                  additionalProperties: false,
-                },
-              };
-              planRequired.push("rootFields");
-            }
-
-            planSchema = {
-              name: `${planContentType.replace(/-/g, "_")}_plan`,
-              schema: {
-                type: "object",
-                properties: planProperties,
-                required: planRequired,
-                additionalProperties: false,
-              },
-              strict: true,
-            };
-          }
-
-          const response = await contentService.generateContent({
-            system: planPrompt,
-            prompt: `Plan ${isFlat ? "content" : "a page"} for: ${
-              validated.intent
-            }`,
-            schema: planSchema,
-          });
-
-          // Build usage instructions based on content type characteristics
-          let usage: string;
-          if (isFlat) {
-            usage =
-              "Use generate_root_field(fieldName=..., contentType=...) for each field, then create_page_with_content with rootFields.";
-          } else if (hasRootFields) {
-            usage =
-              "Use generate_section for each section, generate_root_field for each root field (head, aside, cta), and generate_seo for SEO metadata. Then assemble with create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo }).";
-          } else {
-            usage =
-              "Use generate_section or generate_content(componentType=...) for each section in order. Pass previousSection/nextSection for better transitions.";
-          }
 
           return {
             content: [
@@ -2216,19 +1978,12 @@ Respond with a JSON object:
                 type: "text",
                 text: JSON.stringify(
                   {
-                    plan: response,
-                    contentType: planContentType,
-                    ...(hasRootFields && {
-                      rootFieldMeta: generatableRootFields.map(
-                        (f: RootFieldMeta) => ({
-                          name: f.name,
-                          type: f.type,
-                          priority: f.priority,
-                          title: f.title,
-                        })
-                      ),
+                    plan: planResult.plan,
+                    contentType: planResult.contentType,
+                    ...(planResult.rootFieldMeta && {
+                      rootFieldMeta: planResult.rootFieldMeta,
                     }),
-                    usage,
+                    usage: planResult.usage,
                   },
                   null,
                   2
@@ -2251,119 +2006,50 @@ Respond with a JSON object:
             );
           }
 
-          // Gather site-specific context — use filtered patterns if startsWith
-          // is provided, otherwise fall back to the global startup cache.
+          // Resolve patterns — use filtered patterns if startsWith is provided,
+          // otherwise fall back to the global startup cache.
           let sectionPatternsSource: ContentPatternAnalysis | null = null;
           if (validated.startsWith) {
-            const patternRules = registry.has(sectionContentType)
-              ? registry.get(sectionContentType).rules
-              : PAGE_VALIDATION_RULES;
-            const patternSchema = registry.has(sectionContentType)
-              ? registry.get(sectionContentType).schema
-              : registry.page.schema;
+            const sectionEntry = registry.has(sectionContentType)
+              ? registry.get(sectionContentType)
+              : registry.page;
             console.error(
               `[MCP] generate_section: fetching filtered patterns (startsWith: ${validated.startsWith})...`
             );
             sectionPatternsSource = await analyzeContentPatterns(
               storyblokService.getContentClient(),
-              patternRules,
+              sectionEntry.rules,
               {
                 contentType: sectionContentType,
                 startsWith: validated.startsWith,
-                derefSchema: patternSchema,
+                derefSchema: sectionEntry.schema,
               }
             );
           } else {
             sectionPatternsSource = cachedPatterns;
           }
 
-          let siteContext = "";
-          if (sectionPatternsSource) {
-            const relevantStats = sectionPatternsSource.subComponentCounts[
-              validated.componentType
-            ] as SubComponentStats | undefined;
-            if (relevantStats) {
-              siteContext += `\nOn this site, ${validated.componentType} sections typically have ${relevantStats.median} sub-items (range: ${relevantStats.min}-${relevantStats.max}).`;
-            }
-            const freq = sectionPatternsSource.componentFrequency.find(
-              (c: { component: string }) =>
-                c.component === validated.componentType
-            );
-            if (freq) {
-              siteContext += `\nThis component is used ${freq.count} times across the site.`;
-            }
-          }
-
-          // Build context-aware system prompt
-          let systemPrompt =
-            validated.system ||
-            `You are an expert content writer creating a ${validated.componentType} section for a website.`;
-
-          // Always inject placeholder image instructions so image fields are never left empty
-          systemPrompt += `\n\n${PLACEHOLDER_IMAGE_INSTRUCTIONS}`;
-
-          if (siteContext) {
-            systemPrompt += `\n\nSite-specific guidance:${siteContext}`;
-          }
-          if (validated.previousSection) {
-            systemPrompt += `\n\nThis section follows a "${validated.previousSection}" section. Ensure a smooth content transition.`;
-          }
-          if (validated.nextSection) {
-            systemPrompt += `\n\nThis section precedes a "${validated.nextSection}" section. Set up the transition naturally.`;
-          }
-
-          // Check best practices from recipes — prefer content-type-specific match
-          const recipe =
-            sectionRecipes.recipes?.find(
-              (r: { components: string[]; contentType?: string }) =>
-                r.components.includes(validated.componentType) &&
-                r.contentType === sectionContentType
-            ) ||
-            sectionRecipes.recipes?.find((r: { components: string[] }) =>
-              r.components.includes(validated.componentType)
-            );
-          if (recipe?.notes) {
-            systemPrompt += `\n\nBest practices: ${recipe.notes}`;
-          }
-
-          // Assemble field-level compositional guidance from patterns + recipes
-          const fieldGuidance = assembleFieldGuidance({
-            componentType: validated.componentType,
-            patterns: sectionPatternsSource,
-            recipes: sectionRecipes as SectionRecipes,
-            scopeLabel: validated.startsWith || undefined,
-          });
-          if (fieldGuidance) {
-            systemPrompt += fieldGuidance;
-          }
-
-          // Log the full system prompt so we can inspect what guidance reaches OpenAI
-          console.error(
-            `[MCP] generate_section system prompt for "${validated.componentType}":\n${systemPrompt}`
-          );
-
-          // Generate via the content service (full pipeline with schema auto-derivation)
-          const result = await contentService.generateWithSchema({
-            system: systemPrompt,
-            prompt: validated.prompt,
-            componentType: validated.componentType,
-            contentType: sectionContentType,
-          });
-
-          // Unwrap the page-level envelope produced by processForStoryblok.
-          // The pipeline always returns a page wrapper like { section: [{ component: "section", ... }] }.
-          // For generate_section we need to return just the section object(s), not the wrapper.
-          const entry = registry.has(sectionContentType)
+          // Resolve content type entry
+          const sectionEntry = registry.has(sectionContentType)
             ? registry.get(sectionContentType)
             : registry.page;
-          const rootField = entry.rootArrayFields[0] || "section";
-          const storyblokSections = result.storyblokContent[rootField] || [];
 
-          // Return the first section object (generate_section targets a single section)
-          const sectionContent =
-            Array.isArray(storyblokSections) && storyblokSections.length > 0
-              ? storyblokSections[0]
-              : result.storyblokContent;
+          // Delegate to shared section generation function
+          const sectionResult: GenerateSectionResult =
+            await generateSectionContent(
+              contentService.getClient(),
+              sectionEntry,
+              {
+                componentType: validated.componentType,
+                prompt: validated.prompt,
+                system: validated.system || undefined,
+                previousSection: validated.previousSection,
+                nextSection: validated.nextSection,
+                patterns: sectionPatternsSource,
+                recipes: sectionRecipes as SectionRecipes,
+                scopeLabel: validated.startsWith || undefined,
+              }
+            );
 
           return {
             content: [
@@ -2371,9 +2057,9 @@ Respond with a JSON object:
                 type: "text",
                 text: JSON.stringify(
                   {
-                    section: sectionContent,
-                    designSystemProps: result.designSystemProps,
-                    componentType: validated.componentType,
+                    section: sectionResult.section,
+                    designSystemProps: sectionResult.designSystemProps,
+                    componentType: sectionResult.componentType,
                     note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains a single Storyblok-ready section object (with component: 'section' and nested components). Collect multiple section objects into an array and pass as 'sections' to create_page_with_content.",
                   },
                   null,

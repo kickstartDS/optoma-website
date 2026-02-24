@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   FC,
   HTMLAttributes,
@@ -223,7 +222,7 @@ export const PrompterComponent = forwardRef<
     const ideaSelectRef = useRef(null);
 
     const createPrompt = (ideaId: string, story?: ISbStoryData) => {
-      let prompt = `Aufgabe: ${userPrompt}.\n`;
+      let prompt = `Task: ${userPrompt}.\n`;
 
       if (useIdea) {
         const ideaContent: string[] = [];
@@ -235,12 +234,12 @@ export const PrompterComponent = forwardRef<
               ideaContent.push(value.text);
           });
         }
-        prompt += `\n((Idee)):\n${ideaContent.join(" ")}\n`;
+        prompt += `\n((Idea)):\n${ideaContent.join(" ")}\n`;
       }
       if (story) prompt += `\n((Story)):\n${JSON.stringify(story.content)}\n`;
       if (relatedStories && relatedStories.length > 0) {
         relatedStories.forEach((relatedStory) => {
-          prompt += `\n((Ähnliche Story)):\n${JSON.stringify(
+          prompt += `\n((Related Story)):\n${JSON.stringify(
             processStory(relatedStory)
           )}\n`;
         });
@@ -271,8 +270,12 @@ export const PrompterComponent = forwardRef<
 
     useEffect(() => {
       if (storyUid) {
-        // TODO remove credential
-        initStoryblok("tiiyPe4tqKDSQEdBa9qtRwtt");
+        const token = process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN;
+        if (!token) {
+          console.error("Missing NEXT_PUBLIC_STORYBLOK_API_TOKEN env var");
+          return;
+        }
+        initStoryblok(token);
         const storyblokApi = getStoryblokApi();
         fetchStory(storyUid, false, storyblokApi)
           .then((response) => {
@@ -367,8 +370,8 @@ export const PrompterComponent = forwardRef<
         <PrompterSection
           headline={
             !submitted
-              ? "Prompter - erstelle jetzt einen Content-Draft, schnell, markentreu, nahtlos eingefügt."
-              : "Dein neuer Content wurde gespeichert"
+              ? "Prompter — create a content draft, fast, on-brand, seamlessly integrated."
+              : "Your new content has been saved"
           }
           text={!submitted ? "" : undefined}
         >
@@ -388,7 +391,7 @@ export const PrompterComponent = forwardRef<
                         onChange={(e) => setIdea(e.target.value)}
                         options={[
                           {
-                            label: "Idee wählen...",
+                            label: "Select an idea...",
                             value: "",
                             disabled: true,
                           },
@@ -446,18 +449,15 @@ export const PrompterComponent = forwardRef<
           )}
           {submitted && (
             <>
-              <PrompterSubmittedText
-                text="Um deinen neuen Content nicht zu überschreiben, musst Du die
-                  Seite jetzt neu laden."
-              />
-              <PrompterButton icon="reload" label="Jetzt neu laden" />
+              <PrompterSubmittedText text="To avoid overwriting your new content, please reload the page now." />
+              <PrompterButton icon="reload" label="Reload page" />
             </>
           )}
         </PrompterSection>
 
         {generatedContent && !submitted && (
           <div className="prompter__generated-content">
-            <PrompterBadge label="KI Draft" state="unsaved" />
+            <PrompterBadge label="AI Draft" state="unsaved" />
             <Page
               {...generatedContent}
               seo={{

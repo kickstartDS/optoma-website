@@ -16,7 +16,7 @@ const PrompterSelectionDisplay: React.FC<PrompterSelectionDisplayProps> = ({
     <div className={classnames("prompter-selection-display", {})}>
       <div className="prompter-selection-display__text">
         <div className="prompter-selection-display__topic">
-          Gewählte Idee:
+          Selected idea:
           {text}
         </div>
         <div className="prompter-selection-display__idea">{idea}</div>

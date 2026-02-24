@@ -245,13 +245,13 @@ export const components = {
       )
     )
   ),
-  // prompter: editable(
-  //   dynamic(() =>
-  //     import("./prompter/PrompterComponent").then(
-  //       (mod) => mod.PrompterComponent
-  //     )
-  //   )
-  // ),
+  prompter: editable(
+    dynamic(() =>
+      import("./prompter/PrompterComponent").then(
+        (mod) => mod.PrompterComponent
+      )
+    )
+  ),
 
   "info-table": editable(
     dynamic(() =>
