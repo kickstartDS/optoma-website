@@ -52,16 +52,21 @@ export const getStaticProps = async () => {
       blurHashes[imageUrl] ||= cache.getSync(imageUrl) || null;
     }
 
-    const settingsIndex = settingsData.stories.findIndex(
-      (story) => !story.full_slug.startsWith("en/")
-    );
+    const settingsStory = settingsData.stories.reduce((closest, story) => {
+      if (
+        story.full_slug.split("/").length < closest.full_slug.split("/").length
+      ) {
+        return story;
+      }
+      return closest;
+    }, settingsData.stories[0] || { full_slug: "" });
 
     return {
       props: {
         ...pageData,
         blurHashes,
         fontClassNames,
-        settings: settingsData.stories[settingsIndex]?.content || null,
+        settings: settingsStory.content || null,
         key: pageData.story.id,
         language: "de",
       },
