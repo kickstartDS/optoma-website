@@ -80,6 +80,16 @@ See [packages/mcp-server/README.md](packages/mcp-server/README.md) for full setu
 
 For event-driven automation (without an LLM), see the companion [n8n community nodes](packages/n8n-nodes/), which offer the same auto-schema and auto-transform capabilities as n8n workflow nodes.
 
+## Prompter (In-Editor AI Generation)
+
+The website includes a **Prompter component** that enables AI content generation directly inside Storyblok's Visual Editor. Editors place a Prompter inside a section, enter a prompt, and generate content via OpenAI — all without leaving the editor.
+
+- **Section mode**: Generate a single section by picking a component type and entering a prompt
+- **Page mode**: AI plans a multi-section page structure, generates each section sequentially, and imports them all at once
+- **CMS-configurable**: Default mode, allowed component types, content type, and upload behavior are all configurable as Storyblok fields
+
+API routes live under `/api/prompter/` (patterns, recipes, plan, generate-section, import, ideas). The Prompter consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server and n8n nodes.
+
 ## Local Development
 
 ### Setup

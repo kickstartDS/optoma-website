@@ -1,6 +1,6 @@
 # Shared Services Refactor Plan
 
-> **Status: ✅ Completed** — All 8 phases have been implemented. The shared library `@kickstartds/storyblok-services` now contains `schema.ts`, `transform.ts`, and `pipeline.ts`. The MCP server, n8n nodes, and PrompterComponent all consume these shared modules.
+> **Status: ✅ Completed** — All 8 phases have been implemented. The shared library `@kickstartds/storyblok-services` now contains `schema.ts`, `transform.ts`, `pipeline.ts`, `validate.ts`, `registry.ts`, `assets.ts`, `patterns.ts`, `guidance.ts`, `plan.ts`, and `generate-section.ts`. The MCP server, n8n nodes, and the Prompter's API routes (`/api/prompter/*`) all consume these shared modules.
 
 ## Problem Statement
 

@@ -88,7 +88,7 @@ Override kickstartDS components via React Context:
 
 Custom components live in `packages/website/components/{name}/`:
 
-- [packages/website/components/prompter/](packages/website/components/prompter/) - AI content generation
+- [packages/website/components/prompter/](packages/website/components/prompter/) - In-Visual-Editor AI content generation (see **Prompter Architecture** section below)
 - [packages/website/components/info-table/](packages/website/components/info-table/) - Custom info table
 - [packages/website/components/headline/](packages/website/components/headline/) - Extended headline
 
@@ -144,6 +144,54 @@ Required in `packages/website/.env.local`:
 - `NEXT_STORYBLOK_API_TOKEN` - Preview API token
 - `NEXT_STORYBLOK_OAUTH_TOKEN` - Management API token
 - `NEXT_STORYBLOK_SPACE_ID` - Space ID (without #)
+- `NEXT_OPENAI_API_KEY` - OpenAI API key (required for Prompter AI generation)
+- `NEXT_PUBLIC_STORYBLOK_API_TOKEN` - Public preview token (used by Prompter client-side story fetch)
+- `NEXT_PUBLIC_SITE_URL` - Public site URL (used for API route calls in the Visual Editor)
+
+## Prompter Architecture
+
+The Prompter is an **in-Visual-Editor AI content generation component**. Editors place it inside a section in Storyblok's Visual Editor to generate content via OpenAI.
+
+### Two Generation Modes
+
+- **Section mode** (default): Generate a single section — editor picks a component type, enters a prompt, content is generated and imported in one step
+- **Page mode**: Multi-section generation — AI plans a section sequence, editor reviews the plan, then sections are generated one-by-one and imported together
+
+### Component Structure
+
+```
+PrompterComponent.tsx          — Main UI with step-based flow
+├── usePrompter.ts             — State machine hook (steps: configure → planning → plan-review → generating → preview → importing → submitted)
+├── PrompterModeToggle.tsx     — Section/Page mode toggle
+├── PrompterComponentPicker.tsx — Component type selector (section mode)
+├── PrompterPlanReview.tsx     — Plan review/edit (page mode)
+├── PrompterProgress.tsx       — Generation progress bar
+├── PrompterWarnings.tsx       — Compositional quality warnings
+├── prompter.schema.json       — JSON Schema (CMS fields: mode, componentTypes, contentType, startsWith, uploadAssets)
+├── PrompterProps.ts           — TypeScript prop types
+└── PrompterDefaults.ts        — Default prop values
+```
+
+### API Routes
+
+All Prompter API routes live under `packages/website/pages/api/prompter/`:
+
+| Route                            | Method | Purpose                                                                 |
+| -------------------------------- | ------ | ----------------------------------------------------------------------- |
+| `/api/prompter/patterns`         | GET    | Fetch content patterns (component frequency, section sequences)         |
+| `/api/prompter/recipes`          | GET    | Fetch section recipes and anti-patterns                                 |
+| `/api/prompter/plan`             | POST   | AI-assisted page structure planning (requires OpenAI key)               |
+| `/api/prompter/generate-section` | POST   | Generate a single section with site-aware context (requires OpenAI key) |
+| `/api/prompter/import`           | POST   | Import generated content into Storyblok story                           |
+| `/api/prompter/ideas`            | GET    | Fetch Storyblok Ideas for seed content                                  |
+
+**Deprecated routes** (sunset 2026-06-01): `/api/content`, `/api/import`, `/api/ideas` — replaced by the routes above.
+
+### Data Flow
+
+```
+Visual Editor → usePrompter hook → /api/prompter/* routes → storyblok-services → OpenAI / Storyblok API
+```
 
 ## MCP Server
 
@@ -233,6 +281,10 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (20 operations across 3 resources)
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
+- [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
+- [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
+- [packages/website/pages/api/prompter/\_helpers.ts](packages/website/pages/api/prompter/_helpers.ts) - Shared helpers for Prompter API routes
+- [docs/prompter-reactivation-prd.md](docs/prompter-reactivation-prd.md) - Prompter reactivation PRD (all 5 phases)
 - [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) - Section-by-section generation workflow guide
 - [docs/guided-generation-plan.md](docs/guided-generation-plan.md) - Design document for guided content generation
 
