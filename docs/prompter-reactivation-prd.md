@@ -74,12 +74,14 @@ The Prompter was built before the MCP server gained its guided generation toolki
 ### Goals
 
 1. **Re-enable the Prompter** in the component registry so it renders in the Visual Editor again
-2. **Replace the monolithic generation flow** with the guided generation pipeline (`plan_page` → `generate_section` → import)
-3. **Add site-aware context** — patterns, recipes, field guidance — to Prompter-driven generation
+2. **Support two generation modes** via an editor-facing toggle:
+   - **Section mode** — the editor builds an ordered list of one or more component types (e.g. `[faq]` or `[features, testimonials, cta]`), writes a prompt, and each section is generated via `generate_section`. Ideal for inserting a Prompter between existing sections on an already-populated page. The key distinction: **the editor controls exactly which sections are generated and in what order.**
+   - **Page mode** — the editor provides an intent and the **AI proposes the section sequence** via `plan_page`. The editor reviews and can adjust the plan before generation. Ideal for bootstrapping a new page from scratch. The key distinction: **the AI controls the section selection.**
+3. **Add site-aware context** — patterns, recipes, field guidance — to Prompter-driven generation in both modes
 4. **Support multi-content-type generation** — detect the current story's content type and use the appropriate schema
 5. **Add asset upload support** — generated image URLs are uploaded to Storyblok CDN on import
 6. **Surface compositional quality warnings** — show the editor any issues before they save
-7. **Improve the preview experience** — render sections incrementally as they're generated (section-by-section streaming)
+7. **Improve the preview experience** — in page mode, render sections incrementally as they're generated; in section mode, show the single section preview immediately
 8. **Remove hardcoded credentials and German-language strings** — clean up tech debt from the prototype
 
 ### Non-Goals
@@ -132,7 +134,22 @@ Currently, the MCP server's `plan_page` and `generate_section` logic lives inlin
 
 After extraction, the MCP server's tool handlers become thin wrappers around these shared functions (just like `importByPrompterReplacement` already is).
 
-### 3.3 Updated Prompter Component Flow
+### 3.3 Generation Modes
+
+The Prompter supports two distinct generation modes, toggled by the editor in Step 1. The mode fundamentally changes the flow:
+
+| Aspect               | Section Mode                                                         | Page Mode                                         |
+| -------------------- | -------------------------------------------------------------------- | ------------------------------------------------- |
+| Use case             | Add 1–N sections to an existing page                                 | Bootstrap a new page from scratch                 |
+| Who picks sections   | **Editor** selects component types manually                          | **AI** proposes via `plan_page`; editor reviews   |
+| Planning step        | Skipped — editor builds ordered list of component types              | AI-assisted via `plan_page`                       |
+| Generation           | `generate_section` × N (one per editor-selected type)                | `generate_section` × N (one per planned section)  |
+| Import result        | Prompter replaced by 1–N sections                                    | Prompter replaced by N sections                   |
+| Context (1 section)  | `previousSection` / `nextSection` from surrounding story sections    | N/A (plan always has multiple sections)           |
+| Context (N sections) | First/last sections use story context; inner sections use each other | Transition context derived from the plan sequence |
+| Typical placement    | Between existing sections on a populated page                        | Only Prompter in an otherwise empty page          |
+
+### 3.4 Updated Prompter Component Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -143,37 +160,66 @@ After extraction, the MCP server's tool handlers become thin wrappers around the
 │  │                                                           │  │
 │  │  Step 1: Configure                                        │  │
 │  │  ┌──────────────────────────────────────────────────────┐ │  │
+│  │  │ • Mode toggle: [Section ↔ Page]                      │ │  │
 │  │  │ • Select Idea (optional, from Storyblok Ideas)       │ │  │
 │  │  │ • Enter intent / user prompt                         │ │  │
 │  │  │ • Content type auto-detected from current story      │ │  │
 │  │  │ • Toggle: include current story as context           │ │  │
-│  │  │ • [Plan Content] button                              │ │  │
+│  │  │                                                      │ │  │
+│  │  │   Section mode only:                                 │ │  │
+│  │  │   • Component type picker (hero, faq, features, ...) │ │  │
+│  │  │   • [+ Add another section] to build a list          │ │  │
+│  │  │   • [Generate] button                                │ │  │
+│  │  │                                                      │ │  │
+│  │  │   Page mode only:                                    │ │  │
+│  │  │   • [Plan Content] button                            │ │  │
 │  │  └──────────────────────────────────────────────────────┘ │  │
 │  │                          │                                │  │
+│  │              ┌───────────┴───────────┐                    │  │
+│  │              ▼                       ▼                    │  │
+│  │                                                           │  │
+│  │  ┌─ Section Mode ─────────┐  ┌─ Page Mode ─────────────┐ │  │
+│  │  │                        │  │                          │ │  │
+│  │  │  Step 2: Generate      │  │  Step 2: Review Plan     │ │  │
+│  │  │  ┌──────────────────┐  │  │  ┌────────────────────┐  │ │  │
+│  │  │  │ generate_section │  │  │  │ Section sequence   │  │ │  │
+│  │  │  │ × N (sequential) │  │  │  │ from plan_page     │  │ │  │
+│  │  │  │                  │  │  │  │ e.g. hero →        │  │ │  │
+│  │  │  │ 1 section: uses  │  │  │  │ features →         │  │ │  │
+│  │  │  │ surrounding      │  │  │  │ testimonials → cta │  │ │  │
+│  │  │  │ story context    │  │  │  │                    │  │ │  │
+│  │  │  │                  │  │  │  │ Editor can reorder │  │ │  │
+│  │  │  │ N sections: edge │  │  │  │ remove, or add     │  │ │  │
+│  │  │  │ sections use     │  │  │  │                    │  │ │  │
+│  │  │  │ story context,   │  │  │  │                    │  │ │  │
+│  │  │  │ inner use each   │  │  │  │                    │  │ │  │
+│  │  │  │ other            │  │  │  │                    │  │ │  │
+│  │  │  └──────────────────┘  │  │  │ [Generate All]     │  │ │  │
+│  │  │          │             │  │  └────────────────────┘  │ │  │
+│  │  │          │             │  │          │               │ │  │
+│  │  │          │             │  │          ▼               │ │  │
+│  │  │          │             │  │  Step 3: Generate &      │ │  │
+│  │  │          │             │  │  Preview (per section)   │ │  │
+│  │  │          │             │  │  ┌────────────────────┐  │ │  │
+│  │  │          │             │  │  │ Sequential calls   │  │ │  │
+│  │  │          │             │  │  │ to generate_section│  │ │  │
+│  │  │          │             │  │  │ with transition    │  │ │  │
+│  │  │          │             │  │  │ context between    │  │ │  │
+│  │  │          │             │  │  │ sections           │  │ │  │
+│  │  │          │             │  │  │                    │  │ │  │
+│  │  │          │             │  │  │ Progress: 2 of 5   │  │ │  │
+│  │  │          │             │  │  │ [Regenerate] per   │  │ │  │
+│  │  │          │             │  │  │ section            │  │ │  │
+│  │  │          │             │  │  └────────────────────┘  │ │  │
+│  │  │          │             │  │          │               │ │  │
+│  │  └──────────┼─────────────┘  └──────────┼───────────────┘ │  │
+│  │              └───────────┬───────────────┘                │  │
 │  │                          ▼                                │  │
-│  │  Step 2: Review Plan                                      │  │
+│  │  Step 3/4: Preview & Save (shared)                        │  │
 │  │  ┌──────────────────────────────────────────────────────┐ │  │
-│  │  │ • Shows planned section sequence from plan_page      │ │  │
-│  │  │   e.g. hero → features → testimonials → cta         │ │  │
-│  │  │ • Editor can reorder, remove, or add sections        │ │  │
-│  │  │ • Shows compositional warnings (if any)              │ │  │
-│  │  │ • [Generate All Sections] button                     │ │  │
-│  │  └──────────────────────────────────────────────────────┘ │  │
-│  │                          │                                │  │
-│  │                          ▼                                │  │
-│  │  Step 3: Generate & Preview (section-by-section)          │  │
-│  │  ┌──────────────────────────────────────────────────────┐ │  │
-│  │  │ • Calls generate_section for each planned section    │ │  │
-│  │  │ • Renders each section preview as it completes       │ │  │
-│  │  │ • Shows progress: "Generating section 2 of 5..."     │ │  │
-│  │  │ • Compositional quality warnings shown inline        │ │  │
-│  │  │ • Editor can regenerate individual sections          │ │  │
-│  │  └──────────────────────────────────────────────────────┘ │  │
-│  │                          │                                │  │
-│  │                          ▼                                │  │
-│  │  Step 4: Save                                             │  │
-│  │  ┌──────────────────────────────────────────────────────┐ │  │
-│  │  │ • [Save Content] replaces Prompter with sections     │ │  │
+│  │  │ • Preview: rendered section(s) with "AI Draft" badge │ │  │
+│  │  │ • Compositional quality warnings (if any)            │ │  │
+│  │  │ • [Save Content] replaces Prompter with section(s)   │ │  │
 │  │  │ • Asset upload happens server-side during import     │ │  │
 │  │  │ • [Discard] removes generated content                │ │  │
 │  │  └──────────────────────────────────────────────────────┘ │  │
@@ -182,17 +228,37 @@ After extraction, the MCP server's tool handlers become thin wrappers around the
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 3.4 Content Type Detection
+#### Section Mode: Context from Surrounding Sections
+
+In section mode, the Prompter is placed between existing sections. The component reads the story's current section array to determine the component types of the sections immediately before and after the Prompter's position.
+
+**Single section** (e.g. editor picks `[faq]`): If the story has `[hero, features, PROMPTER, testimonials, cta]`, the call passes `previousSection: "features"` and `nextSection: "testimonials"`.
+
+**Multiple sections** (e.g. editor picks `[faq, stats, cta]`): The first section uses `previousSection` from the story (the section before the Prompter) and `nextSection` from the editor's list. Inner sections use their neighbors from the list. The last section uses `nextSection` from the story (the section after the Prompter). For example, with story `[hero, PROMPTER, contact]` and editor list `[faq, stats, cta]`:
+
+| Section       | `previousSection`     | `nextSection`            |
+| ------------- | --------------------- | ------------------------ |
+| `faq` (1st)   | `"hero"` (from story) | `"stats"` (from list)    |
+| `stats` (2nd) | `"faq"` (from list)   | `"cta"` (from list)      |
+| `cta` (3rd)   | `"stats"` (from list) | `"contact"` (from story) |
+
+This hybrid context approach gives each section awareness of both the existing page structure and its generated neighbors.
+
+#### Page Mode: Context from the Plan
+
+In page mode, there are no surrounding sections to derive context from (the page is typically empty except for the Prompter). Instead, the planned sequence itself provides transition context: when generating section 3 of `[hero, features, faq, cta]`, the call passes `previousSection: "features"` and `nextSection: "cta"`.
+
+### 3.5 Content Type Detection
 
 The Prompter currently hardcodes `page` as the content type. The updated Prompter should:
 
 1. Read the current story via the Storyblok API (already done)
 2. Detect the story's root `component` field (e.g. `page`, `blog-post`, `blog-overview`)
-3. Pass the detected content type to `plan_page` and `generate_section`
-4. For Tier 1 section-based types: full section generation workflow
-5. For hybrid types (`blog-post`): section generation + root field generation (show additional fields in the plan step)
+3. Pass the detected content type to `plan_page` (page mode) and `generate_section` (both modes)
+4. For Tier 1 section-based types: both modes available
+5. For hybrid types (`blog-post`): page mode includes root field generation; section mode generates individual sections only
 
-### 3.5 Schema Handling
+### 3.6 Schema Handling
 
 The current Prompter runs `prepareSchemaForOpenAi` client-side on every render. The updated architecture:
 
@@ -239,16 +305,19 @@ The current Prompter runs `prepareSchemaForOpenAi` client-side on every render. 
 
 ### Phase 4: Component Rewrite (High Effort)
 
-| #   | Task                                                                           | Files                                | Effort |
-| --- | ------------------------------------------------------------------------------ | ------------------------------------ | ------ |
-| 4.1 | Refactor component into multi-step wizard (Configure → Plan → Generate → Save) | `PrompterComponent.tsx`              | XL     |
-| 4.2 | Add plan review UI (section sequence display, reorder, add/remove)             | New sub-component                    | L      |
-| 4.3 | Implement section-by-section generation with progress indicator                | `PrompterComponent.tsx`              | L      |
-| 4.4 | Add per-section regenerate button in preview                                   | `PrompterComponent.tsx`              | M      |
-| 4.5 | Add content type auto-detection from current story                             | `PrompterComponent.tsx`              | S      |
-| 4.6 | Add compositional quality warnings display                                     | New sub-component                    | M      |
-| 4.7 | Remove client-side schema preparation (move to server)                         | `PrompterComponent.tsx`              | M      |
-| 4.8 | Update preview rendering to handle all current component types                 | `PrompterComponent.tsx` componentMap | S      |
+| #    | Task                                                                                                  | Files                                | Effort |
+| ---- | ----------------------------------------------------------------------------------------------------- | ------------------------------------ | ------ |
+| 4.1  | Add mode toggle UI (Section ↔ Page) with distinct flows branching after Step 1                        | `PrompterComponent.tsx`              | L      |
+| 4.2  | **Section mode:** Add component type picker with "+ Add another section" to build an ordered list     | New sub-component                    | M      |
+| 4.3  | **Section mode:** Derive hybrid context (story neighbors for edge sections, list neighbors for inner) | `PrompterComponent.tsx`              | M      |
+| 4.4  | **Section mode:** Sequential `generate_section` calls with progress (reuse page mode progress UI)     | `PrompterComponent.tsx`              | L      |
+| 4.5  | **Page mode:** Add plan review UI (section sequence display, reorder, add/remove)                     | New sub-component                    | L      |
+| 4.6  | **Page mode:** Implement section-by-section generation with progress indicator                        | `PrompterComponent.tsx`              | L      |
+| 4.7  | **Page mode:** Add per-section regenerate button in preview                                           | `PrompterComponent.tsx`              | M      |
+| 4.8  | **Shared:** Add content type auto-detection from current story                                        | `PrompterComponent.tsx`              | S      |
+| 4.9  | **Shared:** Add compositional quality warnings display                                                | New sub-component                    | M      |
+| 4.10 | **Shared:** Remove client-side schema preparation (move to server)                                    | `PrompterComponent.tsx`              | M      |
+| 4.11 | **Shared:** Update preview rendering to handle all current component types                            | `PrompterComponent.tsx` componentMap | S      |
 
 ### Phase 5: Polish & Testing (Medium Risk)
 
@@ -282,16 +351,27 @@ The current Prompter runs `prepareSchemaForOpenAi` client-side on every render. 
 
 ```json
 {
+  "mode": {
+    "type": "string",
+    "enum": ["section", "page"],
+    "default": "section",
+    "description": "Generation mode. 'section' generates editor-selected sections via generate_section (1 or more). 'page' uses plan_page → generate_section (×N) for AI-planned full-page generation."
+  },
+  "componentTypes": {
+    "type": "array",
+    "items": { "type": "string" },
+    "description": "Ordered list of component types to generate (section mode only). E.g. ['faq'] for a single section, or ['features', 'testimonials', 'cta'] for multiple. Ignored in page mode where the plan determines component types."
+  },
   "sections": {
     "type": "integer",
-    "description": "Deprecated — section count is now determined by plan_page. Kept for backward compat."
+    "description": "Deprecated — in page mode, section count is determined by plan_page. In section mode, determined by componentTypes array length. Kept for backward compat."
   },
   "includeStory": { "type": "boolean", "default": true },
   "useIdea": { "type": "boolean", "default": true },
   "relatedStories": { "type": "array", "items": { "type": "string" } },
   "userPrompt": {
     "type": "string",
-    "description": "Intent / prompt for page planning and section generation"
+    "description": "In section mode: prompt describing the section(s) content — shared across all selected component types. In page mode: intent for page planning (e.g. 'product landing page for our new API')."
   },
   "systemPrompt": {
     "type": "string",
@@ -314,6 +394,8 @@ The current Prompter runs `prepareSchemaForOpenAi` client-side on every render. 
   }
 }
 ```
+
+**Note on `mode` default:** The default is `"section"` because single-section generation is the more common editorial use case — editors typically have an existing page and want to add one section. The `"page"` mode is opted into when bootstrapping from scratch.
 
 ---
 
@@ -360,8 +442,14 @@ The Phase 2 extraction is a **refactor, not a behavior change**. After extractio
 5. **Should the Prompter's "Idea" integration be preserved?**
    The Storyblok Ideas feature is lightweight and may not be used by all teams. Consider making it optional (already gated by `useIdea` flag) and enhancing the user prompt field to be the primary input.
 
-6. **Should there be a way to generate into an existing page (append sections)?**
-   Currently the Prompter replaces itself. A variation could append sections at a specific position (using `import_content_at_position` logic). This would allow editors to add AI-generated sections to an already-populated page.
+6. **~~Should there be a way to generate into an existing page (append sections)?~~** → Resolved by the **Section mode**.
+   Section mode is specifically designed for this: drop a Prompter between existing sections, pick one or more component types, and it replaces itself with the generated sections in-place. Since the Prompter sits at the exact position in the section array where the editor placed it, the result is an "insert at position" effect — whether it's 1 section or 3.
+
+7. **Should the mode default be configurable per-space or per-story-type?**
+   The schema defaults to `"section"` mode. But for certain content types (e.g. `page` on a brand-new story), `"page"` mode might be the better default. Consider auto-selecting the mode based on whether the story already has other sections: if the Prompter is the only section → default to page mode; if surrounded by other sections → default to section mode.
+
+8. **Should section mode offer a "quick pick" vs. "custom prompt" sub-flow?**
+   In section mode, the editor must currently select a component type AND write a prompt. For fast workflows, a "quick pick" variant could offer pre-configured section templates from `list_recipes` (e.g. "FAQ section with 5 items about our product") that only need a single click.
 
 ---
 
