@@ -41,11 +41,14 @@ registry:
 # Configure builder setup.
 builder:
   arch: amd64
+  context: .
+  dockerfile: packages/website/Dockerfile
   # Pass in additional build args needed for your Dockerfile.
   args:
     NEXT_STORYBLOK_API_TOKEN: <%= ENV["NEXT_STORYBLOK_API_TOKEN"] %>
     NEXT_STORYBLOK_OAUTH_TOKEN: <%= ENV["NEXT_STORYBLOK_OAUTH_TOKEN"] %>
     NEXT_STORYBLOK_SPACE_ID: <%= ENV["NEXT_STORYBLOK_SPACE_ID"] %>
+    CACHEBUST: <%= Time.now.to_i %>
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 #
 env:

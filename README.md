@@ -1,111 +1,84 @@
-# kickstartDS Storyblok starter
+# kickstartDS Storyblok Starter
 
-1. Clone our Starter space by visiting https://app.storyblok.com/#!/build/242426.
-2. Clone `energyui-storyblok-starter`-Repo by clicking on "Use this template"
-   -> "Create new repository".
-3. Go to Vercel and click on "Add New..." -> "Project". Import your cloned
-   Github Repository. Unfold "Environment Variables" and add the following:
-   - `NPM_RC` with `//<your package registry>:_authToken=<your npm token>`
-   - `STORYBLOK_API_TOKEN` with a preview token from the cloned Stroyblok
-     Space above.
-4. Click on "Deploy"
-5. Configure your freshly deployt App as the default preview URL in Storyblok
-   ("Settings" -> "Visual Editor"). Type in the base URL of your deployment and
-   add `/preview/` as the path, e.g.
-   `https://energyui-storyblok-starter.vercel.app/preview/`.
+A **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyblok MCP server, a shared services library, and an n8n community node — all powered by the **kickstartDS** design system (`@kickstartds/ds-agency-premium`).
 
-See ["Local Development"-Section](#local-development) below for the necessary steps to start developing locally with rapid feedback cycles.
+## Monorepo Structure
 
-You can use this button to deploy the EnergyUI@Storyblok starter repo on Vercel. Feel free to change the repository URL for quicker deployment of the clone repository:
+```
+packages/
+  website/              — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
+  storyblok-services/   — Shared library (schema, validation, transforms)
+  mcp-server/           — Storyblok MCP server (Model Context Protocol)
+  n8n-nodes/            — n8n community node for Storyblok workflows
+```
 
-## Deploy your own
+**Package manager:** pnpm 9.15.0 · **Versioning:** Changesets for independent per-package publishing
+
+## Quick Start
 
 ### Requirements
 
-- Node / `npm`: Ensure you're using the correct Node version 18+ locally; `nvs use`, `nvm use` for automatic selection, if you use one of those tools.
-- [`mkcert`](https://github.com/FiloSottile/mkcert#installation): for local setup, to get a locally trusted SSL certificate... needed to run inside the Visual Editor iframe of `app.storyblok.com`
+- **Node.js 18+** — `nvs use` or `nvm use` for automatic version selection
+- **pnpm 9.15.0** — `corepack enable && corepack prepare pnpm@9.15.0 --activate`
+- [`mkcert`](https://github.com/FiloSottile/mkcert#installation) — for local SSL (needed for Storyblok Visual Editor iframe)
 
-### Manually
+### Install & Build
 
-#### Setup
+```bash
+pnpm install                # Install all workspaces
+pnpm -r run build           # Build all packages (topological order)
+```
 
-1. Create a new Storyblok Space to host your project (you can just go with the free "Community" tier here, to start): https://app.storyblok.com/#/me/spaces/new
-2. TODO note about initial video uploads needing account / space verification for it to work, only needed for premium, though. General note applies to both, though
-3. Fork the starter to your own account or organisation, this way you can easily benefit from future improvements: https://github.com/kickstartDS/storyblok-starter/fork
-4. Clone the forked repository to your local machine
-5. Switch to the freshly cloned directory, and inside:
-   1. `npm i` to install dependencies
-   2. Copy `.env.local.sample` to `.env.local`, and replace all placeholders:
-      - You can find the Space ID (`NEXT_STORYBLOK_SPACE_ID`) in your Storyblok Spaces "Settings", on the initially opened page (called "Space"). Make sure to exclude(!) the `#` sign in front of it (`297364` instead of `#297364`)
-      - You can find the needed Preview API Token (`NEXT_STORYBLOK_API_TOKEN`) in those same "Settings", but in the sub page called "Access Tokens". You can just use the initially created `Preview`-Token (just copy it using the handy icon)
-      - Your Management API OAUTH Token (`NEXT_STORYBLOK_OAUTH_TOKEN`) needs to be created in your "My account" settings, just follow this guide: https://www.storyblok.com/docs/api/management/getting-started/authentication
-   3. (Re-)login to the Storyblok CLI: `npm run storyblok-logout` followed by `npm run storyblok-login`. The logout first ensures the CLI can actually see all projects, especially newly created ones (which would be likely for a starter like this) can error out otherwise. Use your Storyblok-Login and the region chosen when creating your Space here
-   4. Run the project initialization: `npm run init`. This removes demo content, adds all the needed preset and demo content images (into distinct folders, as not to pollute your future project), all components and preset configuration, and creates an initial demo page
-   5. Final small adjustment you need to make is to add your future site url in `.env` (variable `NEXT_PUBLIC_SITE_URL`)
-   6. You can now commit & push all the locally updated files (`git add --all && git commit -m "Initial Storyblok setup" && git push origin main`):
-      - `cms/components.123456.json` is the automatically generated component schema, which was already part of the repository when forked (you can regenerate it with `npm run create-storyblok-config`). It now includes the correct asset references for visual component previews
-      - `cms/presets.123456.json` is the same for presets, now with updated asset references for visual preset previews and correct space and component id references
-      - `types/components-schema.json` is your live component schema pulled from Storyblok (seeded by `cms/components.123456.json`, this now includes all correct ids and references, pulled by `npm run pull-content-schema`)
-      - `types/components-presets.json` again is the same for presets
-      - `types/components-schema.d.ts` includes TypeScript types matching your content and component schemas. This is generated based off your `components-schema.json` by using https://github.com/dohomi/storyblok-generate-ts
-      - `.env` containing general project related configuration
+### Environment Variables
 
-#### Local
+Create `packages/website/.env.local` (see `.env.local.sample`) with:
 
-TODO add note somewhere about server start being bound to `getting-started` existing. If that page is renamed / deleted, you need to adjust the script `dev:proxy` in `package.json` accordingly.
+- `NEXT_STORYBLOK_API_TOKEN` — Preview API token
+- `NEXT_STORYBLOK_OAUTH_TOKEN` — Management API token
+- `NEXT_STORYBLOK_SPACE_ID` — Space ID (without `#`)
 
-1. Inside the project directory start by creating a local certificate for the project: `mkcert localhost`. This generates local key and cert files used when starting the local server (you don't commit those, which is why they're on the `.gitignore`)
-2. Run a first full build with `npm run build`
-3. Start the local server (including proxy) with `npm run dev`
-4. Open your Space in Storyblok (https://app.storyblok.com)
-5. Go into the projects "Settings", and open the entry "Visual Editor"
-6. Add a new "Preview URL" called "Development", and set its value to `https://localhost:3010/api/preview/`
-7. Save your changes by hitting "Save" at the top right
-8. On the main "Content" pane, open the page "Getting Started", that was created on initial project setup
-9. At the top of the window, inside the simulated address bar of the page preview, click on the small settings icon to the right... and select your "Development" Preview URL
-10. Et voila... you should see your locally hosted page preview
+### Local Development
 
-TODO: check initial `npm run init` locally again... failed for `push-components` in initial try, because of missing environment variable `NEXT_STORYBLOK_SPACE_ID` in `push-components` script
+```bash
+pnpm --filter website dev   # Start dev server with SSL proxy on :3010
+```
 
-#### Netlify Hosting
+Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
 
-1. Add a new site in your Netlify dashboard, choose "Import an existing project"
-2. Select the repository you forked here, presumably from Github
-3. Choose a fitting name, and while leaving the rest of the settings as is... do add the following variables through "New variable" in "Environment variables":
-   - `NEXT_STORYBLOK_API_TOKEN`: TODO don't repeat explanations, see local setup above
-   - `NEXT_STORYBLOK_OAUTH_TOKEN`: TODO don't repeat explanations, see local setup above
-   - `NEXT_STORYBLOK_SPACE_ID`: TODO don't repeat explanations, see local setup above
-   - `STORYBLOK_LOGIN_EMAIL`: the email for the account you created the Space with
-   - `STORYBLOK_REGION`: region your Space is hosted in. You should have selected this when creating it
-4. Run the first deployment for your project by hitting the final button
-5. You should be able to open the site url configured in Netlify now
+### Common Commands
 
-#### Netlify Webhook on Storyblok change
+```bash
+pnpm -r run build                              # Build all packages
+pnpm --filter website dev                      # Website dev server
+pnpm --filter mcp-server dev                   # MCP server dev mode
+pnpm --filter website push-components          # Push CMS schema to Storyblok
+pnpm --filter website generate-content-types   # Pull + generate TypeScript types
+pnpm changeset                                 # Create a new changeset
+pnpm version-packages                          # Bump versions from changesets
+pnpm publish-packages                          # Publish to npm
+```
 
-1. Open the settings for your Netlify site ("Site configuration"), and switch to "Build & deploy" -> "Continuous deployment". Scroll down to the section titled "Build hooks", and click "Add build hook"
-2. Give that hook a distinct name (e.g. "Storyblok"), and probably keep `main` as the branch to build from
-3. Save and copy the generated hook URL
-4. Open your Storyblok Space "Settings", and switch to "Webhooks"
-5. Click "+ New Webhook", and give hook a distinct name, too (e.g. "Netlify")
-6. Replace the "Endpoint URL" with the copied URL from Netlify
-7. For "Triggers", open "Story" and select all 4 entries
-8. Save the hook
+## MCP Server (AI Integration)
 
-From now on your build process in Netlify should be automatically triggered, deploying a new version of the site in the background, whenever an editor adds, deletes or changes a Story in Storyblok.
+The project includes a **Storyblok MCP server** ([packages/mcp-server/](packages/mcp-server/)) that exposes CMS tools (content CRUD, AI generation, component introspection) to AI assistants via the [Model Context Protocol](https://modelcontextprotocol.io/).
 
-#### Storyblok hosted preview
+Key capabilities:
 
-1. Open the Storyblok Spaces "Settings", and switch to "Visual Editor"
-2. For "Location (default environment)" enter the site URL configured in Netlify, with `/api/preview` added to it (e.g. if your site URL happens to be `https://storyblok.netlify.app`, the URL you'd enter would have to be `https://storyblok.netlify.app/api/preview/`)
-3. Save your changes by hitting "Save" at the top right
-4. On the main "Content" pane, open the page "Getting Started", that was created on initial project setup
-5. If you already went through configuring a local preview URL, you will most likely have to change back to the default preview environment now by clicking on the settings icons (cogs) on the top right of the preview frame
+- **Multi-content-type support**: 5 content types (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`) with per-type schema validation via a `SchemaRegistry`
+- **Auto-schema derivation**: The `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema for any content type — no manual schema authoring needed
+- **Automatic transforms**: Import tools automatically convert Design System props into Storyblok's flat `key_subKey` format
+- **Full pipeline**: End-to-end content generation from prompt → schema preparation → OpenAI generation → post-processing → Storyblok import
 
-### Netlify Deploy
+Transport modes:
 
-// TODO use correct URL in non-premium starter
-// TODO mention next local steps still needed (like `npm run generate-content-types`)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/kickstartDS/storyblok-starter-premium)
+- **Local usage**: Run via stdio for Claude Desktop — `pnpm --filter mcp-server start`
+- **Cloud deployment**: Deploy via Kamal with Streamable HTTP transport — `kamal deploy -d mcp`
+  - Deploys to the same server as the main site under a separate subdomain
+  - Endpoint: `https://mcp.your-domain.com/mcp`
+
+See [packages/mcp-server/README.md](packages/mcp-server/README.md) for full setup and deployment instructions.
+
+For event-driven automation (without an LLM), see the companion [n8n community nodes](packages/n8n-nodes/), which offer the same auto-schema and auto-transform capabilities as n8n workflow nodes.
 
 ## Local Development
 
@@ -168,7 +141,7 @@ Reminder: Undo the import for `fonts.scss` in `index.scss` if you had to change 
 ### Typescript Support
 
 Generate ts types according to the content schema by running
-`NEXT_STORYBLOK_SPACE_ID=<your-space-id> npm run generate-content-types`.
+`pnpm --filter website generate-content-types`.
 
 ### Migrations
 
