@@ -185,6 +185,36 @@ export function storyProcessing(
     }
   }
 
+  function coerceNumberFields({
+    parent,
+    key,
+    value,
+  }: TraversalCallbackContext) {
+    if (
+      parent &&
+      parent.component &&
+      key &&
+      typeof value === "string" &&
+      value !== ""
+    ) {
+      const componentSchema = componentsSchema.components.find(
+        (component) => component.name === parent.component
+      );
+      if (
+        componentSchema &&
+        isStoryblokComponentSchema(componentSchema as unknown as any)
+      ) {
+        const propSchema = (componentSchema as unknown as any).schema[key];
+        if (propSchema && propSchema.type === "number") {
+          const num = Number(value);
+          if (!isNaN(num)) {
+            parent[key] = num;
+          }
+        }
+      }
+    }
+  }
+
   if (!preview && blok.section && blok.section.length > 0) {
     blok.section = blok.section.filter((section: Record<string, any>) => {
       return !section.aiDraft;
@@ -197,6 +227,7 @@ export function storyProcessing(
     mapStoryblokAssets(context);
     mapResolvedEntries(context);
     mapBlokEntries(context);
+    coerceNumberFields(context);
   });
 
   return blok;
