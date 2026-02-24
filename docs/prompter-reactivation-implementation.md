@@ -1,6 +1,6 @@
 # Prompter Reactivation Implementation Progress
 
-> **Status: 🟡 IN PROGRESS** — Phases 1–3 complete. Phase 4 (Component Rewrite) next.
+> **Status: 🟡 IN PROGRESS** — Phases 1–4 complete. Phase 5 (Polish & Testing) next.
 > Companion PRD: [prompter-reactivation-prd.md](./prompter-reactivation-prd.md)
 
 ## Phase 1: Cleanup & Reactivation (Low Risk) ✅
@@ -73,30 +73,44 @@ Shared helpers in `pages/api/prompter/_helpers.ts`: CORS middleware, env validat
 - [x] 3.5 Create `/api/prompter/import` route — `pages/api/prompter/import.ts` (POST, wraps `importByPrompterReplacement()` with validation + compositional warnings + asset upload)
 - [x] 3.6 Create `/api/prompter/ideas` route — `pages/api/prompter/ideas.ts` (GET, wraps Storyblok Ideas API)
 
-## Phase 4: Component Rewrite (High Effort)
+## Phase 4: Component Rewrite (High Effort) ✅
+
+Complete rewrite of PrompterComponent with new sub-components and state machine hook. All schema preparation moved server-side. Zero TypeScript errors.
 
 ### Mode Toggle & Shared UI
 
-- [ ] 4.1 Add mode toggle UI (Section ↔ Page) in PrompterComponent
-- [ ] 4.8 Add content type auto-detection from current story
-- [ ] 4.10 Remove client-side schema preparation (move to server-side API routes)
-- [ ] 4.11 Update preview `componentMap` to handle all current component types
+- [x] 4.1 Add mode toggle UI (Section ↔ Page) — `components/prompter/prompter-mode-toggle/PrompterModeToggle.tsx`
+- [x] 4.8 Add content type auto-detection — `detectContentType()` in `components/prompter/usePrompter.ts`
+- [x] 4.10 Remove client-side schema preparation — all schema work now in Phase 3 API routes; removed `prepareSchemaForOpenAi`, `processOpenAiResponse`, `processForStoryblok` from client
+- [x] 4.11 Update preview `componentMap` — 26 Design System components mapped in `PrompterComponent.tsx`
 
 ### Section Mode
 
-- [ ] 4.2 Add component type picker with "+ Add another section" to build ordered list
-- [ ] 4.3 Derive hybrid context (story neighbors for edge sections, list neighbors for inner)
-- [ ] 4.4 Sequential `generate_section` calls with progress (reuse page mode progress UI)
+- [x] 4.2 Add component type picker — `components/prompter/prompter-component-picker/PrompterComponentPicker.tsx` (22 component types, ordered list builder with add/remove/reorder)
+- [x] 4.3 Derive hybrid context — `getSurroundingContext()` in `usePrompter.ts` (story neighbors for edge sections, list/plan neighbors for inner)
+- [x] 4.4 Sequential `generate_section` calls with progress — `generate()` in `usePrompter.ts` + `PrompterProgress` sub-component
 
 ### Page Mode
 
-- [ ] 4.5 Add plan review UI (section sequence display, reorder, add/remove)
-- [ ] 4.6 Implement section-by-section generation with progress indicator
-- [ ] 4.7 Add per-section regenerate button in preview
+- [x] 4.5 Add plan review UI — `components/prompter/prompter-plan-review/PrompterPlanReview.tsx` (section sequence display, reorder, add/remove, editable intent)
+- [x] 4.6 Implement section-by-section generation with progress — shared with 4.4 via `usePrompter.generate()`
+- [x] 4.7 Add per-section regenerate button — `SectionPreview` component in `PrompterComponent.tsx` with hover-reveal regenerate
 
 ### Quality & Warnings
 
-- [ ] 4.9 Add compositional quality warnings display
+- [x] 4.9 Add compositional quality warnings — `components/prompter/prompter-warnings/PrompterWarnings.tsx`
+
+### Key Files Created/Modified
+
+- **`components/prompter/usePrompter.ts`** (NEW, ~736 lines) — State machine hook with 8 steps, 2 modes
+- **`components/prompter/PrompterComponent.tsx`** (REWRITTEN, ~527 lines) — Step-based UI, `SectionPreview`, `PagePreview`, `PromptTextarea`
+- **`components/prompter/prompter-mode-toggle/`** (NEW) — TSX + SCSS
+- **`components/prompter/prompter-component-picker/`** (NEW) — TSX + SCSS
+- **`components/prompter/prompter-plan-review/`** (NEW) — TSX + SCSS
+- **`components/prompter/prompter-progress/`** (NEW) — TSX + SCSS
+- **`components/prompter/prompter-warnings/`** (NEW) — TSX + SCSS
+- **`components/prompter/prompter.scss`** (MODIFIED) — Added 5 sub-component imports + new styles
+- **`components/prompter/prompter-select-field/PrompterSelectField.tsx`** (MODIFIED) — Fixed `forwardRef` props type
 
 ## Phase 5: Polish & Testing (Medium Risk)
 

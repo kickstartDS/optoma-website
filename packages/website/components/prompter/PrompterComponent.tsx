@@ -1,30 +1,10 @@
 import {
   FC,
   HTMLAttributes,
-  MouseEventHandler,
-  PropsWithChildren,
   forwardRef,
   useEffect,
-  useMemo,
-  useRef,
-  useState,
 } from "react";
 import { ThreeDots } from "react-loader-spinner";
-import { traverse as objectTraverse } from "object-traversal";
-import { ISbStoryData, getStoryblokApi } from "@storyblok/react";
-import { defaultObjectForSchema } from "@kickstartds/cambria";
-import merge from "deepmerge";
-
-import { fetchStory, initStoryblok } from "@/helpers/storyblok";
-import { unflatten } from "@/helpers/unflatten";
-
-import {
-  prepareSchemaForOpenAi,
-  processOpenAiResponse,
-  processForStoryblok,
-} from "@kickstartds/storyblok-services";
-
-import pageSchema from "@kickstartds/ds-agency-premium/page/page.schema.dereffed.json";
 
 import { Section } from "@kickstartds/ds-agency-premium/section";
 import { SplitEven } from "@kickstartds/ds-agency-premium/split-even";
@@ -46,7 +26,6 @@ import { ImageStory } from "@kickstartds/ds-agency-premium/image-story";
 import { ImageText } from "@kickstartds/ds-agency-premium/image-text";
 import { Logos } from "@kickstartds/ds-agency-premium/logos";
 import { Mosaic } from "@kickstartds/ds-agency-premium/mosaic";
-import { PageProps } from "@kickstartds/ds-agency-premium/page";
 import { Slider } from "@kickstartds/ds-agency-premium/slider";
 import { Stats } from "@kickstartds/ds-agency-premium/stats";
 import { TeaserCard } from "@kickstartds/ds-agency-premium/teaser-card";
@@ -63,12 +42,15 @@ import PrompterSectionInput from "./prompter-section-input/PrompterSectionInput"
 import PrompterSelectionDisplay from "./prompter-selection-display/PrompterSelectionDisplay";
 import PrompterSubmittedText from "./prompter-submitted-text/PrompterSubmittedText";
 import { PrompterSelectField } from "./prompter-select-field/PrompterSelectField";
+import PrompterModeToggle from "./prompter-mode-toggle/PrompterModeToggle";
+import PrompterComponentPicker from "./prompter-component-picker/PrompterComponentPicker";
+import PrompterPlanReview from "./prompter-plan-review/PrompterPlanReview";
+import PrompterProgress from "./prompter-progress/PrompterProgress";
+import PrompterWarnings from "./prompter-warnings/PrompterWarnings";
+import { usePrompter, GeneratedSection } from "./usePrompter";
 import { PrompterProps } from "./PrompterProps";
 
-type Idea = {
-  id: string;
-  name: string;
-};
+// ─── Component map for preview rendering ──────────────────────────────
 
 const componentMap = {
   "blog-teaser": BlogTeaser,
@@ -104,77 +86,114 @@ function isComponentMapKey(key: string): key is ComponentMapKeys {
   return key in componentMap;
 }
 
-// TODO handle `type` in props, currently just gets passed through
-const Page: FC<PropsWithChildren<PageProps>> = ({ section }) => {
+// ─── Preview renderer ─────────────────────────────────────────────────
+
+/**
+ * Renders a single generated section using Design System props.
+ * The designSystemProps from generateSectionContent() are in DS format,
+ * wrapped in a section envelope: { section: [{ components: [...], ...sectionProps }] }
+ */
+const SectionPreview: FC<{
+  generated: GeneratedSection;
+  index: number;
+  onRegenerate?: (index: number) => void;
+  isRegenerating?: boolean;
+}> = ({ generated, index, onRegenerate, isRegenerating }) => {
+  const dsProps = generated.designSystemProps;
+
+  // The section may be at dsProps.section[0] (page envelope) or dsProps directly
+  const sectionArray = dsProps?.section || (dsProps ? [dsProps] : []);
+
+  if (!sectionArray.length || isRegenerating) {
+    return (
+      <div className="prompter-section-preview prompter-section-preview--loading">
+        <ThreeDots
+          height="20"
+          width="50"
+          radius="9"
+          color="var(--prompter-color)"
+          ariaLabel="regenerating"
+          visible={true}
+        />
+      </div>
+    );
+  }
+
   return (
-    <>
-      {section?.map((section, index) => {
-        const { components, ...props } = section;
+    <div className="prompter-section-preview">
+      {onRegenerate && (
+        <button
+          className="prompter-section-preview__regenerate"
+          onClick={() => onRegenerate(index)}
+          title="Regenerate this section"
+          type="button"
+        >
+          ↻ Regenerate
+        </button>
+      )}
+      {sectionArray.map((section: any, sIdx: number) => {
+        const { components, ...sectionProps } = section;
         return (
-          <Section key={index} {...props}>
-            {components?.map((component, index) => {
+          <Section key={sIdx} {...sectionProps}>
+            {components?.map((component: any, cIdx: number) => {
               const type = component.type;
-              if (!isComponentMapKey(type))
-                throw new Error(`Unknown component type: ${type}`);
+              if (!type || !isComponentMapKey(type)) {
+                console.warn("Unknown component type in preview:", type);
+                return null;
+              }
               const Component = componentMap[type];
-              return <Component key={index} {...component} />;
+              return <Component key={cIdx} {...component} />;
             })}
           </Section>
         );
       })}
+    </div>
+  );
+};
+
+/**
+ * Renders all generated sections with "AI Draft" badge.
+ */
+const PagePreview: FC<{
+  sections: GeneratedSection[];
+  onRegenerate?: (index: number) => void;
+}> = ({ sections, onRegenerate }) => {
+  return (
+    <>
+      {sections.map((gen, index) => (
+        <SectionPreview
+          key={`${gen.componentType}-${index}`}
+          generated={gen}
+          index={index}
+          onRegenerate={onRegenerate}
+          isRegenerating={
+            Object.keys(gen.designSystemProps || {}).length === 0
+          }
+        />
+      ))}
     </>
   );
 };
 
-const storyblokKeys = ["_uid", "_editable", "component"];
-const processStory = (story: ISbStoryData): Record<string, any> => {
-  const page = structuredClone(story);
+// ─── Prompt textarea ──────────────────────────────────────────────────
 
-  objectTraverse(
-    page,
-    ({ value, parent, key }) => {
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
-        if (parent && key !== undefined) {
-          parent[key] = unflatten(value);
-        }
-      } else if (Array.isArray(value)) {
-        value.forEach((item, index) => {
-          if (
-            typeof item === "object" &&
-            item !== null &&
-            !Array.isArray(item)
-          ) {
-            value[index] = unflatten(item);
-          }
-        });
-      }
-    },
-    { traversalType: "depth-first" }
-  );
+const PromptTextarea: FC<{
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+}> = ({ value, onChange, placeholder, disabled }) => (
+  <textarea
+    className="prompter-prompt-textarea"
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    placeholder={placeholder}
+    disabled={disabled}
+    rows={3}
+  />
+);
 
-  objectTraverse(
-    page,
-    ({ key, value, parent }) => {
-      if (key === "type" && parent && typeof value === "string") {
-        parent[`type__${value}`] = value;
-        delete parent[key];
-      }
-    },
-    { traversalType: "depth-first" }
-  );
-
-  objectTraverse(page, ({ key, parent }) => {
-    if (key && storyblokKeys.includes(key) && parent) {
-      delete parent[key];
-    }
-  });
-  console.log("Processed page", page);
-  return page;
-};
+// ─── Main Prompter Component ──────────────────────────────────────────
 
 export const PrompterComponent = forwardRef<
   HTMLDivElement,
@@ -182,216 +201,105 @@ export const PrompterComponent = forwardRef<
 >(
   (
     {
-      sections,
+      sections: _sections,
       includeStory = true,
       useIdea = true,
       relatedStories = [],
-      userPrompt,
+      userPrompt = "",
       systemPrompt,
       ...props
     },
     ref
   ) => {
-    const [generatedContent, setGeneratedContent] =
-      useState<Record<string, any>>(null);
-    const [storyblokContent, setStoryblokContent] =
-      useState<Record<string, any>>(null);
+    const prompter = usePrompter({
+      defaultMode: "section",
+      includeStory,
+      useIdea,
+      userPrompt,
+      systemPrompt,
+      relatedStories,
+    });
 
-    const { schema, schemaMap } = useMemo(() => {
-      const prepared = prepareSchemaForOpenAi(pageSchema, {
-        sections,
-      });
-
-      if (prepared.validation.warnings.length > 0) {
-        console.log("Schema warnings:", prepared.validation.warnings);
-      }
-
-      return {
-        schema: prepared.envelope,
-        schemaMap: prepared.schemaMap,
-      };
-    }, [sections]);
-
-    const [ideas, setIdeas] = useState<Idea[]>([]);
-    const [idea, setIdea] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
-    const [storyUid, setStoryUid] = useState<string>();
-    const [story, setStory] = useState<ISbStoryData>();
-
-    const ideaSelectRef = useRef(null);
-
-    const createPrompt = (ideaId: string, story?: ISbStoryData) => {
-      let prompt = `Task: ${userPrompt}.\n`;
-
-      if (useIdea) {
-        const ideaContent: string[] = [];
-        const idea = ideas.find((object) => object.id === ideaId);
-
-        if (idea) {
-          objectTraverse(idea, ({ value }) => {
-            if (value && value.type && value.type === "text" && value.text)
-              ideaContent.push(value.text);
-          });
-        }
-        prompt += `\n((Idea)):\n${ideaContent.join(" ")}\n`;
-      }
-      if (story) prompt += `\n((Story)):\n${JSON.stringify(story.content)}\n`;
-      if (relatedStories && relatedStories.length > 0) {
-        relatedStories.forEach((relatedStory) => {
-          prompt += `\n((Related Story)):\n${JSON.stringify(
-            processStory(relatedStory)
-          )}\n`;
-        });
-      }
-
-      return prompt;
-    };
-
+    // Detect the prompter UID once mounted
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/ideas`)
-        .then((response) => {
-          response.json().then((json) => {
-            setIdeas(json.response.data.ideas);
-          });
-        })
-        .catch((error) => console.error(error));
-    }, []);
+      prompter.detectPrompterUid();
+    }, [prompter.detectPrompterUid]);
 
-    useEffect(() => {
-      const blok = document.querySelector("[data-blok-c]");
-      const blokMetaString = blok?.getAttribute("data-blok-c");
-      if (!blokMetaString)
-        throw new Error("Could not find blok meta for prompter");
+    const {
+      mode,
+      step,
+      prompt,
+      error,
+      ideas,
+      selectedIdea,
+      componentTypes,
+      plan,
+      generatedSections,
+      currentSectionIndex,
+      totalSections,
+      warnings,
+      canGenerate,
+      canPlan,
+      canStartPageGeneration,
+      canImport,
+      setMode,
+      setPrompt,
+      setSelectedIdea,
+      addComponentType,
+      removeComponentType,
+      moveComponentType,
+      planPage,
+      updatePlanSection,
+      removePlanSection,
+      movePlanSection,
+      generate,
+      regenerateSection,
+      importSections,
+      discard,
+      prompterRef,
+    } = prompter;
 
-      const { id } = JSON.parse(blokMetaString);
-      setStoryUid(id);
-    }, []);
+    const isConfiguring = step === "configure";
+    const isPlanning = step === "planning";
+    const isPlanReview = step === "plan-review";
+    const isGenerating = step === "generating";
+    const isPreview = step === "preview";
+    const isImporting = step === "importing";
+    const isSubmitted = step === "submitted";
+    const isError = step === "error";
 
-    useEffect(() => {
-      if (storyUid) {
-        const token = process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN;
-        if (!token) {
-          console.error("Missing NEXT_PUBLIC_STORYBLOK_API_TOKEN env var");
-          return;
-        }
-        initStoryblok(token);
-        const storyblokApi = getStoryblokApi();
-        fetchStory(storyUid, false, storyblokApi)
-          .then((response) => {
-            setStory(processStory(response.data.story));
-          })
-          .catch((error) => console.error(error));
-      }
-    }, [storyUid]);
-
-    const handleGenerate = async () => {
-      const prompt = createPrompt(idea, includeStory ? story : undefined);
-      console.log(
-        "PROMPT",
-        prompt,
-        systemPrompt,
-        schema,
-        includeStory,
-        story,
-        storyUid
-      );
-      setLoading(true);
-      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/content`, {
-        method: "POST",
-        body: JSON.stringify({
-          system: systemPrompt,
-          prompt,
-          schema,
-        }),
-      })
-        .then((response) => {
-          response.json().then((json) => {
-            console.log("Prompter raw response", response, json);
-            const pageProps = processOpenAiResponse(
-              JSON.parse(json.content),
-              schemaMap,
-              defaultObjectForSchema,
-              merge
-            );
-            setGeneratedContent(pageProps);
-
-            const storyblokProps = processForStoryblok(
-              structuredClone(pageProps)
-            );
-            setStoryblokContent(storyblokProps);
-
-            console.log("Prompter response", json, pageProps, storyblokProps);
-
-            setLoading(false);
-          });
-        })
-        .catch((error) => console.error(error));
-    };
-
-    const submitStory: MouseEventHandler<HTMLButtonElement> = async (ev) => {
-      const blok = (ev.target as Element).closest("[data-blok-c]");
-      const blokMetaString = blok?.getAttribute("data-blok-c");
-      if (!blokMetaString)
-        throw new Error("Could not find blok meta for prompter");
-
-      const { uid: prompterUid } = JSON.parse(blokMetaString);
-
-      console.log("Submitting story", storyblokContent);
-
-      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/import`, {
-        method: "POST",
-        body: JSON.stringify({
-          storyUid,
-          prompterUid,
-          page: {
-            name: "Import",
-            is_folder: false,
-            content: storyblokContent,
-            published: true,
-            real_path: "/import",
-            unpublished_changes: false,
-            slug: "import",
-            full_slug: "import",
-            position: 0,
-          },
-        }),
-      })
-        .then((response) => {
-          response.json().then(() => {
-            setSubmitted(true);
-          });
-        })
-        .catch((error) => console.error(error));
+    // ── Headlines based on step ──────────────────────────────────────
+    const getHeadline = (): string => {
+      if (isSubmitted) return "Your new content has been saved";
+      if (isImporting) return "Saving content…";
+      if (isPreview) return "Review generated content";
+      if (isGenerating) return "Generating content…";
+      if (isPlanReview) return "Review the planned structure";
+      if (isPlanning) return "Planning your page…";
+      if (isError) return "Something went wrong";
+      return "Prompter — create a content draft, fast, on-brand, seamlessly integrated.";
     };
 
     return (
       <div className="prompter" {...props} ref={ref}>
-        <PrompterSection
-          headline={
-            !submitted
-              ? "Prompter — create a content draft, fast, on-brand, seamlessly integrated."
-              : "Your new content has been saved"
-          }
-          text={!submitted ? "" : undefined}
-        >
-          {((!loading && !submitted && !idea && ideas && ideas.length > 0) ||
-            (idea && !loading && !generatedContent)) && (
-            <>
-              {useIdea && (
-                <PrompterSectionInput>
-                  {!loading &&
-                    !submitted &&
-                    !idea &&
-                    ideas &&
-                    ideas.length > 0 && (
+        <div ref={prompterRef}>
+          <PrompterSection headline={getHeadline()}>
+            {/* ── Step 1: Configure ──────────────────────────────── */}
+            {isConfiguring && (
+              <>
+                {/* Mode toggle */}
+                <PrompterModeToggle mode={mode} onModeChange={setMode} />
+
+                {/* Idea picker (optional) */}
+                {useIdea && ideas.length > 0 && (
+                  <PrompterSectionInput>
+                    {!selectedIdea && (
                       <PrompterSelectField
-                        ref={ideaSelectRef}
-                        value={idea}
-                        onChange={(e) => setIdea(e.target.value)}
+                        value={selectedIdea}
+                        onChange={(e: any) => setSelectedIdea(e.target.value)}
                         options={[
                           {
-                            label: "Select an idea...",
+                            label: "Select an idea…",
                             value: "",
                             disabled: true,
                           },
@@ -403,101 +311,212 @@ export const PrompterComponent = forwardRef<
                         ]}
                       />
                     )}
-                  {idea && !loading && !generatedContent && (
-                    <>
+                    {selectedIdea && (
                       <PrompterSelectionDisplay
-                        idea={`${
-                          ideas.find((object) => object.id === idea)?.name
-                        }`}
+                        idea={
+                          ideas.find((i) => i.id === selectedIdea)?.name || ""
+                        }
+                        text=""
                       />
-                    </>
-                  )}
-                </PrompterSectionInput>
-              )}
-              {!submitted && !loading && !generatedContent && (
-                <PrompterButton
-                  spacingTop={!useIdea}
-                  disabled={useIdea && !idea}
-                  label="Generate Content"
-                  icon="wand"
-                  onClick={handleGenerate}
-                />
-              )}
-            </>
-          )}
-          {storyblokContent && !submitted && (
-            <div className="prompter-section__button-row">
-              <PrompterButton variant="secondary" label="Discard Content" />
-              <PrompterButton
-                label="Save Content"
-                icon="save"
-                onClick={submitStory}
-              />
-            </div>
-          )}
-          {loading && (
-            <ThreeDots
-              style={{ margin: "auto", alignSelf: "center" }}
-              height="30"
-              width="80"
-              radius="9"
-              color="var(--prompter-color)"
-              ariaLabel="three-dots-loading"
-              wrapperClass="prompter-loading-indicator"
-              visible={true}
-            />
-          )}
-          {submitted && (
-            <>
-              <PrompterSubmittedText text="To avoid overwriting your new content, please reload the page now." />
-              <PrompterButton icon="reload" label="Reload page" />
-            </>
-          )}
-        </PrompterSection>
+                    )}
+                  </PrompterSectionInput>
+                )}
 
-        {generatedContent && !submitted && (
+                {/* Prompt / intent textarea */}
+                <PromptTextarea
+                  value={prompt}
+                  onChange={setPrompt}
+                  placeholder={
+                    mode === "section"
+                      ? "Describe the content you want to generate…"
+                      : "Describe the page you want to create (e.g. 'product landing page for our new API')…"
+                  }
+                />
+
+                {/* Section mode: component type picker */}
+                {mode === "section" && (
+                  <PrompterComponentPicker
+                    selectedTypes={componentTypes}
+                    onAdd={addComponentType}
+                    onRemove={removeComponentType}
+                    onMove={moveComponentType}
+                  />
+                )}
+
+                {/* Action buttons */}
+                <div className="prompter-section__button-row">
+                  {mode === "section" && (
+                    <PrompterButton
+                      label="Generate"
+                      icon="wand"
+                      disabled={!canGenerate}
+                      onClick={generate}
+                    />
+                  )}
+                  {mode === "page" && (
+                    <PrompterButton
+                      label="Plan Content"
+                      icon="wand"
+                      disabled={!canPlan}
+                      onClick={planPage}
+                    />
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* ── Planning (page mode loading) ───────────────────── */}
+            {isPlanning && (
+              <ThreeDots
+                height="30"
+                width="80"
+                radius="9"
+                color="var(--prompter-color)"
+                ariaLabel="planning"
+                wrapperClass="prompter-loading-indicator"
+                visible={true}
+              />
+            )}
+
+            {/* ── Plan review (page mode) ────────────────────────── */}
+            {isPlanReview && plan?.sections && (
+              <>
+                <PrompterPlanReview
+                  sections={plan.sections}
+                  reasoning={plan.reasoning}
+                  onRemove={removePlanSection}
+                  onMove={movePlanSection}
+                  onUpdateIntent={(index, intent) =>
+                    updatePlanSection(index, { intent })
+                  }
+                  onGenerate={generate}
+                />
+                <div className="prompter-section__button-row">
+                  <PrompterButton
+                    variant="secondary"
+                    label="Back"
+                    onClick={discard}
+                  />
+                  <PrompterButton
+                    label="Generate All"
+                    icon="wand"
+                    disabled={!canStartPageGeneration}
+                    onClick={generate}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* ── Generating (progress bar) ──────────────────────── */}
+            {isGenerating && (
+              <>
+                <PrompterProgress
+                  current={currentSectionIndex}
+                  total={totalSections}
+                  currentType={
+                    mode === "page"
+                      ? plan?.sections?.[currentSectionIndex]?.componentType
+                      : componentTypes[currentSectionIndex]
+                  }
+                />
+                <ThreeDots
+                  height="30"
+                  width="80"
+                  radius="9"
+                  color="var(--prompter-color)"
+                  ariaLabel="generating"
+                  wrapperClass="prompter-loading-indicator"
+                  visible={true}
+                />
+              </>
+            )}
+
+            {/* ── Preview: save / discard controls ───────────────── */}
+            {isPreview && (
+              <>
+                {warnings.length > 0 && (
+                  <PrompterWarnings warnings={warnings} />
+                )}
+                <div className="prompter-section__button-row">
+                  <PrompterButton
+                    variant="secondary"
+                    label="Discard Content"
+                    onClick={discard}
+                  />
+                  <PrompterButton
+                    label="Save Content"
+                    icon="save"
+                    disabled={!canImport}
+                    onClick={importSections}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* ── Importing ──────────────────────────────────────── */}
+            {isImporting && (
+              <ThreeDots
+                height="30"
+                width="80"
+                radius="9"
+                color="var(--prompter-color)"
+                ariaLabel="importing"
+                wrapperClass="prompter-loading-indicator"
+                visible={true}
+              />
+            )}
+
+            {/* ── Submitted ──────────────────────────────────────── */}
+            {isSubmitted && (
+              <>
+                <PrompterSubmittedText text="To avoid overwriting your new content, please reload the page now." />
+                <PrompterButton
+                  icon="reload"
+                  label="Reload page"
+                  onClick={() => window.location.reload()}
+                />
+              </>
+            )}
+
+            {/* ── Error ──────────────────────────────────────────── */}
+            {isError && error && (
+              <>
+                <div className="prompter-error">
+                  <strong>Error:</strong> {error}
+                </div>
+                <PrompterButton
+                  variant="secondary"
+                  label="Try Again"
+                  onClick={discard}
+                />
+              </>
+            )}
+          </PrompterSection>
+        </div>
+
+        {/* ── Generated content preview ────────────────────────────── */}
+        {(isPreview || isGenerating) && generatedSections.length > 0 && (
           <div className="prompter__generated-content">
             <PrompterBadge label="AI Draft" state="unsaved" />
-            <Page
-              {...generatedContent}
-              seo={{
-                title:
-                  "TODO remove this, only added to satisfy typings for now",
-              }}
+            <PagePreview
+              sections={generatedSections}
+              onRegenerate={isPreview ? regenerateSection : undefined}
             />
           </div>
         )}
-        {story && (
+
+        {/* ── Story JSON debug panel ───────────────────────────────── */}
+        {prompter.story && (
           <details className="prompter__story">
             <summary>Story JSON</summary>
-
             <pre className="prompter__story-code">
-              <code>{JSON.stringify(story, null, 2)}</code>
+              <code>{JSON.stringify(prompter.story, null, 2)}</code>
             </pre>
           </details>
         )}
-        {/* {storyblokContent && (
-        <Section width="full" spaceAfter="small" spaceBefore="none">
-          <Html
-            style={{ background: "white" }}
-            html={`<pre><code>${JSON.stringify(
-              storyblokContent,
-              null,
-              2
-            )}</code></pre>`}
-          />
-        </Section>
-      )} */}
       </div>
     );
   }
 );
-PrompterComponent.displayName = "Prompter Component";
 
-// TODO:
-//
-// - add hints for removed fields to description, if applicable (e.g. `format: markdown` -> "this typically can include markdown formatting", `default` -> "..., typically set to 'value'")
-// - collect used / removed fields, to clean up stories from API to use for additional context
-// - merge result back to defaults of component
-// - relatedStories initially, after import into Storyblok, is set to `blocks`, but should be `references`
-// - aiDraft not rendered in frontend
+PrompterComponent.displayName = "Prompter Component";

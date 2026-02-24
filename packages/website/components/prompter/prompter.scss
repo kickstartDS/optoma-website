@@ -7,6 +7,11 @@
 @import "./prompter-selection-display/prompter-selection-display.scss";
 @import "./prompter-submitted-text/prompter-submitted-text.scss";
 @import "./prompter-loading-indicator/prompter-loading-indicator.scss";
+@import "./prompter-mode-toggle/prompter-mode-toggle.scss";
+@import "./prompter-component-picker/prompter-component-picker.scss";
+@import "./prompter-plan-review/prompter-plan-review.scss";
+@import "./prompter-progress/prompter-progress.scss";
+@import "./prompter-warnings/prompter-warnings.scss";
 
 :root {
   --prompter-color: #800080;
@@ -62,6 +67,93 @@
       margin: 0;
       padding-top: 1em;
       overflow-x: auto;
+    }
+  }
+
+  .prompter-prompt-textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-family: var(--prompter-font-family);
+    resize: vertical;
+    line-height: 1.5;
+    color: #333;
+    margin: 1rem 0;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: var(--prompter-color);
+      box-shadow: 0 0 0 2px rgba(128, 0, 128, 0.1);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+  }
+
+  .prompter-section-preview {
+    position: relative;
+
+    &--loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      background: rgba(128, 0, 128, 0.03);
+      border-radius: 8px;
+      margin: 0.5rem 0;
+    }
+
+    &__regenerate {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 10;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-family: var(--prompter-font-family);
+      font-weight: 600;
+      color: var(--prompter-color);
+      background: white;
+      border: 1px solid var(--prompter-color);
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+
+      &:hover {
+        background: rgba(128, 0, 128, 0.06);
+      }
+    }
+
+    &:hover .prompter-section-preview__regenerate {
+      opacity: 1;
+    }
+  }
+
+  .prompter-error {
+    width: 100%;
+    font-family: var(--prompter-font-family);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #cc3333;
+    background: #fff0f0;
+    border: 1px solid #ffcccc;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    word-break: break-word;
+
+    strong {
+      font-weight: 700;
     }
   }
 }
