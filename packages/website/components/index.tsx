@@ -92,6 +92,18 @@ const Hero = dynamic(() =>
   import("@kickstartds/ds-agency-premium/hero").then((mod) => mod.Hero)
 );
 
+const DynamicMosaic = dynamic(() =>
+  import("@kickstartds/ds-agency-premium/mosaic").then((mod) => mod.Mosaic)
+);
+
+const MosaicWrapper: FC<Record<string, any>> = (props) => {
+  const processedTile = props.tile?.map((t: Record<string, any>) => {
+    const { component, _uid, ...tileProps } = unflatten(t);
+    return tileProps;
+  });
+  return <DynamicMosaic {...props} tile={processedTile} />;
+};
+
 export const components = {
   page: editablePage,
   global: Global,
@@ -240,6 +252,14 @@ export const components = {
   //     )
   //   )
   // ),
+
+  "info-table": editable(
+    dynamic(() =>
+      import("./info-table/InfoTableComponent").then(
+        (mod) => mod.InfoTableContextDefault
+      )
+    )
+  ),
   "split-even": editable(
     dynamic(() =>
       import("@kickstartds/ds-agency-premium/split-even").then(
@@ -267,13 +287,6 @@ export const components = {
     dynamic(() =>
       import("@kickstartds/ds-agency-premium/stat").then(
         (mod) => mod.StatContextDefault
-      )
-    )
-  ),
-  "info-table": editable(
-    dynamic(() =>
-      import("./info-table/InfoTableComponent").then(
-        (mod) => mod.InfoTableContextDefault
       )
     )
   ),
@@ -329,13 +342,7 @@ export const components = {
       <Hero {...props} />
     </ImageAutoSizeProvider>
   )),
-  mosaic: editable(
-    dynamic(() =>
-      import("@kickstartds/ds-agency-premium/mosaic").then(
-        (mod) => mod.MosaicContextDefault
-      )
-    )
-  ),
+  mosaic: editable(MosaicWrapper),
   "video-curtain": editable(
     dynamic(() =>
       import("@kickstartds/ds-agency-premium/video-curtain").then(
