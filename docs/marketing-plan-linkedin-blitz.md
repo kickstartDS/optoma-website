@@ -292,9 +292,9 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 
 **Thema:** Der komplette Content-Operations-Stack auf einer Slide
 
-> **Hook:** „12 Workflows. 1 MCP Server. 0 manuelle Copy-Paste-Orgien."
+> **Hook:** „14 Workflows. 1 MCP Server. 0 manuelle Copy-Paste-Orgien."
 >
-> **Slide 2:** Übersichtsgrafik aller 12 Workflows (Bulk-Generierung, Migration, Blog-Autopilot, Content-Audit, SEO-Monitoring, Broken-Asset-Detektion, Competitor-Monitoring, Event-Seiten, Übersetzung, Freshness-Tracker, Dashboard, Archivierung)
+> **Slide 2:** Übersichtsgrafik aller 14 Workflows (Bulk-Generierung, Migration, Blog-Autopilot, Content-Audit, SEO-Monitoring, Broken-Asset-Detektion, Competitor-Monitoring, Event-Seiten, Übersetzung, Freshness-Tracker, Dashboard, Archivierung, Bulk-SEO-Generierung, Kampagnen-Sektions-Swap)
 >
 > **Slide 3:** Architektur-Diagramm: `Storyblok ↔ MCP Server ↔ n8n / Claude Desktop ↔ GPT-4 + Design System`
 >
@@ -302,11 +302,11 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 >
 > **Slide 5:** „Das Design System ist der Schlüssel – die KI generiert keine beliebigen Inhalte, sondern solche, die exakt zu den verfügbaren Bausteinen passen."
 >
-> **CTA:** „Welcher dieser 12 Workflows würde bei euch am meisten Zeit sparen?"
+> **CTA:** „Welcher dieser 14 Workflows würde bei euch am meisten Zeit sparen?"
 
 **LinkedIn-Post-Text:**
 
-> 12 Workflows. 1 MCP Server. 0 manuelle Copy-Paste-Orgien.
+> 14 Workflows. 1 MCP Server. 0 manuelle Copy-Paste-Orgien.
 >
 > In den letzten Wochen habe ich einzelne Workflows gezeigt: Bulk-Generierung, Content-Migration, Blog-Autopilot, Content-Audit.
 >
@@ -321,9 +321,11 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 > 👀 Competitor-Monitoring (Wettbewerber-Seiten beobachten)
 > 🎪 Event-Seiten (Messe-Landingpages aus Produktdaten)
 > 🌍 Übersetzung (Seiten in andere Sprachen)
-> ⏰ Freshness-Tracker (veraltete Inhalte aufspüren)
+> ⏰ Freshness-Tracker (veraltete Sektionen chirurgisch ersetzen)
 > 📊 Content-Dashboard (KPIs auf einen Blick)
 > 🗄️ Archivierung (End-of-Life-Seiten sauber entfernen)
+> 🏷️ Bulk-SEO-Generierung (fehlende Meta-Daten automatisch füllen)
+> 🎯 Kampagnen-Sektions-Swap (Heroes/CTAs tauschen + Rollback)
 >
 > Der Tech-Stack dahinter:
 > Storyblok (CMS) ↔ MCP Server (Intelligenz) ↔ n8n (Automation) ↔ GPT-4 + Design System (Qualität)
@@ -332,7 +334,7 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 >
 > ↕️ Wischt durch das Carousel für den kompletten Stack.
 >
-> Welcher dieser 12 Workflows würde bei euch am meisten Zeit sparen? 👇
+> Welcher dieser 14 Workflows würde bei euch am meisten Zeit sparen? 👇
 
 **Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#DesignSystem` `#Automation`
 
@@ -388,7 +390,7 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 > ✅ Blog-Drafts automatisch aus RSS-Feeds erstellen
 > ✅ Content-Audits wöchentlich auf Autopilot
 > ✅ SEO-Checks, die sich selbst fixen
-> ✅ 12 Workflows, die euer Content-Team entlasten
+> ✅ 14 Workflows, die euer Content-Team entlasten
 >
 > Alles Open Source. Alles auf eurem eigenen Stack.
 > Storyblok + kickstartDS + MCP + n8n.
@@ -448,7 +450,7 @@ Fokus: Große Vision zeichnen, Community aktivieren, Conversion.
 | 4   | Mo, Woche 2 | 🎠 Carousel       | Website-Relaunch: Content-Migration per KI       |
 | 5   | Mi, Woche 2 | 🎠 Carousel       | Automatischer Content-Audit                      |
 | 6   | Fr, Woche 2 | 🎥 Video          | Blog-Autopilot aus RSS-Feed                      |
-| 7   | Mo, Woche 3 | 🎠 Carousel       | 12 Workflows auf einer Slide                     |
+| 7   | Mo, Woche 3 | 🎠 Carousel       | 14 Workflows auf einer Slide                     |
 | 8   | Mi, Woche 3 | 💬 Thought Leader | „Der Redakteur der Zukunft ist ein Kurator"      |
 | 9   | Fr, Woche 3 | 🎥 Video + CTA    | Zusammenfassung + Demo-Einladung                 |
 
