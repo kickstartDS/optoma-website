@@ -362,6 +362,125 @@ export function unflattenNestedObjects(
   }, {} as Record<string, any>);
 }
 
+// ─── Missing component injection ──────────────────────────────────────
+
+/**
+ * Walk a Storyblok content tree and inject missing `component` fields on
+ * items that sit inside monomorphic container slots (slots where only a
+ * single component type is allowed).
+ *
+ * Storyblok bloks fields require every item to carry a `component`
+ * discriminator. The generation pipeline converts `type` → `component`
+ * via `processForStoryblok`, but that only works when the item already
+ * has a `type` field from OpenAI output. Monomorphic sub-items (e.g.
+ * `stat` inside `stats.stat[]`) often lack a `type` because the schema
+ * preparation doesn't add a discriminator for single-type arrays.
+ *
+ * This function acts as a **safety net** — it runs after all other
+ * transforms and uses the schema-derived `containerSlots` to inject
+ * `component` where it's unambiguous (monomorphic = exactly 1 allowed type).
+ *
+ * **Mutates** the input in place.
+ *
+ * @param sections - Array of section objects (Storyblok format).
+ * @param containerSlots - Map from `buildValidationRules()`.
+ * @param rootArrayField - The root field name (default `"section"`).
+ */
+export function ensureSubItemComponents(
+  sections: Record<string, any>[],
+  containerSlots: Map<string, Set<string>>,
+  rootArrayField = "section"
+): void {
+  for (const section of sections) {
+    injectInNode(section, rootArrayField, containerSlots);
+  }
+}
+
+/**
+ * Recursively walk a node's array children and inject `component` on
+ * items in monomorphic container slots.
+ */
+function injectInNode(
+  node: Record<string, any>,
+  nodeType: string,
+  containerSlots: Map<string, Set<string>>
+): void {
+  for (const [key, value] of Object.entries(node)) {
+    if (!Array.isArray(value)) continue;
+
+    // Check if this array corresponds to a known container slot
+    const slotPath = `${nodeType}.${key}`;
+    const allowedTypes = containerSlots.get(slotPath);
+
+    if (!allowedTypes) continue;
+
+    for (const item of value) {
+      if (typeof item !== "object" || item === null || Array.isArray(item)) {
+        continue;
+      }
+
+      // Inject component if missing and slot is monomorphic
+      if (!item.component && allowedTypes.size === 1) {
+        item.component = [...allowedTypes][0];
+      }
+
+      // Recurse into the child's own container slots
+      if (item.component) {
+        injectInNode(item, item.component, containerSlots);
+      }
+    }
+  }
+}
+
+/**
+ * Ensure root-level bloks fields (like `seo` on `page`) are correctly
+ * formatted for Storyblok: wrapped in an array with `component` injected.
+ *
+ * Root field schemas define component objects (with `$id`) that Storyblok
+ * stores as bloks fields (arrays of component objects). When content is
+ * passed as a plain object (e.g. from `generate_seo` output that was
+ * unwrapped), this function re-wraps it.
+ *
+ * @param rootFields - The rootFields object from `create_page_with_content`.
+ * @param rootBloksFields - Map of field name → component name, from
+ *   `ValidationRules.rootBloksFields`.
+ * @returns A new rootFields object with bloks fields correctly formatted.
+ */
+export function ensureRootFieldBloks(
+  rootFields: Record<string, unknown>,
+  rootBloksFields: Map<string, string>
+): Record<string, unknown> {
+  const result = { ...rootFields };
+
+  for (const [fieldName, componentName] of rootBloksFields) {
+    const value = result[fieldName];
+    if (value === undefined || value === null) continue;
+
+    if (Array.isArray(value)) {
+      // Already an array — ensure items have `component`
+      for (const item of value) {
+        if (
+          typeof item === "object" &&
+          item !== null &&
+          !Array.isArray(item) &&
+          !item.component
+        ) {
+          item.component = componentName;
+        }
+      }
+    } else if (typeof value === "object" && !Array.isArray(value)) {
+      // Plain object — inject component and wrap in array
+      const obj = value as Record<string, any>;
+      if (!obj.component) {
+        obj.component = componentName;
+      }
+      result[fieldName] = [obj];
+    }
+  }
+
+  return result;
+}
+
 // ─── Internal helpers ─────────────────────────────────────────────────
 
 /** Simple shallow merge fallback when deepmerge is not provided. */

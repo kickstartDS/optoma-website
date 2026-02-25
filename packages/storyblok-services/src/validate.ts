@@ -85,6 +85,19 @@ export interface ValidationRules {
    *          `"cta"` → `Set(["backgroundImage"])`
    */
   flatAssetFields: Map<string, Set<string>>;
+
+  /**
+   * Maps root-level bloks field names to their component name.
+   *
+   * These are root properties defined as single objects with `$id` in the
+   * JSON Schema but stored as arrays of blok objects in Storyblok.
+   *
+   * Example: `"seo"` → `"seo"` (page), `"head"` → `"blog-head"` (blog-post)
+   *
+   * Used by `ensureRootFieldBloks()` to wrap plain objects in arrays and
+   * inject the correct `component` identifier.
+   */
+  rootBloksFields: Map<string, string>;
 }
 
 /** Describes a single validation error. */
@@ -173,6 +186,25 @@ export function buildValidationRules(
     }
   }
 
+  // ── Discover root-level bloks fields (single-object properties with $id) ──
+  const rootBloksFields = new Map<string, string>();
+  for (const [key, value] of Object.entries<any>(rootProps)) {
+    if (value && value.type === "object" && value.$id && value.properties) {
+      const name = getSchemaName(value.$id);
+      if (name) {
+        rootBloksFields.set(key, name);
+        allKnownComponents.add(name);
+        walkSchemaNode(
+          value,
+          name,
+          containerSlots,
+          allKnownComponents,
+          flatAssetFields
+        );
+      }
+    }
+  }
+
   // ── Build reverse index ─────────────────────────────────────────
   const componentToSlots = new Map<string, string[]>();
   for (const [slotPath, allowedTypes] of containerSlots) {
@@ -221,6 +253,7 @@ export function buildValidationRules(
     rootArrayFields,
     subComponentMap,
     flatAssetFields,
+    rootBloksFields,
   };
 }
 

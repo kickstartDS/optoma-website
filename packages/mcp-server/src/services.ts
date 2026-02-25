@@ -19,6 +19,8 @@ import {
   listAvailableComponents,
   processOpenAiResponse,
   processForStoryblok,
+  ensureSubItemComponents,
+  ensureRootFieldBloks,
   generateAndPrepareContent,
   generateRootFieldContent,
   generateSeoContent,
@@ -340,6 +342,15 @@ export class StoryblokService {
       );
     }
 
+    // Inject missing `component` fields on sub-items in monomorphic slots
+    if (entry.rules.containerSlots?.size) {
+      ensureSubItemComponents(
+        sections as Record<string, any>[],
+        entry.rules.containerSlots,
+        rootArrayField
+      );
+    }
+
     // Validate sections against the Design System schema
     if (!options.skipValidation) {
       const validationResult = validateSections(
@@ -400,6 +411,15 @@ export class StoryblokService {
       normalizeAssetFieldNames(
         sections as Record<string, any>[],
         entry.rules.flatAssetFields
+      );
+    }
+
+    // Inject missing `component` fields on sub-items in monomorphic slots
+    if (entry.rules.containerSlots?.size) {
+      ensureSubItemComponents(
+        sections as Record<string, any>[],
+        entry.rules.containerSlots,
+        rootArrayField
       );
     }
 

@@ -17,6 +17,7 @@ import {
   listAvailableComponents,
   processOpenAiResponse,
   processForStoryblok,
+  ensureSubItemComponents,
   generateAndPrepareContent,
   buildValidationRules,
   validateSections,
@@ -164,10 +165,21 @@ export async function importContentIntoStory(
   skipValidation = false,
   contentType = "page"
 ): Promise<Record<string, any>> {
+  const rules = registry.has(contentType)
+    ? registry.get(contentType).rules
+    : PAGE_VALIDATION_RULES;
+
+  // Inject missing `component` fields on sub-items in monomorphic slots
+  if (rules.containerSlots?.size) {
+    const rootArrayField = rules.rootArrayFields[0] || "section";
+    ensureSubItemComponents(
+      sections as Record<string, any>[],
+      rules.containerSlots,
+      rootArrayField
+    );
+  }
+
   if (!skipValidation) {
-    const rules = registry.has(contentType)
-      ? registry.get(contentType).rules
-      : PAGE_VALIDATION_RULES;
     const result = validateSections(sections, rules);
     if (!result.valid) {
       throw new Error(formatValidationErrors(result.errors));
@@ -197,10 +209,21 @@ export async function insertContentAtPosition(
   skipValidation = false,
   contentType = "page"
 ): Promise<Record<string, any>> {
+  const rules = registry.has(contentType)
+    ? registry.get(contentType).rules
+    : PAGE_VALIDATION_RULES;
+
+  // Inject missing `component` fields on sub-items in monomorphic slots
+  if (rules.containerSlots?.size) {
+    const rootArrayField = rules.rootArrayFields[0] || "section";
+    ensureSubItemComponents(
+      sections as Record<string, any>[],
+      rules.containerSlots,
+      rootArrayField
+    );
+  }
+
   if (!skipValidation) {
-    const rules = registry.has(contentType)
-      ? registry.get(contentType).rules
-      : PAGE_VALIDATION_RULES;
     const result = validateSections(sections, rules);
     if (!result.valid) {
       throw new Error(formatValidationErrors(result.errors));

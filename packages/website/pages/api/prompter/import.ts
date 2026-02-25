@@ -20,6 +20,7 @@ import {
   validateSections,
   formatValidationErrors,
   checkCompositionalQuality,
+  ensureSubItemComponents,
 } from "@kickstartds/storyblok-services";
 import {
   corsPOST,
@@ -68,6 +69,16 @@ export default async function handler(
     const entry = registry.has(contentType)
       ? registry.get(contentType)
       : registry.page;
+
+    // Inject missing `component` fields on sub-items in monomorphic slots
+    if (entry.rules.containerSlots?.size) {
+      const rootArrayField = entry.rules.rootArrayFields[0] || "section";
+      ensureSubItemComponents(
+        sections,
+        entry.rules.containerSlots,
+        rootArrayField
+      );
+    }
 
     const validationResult = validateSections(sections, entry.rules);
     if (!validationResult.valid) {

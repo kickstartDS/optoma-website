@@ -26,6 +26,7 @@ import {
   formatValidationErrors,
   type ValidationRules,
 } from "./validate.js";
+import { ensureSubItemComponents, ensureRootFieldBloks } from "./transform.js";
 import { getStoryManagement, saveStory } from "./storyblok.js";
 
 // ─── Content Delivery client factory ──────────────────────────────────
@@ -377,6 +378,29 @@ export async function createPageWithContent(
         }
       }
     }
+  }
+
+  // 0b. Inject missing `component` fields on sub-items in monomorphic
+  // container slots (e.g. stat items inside stats.stat[], feature items
+  // inside features.feature[]). Must run before validation.
+  if (options.validationRules.containerSlots?.size) {
+    ensureSubItemComponents(
+      options.sections as Record<string, any>[],
+      options.validationRules.containerSlots,
+      options.rootArrayField
+    );
+  }
+
+  // 0c. Ensure root-level bloks fields are correctly formatted
+  // (wrapped in arrays with `component` injected).
+  if (options.rootFields && options.validationRules.rootBloksFields?.size) {
+    options = {
+      ...options,
+      rootFields: ensureRootFieldBloks(
+        options.rootFields as Record<string, unknown>,
+        options.validationRules.rootBloksFields
+      ),
+    };
   }
 
   // 1. Validate sections

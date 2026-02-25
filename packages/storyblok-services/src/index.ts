@@ -68,6 +68,8 @@ export {
   flattenNestedObjects,
   unflattenNestedObjects,
   injectRootFieldComponentTypes,
+  ensureSubItemComponents,
+  ensureRootFieldBloks,
 } from "./transform.js";
 export type { TransformedContent } from "./transform.js";
 
