@@ -376,7 +376,7 @@ export const PrompterComponent = forwardRef<
 
                 {/* Idea picker (optional) */}
                 {useIdea && ideas.length > 0 && (
-                  <PrompterSectionInput>
+                  <>
                     {!selectedIdea && (
                       <PrompterSelectField
                         value={selectedIdea}
@@ -403,7 +403,7 @@ export const PrompterComponent = forwardRef<
                         text=""
                       />
                     )}
-                  </PrompterSectionInput>
+                  </>
                 )}
 
                 {/* Prompt / intent textarea */}

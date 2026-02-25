@@ -15,18 +15,16 @@
     border-radius: 12px;
     background: white;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--prompter-interface-transition);
     font-family: var(--prompter-font-family);
 
     &:hover:not(:disabled) {
-      border-color: var(--prompter-color);
-      background: rgba(128, 0, 128, 0.03);
+      border-color: var(--prompter-interface-border-color-hover);
     }
 
-    &--active {
-      border-color: var(--prompter-color);
+    &.prompter-mode-toggle__option--active:not(:disabled) {
+      border-color: var(--prompter-interface-border-color-active);
       background: rgba(128, 0, 128, 0.06);
-      box-shadow: 0 0 0 1px var(--prompter-color);
     }
 
     &:disabled {

@@ -114,29 +114,35 @@ const PrompterComponentPicker: React.FC<PrompterComponentPickerProps> = ({
       )}
 
       <div className="prompter-component-picker__add-row">
-        <select
-          className="prompter-component-picker__select"
-          value={pickerValue}
-          onChange={(e) => setPickerValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-        >
-          <option value="" disabled>
-            Choose a component type…
-          </option>
-          {SECTION_COMPONENT_TYPES.map((t) => (
-            <option key={t.value} value={t.value}>
-              {t.label}
+        <div className="prompter-component-picker__select-wrapper">
+          <select
+            className="prompter-component-picker__select"
+            value={pickerValue}
+            onChange={(e) => setPickerValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+          >
+            <option value="" disabled>
+              Choose a component type…
             </option>
-          ))}
-        </select>
+            {SECTION_COMPONENT_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <Icon
+            icon="chevron-down"
+            className="prompter-component-picker__select-icon"
+          />
+        </div>
         <button
           className="prompter-component-picker__add-btn"
           onClick={handleAdd}
           disabled={!pickerValue}
           type="button"
         >
-          <Icon icon="plus" />
           Add
+          <div className="prompter-component-picker__add-btn-icon" />
         </button>
       </div>
     </div>

@@ -15,11 +15,18 @@
 
 :root {
   --prompter-color: #800080;
-  --prompter-font-family: system-ui, -apple-system, BlinkMacSystemFont,
-    "Avenir Next", "Avenir", "Segoe UI", "Lucida Grande", "Helvetica Neue",
-    "Helvetica", "Fira Sans", "Roboto", "Noto", "Droid Sans", "Cantarell",
-    "Oxygen", "Ubuntu", "Franklin Gothic Medium", "Century Gothic",
-    "Liberation Sans", sans-serif;
+  --prompter-font-family:
+    system-ui, -apple-system, BlinkMacSystemFont, "Avenir Next", "Avenir", "Segoe UI", "Lucida Grande",
+    "Helvetica Neue", "Helvetica", "Fira Sans", "Roboto", "Noto", "Droid Sans", "Cantarell", "Oxygen", "Ubuntu",
+    "Franklin Gothic Medium", "Century Gothic", "Liberation Sans", sans-serif;
+  --prompter-interface-border: 2px solid #e0e0e0;
+  --prompter-interface-border-color-hover: #c0c0c0;
+  --prompter-interface-border-color-active: var(--prompter-color);
+  --prompter-interface-font: var(--prompter-interface-font-size) / 1.125 var(--prompter-font-family);
+  --prompter-interface-transition: all 0.2s ease;
+  --prompter-interface-font-size: 1.125rem;
+  --prompter-interface-padding: 1rem;
+  --prompter-interface-color: #333;
 
   .prompter {
     position: relative;
@@ -63,21 +70,23 @@
 
   .prompter-prompt-textarea {
     width: 100%;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
+    border: var(--prompter-interface-border);
     border-radius: 12px;
-    font-size: 1.1rem;
-    font-family: var(--prompter-font-family);
+    padding: var(--prompter-interface-padding);
+    font: var(--prompter-interface-font);
     resize: vertical;
     line-height: 1.5;
-    color: #333;
+    color: var(--prompter-interface-color);
     margin: 1rem 0;
     box-sizing: border-box;
 
+    &:hover {
+      border-color: var(--prompter-interface-border-color-hover);
+    }
+
     &:focus {
       outline: none;
-      border-color: var(--prompter-color);
-      box-shadow: 0 0 0 2px rgba(128, 0, 128, 0.1);
+      border-color: var(--prompter-interface-border-color-active);
     }
 
     &::placeholder {
