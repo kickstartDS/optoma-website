@@ -47,6 +47,20 @@ export const storyOperations: INodeProperties = {
       action: "Delete a story",
     },
     {
+      name: "Replace Section",
+      value: "replaceSection",
+      description:
+        "Replace a single section by zero-based index — avoids fetching/resubmitting the entire content tree",
+      action: "Replace a section in a story",
+    },
+    {
+      name: "Update SEO",
+      value: "updateSeo",
+      description:
+        "Set or update SEO metadata fields (title, description, keywords, image, cardImage) — auto-creates the SEO component if missing",
+      action: "Update SEO metadata on a story",
+    },
+    {
       name: "Search",
       value: "search",
       description: "Full-text search across all stories",
@@ -472,6 +486,258 @@ export const storyFields: INodeProperties[] = [
       show: {
         resource: ["story"],
         operation: ["delete"],
+      },
+    },
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // Replace Section operation fields
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    displayName: "Story UID",
+    name: "replaceSectionStoryUid",
+    type: "string",
+    default: "",
+    required: true,
+    description:
+      "The UUID or numeric ID of the story containing the section to replace",
+    placeholder: "abc-123-def or 123456789",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+  {
+    displayName: "Position",
+    name: "replaceSectionPosition",
+    type: "number",
+    default: 0,
+    required: true,
+    description:
+      "Zero-based index of the section to replace. Use -1 to replace the last section.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+  {
+    displayName: "Section",
+    name: "replaceSectionContent",
+    type: "json",
+    default: "{}",
+    required: true,
+    description:
+      "The replacement section object (JSON). Should be a Design System component object.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+  {
+    displayName: "Publish",
+    name: "replaceSectionPublish",
+    type: "boolean",
+    default: false,
+    description: "Whether to publish the story after replacing the section",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+  {
+    displayName: "Upload Assets",
+    name: "replaceSectionUploadAssets",
+    type: "boolean",
+    default: false,
+    description:
+      "Whether to download external image URLs and upload them as Storyblok assets",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+  {
+    displayName: "Asset Folder Name",
+    name: "replaceSectionAssetFolderName",
+    type: "string",
+    default: "AI Generated",
+    description:
+      "Storyblok asset folder to upload images into (created if it doesn't exist)",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+        replaceSectionUploadAssets: [true],
+      },
+    },
+  },
+  {
+    displayName: "Skip Validation",
+    name: "replaceSectionSkipValidation",
+    type: "boolean",
+    default: false,
+    description:
+      "Whether to skip Design System schema validation before writing",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+  {
+    displayName: "Skip Transform",
+    name: "replaceSectionSkipTransform",
+    type: "boolean",
+    default: false,
+    description:
+      "Whether to skip the automatic Storyblok flattening transform. Set to true if content is already in Storyblok format.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["replaceSection"],
+      },
+    },
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // Update SEO operation fields
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    displayName: "Story UID",
+    name: "updateSeoStoryUid",
+    type: "string",
+    default: "",
+    required: true,
+    description: "The UUID or numeric ID of the story to update SEO for",
+    placeholder: "abc-123-def or 123456789",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "SEO Title",
+    name: "updateSeoTitle",
+    type: "string",
+    default: "",
+    description:
+      "Page title for search engines and social sharing (og:title). Leave empty to keep current.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "SEO Description",
+    name: "updateSeoDescription",
+    type: "string",
+    default: "",
+    description:
+      "Meta description for search engines (og:description). Leave empty to keep current.",
+    typeOptions: {
+      rows: 3,
+    },
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "SEO Keywords",
+    name: "updateSeoKeywords",
+    type: "string",
+    default: "",
+    description: "Comma-separated keywords. Leave empty to keep current.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "SEO Image",
+    name: "updateSeoImage",
+    type: "string",
+    default: "",
+    description:
+      "OG image URL. Will be uploaded to Storyblok when Upload Assets is enabled. Leave empty to keep current.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "SEO Card Image",
+    name: "updateSeoCardImage",
+    type: "string",
+    default: "",
+    description: "Twitter/social card image URL. Leave empty to keep current.",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "Publish",
+    name: "updateSeoPublish",
+    type: "boolean",
+    default: false,
+    description: "Whether to publish the story after updating SEO",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "Upload Assets",
+    name: "updateSeoUploadAssets",
+    type: "boolean",
+    default: false,
+    description:
+      "Whether to download external image URLs in SEO fields and upload them as Storyblok assets",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+      },
+    },
+  },
+  {
+    displayName: "Asset Folder Name",
+    name: "updateSeoAssetFolderName",
+    type: "string",
+    default: "AI Generated",
+    description:
+      "Storyblok asset folder to upload SEO images into (created if it doesn't exist)",
+    displayOptions: {
+      show: {
+        resource: ["story"],
+        operation: ["updateSeo"],
+        updateSeoUploadAssets: [true],
       },
     },
   },

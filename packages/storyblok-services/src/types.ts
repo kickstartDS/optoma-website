@@ -116,6 +116,75 @@ export interface ImportAtPositionOptions {
   assetFolderName?: string;
 }
 
+/**
+ * Options for replacing a section at a specific index.
+ */
+export interface ReplaceSectionOptions {
+  /** Numeric story ID or UID. */
+  storyUid: string;
+  /**
+   * Zero-based index of the section to replace.
+   * - `-1` replaces the last section.
+   * - Any other value is clamped to `[0, section.length - 1]`.
+   */
+  position: number;
+  /** The replacement section object. */
+  section: Record<string, unknown>;
+  /** Whether to publish the story immediately. @default false */
+  publish?: boolean;
+  /**
+   * When `true`, image URLs in the section are downloaded and uploaded
+   * to Storyblok as native assets before the story is saved.
+   * @default false
+   */
+  uploadAssets?: boolean;
+  /**
+   * Name of the Storyblok asset folder to upload images into.
+   * Created if it doesn't exist. @default "AI Generated"
+   */
+  assetFolderName?: string;
+}
+
+/**
+ * Options for updating SEO metadata on a story.
+ */
+export interface UpdateSeoOptions {
+  /** Numeric story ID or UID. */
+  storyUid: string;
+  /** SEO metadata fields to set or update. */
+  seo: {
+    /** Page title (og:title). */
+    title?: string;
+    /** Meta description (og:description). */
+    description?: string;
+    /** Comma-separated keywords. */
+    keywords?: string;
+    /**
+     * OG image. Can be:
+     * - A plain URL string (uploaded when `uploadAssets` is true, or wrapped)
+     * - A Storyblok asset object `{ id, filename, fieldtype: "asset", ... }`
+     */
+    image?: string | Record<string, unknown>;
+    /**
+     * Twitter/social card image. Same format options as `image`.
+     */
+    cardImage?: string | Record<string, unknown>;
+  };
+  /** Whether to publish the story immediately. @default false */
+  publish?: boolean;
+  /**
+   * When `true`, image URLs in the SEO data are downloaded and uploaded
+   * to Storyblok as native assets before the story is saved.
+   * @default false
+   */
+  uploadAssets?: boolean;
+  /**
+   * Name of the Storyblok asset folder to upload images into.
+   * Created if it doesn't exist. @default "AI Generated"
+   */
+  assetFolderName?: string;
+}
+
 // ─── Error types ──────────────────────────────────────────────────────
 
 /**

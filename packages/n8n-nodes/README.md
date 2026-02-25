@@ -2,12 +2,12 @@
 
 n8n community node package for **Storyblok CMS** with **kickstartDS Design System** — AI-powered content generation, story management, and space introspection.
 
-This package provides **20 operations** across **3 resources** as a single n8n node:
+This package provides **22 operations** across **3 resources** as a single n8n node:
 
 | Resource       | Operations | Description                                                             |
 | -------------- | ---------- | ----------------------------------------------------------------------- |
 | **AI Content** | 7          | Generate, import, plan, analyze, and generate root fields & SEO with AI |
-| **Story**      | 6          | Full CRUD + search for Storyblok stories                                |
+| **Story**      | 8          | Full CRUD + search + replace section + update SEO                       |
 | **Space**      | 7          | Scrape URLs, introspect components/assets/recipes/icons                 |
 
 Together they enable fully automated content pipelines: analyze → plan → generate → create → publish.
@@ -357,6 +357,37 @@ Permanently delete a story. This action cannot be undone.
 | Parameter    | Type   | Required | Description      |
 | ------------ | ------ | -------- | ---------------- |
 | **Story ID** | Number | ✅       | Numeric story ID |
+
+#### Operation: Replace Section
+
+Replace a single section in a story by zero-based index. Avoids fetching and resubmitting the entire content tree via Update. Supports asset upload.
+
+| Parameter             | Type    | Required    | Description                                           |
+| --------------------- | ------- | ----------- | ----------------------------------------------------- |
+| **Story UID**         | String  | ✅          | Story UUID or numeric ID                              |
+| **Position**          | Number  | ✅          | Zero-based section index (`-1` = last)                |
+| **Section**           | JSON    | ✅          | Replacement section object                            |
+| **Publish**           | Boolean | No          | Publish after replacing (default: false)              |
+| **Upload Assets**     | Boolean | No          | Upload external images to Storyblok (default: false)  |
+| **Asset Folder Name** | String  | When Upload | Storyblok asset folder name (default: `AI Generated`) |
+| **Skip Validation**   | Boolean | No          | Skip schema validation (default: false)               |
+| **Skip Transform**    | Boolean | No          | Skip Storyblok flattening (default: false)            |
+
+#### Operation: Update SEO
+
+Set or update SEO metadata fields on a story. Auto-creates the SEO component if the story doesn't have one yet. Only provided fields are updated — omitted fields are left unchanged.
+
+| Parameter             | Type    | Required    | Description                                                     |
+| --------------------- | ------- | ----------- | --------------------------------------------------------------- |
+| **Story UID**         | String  | ✅          | Story UUID or numeric ID                                        |
+| **SEO Title**         | String  | No          | Page title (og:title). Leave empty to keep current.             |
+| **SEO Description**   | String  | No          | Meta description (og:description). Leave empty to keep current. |
+| **SEO Keywords**      | String  | No          | Comma-separated keywords. Leave empty to keep current.          |
+| **SEO Image**         | String  | No          | OG image URL. Uploaded when Upload Assets enabled.              |
+| **SEO Card Image**    | String  | No          | Twitter/social card image URL. Leave empty to keep current.     |
+| **Publish**           | Boolean | No          | Publish after updating (default: false)                         |
+| **Upload Assets**     | Boolean | No          | Upload external SEO image URLs to Storyblok (default: false)    |
+| **Asset Folder Name** | String  | When Upload | Storyblok asset folder name (default: `AI Generated`)           |
 
 #### Operation: Search
 

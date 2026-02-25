@@ -9,6 +9,8 @@ import {
   saveStory,
   importByPrompterReplacement,
   importAtPosition,
+  replaceSection as sharedReplaceSection,
+  updateSeo as sharedUpdateSeo,
   uploadAndReplaceAssets,
   wrapAssetUrls,
   normalizeAssetFieldNames,
@@ -529,6 +531,100 @@ export class StoryblokService {
    */
   async findBySlug(fullSlug: string): Promise<Record<string, any> | null> {
     return sharedFindBySlug(this.contentClient, fullSlug);
+  }
+
+  /**
+   * Replace a single section at a specific index in a story.
+   * Delegates to shared `replaceSection()`.
+   */
+  async replaceSection(options: {
+    storyUid: string;
+    position: number;
+    section: Record<string, unknown>;
+    contentType?: string;
+    publish?: boolean;
+    skipTransform?: boolean;
+    skipValidation?: boolean;
+    uploadAssets?: boolean;
+    assetFolderName?: string;
+  }): Promise<unknown> {
+    const entry = options.contentType
+      ? registry.get(options.contentType)
+      : registry.page;
+
+    let section = options.section;
+
+    // Normalize wrongly-flattened asset field names before validation
+    if (entry.rules.flatAssetFields?.size) {
+      normalizeAssetFieldNames(
+        [section] as Record<string, any>[],
+        entry.rules.flatAssetFields
+      );
+    }
+
+    // Inject missing `component` fields on sub-items in monomorphic slots
+    if (entry.rules.containerSlots?.size) {
+      ensureSubItemComponents(
+        [section] as Record<string, any>[],
+        entry.rules.containerSlots,
+        entry.rootArrayFields[0] || "section"
+      );
+    }
+
+    // Validate the section
+    if (!options.skipValidation) {
+      const validationResult = validateSections(
+        [section] as Record<string, any>[],
+        entry.rules
+      );
+      if (!validationResult.valid) {
+        throw new Error(formatValidationErrors(validationResult.errors));
+      }
+    }
+
+    if (!options.skipTransform) {
+      const rootArrayField = entry.rootArrayFields[0] || "section";
+      const transformed = processForStoryblok(
+        { [rootArrayField]: [section] },
+        entry.rules.flatAssetFields
+      );
+      section = transformed[rootArrayField][0];
+    }
+
+    return sharedReplaceSection(this.managementClient, this.spaceId, {
+      storyUid: options.storyUid,
+      position: options.position,
+      section,
+      publish: options.publish,
+      uploadAssets: options.uploadAssets,
+      assetFolderName: options.assetFolderName,
+    });
+  }
+
+  /**
+   * Update SEO metadata on a story.
+   * Delegates to shared `updateSeo()`.
+   */
+  async updateSeo(options: {
+    storyUid: string;
+    seo: {
+      title?: string;
+      description?: string;
+      keywords?: string;
+      image?: string | Record<string, unknown>;
+      cardImage?: string | Record<string, unknown>;
+    };
+    publish?: boolean;
+    uploadAssets?: boolean;
+    assetFolderName?: string;
+  }): Promise<unknown> {
+    return sharedUpdateSeo(this.managementClient, this.spaceId, {
+      storyUid: options.storyUid,
+      seo: options.seo,
+      publish: options.publish,
+      uploadAssets: options.uploadAssets,
+      assetFolderName: options.assetFolderName,
+    });
   }
 
   /**

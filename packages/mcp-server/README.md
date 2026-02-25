@@ -6,15 +6,17 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Content Management Tools
 
-| Tool             | Description                                                                                                                                 |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `list_stories`   | List stories with filtering by slug prefix or content type. Returns metadata-only by default; pass `excludeContent: false` for full content |
-| `get_story`      | Get a single story by slug, ID, or UUID (asset boilerplate auto-stripped)                                                                   |
-| `create_story`   | Create a new story with content (validates against Design System schema). Supports `path` for auto-folder creation                          |
-| `update_story`   | Update an existing story (validates against Design System schema)                                                                           |
-| `delete_story`   | Delete a story                                                                                                                              |
-| `search_content` | Full-text search across stories (asset boilerplate auto-stripped)                                                                           |
-| `ensure_path`    | Ensure a folder path exists (like `mkdir -p`), creating missing intermediate folders. Returns the folder ID                                 |
+| Tool              | Description                                                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_stories`    | List stories with filtering by slug prefix or content type. Returns metadata-only by default; pass `excludeContent: false` for full content |
+| `get_story`       | Get a single story by slug, ID, or UUID (asset boilerplate auto-stripped)                                                                   |
+| `create_story`    | Create a new story with content (validates against Design System schema). Supports `path` for auto-folder creation                          |
+| `update_story`    | Update an existing story (validates against Design System schema)                                                                           |
+| `delete_story`    | Delete a story                                                                                                                              |
+| `search_content`  | Full-text search across stories (asset boilerplate auto-stripped)                                                                           |
+| `ensure_path`     | Ensure a folder path exists (like `mkdir -p`), creating missing intermediate folders. Returns the folder ID                                 |
+| `replace_section` | Replace a single section by zero-based index — avoids fetching/resubmitting the entire content tree via `update_story`                      |
+| `update_seo`      | Set or update SEO metadata fields (title, description, keywords, image, cardImage) — auto-creates the SEO component if missing              |
 
 ### AI Content Generation
 
@@ -298,7 +300,7 @@ All generation, import, and validation tools accept a `contentType` parameter. T
 
 ### Import content with automatic asset upload
 
-The `import_content`, `import_content_at_position`, and `create_page_with_content` tools all support automatic asset upload. When `uploadAssets` is `true`, any image URLs in the content (e.g. DALL·E URLs or scraped external URLs) are downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs before the story is saved:
+The `import_content`, `import_content_at_position`, `create_page_with_content`, `replace_section`, and `update_seo` tools all support automatic asset upload. When `uploadAssets` is `true`, any image URLs in the content (e.g. DALL·E URLs or scraped external URLs) are downloaded, uploaded to Storyblok as native assets, and replaced with Storyblok CDN URLs before the story is saved:
 
 ```json
 {
@@ -592,6 +594,55 @@ Filter by content type to get recipes specific to blog posts, events, etc.:
 }
 ```
 
+### Replace a single section
+
+Surgically replace one section without fetching/resubmitting the entire content tree:
+
+```json
+{
+  "tool": "replace_section",
+  "arguments": {
+    "storyUid": "abc-123-def",
+    "position": 2,
+    "section": {
+      "component": "faq",
+      "headline_text": "Frequently Asked Questions",
+      "faqItems": [
+        { "component": "faq-item", "question": "...", "answer": "..." }
+      ]
+    },
+    "publish": false,
+    "uploadAssets": true
+  }
+}
+```
+
+Use `position: -1` to replace the last section. Goes through the full validation/transform pipeline.
+
+### Update SEO metadata
+
+Set or update SEO fields without touching the rest of the story:
+
+```json
+{
+  "tool": "update_seo",
+  "arguments": {
+    "storyUid": "abc-123-def",
+    "seo": {
+      "title": "Our Services | Agency Name",
+      "description": "Discover our full range of digital services...",
+      "keywords": "digital agency, web development, design",
+      "image": "https://placehold.co/1200x630/png?text=Services"
+    },
+    "publish": false,
+    "uploadAssets": true,
+    "assetFolderName": "SEO Images"
+  }
+}
+```
+
+Only the provided fields are updated — omitted fields are left unchanged. Auto-creates the SEO component if the story doesn't have one yet.
+
 ## Resources
 
 The server also exposes MCP resources:
@@ -618,7 +669,7 @@ Alternatively, use `list_recipes` for a single-call overview of proven component
 
 ### Compositional Quality Warnings
 
-Write tools (`import_content`, `import_content_at_position`, `create_page_with_content`) return **compositional quality warnings** alongside successful results. These are non-blocking hints about content quality:
+Write tools (`import_content`, `import_content_at_position`, `create_page_with_content`, `replace_section`) return **compositional quality warnings** alongside successful results. These are non-blocking hints about content quality:
 
 | Warning                     | Example                                                               |
 | --------------------------- | --------------------------------------------------------------------- |
@@ -636,7 +687,7 @@ Warnings appear in the `warnings` array of the response. Content is still saved 
 
 ## Schema Guardrails & Content Validation
 
-All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content **before** writing to Storyblok. Validation rules are derived automatically from the dereferenced schema **for each content type** via the `SchemaRegistry` — no component names or nesting rules are hardcoded. The server loads 5 content type schemas at startup (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`) and builds per-type validation rules.
+All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`, `replace_section`) validate content **before** writing to Storyblok. Validation rules are derived automatically from the dereferenced schema **for each content type** via the `SchemaRegistry` — no component names or nesting rules are hardcoded. The server loads 5 content type schemas at startup (`page`, `blog-post`, `blog-overview`, `event-detail`, `event-list`) and builds per-type validation rules.
 
 ### What is validated
 
@@ -791,6 +842,8 @@ When using this MCP server with LLM clients that have limited context windows (e
 | `plan_page`                   | ~3–5 KB          | **~750–1,250**    | Small, well-scoped                         |
 | `generate_root_field`         | ~2–5 KB          | **~500–1,250**    | Single field                               |
 | `generate_seo`                | ~1–2 KB          | **~250–500**      | Small                                      |
+| `replace_section`             | ~5–15 KB         | **~1,250–3,750**  | Returns updated story                      |
+| `update_seo`                  | ~5–10 KB         | **~1,250–2,500**  | Returns updated story (SEO fields only)    |
 | `list_icons`                  | ~0.5 KB          | **~125**          | Tiny                                       |
 
 > **`list_stories` is metadata-only by default.** It returns only story IDs, slugs, names, timestamps, and published status — no `content` field. Pass `excludeContent: false` to include the full content tree (needed for content audits, SEO analysis, broken asset detection). Additionally, `get_story` and `search_content` automatically strip empty Storyblok asset boilerplate (empty `alt`, `title`, `copyright`, etc.) to further reduce token usage.
@@ -807,13 +860,13 @@ When using this MCP server with LLM clients that have limited context windows (e
 
 For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes/).
 
-It provides **20 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
+It provides **22 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
 
-| Resource       | Operations | Covers MCP tools                                                                                                                         |
-| -------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **AI Content** | 7          | `generate_content`, `import_content`, `generate_section`, `plan_page`, `analyze_content_patterns`, `generate_root_field`, `generate_seo` |
-| **Story**      | 6          | `list_stories`, `get_story`, `create_page_with_content`, `update_story`, `delete_story`, `search_content`                                |
-| **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path`                             |
+| Resource       | Operations | Covers MCP tools                                                                                                                           |
+| -------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **AI Content** | 7          | `generate_content`, `import_content`, `generate_section`, `plan_page`, `analyze_content_patterns`, `generate_root_field`, `generate_seo`   |
+| **Story**      | 8          | `list_stories`, `get_story`, `create_page_with_content`, `update_story`, `delete_story`, `replace_section`, `update_seo`, `search_content` |
+| **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path`                               |
 
 Both packages consume the same shared service library (`@kickstartds/storyblok-services`), so validation, schema preparation, and content transformation behave identically. Nine ready-to-import workflow templates are included.
 
@@ -897,7 +950,7 @@ curl -s -X POST https://YOUR_DOMAIN/mcp \
   }'
 ```
 
-You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, etc.
+You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `replace_section`, `update_seo`, etc.
 
 ### 4. Call a tool
 

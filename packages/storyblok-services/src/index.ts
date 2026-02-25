@@ -13,6 +13,8 @@ export type {
   GenerateContentOptions,
   ImportByPrompterOptions,
   ImportAtPositionOptions,
+  ReplaceSectionOptions,
+  UpdateSeoOptions,
   ListStoriesOptions,
   CreateStoryOptions,
   CreatePageWithContentOptions,
@@ -35,6 +37,8 @@ export {
   saveStory,
   importByPrompterReplacement,
   importAtPosition,
+  replaceSection,
+  updateSeo,
 } from "./storyblok.js";
 
 // ─── OpenAI services ─────────────────────────────────────────────────

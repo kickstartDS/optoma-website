@@ -34,6 +34,9 @@ import {
   deleteStory,
   ensurePath,
   ensureUids,
+  // Convenience update shared functions
+  replaceSection,
+  updateSeo,
   // Component & asset introspection shared functions
   listComponents,
   getComponent,
@@ -60,6 +63,8 @@ import {
   type CreatePageWithContentOptions,
   type UpdateStoryOptions,
   type ListAssetsOptions,
+  type ReplaceSectionOptions,
+  type UpdateSeoOptions,
   type ContentPatternAnalysis,
   type SubComponentStats,
   type AnalyzeContentPatternsOptions,
@@ -112,6 +117,9 @@ export {
   getRootFieldSchema,
   // Field-level guidance
   assembleFieldGuidance,
+  // Convenience updates
+  replaceSection,
+  updateSeo,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
@@ -122,6 +130,8 @@ export {
   type CreatePageWithContentOptions,
   type UpdateStoryOptions,
   type ListAssetsOptions,
+  type ReplaceSectionOptions,
+  type UpdateSeoOptions,
   type ContentPatternAnalysis,
   type SubComponentStats,
   type RootFieldMeta,

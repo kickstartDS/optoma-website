@@ -2,7 +2,7 @@
 
 This document describes automation workflows that editors can build using **n8n** connected to the **Storyblok MCP Server** via an MCP client node. Each workflow combines MCP tools with external n8n nodes to automate content production, quality assurance, and housekeeping.
 
-> **💡 Native n8n Node Available:** All MCP tools referenced in these workflows are also available as **native n8n operations** via the [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/) community node package. The native node provides 20 operations across 3 resources (AI Content, Story, Space) and is the recommended approach — no MCP client node needed. See the [n8n node README](../n8n-nodes-storyblok-kickstartds/README.md) for the full operation reference and ready-to-import workflow templates (`workflows/template-*.json`).
+> **💡 Native n8n Node Available:** All MCP tools referenced in these workflows are also available as **native n8n operations** via the [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes-storyblok-kickstartds/) community node package. The native node provides 22 operations across 3 resources (AI Content, Story, Space) and is the recommended approach — no MCP client node needed. See the [n8n node README](../n8n-nodes-storyblok-kickstartds/README.md) for the full operation reference and ready-to-import workflow templates (`workflows/template-*.json`).
 
 ---
 
@@ -67,13 +67,13 @@ Einmal pro Woche crawlt n8n alle Stories und prüft auf typische Probleme: fehle
 
 Stories werden gegen SEO-Regeln geprüft (Meta-Titel, Description, Heading-Hierarchie, Bildoptimierung). Bei Verstößen wird automatisch ein Fix vorgeschlagen.
 
-| Schritt              | Tool                                                   | Zweck                                                     |
-| -------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
-| Stories laden        | `list_stories` (`excludeContent: false`) + `get_story` | Inhalte pro Seite holen                                   |
-| SEO analysieren      | _n8n Code Node_                                        | H1-Existenz, Meta-Länge, Alt-Texte, Keyword-Dichte prüfen |
-| Fix generieren       | `generate_content`                                     | KI schlägt verbesserte Meta-Texte / Headlines vor         |
-| Optional: einspielen | `update_story`                                         | Automatisch SEO-Fixes als Draft speichern                 |
-| Report               | _n8n E-Mail/Notion Node_                               | SEO-Scorecard pro Seite                                   |
+| Schritt              | Tool                                                   | Zweck                                                                                   |
+| -------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Stories laden        | `list_stories` (`excludeContent: false`) + `get_story` | Inhalte pro Seite holen                                                                 |
+| SEO analysieren      | _n8n Code Node_                                        | H1-Existenz, Meta-Länge, Alt-Texte, Keyword-Dichte prüfen                               |
+| Fix generieren       | `generate_content`                                     | KI schlägt verbesserte Meta-Texte / Headlines vor                                       |
+| Optional: einspielen | `update_seo`                                           | SEO-Fixes gezielt als Draft speichern (oder `update_story` für umfassendere Änderungen) |
+| Report               | _n8n E-Mail/Notion Node_                               | SEO-Scorecard pro Seite                                                                 |
 
 ### 6. Broken-Asset-Detektion
 
@@ -179,6 +179,8 @@ Alle im MCP Server verfügbaren Tools auf einen Blick:
 |                    | `ensure_path`                | Ordnerpfad sicherstellen (wie `mkdir -p`), fehlende Zwischenordner anlegen, Ordner-ID zurückgeben                                                      |
 | **Import**         | `import_content`             | Prompter-Komponente in einer Story durch neue Sektionen ersetzen                                                                                       |
 |                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                                                                        |
+|                    | `replace_section`            | Einzelne Sektion per Index ersetzen – ohne die gesamte Story laden/zurückschreiben zu müssen                                                           |
+| **Convenience**    | `update_seo`                 | SEO-Metadaten (Titel, Description, Keywords, Bild) setzen/aktualisieren – erstellt die SEO-Komponente automatisch, falls nicht vorhanden               |
 | **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                                                                        |
 | **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish)                                                   |
 |                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space                                                               |
@@ -223,13 +225,15 @@ Eine Seite existiert bereits, aber es fehlt z.B. ein Testimonial-Bereich oder ei
 
 #### Iteratives Verfeinern im Dialog
 
-Anders als bei n8n-Workflows kann der Editor im Claude-Desktop-Gespräch **nachsteuern**: _„Mach die Hero-Headline kürzer"_, _„Tausche die Testimonials-Sektion gegen eine Stats-Sektion"_, _„Füge noch ein CTA am Ende ein"_. Claude behält den Kontext und kann mehrfach `generate_content` und `update_story` aufrufen, bis das Ergebnis stimmt.
+Anders als bei n8n-Workflows kann der Editor im Claude-Desktop-Gespräch **nachsteuern**: _„Mach die Hero-Headline kürzer“_, _„Tausche die Testimonials-Sektion gegen eine Stats-Sektion“_, _„Füge noch ein CTA am Ende ein“_. Claude behält den Kontext und kann gezielt `replace_section` für einzelne Sektionen, `update_seo` für SEO-Metadaten oder `update_story` für umfassendere Änderungen aufrufen, bis das Ergebnis stimmt.
 
-| Tool               | Zweck                           |
-| ------------------ | ------------------------------- |
-| `generate_content` | Inhalte schrittweise verfeinern |
-| `update_story`     | Änderungen als Draft speichern  |
-| `get_story`        | Zwischenstand prüfen            |
+| Tool               | Zweck                                     |
+| ------------------ | ----------------------------------------- |
+| `generate_content` | Inhalte schrittweise verfeinern           |
+| `replace_section`  | Einzelne Sektion gezielt ersetzen         |
+| `update_seo`       | SEO-Metadaten setzen/aktualisieren        |
+| `update_story`     | Umfassende Änderungen als Draft speichern |
+| `get_story`        | Zwischenstand prüfen                      |
 
 ### Inhalte aus externen Quellen übernehmen
 

@@ -80,7 +80,9 @@ Dem Editor einen übersichtlichen Report zeigen:
 Falls der Editor Fixes wünscht:
 
 - **Tool:** `generate_content` für fehlende Texte (z.B. Alt-Texte, Meta-Description)
-- **Tool:** `update_story` um die Fixes als Draft zu speichern
+- **Tool:** `update_seo` für SEO-spezifische Fixes (Titel, Description, Keywords, Bilder) – erstellt die SEO-Komponente automatisch, falls nicht vorhanden
+- **Tool:** `replace_section` für einzelne Sektions-Fixes (z.B. leere Testimonials ersetzen)
+- **Tool:** `update_story` für umfassendere Änderungen, die mehrere Sektionen betreffen
 - ⚠️ Immer erst bestätigen lassen, bevor Änderungen gespeichert werden
 
 ## Häufige Fehler
@@ -97,4 +99,4 @@ Falls der Editor Fixes wünscht:
 - **Gesamter Space:** `list_stories` paginiert aufrufen, dann für jede Story `get_story` → Ergebnis als Gesamt-Report zusammenfassen. Besser über n8n automatisieren (siehe Content Operations Workflows).
 - **Nur SEO-Audit:** Fokus auf Meta-Daten und Heading-Struktur
 - **Nur Bilder-Audit:** Fokus auf fehlende Bilder, Alt-Texte, externe URLs
-- **Audit + Auto-Fix:** Nach dem Audit direkt `generate_content` für fehlende Texte und `update_story` zum Speichern
+- **Audit + Auto-Fix:** Nach dem Audit direkt `generate_content` für fehlende Texte, `update_seo` für SEO-Fixes und `replace_section` / `update_story` zum Speichern

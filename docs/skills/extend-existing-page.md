@@ -80,6 +80,6 @@ Der Editor hat eine bestehende Seite in Storyblok und möchte eine oder mehrere 
 
 ## Varianten
 
-- **Sektion ersetzen statt hinzufügen:** Zuerst die Seite laden, den Inhalt manuell anpassen, dann `update_story` verwenden
+- **Sektion ersetzen statt hinzufügen:** `replace_section` mit `storyUid` und `position` (0-basiert, -1 für letzte) verwenden – erspart das Laden und Zurückschreiben der gesamten Story via `update_story`
 - **Mehrere Sektionen an verschiedenen Stellen:** Workflow mehrfach durchlaufen mit verschiedenen Positionen
 - **Sektion am Ende anhängen:** `position: -1` als Kurzform

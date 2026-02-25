@@ -32,6 +32,9 @@ import {
   updateStory,
   deleteStory,
   ensurePath,
+  // Convenience update shared functions
+  replaceSection,
+  updateSeo,
   // Space introspection shared functions
   scrapeUrl,
   listComponents,
@@ -613,6 +616,10 @@ export class StoryblokKickstartDs implements INodeType {
             result = await executeUpdateStory.call(this, i);
           } else if (operation === "delete") {
             result = await executeDeleteStory.call(this, i);
+          } else if (operation === "replaceSection") {
+            result = await executeReplaceSection.call(this, i);
+          } else if (operation === "updateSeo") {
+            result = await executeUpdateSeo.call(this, i);
           } else if (operation === "search") {
             result = await executeSearchStories.call(this, i);
           } else {
@@ -1353,6 +1360,227 @@ async function executeDeleteStory(
     const message = error instanceof Error ? error.message : String(error);
     throw new NodeApiError(this.getNode(), { message } as any, {
       message: `Failed to delete story ${storyId}: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeReplaceSection(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const storyUid = this.getNodeParameter(
+    "replaceSectionStoryUid",
+    itemIndex
+  ) as string;
+  const position = this.getNodeParameter(
+    "replaceSectionPosition",
+    itemIndex
+  ) as number;
+  const sectionRaw = this.getNodeParameter(
+    "replaceSectionContent",
+    itemIndex
+  ) as string | object;
+  const publish = this.getNodeParameter(
+    "replaceSectionPublish",
+    itemIndex,
+    false
+  ) as boolean;
+  const uploadAssets = this.getNodeParameter(
+    "replaceSectionUploadAssets",
+    itemIndex,
+    false
+  ) as boolean;
+  const assetFolderName = this.getNodeParameter(
+    "replaceSectionAssetFolderName",
+    itemIndex,
+    "AI Generated"
+  ) as string;
+  const skipValidation = this.getNodeParameter(
+    "replaceSectionSkipValidation",
+    itemIndex,
+    false
+  ) as boolean;
+  const skipTransform = this.getNodeParameter(
+    "replaceSectionSkipTransform",
+    itemIndex,
+    false
+  ) as boolean;
+
+  // Parse section JSON
+  let section: Record<string, unknown>;
+  try {
+    section =
+      typeof sectionRaw === "string" ? JSON.parse(sectionRaw) : sectionRaw;
+  } catch {
+    throw new NodeOperationError(
+      this.getNode(),
+      "Invalid JSON in Section field.",
+      { itemIndex }
+    );
+  }
+
+  // Auto-flatten for Storyblok
+  if (!skipTransform) {
+    const flattened = processForStoryblok({ section: [section] });
+    section = (flattened as any).section[0];
+  }
+
+  // Validate if requested
+  if (!skipValidation) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const {
+      validateSections,
+      formatValidationErrors,
+    } = require("@kickstartds/storyblok-services");
+    const rules = registry.page.rules;
+    const validationResult = validateSections([section], rules);
+    if (!validationResult.valid) {
+      throw new NodeOperationError(
+        this.getNode(),
+        formatValidationErrors(validationResult.errors),
+        { itemIndex }
+      );
+    }
+  }
+
+  try {
+    const result = await replaceSection(client, spaceId, {
+      storyUid,
+      position,
+      section,
+      publish,
+      uploadAssets,
+      assetFolderName,
+    });
+
+    return {
+      success: true,
+      story: result,
+      replacedIndex: (result as any).replacedIndex,
+      _meta: {
+        operation: "replaceSection",
+        storyUid,
+        position,
+        replacedIndex: (result as any).replacedIndex,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to replace section at position ${position}: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeUpdateSeo(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const client = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const storyUid = this.getNodeParameter(
+    "updateSeoStoryUid",
+    itemIndex
+  ) as string;
+  const title = this.getNodeParameter(
+    "updateSeoTitle",
+    itemIndex,
+    ""
+  ) as string;
+  const description = this.getNodeParameter(
+    "updateSeoDescription",
+    itemIndex,
+    ""
+  ) as string;
+  const keywords = this.getNodeParameter(
+    "updateSeoKeywords",
+    itemIndex,
+    ""
+  ) as string;
+  const image = this.getNodeParameter(
+    "updateSeoImage",
+    itemIndex,
+    ""
+  ) as string;
+  const cardImage = this.getNodeParameter(
+    "updateSeoCardImage",
+    itemIndex,
+    ""
+  ) as string;
+  const publish = this.getNodeParameter(
+    "updateSeoPublish",
+    itemIndex,
+    false
+  ) as boolean;
+  const uploadAssets = this.getNodeParameter(
+    "updateSeoUploadAssets",
+    itemIndex,
+    false
+  ) as boolean;
+  const assetFolderName = this.getNodeParameter(
+    "updateSeoAssetFolderName",
+    itemIndex,
+    "AI Generated"
+  ) as string;
+
+  // Build SEO object — only include non-empty fields
+  const seo: Record<string, string> = {};
+  if (title) seo.title = title;
+  if (description) seo.description = description;
+  if (keywords) seo.keywords = keywords;
+  if (image) seo.image = image;
+  if (cardImage) seo.cardImage = cardImage;
+
+  if (Object.keys(seo).length === 0) {
+    throw new NodeOperationError(
+      this.getNode(),
+      "At least one SEO field must be provided (title, description, keywords, image, or cardImage).",
+      { itemIndex }
+    );
+  }
+
+  try {
+    const result = await updateSeo(client, spaceId, {
+      storyUid,
+      seo,
+      publish,
+      uploadAssets,
+      assetFolderName,
+    });
+
+    return {
+      success: true,
+      story: result,
+      _meta: {
+        operation: "updateSeo",
+        storyUid,
+        seoFieldsUpdated: Object.keys(seo),
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to update SEO for story ${storyUid}: ${message}`,
       itemIndex,
     });
   }

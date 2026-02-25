@@ -553,6 +553,113 @@ export const schemas = {
       .optional()
       .describe("OpenAI model to use (default: gpt-4o-2024-08-06)"),
   }),
+
+  replaceSection: z.object({
+    storyUid: z
+      .string()
+      .describe("The UID (or numeric ID) of the story to update"),
+    position: z
+      .number()
+      .describe(
+        "Zero-based index of the section to replace. -1 = last section."
+      ),
+    section: sectionSchema.describe(
+      "The replacement section object. Must be a valid section component."
+    ),
+    contentType: z
+      .string()
+      .optional()
+      .default("page")
+      .describe(
+        "Content type (e.g. 'page', 'blog-post'). Determines which schema to validate against. Default: 'page'."
+      ),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Publish the story immediately after replacing (default: false)"
+      ),
+    skipTransform: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Skip automatic content flattening for Storyblok (default: false)"
+      ),
+    uploadAssets: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "When true, image URLs in the section are downloaded and uploaded to Storyblok as native assets before saving."
+      ),
+    assetFolderName: z
+      .string()
+      .optional()
+      .describe(
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+      ),
+    skipValidation: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe("Skip content validation against the Design System schema"),
+  }),
+
+  updateSeo: z.object({
+    storyUid: z
+      .string()
+      .describe(
+        "The UID (or numeric ID) of the story to update SEO metadata for"
+      ),
+    seo: z
+      .object({
+        title: z
+          .string()
+          .optional()
+          .describe("Page title for og:title and search results"),
+        description: z
+          .string()
+          .optional()
+          .describe("Meta description for og:description and search results"),
+        keywords: z
+          .string()
+          .optional()
+          .describe("Comma-separated keywords for the page"),
+        image: z
+          .union([z.string(), z.record(z.unknown())])
+          .optional()
+          .describe(
+            "OG image. Can be a URL string (uploaded when uploadAssets is true) or a Storyblok asset object."
+          ),
+        cardImage: z
+          .union([z.string(), z.record(z.unknown())])
+          .optional()
+          .describe("Twitter/social card image. Same format as image."),
+      })
+      .describe("SEO metadata fields to set or update"),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Publish the story immediately after updating SEO (default: false)"
+      ),
+    uploadAssets: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "When true, image URLs in the SEO data are downloaded and uploaded to Storyblok as native assets before saving."
+      ),
+    assetFolderName: z
+      .string()
+      .optional()
+      .describe(
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+      ),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -582,3 +689,5 @@ export type GenerateSectionInput = z.infer<typeof schemas.generateSection>;
 export type EnsurePathInput = z.infer<typeof schemas.ensurePath>;
 export type GenerateRootFieldInput = z.infer<typeof schemas.generateRootField>;
 export type GenerateSeoInput = z.infer<typeof schemas.generateSeo>;
+export type ReplaceSectionInput = z.infer<typeof schemas.replaceSection>;
+export type UpdateSeoInput = z.infer<typeof schemas.updateSeo>;

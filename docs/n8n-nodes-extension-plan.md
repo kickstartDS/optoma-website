@@ -1,10 +1,10 @@
 # Plan: n8n Nodes Extension — From 2 Operations to Full Storyblok Toolkit
 
-> **Status:** ✅ IMPLEMENTED — All milestones (M8–M13) completed. The n8n node now provides 20 operations across 3 resources. See the [extension checklist](n8n-nodes-extension-checklist.md) for per-item tracking.
+> **Status:** ✅ IMPLEMENTED — All milestones (M8–M13) completed. The n8n node now provides 22 operations across 3 resources. See the [extension checklist](n8n-nodes-extension-checklist.md) for per-item tracking.
 
 ## Overview
 
-The n8n node currently exposes **20 operations** across **3 resources** (AI Content, Story, Space), covering the full MCP server tool surface. The [12 documented workflows](content-operations-workflows.md) can now use native n8n node operations directly.
+The n8n node currently exposes **22 operations** across **3 resources** (AI Content, Story, Space), covering the full MCP server tool surface. The [12 documented workflows](content-operations-workflows.md) can now use native n8n node operations directly.
 
 This plan adds **19 new operations** across **3 resources**, turning the node into a full Storyblok content operations toolkit while preserving full backward compatibility with existing workflows.
 

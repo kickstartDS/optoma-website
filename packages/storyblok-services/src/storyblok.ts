@@ -9,6 +9,8 @@ import type {
   StoryblokCredentials,
   ImportByPrompterOptions,
   ImportAtPositionOptions,
+  ReplaceSectionOptions,
+  UpdateSeoOptions,
 } from "./types.js";
 import { StoryblokApiError, PrompterNotFoundError } from "./types.js";
 import { uploadAndReplaceAssets, wrapAssetUrls } from "./assets.js";
@@ -206,6 +208,156 @@ export async function importAtPosition(
   sectionArray.splice(insertAt, 0, ...sections);
 
   // 7. Save the story
+  const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
+
+  return assetsSummary ? { ...savedStory, assetsSummary } : savedStory;
+}
+
+// ─── Section replacement ──────────────────────────────────────────────
+
+/**
+ * Replace a single section at a specific index in a story's section array.
+ *
+ * @param options.position - Zero-based index. `-1` replaces the last section.
+ * @returns The updated story object.
+ * @throws {StoryblokApiError} when the story has no section array or the index is out of range.
+ */
+export async function replaceSection(
+  client: StoryblokClient,
+  spaceId: string,
+  options: ReplaceSectionOptions
+): Promise<Record<string, any>> {
+  const {
+    storyUid,
+    position,
+    section,
+    publish = false,
+    uploadAssets = false,
+    assetFolderName,
+  } = options;
+
+  // 1. Fetch the current story
+  const story = await getStoryManagement(client, spaceId, storyUid);
+
+  // 2. Ensure section array exists
+  const sectionArray: Record<string, unknown>[] | undefined =
+    story.content?.section;
+
+  if (!sectionArray || !Array.isArray(sectionArray)) {
+    throw new StoryblokApiError(
+      `Story ${storyUid} does not have a "section" array in its content.`
+    );
+  }
+
+  if (sectionArray.length === 0) {
+    throw new StoryblokApiError(
+      `Story ${storyUid} has an empty section array — nothing to replace.`
+    );
+  }
+
+  // 3. Resolve index (support -1 for last)
+  const resolvedIndex =
+    position < 0
+      ? Math.max(0, sectionArray.length + position)
+      : Math.min(position, sectionArray.length - 1);
+
+  // 4. Upload external images to Storyblok (if requested)
+  let assetsSummary;
+  if (uploadAssets) {
+    const wrapper = { section: [section] } as Record<string, any>;
+    assetsSummary = await uploadAndReplaceAssets(client, wrapper, {
+      spaceId,
+      assetFolderName: assetFolderName || "AI Generated",
+    });
+  }
+
+  // 5. Wrap plain URL strings in asset fields into Storyblok asset objects
+  wrapAssetUrls(section as Record<string, any>);
+
+  // 6. Replace the section at the resolved index
+  sectionArray[resolvedIndex] = section;
+
+  // 7. Save the story
+  const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
+
+  return assetsSummary
+    ? { ...savedStory, assetsSummary, replacedIndex: resolvedIndex }
+    : { ...savedStory, replacedIndex: resolvedIndex };
+}
+
+// ─── SEO update ───────────────────────────────────────────────────────
+
+/**
+ * Update (or create) the SEO metadata on a story.
+ *
+ * Merges the provided SEO fields into the story's existing `seo` component.
+ * If no `seo` component exists yet, one is created. Supports asset upload
+ * for OG and card images.
+ *
+ * @returns The updated story object.
+ */
+export async function updateSeo(
+  client: StoryblokClient,
+  spaceId: string,
+  options: UpdateSeoOptions
+): Promise<Record<string, any>> {
+  const {
+    storyUid,
+    seo,
+    publish = false,
+    uploadAssets = false,
+    assetFolderName,
+  } = options;
+
+  // 1. Fetch the current story
+  const story = await getStoryManagement(client, spaceId, storyUid);
+
+  if (!story.content) {
+    throw new StoryblokApiError(`Story ${storyUid} has no content object.`);
+  }
+
+  // 2. Find or create the SEO component
+  let seoComponent: Record<string, any>;
+  if (Array.isArray(story.content.seo) && story.content.seo.length > 0) {
+    // Update existing SEO component
+    seoComponent = story.content.seo[0];
+  } else {
+    // Create new SEO component
+    seoComponent = {
+      _uid: crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2) +
+          Math.random().toString(36).slice(2),
+      component: "seo",
+      title: "",
+      description: "",
+      keywords: "",
+      image: "",
+      cardImage: "",
+    };
+    story.content.seo = [seoComponent];
+  }
+
+  // 3. Merge provided SEO fields (only set non-undefined fields)
+  if (seo.title !== undefined) seoComponent.title = seo.title;
+  if (seo.description !== undefined) seoComponent.description = seo.description;
+  if (seo.keywords !== undefined) seoComponent.keywords = seo.keywords;
+  if (seo.image !== undefined) seoComponent.image = seo.image;
+  if (seo.cardImage !== undefined) seoComponent.cardImage = seo.cardImage;
+
+  // 4. Upload external images to Storyblok (if requested)
+  let assetsSummary;
+  if (uploadAssets) {
+    assetsSummary = await uploadAndReplaceAssets(client, seoComponent, {
+      spaceId,
+      assetFolderName: assetFolderName || "AI Generated",
+    });
+  }
+
+  // 5. Wrap plain URL strings in asset fields into Storyblok asset objects
+  wrapAssetUrls(seoComponent);
+
+  // 6. Save the story
   const savedStory = await saveStory(client, spaceId, storyUid, story, publish);
 
   return assetsSummary ? { ...savedStory, assetsSummary } : savedStory;

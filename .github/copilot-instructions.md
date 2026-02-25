@@ -217,7 +217,7 @@ All generation, import, and validation tools accept a `contentType` parameter (d
 
 For Tier 2 types, `plan_page` returns a field population plan (`fields` array) instead of a section sequence.
 
-The `import_content`, `import_content_at_position`, and `create_page_with_content` tools all support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content (e.g. from DALL·E, scraped pages, or other external sources) are downloaded and uploaded to Storyblok as native assets before the story is saved. The original URLs are replaced with Storyblok CDN URLs. An optional `assetFolderName` parameter controls which Storyblok asset folder images are uploaded to (defaults to "AI Generated"). **Always pass `uploadAssets: true`** when creating or importing content that contains external image URLs — images should never reference third-party domains in published stories.
+The `import_content`, `import_content_at_position`, `create_page_with_content`, `replace_section`, and `update_seo` tools all support **automatic asset upload**: when `uploadAssets: true` is passed, any image URLs in the content (e.g. from DALL·E, scraped pages, or other external sources) are downloaded and uploaded to Storyblok as native assets before the story is saved. The original URLs are replaced with Storyblok CDN URLs. An optional `assetFolderName` parameter controls which Storyblok asset folder images are uploaded to (defaults to "AI Generated"). **Always pass `uploadAssets: true`** when creating or importing content that contains external image URLs — images should never reference third-party domains in published stories.
 
 The `list_icons` tool returns all available icon identifiers (e.g. `arrow-right`, `star`, `email`, `phone`) that can be used in component icon fields such as hero `cta_icon`, feature `icon`, or contact-info `icon`. Always call `list_icons` before generating or importing content that includes icon fields to ensure only valid identifiers are used.
 
@@ -238,9 +238,16 @@ The `create_page_with_content` and `create_story` tools support **automatic fold
 
 Section recipes are also available as an MCP resource (`recipes://section-recipes`) with 19 proven component combinations (14 page-specific, 3 blog-post-specific, 2 event-specific), 14 page templates, and 13 anti-patterns (10 universal, 3 blog-post-specific). All recipes and templates are tagged with a `contentType` — the `list_recipes` tool filters by content type so that e.g. `blog-post` only receives blog-appropriate recipes (text and split-even focused, no hero or cta sections). Anti-patterns are also filtered by content type.
 
-All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`) validate content against the Design System schema before writing to Storyblok. Validation rules are derived automatically from the dereferenced schema for each content type — no component names or nesting rules are hardcoded. Validation catches unknown component types, nesting violations, sub-component misplacement, and dual-discriminator conflicts (`type` + `component` on the same node). Write tools also return **compositional quality warnings** (non-blocking) for issues like duplicate heroes, sparse sub-items, missing CTAs, redundant section headlines, competing CTAs, inappropriate content_mode, and first-section spacing. Storyblok content must only use `component` as its discriminator — `type` is reserved for user-facing variant props (e.g. CTA visual style). `processForStoryblok()` enforces this by moving `type` → `component` and deleting the original `type`, with a final safety pass to strip any leftover `type` from nodes that already carry `component`. All validated tools accept `skipValidation: true` as an escape hatch. The `list_components` and `get_component` introspection tools annotate their output with nesting and composition rules so LLMs understand where components can be placed.
+All write tools (`create_story`, `update_story`, `import_content`, `import_content_at_position`, `create_page_with_content`, `replace_section`) validate content against the Design System schema before writing to Storyblok. Validation rules are derived automatically from the dereferenced schema for each content type — no component names or nesting rules are hardcoded. Validation catches unknown component types, nesting violations, sub-component misplacement, and dual-discriminator conflicts (`type` + `component` on the same node). Write tools also return **compositional quality warnings** (non-blocking) for issues like duplicate heroes, sparse sub-items, missing CTAs, redundant section headlines, competing CTAs, inappropriate content_mode, and first-section spacing. Storyblok content must only use `component` as its discriminator — `type` is reserved for user-facing variant props (e.g. CTA visual style). `processForStoryblok()` enforces this by moving `type` → `component` and deleting the original `type`, with a final safety pass to strip any leftover `type` from nodes that already carry `component`. All validated tools accept `skipValidation: true` as an escape hatch. The `list_components` and `get_component` introspection tools annotate their output with nesting and composition rules so LLMs understand where components can be placed.
 
 The `ensure_path` tool creates folder hierarchies idempotently (like `mkdir -p`) and returns the folder ID of the deepest folder. Use it for sitemap migration or when you need to pre-create a folder tree before bulk page creation.
+
+The MCP server provides two **convenience tools** for targeted, low-token-cost updates:
+
+- **`replace_section`** — Surgically replace a single section in a story by zero-based index. Accepts `storyUid`, `position` (0-based, -1 for last), and a `section` object. Goes through the full validation/transform pipeline. Use this instead of `update_story` when you only need to swap one section — avoids fetching and resubmitting the entire content tree.
+- **`update_seo`** — Set or update SEO metadata fields (`title`, `description`, `keywords`, `image`, `cardImage`) on any story. Accepts `storyUid` and a `seo` object with the fields to set. Auto-creates the SEO component if the story doesn't have one yet. Only merges provided fields — omitted fields are left unchanged. Use this instead of `update_story` when you only need to touch SEO metadata.
+
+Both tools support `publish`, `uploadAssets`, and `assetFolderName` parameters.
 
 ### Transport Modes
 
@@ -279,7 +286,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-services/src/plan.ts](packages/storyblok-services/src/plan.ts) - Page planning (`planPageContent()`) — AI-assisted section sequence via OpenAI, extracted from MCP server
 - [packages/storyblok-services/src/generate-section.ts](packages/storyblok-services/src/generate-section.ts) - Single-section generation (`generateSectionContent()`) with site-aware context injection, extracted from MCP server
 - [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
-- [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (20 operations across 3 resources)
+- [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
 - [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
@@ -290,12 +297,12 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **20 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **22 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
 
 | Resource       | Operations | Description                                                                                  |
 | -------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | **AI Content** | 7          | generate, import, generateSection, planPage, analyzePatterns, generateRootField, generateSeo |
-| **Story**      | 6          | list, get, createPage, update, delete, search                                                |
+| **Story**      | 8          | list, get, createPage, update, delete, replaceSection, updateSeo, search                     |
 | **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath      |
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.

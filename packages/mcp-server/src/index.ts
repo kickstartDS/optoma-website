@@ -1144,6 +1144,143 @@ Requires OpenAI API key.`,
       },
     },
     {
+      name: "replace_section",
+      description: `Replace a single section at a specific index in a Storyblok story.
+
+This is a convenience tool for surgically updating one section without needing
+to fetch, modify, and re-submit the entire story content via \`update_story\`.
+It handles the fetch-merge-save cycle internally.
+
+Use this when you need to regenerate or swap out a specific section (e.g. the
+hero, a features block, or the CTA) while leaving all other sections untouched.
+
+Content is validated against the Design System's JSON Schema before saving.
+
+Position semantics:
+- 0 = first section
+- -1 = last section
+- Any other number = that index (clamped to bounds)`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          storyUid: {
+            type: "string",
+            description: "The UID (or numeric ID) of the story to update",
+          },
+          position: {
+            type: "number",
+            description:
+              "Zero-based index of the section to replace. -1 = last section.",
+          },
+          section: {
+            type: "object",
+            description:
+              "The replacement section object. Must be a valid section component.",
+          },
+          publish: {
+            type: "boolean",
+            description:
+              "Publish the story immediately after replacing (default: false)",
+          },
+          skipTransform: {
+            type: "boolean",
+            description:
+              "Skip automatic content flattening for Storyblok. Set to true if content is already in Storyblok format (default: false).",
+          },
+          uploadAssets: {
+            type: "boolean",
+            description:
+              "When true, image URLs in the section are downloaded and uploaded to Storyblok as native assets before saving. Default: false.",
+          },
+          assetFolderName: {
+            type: "string",
+            description:
+              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
+          },
+          skipValidation: {
+            type: "boolean",
+            description:
+              "Skip content validation against the Design System schema (default: false)",
+          },
+          contentType: {
+            type: "string",
+            description:
+              "Content type of the target story (default: 'page'). Use 'blog-post', 'blog-overview', etc. for other content types.",
+          },
+        },
+        required: ["storyUid", "position", "section"],
+      },
+    },
+    {
+      name: "update_seo",
+      description: `Update SEO metadata on an existing Storyblok story.
+
+This is a convenience tool for setting or updating a story's SEO fields
+(title, description, keywords, image, cardImage) without needing to fetch
+and re-submit the entire story content via \`update_story\`.
+
+If the story has no SEO component yet, one is created automatically.
+Only the fields you provide are updated — omitted fields keep their
+existing values.
+
+Supports automatic asset upload: pass image URLs (e.g. from placehold.co,
+DALL·E, or any public URL) and set \`uploadAssets: true\` to have them
+downloaded and uploaded to Storyblok as native assets automatically.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          storyUid: {
+            type: "string",
+            description:
+              "The UID (or numeric ID) of the story to update SEO for",
+          },
+          seo: {
+            type: "object",
+            description: "SEO metadata fields to set or update",
+            properties: {
+              title: {
+                type: "string",
+                description:
+                  "Page title for og:title and search engine results",
+              },
+              description: {
+                type: "string",
+                description:
+                  "Meta description for og:description and search results",
+              },
+              keywords: {
+                type: "string",
+                description: "Comma-separated keywords for the page",
+              },
+              image: {
+                description:
+                  "OG image. Can be a URL string (uploaded when uploadAssets is true) or a Storyblok asset object.",
+              },
+              cardImage: {
+                description: "Twitter/social card image. Same format as image.",
+              },
+            },
+          },
+          publish: {
+            type: "boolean",
+            description:
+              "Publish the story immediately after updating SEO (default: false)",
+          },
+          uploadAssets: {
+            type: "boolean",
+            description:
+              "When true, image URLs in the SEO data are downloaded and uploaded to Storyblok as native assets before saving. Default: false.",
+          },
+          assetFolderName: {
+            type: "string",
+            description:
+              "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
+          },
+        },
+        required: ["storyUid", "seo"],
+      },
+    },
+    {
       name: "ensure_path",
       description: `Ensure a folder path exists in Storyblok, creating missing folders.
 
@@ -1515,6 +1652,80 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
                   {
                     success: true,
                     message: `Story ${validated.storyId} deleted successfully`,
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "replace_section": {
+          const validated = schemas.replaceSection.parse(args);
+          const warnings = getCompositionalWarnings(
+            [validated.section as Record<string, any>],
+            validated.contentType
+          );
+          const result = await storyblokService.replaceSection({
+            storyUid: validated.storyUid,
+            position: validated.position,
+            section: validated.section as Record<string, any>,
+            contentType: validated.contentType,
+            publish: validated.publish,
+            skipTransform: validated.skipTransform,
+            uploadAssets: validated.uploadAssets,
+            assetFolderName: validated.assetFolderName,
+            skipValidation: validated.skipValidation,
+          });
+          const replacedIndex = (result as any).replacedIndex;
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    message: `Section at position ${replacedIndex} replaced successfully${
+                      validated.publish ? " and published" : " (draft)"
+                    }`,
+                    story: result,
+                    ...(warnings.length > 0 && { warnings }),
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+
+        case "update_seo": {
+          const validated = schemas.updateSeo.parse(args);
+          const result = await storyblokService.updateSeo({
+            storyUid: validated.storyUid,
+            seo: validated.seo as {
+              title?: string;
+              description?: string;
+              keywords?: string;
+              image?: string | Record<string, unknown>;
+              cardImage?: string | Record<string, unknown>;
+            },
+            publish: validated.publish,
+            uploadAssets: validated.uploadAssets,
+            assetFolderName: validated.assetFolderName,
+          });
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    message: `SEO metadata updated${
+                      validated.publish ? " and published" : " (draft)"
+                    }`,
+                    story: result,
                   },
                   null,
                   2
