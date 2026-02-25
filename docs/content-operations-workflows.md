@@ -129,14 +129,16 @@ Bestehende Stories werden automatisch in andere Sprachen übersetzt und als neue
 
 ### 10. Content-Freshness-Tracker
 
-Stories, die seit X Monaten nicht aktualisiert wurden, werden identifiziert. Optional generiert die KI Aktualisierungsvorschläge.
+Stories, die seit X Monaten nicht aktualisiert wurden, werden identifiziert. Optional generiert die KI Aktualisierungsvorschläge – und kann veraltete Sektionen oder SEO-Daten direkt chirurgisch aktualisieren.
 
-| Schritt             | Tool                   | Zweck                                                               |
-| ------------------- | ---------------------- | ------------------------------------------------------------------- |
-| Alle Stories laden  | `list_stories`         | Timestamps aller Stories prüfen (Metadata-only-Standard reicht aus) |
-| Veraltete filtern   | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate                                     |
-| Refresh vorschlagen | `generate_content`     | KI schlägt aktualisierte Inhalte vor                                |
-| Report              | _n8n E-Mail Node_      | „Diese 12 Seiten brauchen ein Update"                               |
+| Schritt                | Tool                   | Zweck                                                               |
+| ---------------------- | ---------------------- | ------------------------------------------------------------------- |
+| Alle Stories laden     | `list_stories`         | Timestamps aller Stories prüfen (Metadata-only-Standard reicht aus) |
+| Veraltete filtern      | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate                                     |
+| Refresh vorschlagen    | `generate_section`     | KI schlägt aktualisierte Sektionen vor                              |
+| Sektion aktualisieren  | `replace_section`      | Veraltete Sektion gezielt ersetzen, ohne Rest der Seite anzufassen  |
+| SEO auffrischen        | `update_seo`           | Veraltete Meta-Daten aktualisieren                                  |
+| Report                 | _n8n E-Mail Node_      | „12 Seiten aktualisiert, 5 weitere brauchen manuelles Review"       |
 
 ### 11. Content-Statistik-Dashboard
 
@@ -159,6 +161,31 @@ Abgelaufene Event-Seiten oder veraltete Kampagnen-Seiten werden automatisch depu
 | Details prüfen    | `get_story`                                      | Event-Datum auslesen                  |
 | Archivieren       | `update_story`                                   | Status ändern / in Archiv verschieben |
 | Optional: löschen | `delete_story`                                   | Endgültig entfernen                   |
+
+### 13. Bulk-SEO-Generierung
+
+Alle Seiten ohne SEO-Metadaten werden automatisch erkannt, per KI werden passende Titel, Descriptions und Keywords generiert und direkt eingespielt – ohne den restlichen Seiteninhalt anzufassen.
+
+| Schritt               | Tool                                                | Zweck                                                        |
+| --------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
+| Alle Stories laden    | `list_stories` (paginiert, `excludeContent: false`) | Komplettes Content-Inventar erfassen                         |
+| SEO-Lücken erkennen   | _n8n Code/Filter Node_                              | Stories ohne `seo`-Feld oder mit leeren Meta-Daten filtern   |
+| SEO generieren        | `generate_seo` (pro Story)                          | KI erzeugt Titel, Description, Keywords aus Seiteninhalt     |
+| SEO einspielen        | `update_seo` (pro Story)                            | Meta-Daten gezielt setzen, ohne restlichen Content anzufassen |
+| Report                | _n8n Slack/Spreadsheet Node_                        | „SEO für 23 Seiten generiert und eingespielt"                |
+
+### 14. Kampagnen-Sektions-Swap
+
+Vor einer Kampagne (Messe, Saisonverkauf, Produktlaunch) werden Heroes oder CTAs auf vielen Seiten gleichzeitig mit Kampagnen-Inhalten ausgetauscht. Nach der Kampagne wird automatisch auf die Originalversionen zurückgewechselt.
+
+| Schritt                    | Tool                           | Zweck                                                      |
+| -------------------------- | ------------------------------ | ---------------------------------------------------------- |
+| Zielseiten identifizieren  | `list_stories` mit Slug-Filter | Alle betroffenen Seiten finden (z.B. `industry/*`)         |
+| Originale sichern          | `get_story` (pro Seite)        | Aktuelle Hero-/CTA-Sektion als Backup speichern            |
+| Kampagnen-Content erzeugen | `generate_section`             | KI generiert Kampagnen-Hero oder -CTA                      |
+| Sektion austauschen        | `replace_section` (pro Seite)  | Nur die Zielsektion ersetzen, Rest bleibt unangetastet     |
+| Nach Kampagne: Rollback    | `replace_section` (pro Seite)  | Original-Sektionen aus Backup wiederherstellen              |
+| Report                     | _n8n Slack Node_               | „Kampagnen-Rollout: 15 Seiten aktualisiert / zurückgesetzt" |
 
 ---
 
@@ -365,4 +392,4 @@ Der Editor startet mit einer vagen Idee, Claude hilft bei der Strukturierung, ge
 
 ---
 
-> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **Muster-Analyse** (`analyze_content_patterns`) → **Planung** (`plan_page`, `list_recipes`) → **KI-Generierung** (`generate_section` für Guided Generation oder `generate_content` für einfache Fälle) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `update_story`) → **Benachrichtigung**. Die Stärke liegt darin, dass n8n diese Kette vollautomatisch oder per Trigger auslösen kann, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.
+> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **Muster-Analyse** (`analyze_content_patterns`) → **Planung** (`plan_page`, `list_recipes`) → **KI-Generierung** (`generate_section` für Guided Generation oder `generate_content` für einfache Fälle) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `replace_section`, `update_seo`, `update_story`) → **Benachrichtigung**. Die Convenience-Tools `replace_section` und `update_seo` ermöglichen dabei **chirurgische Eingriffe** – einzelne Sektionen oder SEO-Metadaten aktualisieren, ohne die gesamte Story laden und zurückschreiben zu müssen. n8n kann diese Ketten vollautomatisch oder per Trigger auslösen, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.
