@@ -131,14 +131,14 @@ Bestehende Stories werden automatisch in andere Sprachen übersetzt und als neue
 
 Stories, die seit X Monaten nicht aktualisiert wurden, werden identifiziert. Optional generiert die KI Aktualisierungsvorschläge – und kann veraltete Sektionen oder SEO-Daten direkt chirurgisch aktualisieren.
 
-| Schritt                | Tool                   | Zweck                                                               |
-| ---------------------- | ---------------------- | ------------------------------------------------------------------- |
-| Alle Stories laden     | `list_stories`         | Timestamps aller Stories prüfen (Metadata-only-Standard reicht aus) |
-| Veraltete filtern      | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate                                     |
-| Refresh vorschlagen    | `generate_section`     | KI schlägt aktualisierte Sektionen vor                              |
-| Sektion aktualisieren  | `replace_section`      | Veraltete Sektion gezielt ersetzen, ohne Rest der Seite anzufassen  |
-| SEO auffrischen        | `update_seo`           | Veraltete Meta-Daten aktualisieren                                  |
-| Report                 | _n8n E-Mail Node_      | „12 Seiten aktualisiert, 5 weitere brauchen manuelles Review"       |
+| Schritt               | Tool                   | Zweck                                                               |
+| --------------------- | ---------------------- | ------------------------------------------------------------------- |
+| Alle Stories laden    | `list_stories`         | Timestamps aller Stories prüfen (Metadata-only-Standard reicht aus) |
+| Veraltete filtern     | _n8n Filter/Code Node_ | Stories älter als z.B. 6 Monate                                     |
+| Refresh vorschlagen   | `generate_section`     | KI schlägt aktualisierte Sektionen vor                              |
+| Sektion aktualisieren | `replace_section`      | Veraltete Sektion gezielt ersetzen, ohne Rest der Seite anzufassen  |
+| SEO auffrischen       | `update_seo`           | Veraltete Meta-Daten aktualisieren                                  |
+| Report                | _n8n E-Mail Node_      | „12 Seiten aktualisiert, 5 weitere brauchen manuelles Review"       |
 
 ### 11. Content-Statistik-Dashboard
 
@@ -166,24 +166,24 @@ Abgelaufene Event-Seiten oder veraltete Kampagnen-Seiten werden automatisch depu
 
 Alle Seiten ohne SEO-Metadaten werden automatisch erkannt, per KI werden passende Titel, Descriptions und Keywords generiert und direkt eingespielt – ohne den restlichen Seiteninhalt anzufassen.
 
-| Schritt               | Tool                                                | Zweck                                                        |
-| --------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
-| Alle Stories laden    | `list_stories` (paginiert, `excludeContent: false`) | Komplettes Content-Inventar erfassen                         |
-| SEO-Lücken erkennen   | _n8n Code/Filter Node_                              | Stories ohne `seo`-Feld oder mit leeren Meta-Daten filtern   |
-| SEO generieren        | `generate_seo` (pro Story)                          | KI erzeugt Titel, Description, Keywords aus Seiteninhalt     |
-| SEO einspielen        | `update_seo` (pro Story)                            | Meta-Daten gezielt setzen, ohne restlichen Content anzufassen |
-| Report                | _n8n Slack/Spreadsheet Node_                        | „SEO für 23 Seiten generiert und eingespielt"                |
+| Schritt             | Tool                                                | Zweck                                                         |
+| ------------------- | --------------------------------------------------- | ------------------------------------------------------------- |
+| Alle Stories laden  | `list_stories` (paginiert, `excludeContent: false`) | Komplettes Content-Inventar erfassen                          |
+| SEO-Lücken erkennen | _n8n Code/Filter Node_                              | Stories ohne `seo`-Feld oder mit leeren Meta-Daten filtern    |
+| SEO generieren      | `generate_seo` (pro Story)                          | KI erzeugt Titel, Description, Keywords aus Seiteninhalt      |
+| SEO einspielen      | `update_seo` (pro Story)                            | Meta-Daten gezielt setzen, ohne restlichen Content anzufassen |
+| Report              | _n8n Slack/Spreadsheet Node_                        | „SEO für 23 Seiten generiert und eingespielt"                 |
 
 ### 14. Kampagnen-Sektions-Swap
 
 Vor einer Kampagne (Messe, Saisonverkauf, Produktlaunch) werden Heroes oder CTAs auf vielen Seiten gleichzeitig mit Kampagnen-Inhalten ausgetauscht. Nach der Kampagne wird automatisch auf die Originalversionen zurückgewechselt.
 
-| Schritt                    | Tool                           | Zweck                                                      |
-| -------------------------- | ------------------------------ | ---------------------------------------------------------- |
-| Zielseiten identifizieren  | `list_stories` mit Slug-Filter | Alle betroffenen Seiten finden (z.B. `industry/*`)         |
-| Originale sichern          | `get_story` (pro Seite)        | Aktuelle Hero-/CTA-Sektion als Backup speichern            |
-| Kampagnen-Content erzeugen | `generate_section`             | KI generiert Kampagnen-Hero oder -CTA                      |
-| Sektion austauschen        | `replace_section` (pro Seite)  | Nur die Zielsektion ersetzen, Rest bleibt unangetastet     |
+| Schritt                    | Tool                           | Zweck                                                       |
+| -------------------------- | ------------------------------ | ----------------------------------------------------------- |
+| Zielseiten identifizieren  | `list_stories` mit Slug-Filter | Alle betroffenen Seiten finden (z.B. `industry/*`)          |
+| Originale sichern          | `get_story` (pro Seite)        | Aktuelle Hero-/CTA-Sektion als Backup speichern             |
+| Kampagnen-Content erzeugen | `generate_section`             | KI generiert Kampagnen-Hero oder -CTA                       |
+| Sektion austauschen        | `replace_section` (pro Seite)  | Nur die Zielsektion ersetzen, Rest bleibt unangetastet      |
 | Nach Kampagne: Rollback    | `replace_section` (pro Seite)  | Original-Sektionen aus Backup wiederherstellen              |
 | Report                     | _n8n Slack Node_               | „Kampagnen-Rollout: 15 Seiten aktualisiert / zurückgesetzt" |
 
