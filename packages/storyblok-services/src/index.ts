@@ -148,6 +148,8 @@ export {
   ensurePath,
   ensureUids,
   stripEmptyAssetFields,
+  stripInternalAnnotations,
+  stripEmptyAssets,
 } from "./stories.js";
 
 // ─── Component & asset introspection ────────────────────────────────

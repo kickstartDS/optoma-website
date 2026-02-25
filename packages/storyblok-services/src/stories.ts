@@ -101,6 +101,92 @@ export function stripEmptyAssetFields<T>(obj: T): T {
   return result as T;
 }
 
+// ─── Internal annotation stripping ────────────────────────────────────
+
+/**
+ * Keys injected by the Storyblok Content Delivery API at runtime that must
+ * never be persisted back via the Management API.
+ *
+ * - `_editable`: HTML comment added in draft mode for Visual Editor mapping.
+ *   If saved, Storyblok flags every occurrence as "item out of schema".
+ */
+const INTERNAL_ANNOTATION_KEYS = new Set(["_editable"]);
+
+/**
+ * Recursively strip Storyblok CDN runtime annotations from a content tree.
+ *
+ * The Content Delivery API injects fields like `_editable` when returning
+ * draft content. These are **not** part of any component schema and must be
+ * removed before writing content back via the Management API — otherwise
+ * Storyblok shows "item out of schema" warnings for every component.
+ *
+ * This function returns a deep copy — the original object is not mutated.
+ * Legitimate internal fields like `_uid` are preserved.
+ */
+export function stripInternalAnnotations<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== "object") return obj;
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => stripInternalAnnotations(item)) as T;
+  }
+
+  const record = obj as Record<string, unknown>;
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (INTERNAL_ANNOTATION_KEYS.has(key)) continue;
+    result[key] = stripInternalAnnotations(value);
+  }
+  return result as T;
+}
+
+// ─── Empty asset stripping ────────────────────────────────────────────
+
+/**
+ * Recursively remove Storyblok asset objects whose `filename` is empty.
+ *
+ * When the CDN API returns draft content it expands every schema-defined
+ * asset field into a full object — even when no file was ever uploaded:
+ *
+ * ```json
+ * { "id": null, "alt": null, "name": "", "filename": "", "fieldtype": "asset", … }
+ * ```
+ *
+ * If an LLM echoes this back through `update_story`, these empty objects
+ * get persisted. Downstream code (e.g. `unflatten()`) then produces nested
+ * props like `image.srcMobile = { filename: "" }` — a truthy *object* where
+ * a *string* (or nothing) was expected — causing runtime crashes.
+ *
+ * This function **deletes** any key whose value is an asset object with an
+ * empty `filename`. Non-asset objects and assets with data are preserved.
+ * Returns a deep copy — the original object is not mutated.
+ */
+export function stripEmptyAssets<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== "object") return obj;
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => stripEmptyAssets(item)) as T;
+  }
+
+  const record = obj as Record<string, unknown>;
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    // Skip empty asset objects (filename is "" or missing)
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      (value as Record<string, unknown>).fieldtype === "asset" &&
+      !(value as Record<string, unknown>).filename
+    ) {
+      continue;
+    }
+    result[key] = stripEmptyAssets(value);
+  }
+  return result as T;
+}
+
 // ─── List Stories ─────────────────────────────────────────────────────
 
 /**

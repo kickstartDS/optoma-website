@@ -84,7 +84,6 @@ export function storyProcessing(
       value &&
       typeof value === "object" &&
       value.fieldtype === "asset" &&
-      value.id === null &&
       !value.filename
     ) {
       delete parent[key];

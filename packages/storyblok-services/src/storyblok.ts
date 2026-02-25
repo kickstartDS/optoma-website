@@ -12,6 +12,7 @@ import type {
 } from "./types.js";
 import { StoryblokApiError, PrompterNotFoundError } from "./types.js";
 import { uploadAndReplaceAssets, wrapAssetUrls } from "./assets.js";
+import { stripInternalAnnotations, stripEmptyAssets } from "./stories.js";
 
 // ─── Client factory ───────────────────────────────────────────────────
 
@@ -59,6 +60,12 @@ export async function saveStory(
   publish: boolean = false
 ): Promise<Record<string, any>> {
   try {
+    // Strip CDN runtime annotations (e.g. _editable) and empty asset objects
+    // that should never be persisted via the Management API.
+    if (story.content) {
+      story.content = stripInternalAnnotations(story.content);
+      story.content = stripEmptyAssets(story.content);
+    }
     const response = await client.put(`spaces/${spaceId}/stories/${storyId}`, {
       story: story as any,
       publish: publish ? 1 : 0,

@@ -40,6 +40,8 @@ import {
   ensurePath as sharedEnsurePath,
   ensureUids as sharedEnsureUids,
   stripEmptyAssetFields,
+  stripInternalAnnotations,
+  stripEmptyAssets,
   createContentClient,
   listComponents as sharedListComponents,
   getComponent as sharedGetComponent,
@@ -194,7 +196,15 @@ export class StoryblokService {
     const path = `cdn/stories/${identifier}`;
 
     const response = await this.contentClient.get(path, params);
-    return response.data.story;
+    // Strip CDN runtime annotations (_editable) and empty asset objects that
+    // draft mode injects — prevents the LLM from echoing them back in
+    // update_story calls.
+    const story = response.data.story;
+    if (story?.content) {
+      story.content = stripInternalAnnotations(story.content);
+      story.content = stripEmptyAssets(story.content);
+    }
+    return story;
   }
 
   /**

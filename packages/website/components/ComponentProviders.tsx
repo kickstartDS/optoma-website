@@ -96,7 +96,7 @@ const Picture = forwardRef<
     if (internalRef.current) resetBackgroundBlurHash(internalRef.current);
   }, []);
 
-  if (!src) return;
+  if (!src || typeof src !== "string") return;
   const fileUrl = !src.startsWith("http") ? `https:${src}` : src;
   const [width, height] = fileUrl.match(/\/(\d+)x(\d+)\//)?.slice(1) || [];
   const maxWidth = parseInt(width) > size ? Math.floor(size) : parseInt(width);
