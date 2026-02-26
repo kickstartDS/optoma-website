@@ -150,8 +150,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
       '@kickstartds/ds-agency-premium':
-        specifier: 1.6.74--canary.45.2806.0
-        version: 1.6.74--canary.45.2806.0(kdzejxwhpmlu3rpuo3ewufdhse)
+        specifier: ^2.0.0
+        version: 2.0.0(kdzejxwhpmlu3rpuo3ewufdhse)
       '@kickstartds/form':
         specifier: ^4.1.0
         version: 4.2.0(p4i4e4vnjfryh5576h7l23btne)
@@ -1508,8 +1508,8 @@ packages:
       react: ^17.0.2 || ^18.2.0
       storybook-design-token: 3.0.0-beta.3
 
-  '@kickstartds/ds-agency-premium@1.6.74--canary.45.2806.0':
-    resolution: {integrity: sha512-gDqZDYdiCh6ciWnXbiw0NvvCyQq6LzbAbhE9Ole0qWMM6PW6qxKtkg/MrcLpmbnmz1Z+XniZLVmxULMwZaiesg==}
+  '@kickstartds/ds-agency-premium@2.0.0':
+    resolution: {integrity: sha512-ftaEdrm4KZN594jc0PTvOEOytTu3gRrDbJjBxfYnK8PCh+HU/yUjfKlnMMcgO/qm8VLajlQ4gWhEhG2JyrjaoA==}
     peerDependencies:
       '@kickstartds/base': ^4.0.2
       '@kickstartds/blog': ^4.0.2
@@ -10352,7 +10352,7 @@ snapshots:
       sass: 1.97.3
       storybook-design-token: 3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))
 
-  '@kickstartds/ds-agency-premium@1.6.74--canary.45.2806.0(kdzejxwhpmlu3rpuo3ewufdhse)':
+  '@kickstartds/ds-agency-premium@2.0.0(kdzejxwhpmlu3rpuo3ewufdhse)':
     dependencies:
       '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@18.2.0)
       '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
