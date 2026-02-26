@@ -38,15 +38,10 @@ const allItems = $input.all();
 const stories = [];
 let allAssets = [];
 
-for (const item of allItems) {
-  if (item.json.assets) {
-    allAssets = allAssets.concat(item.json.assets);
-  }
-  if (item.json.story) {
-    stories.push(item.json.story);
-  }
+for (const story of allItems[0].json.content[0].text.stories) {
+  stories.push(story);
 }
-
+allAssets.concat(allItems[1].json.content[0].text.assets);
 const now = new Date();
 const findings = [];
 const assetUrlSet = new Set(allAssets.map((a) => a.filename).filter(Boolean));
@@ -91,6 +86,15 @@ function getAltText(node, imageKey) {
     .replace(/^image$/, "image_alt");
   if (altKey !== imageKey && node[altKey] !== undefined) {
     return node[altKey];
+  }
+  // Pattern 1b: responsive variants (image_srcMobile, image_srcTablet,
+  // image_srcDesktop) share the same image_alt as image_src because they
+  // all render inside a single <picture> tag.
+  if (
+    /^image_src(Mobile|Tablet|Desktop)$/.test(imageKey) &&
+    node.image_alt !== undefined
+  ) {
+    return node.image_alt;
   }
   // Pattern 2: alt text inside asset object
   if (typeof node[imageKey] === "object" && node[imageKey]?.alt !== undefined) {
@@ -184,7 +188,13 @@ function walkContent(node, path, storySlug, storyName) {
       }
 
       // Rule: Missing alt text
-      if (filename && !isEmptyAsset(node[field])) {
+      // Skip SEO images — they are only used as social graph / OG meta images
+      // and are never rendered with an alt attribute.
+      if (
+        filename &&
+        !isEmptyAsset(node[field]) &&
+        !(component === "seo" && (field === "image" || field === "cardImage"))
+      ) {
         const alt = getAltText(node, field);
         if (
           alt === undefined ||
