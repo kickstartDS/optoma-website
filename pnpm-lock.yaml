@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@kickstartds/base@4.2.0':
+    hash: kgysbjl7eyw3ae3p27gdr32g4m
+    path: patches/@kickstartds__base@4.2.0.patch
+
 importers:
 
   .:
@@ -139,22 +144,22 @@ importers:
         version: 1.52.0
       '@kickstartds/base':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
+        version: 4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
       '@kickstartds/blog':
         specifier: ^4.1.0
-        version: 4.2.0(p4i4e4vnjfryh5576h7l23btne)
+        version: 4.2.0(ywpejjojf2o24mviwermjgg34i)
       '@kickstartds/content':
         specifier: ^4.1.1
-        version: 4.1.4(p4i4e4vnjfryh5576h7l23btne)
+        version: 4.1.4(ywpejjojf2o24mviwermjgg34i)
       '@kickstartds/core':
         specifier: ^4.1.0
         version: 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
       '@kickstartds/ds-agency-premium':
-        specifier: ^2.0.0
-        version: 2.0.0(kdzejxwhpmlu3rpuo3ewufdhse)
+        specifier: ^2.0.2
+        version: 2.0.2(dn5xaaqtlvsaf2pxneio3fah2i)
       '@kickstartds/form':
         specifier: ^4.1.0
-        version: 4.2.0(p4i4e4vnjfryh5576h7l23btne)
+        version: 4.2.0(ywpejjojf2o24mviwermjgg34i)
       '@kickstartds/storyblok-services':
         specifier: workspace:*
         version: link:../storyblok-services
@@ -239,13 +244,13 @@ importers:
         version: 1.0.5
       '@kickstartds/jsonschema-utils':
         specifier: ^3.8.1
-        version: 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
+        version: 3.8.1(724jleepragc7w5qkcfdnpptiy)
       '@kickstartds/jsonschema2storyblok':
         specifier: ^1.6.9
-        version: 1.6.9(kem6l5y22kiyr6rwwzckczn72i)
+        version: 1.6.9(724jleepragc7w5qkcfdnpptiy)
       '@kickstartds/jsonschema2types':
         specifier: ^1.2.7
-        version: 1.2.7(kem6l5y22kiyr6rwwzckczn72i)
+        version: 1.2.7(724jleepragc7w5qkcfdnpptiy)
       '@kickstartds/style-dictionary':
         specifier: ^4.0.2
         version: 4.0.4(style-dictionary@3.9.2)
@@ -314,7 +319,7 @@ importers:
         version: 5.0.1
       kickstartds:
         specifier: 3.5.0--canary.62.324.0
-        version: 3.5.0--canary.62.324.0(czzhqocxpjkw6wwlifmjhhijeq)
+        version: 3.5.0--canary.62.324.0(twqwakdulvjdnuolj5vbixbbgm)
       local-ssl-proxy:
         specifier: ^2.0.5
         version: 2.0.5
@@ -1508,8 +1513,8 @@ packages:
       react: ^17.0.2 || ^18.2.0
       storybook-design-token: 3.0.0-beta.3
 
-  '@kickstartds/ds-agency-premium@2.0.0':
-    resolution: {integrity: sha512-ftaEdrm4KZN594jc0PTvOEOytTu3gRrDbJjBxfYnK8PCh+HU/yUjfKlnMMcgO/qm8VLajlQ4gWhEhG2JyrjaoA==}
+  '@kickstartds/ds-agency-premium@2.0.2':
+    resolution: {integrity: sha512-rSq88HfCot4KTCTvRS4cvGe+uTVzYekjWvPyPhP2dsLX0OSx/1e48hl0ejbemXA5MhkBNNMmLP89gJZHdrs3eQ==}
     peerDependencies:
       '@kickstartds/base': ^4.0.2
       '@kickstartds/blog': ^4.0.2
@@ -10299,7 +10304,7 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@kickstartds/base@4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)':
+  '@kickstartds/base@4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
@@ -10308,10 +10313,10 @@ snapshots:
       photoswipe: 5.4.4
       react: 18.2.0
 
-  '@kickstartds/blog@4.2.0(p4i4e4vnjfryh5576h7l23btne)':
+  '@kickstartds/blog@4.2.0(ywpejjojf2o24mviwermjgg34i)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
+      '@kickstartds/base': 4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
       classnames: 2.5.1
       date-fns: 2.30.0
@@ -10324,11 +10329,11 @@ snapshots:
       js-yaml: 4.1.1
       to-json-schema: 0.2.5
 
-  '@kickstartds/content@4.1.4(p4i4e4vnjfryh5576h7l23btne)':
+  '@kickstartds/content@4.1.4(ywpejjojf2o24mviwermjgg34i)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@glidejs/glide': 3.7.1
-      '@kickstartds/base': 4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
+      '@kickstartds/base': 4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
       classnames: 2.5.1
       countup.js: 2.9.0
@@ -10352,15 +10357,15 @@ snapshots:
       sass: 1.97.3
       storybook-design-token: 3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))
 
-  '@kickstartds/ds-agency-premium@2.0.0(kdzejxwhpmlu3rpuo3ewufdhse)':
+  '@kickstartds/ds-agency-premium@2.0.2(dn5xaaqtlvsaf2pxneio3fah2i)':
     dependencies:
       '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@18.2.0)
       '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@kickstartds/base': 4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
-      '@kickstartds/blog': 4.2.0(p4i4e4vnjfryh5576h7l23btne)
-      '@kickstartds/content': 4.1.4(p4i4e4vnjfryh5576h7l23btne)
+      '@kickstartds/base': 4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
+      '@kickstartds/blog': 4.2.0(ywpejjojf2o24mviwermjgg34i)
+      '@kickstartds/content': 4.1.4(ywpejjojf2o24mviwermjgg34i)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
-      '@kickstartds/form': 4.2.0(p4i4e4vnjfryh5576h7l23btne)
+      '@kickstartds/form': 4.2.0(ywpejjojf2o24mviwermjgg34i)
       classnames: 2.5.1
       markdown-to-jsx: 7.7.17(react@18.2.0)
       react: 18.2.0
@@ -10372,10 +10377,10 @@ snapshots:
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
-  '@kickstartds/form@4.2.0(p4i4e4vnjfryh5576h7l23btne)':
+  '@kickstartds/form@4.2.0(ywpejjojf2o24mviwermjgg34i)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
+      '@kickstartds/base': 4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
       classnames: 2.5.1
       react: 18.2.0
@@ -10396,15 +10401,15 @@ snapshots:
       mkdirp: 1.0.4
       prettier: 2.8.8
 
-  '@kickstartds/jsonschema-utils@3.8.1(kem6l5y22kiyr6rwwzckczn72i)':
+  '@kickstartds/jsonschema-utils@3.8.1(724jleepragc7w5qkcfdnpptiy)':
     dependencies:
       '@bcherny/json-schema-ref-parser': 10.0.5-fork
-      '@kickstartds/base': 4.2.0(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
-      '@kickstartds/blog': 4.2.0(p4i4e4vnjfryh5576h7l23btne)
+      '@kickstartds/base': 4.2.0(patch_hash=kgysbjl7eyw3ae3p27gdr32g4m)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12))))(react@18.2.0)
+      '@kickstartds/blog': 4.2.0(ywpejjojf2o24mviwermjgg34i)
       '@kickstartds/cambria': 1.0.5
-      '@kickstartds/content': 4.1.4(p4i4e4vnjfryh5576h7l23btne)
+      '@kickstartds/content': 4.1.4(ywpejjojf2o24mviwermjgg34i)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
-      '@kickstartds/form': 4.2.0(p4i4e4vnjfryh5576h7l23btne)
+      '@kickstartds/form': 4.2.0(ywpejjojf2o24mviwermjgg34i)
       ajv: 8.18.0
       change-case: 5.4.4
       directed-graph-typed: 1.52.9
@@ -10413,9 +10418,9 @@ snapshots:
       json-schema-traverse: 1.0.0
       jsonpointer: 5.0.1
 
-  '@kickstartds/jsonschema2stackbit@1.7.8(kem6l5y22kiyr6rwwzckczn72i)':
+  '@kickstartds/jsonschema2stackbit@1.7.8(724jleepragc7w5qkcfdnpptiy)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
+      '@kickstartds/jsonschema-utils': 3.8.1(724jleepragc7w5qkcfdnpptiy)
       ajv: 8.18.0
       object-traversal: 1.0.1
       pluralize-esm: 9.0.5
@@ -10426,9 +10431,9 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2staticcms@2.9.39(kem6l5y22kiyr6rwwzckczn72i)':
+  '@kickstartds/jsonschema2staticcms@2.9.39(724jleepragc7w5qkcfdnpptiy)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
+      '@kickstartds/jsonschema-utils': 3.8.1(724jleepragc7w5qkcfdnpptiy)
       ajv: 8.18.0
       object-traversal: 1.0.1
       pluralize: 8.0.0
@@ -10439,9 +10444,9 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2storyblok@1.6.9(kem6l5y22kiyr6rwwzckczn72i)':
+  '@kickstartds/jsonschema2storyblok@1.6.9(724jleepragc7w5qkcfdnpptiy)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
+      '@kickstartds/jsonschema-utils': 3.8.1(724jleepragc7w5qkcfdnpptiy)
       ajv: 8.18.0
       object-traversal: 1.0.1
       uuid: 9.0.1
@@ -10452,10 +10457,10 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2types@1.2.7(kem6l5y22kiyr6rwwzckczn72i)':
+  '@kickstartds/jsonschema2types@1.2.7(724jleepragc7w5qkcfdnpptiy)':
     dependencies:
       '@kickstartds/json-schema-to-typescript': 13.1.20
-      '@kickstartds/jsonschema-utils': 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
+      '@kickstartds/jsonschema-utils': 3.8.1(724jleepragc7w5qkcfdnpptiy)
       ajv: 8.18.0
       object-traversal: 1.0.1
     transitivePeerDependencies:
@@ -10465,9 +10470,9 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2uniform@1.4.26(kem6l5y22kiyr6rwwzckczn72i)':
+  '@kickstartds/jsonschema2uniform@1.4.26(724jleepragc7w5qkcfdnpptiy)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
+      '@kickstartds/jsonschema-utils': 3.8.1(724jleepragc7w5qkcfdnpptiy)
       ajv: 8.18.0
       change-case: 5.4.4
     transitivePeerDependencies:
@@ -15905,19 +15910,19 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  kickstartds@3.5.0--canary.62.324.0(czzhqocxpjkw6wwlifmjhhijeq):
+  kickstartds@3.5.0--canary.62.324.0(twqwakdulvjdnuolj5vbixbbgm):
     dependencies:
       '@apidevtools/json-schema-ref-parser': 9.1.2
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
       '@influxdata/influxdb-client': 1.35.0
       '@influxdata/influxdb-client-apis': 1.35.0(@influxdata/influxdb-client@1.35.0)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.2(esbuild@0.19.12)))
-      '@kickstartds/jsonschema-utils': 3.8.1(kem6l5y22kiyr6rwwzckczn72i)
-      '@kickstartds/jsonschema2stackbit': 1.7.8(kem6l5y22kiyr6rwwzckczn72i)
-      '@kickstartds/jsonschema2staticcms': 2.9.39(kem6l5y22kiyr6rwwzckczn72i)
-      '@kickstartds/jsonschema2storyblok': 1.6.9(kem6l5y22kiyr6rwwzckczn72i)
-      '@kickstartds/jsonschema2types': 1.2.7(kem6l5y22kiyr6rwwzckczn72i)
-      '@kickstartds/jsonschema2uniform': 1.4.26(kem6l5y22kiyr6rwwzckczn72i)
+      '@kickstartds/jsonschema-utils': 3.8.1(724jleepragc7w5qkcfdnpptiy)
+      '@kickstartds/jsonschema2stackbit': 1.7.8(724jleepragc7w5qkcfdnpptiy)
+      '@kickstartds/jsonschema2staticcms': 2.9.39(724jleepragc7w5qkcfdnpptiy)
+      '@kickstartds/jsonschema2storyblok': 1.6.9(724jleepragc7w5qkcfdnpptiy)
+      '@kickstartds/jsonschema2types': 1.2.7(724jleepragc7w5qkcfdnpptiy)
+      '@kickstartds/jsonschema2uniform': 1.4.26(724jleepragc7w5qkcfdnpptiy)
       '@kickstartds/style-dictionary': 4.0.4(style-dictionary@3.9.2)
       ajv: 8.18.0
       byline: 5.0.0

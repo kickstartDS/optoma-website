@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:24-alpine AS base
 
 # Disabling Telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -7,7 +7,7 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 FROM base AS deps
 WORKDIR /app
-ARG CACHEBUST=0
+
 # Copy workspace config files first for layer caching
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 # Copy package.json files for all required workspace packages

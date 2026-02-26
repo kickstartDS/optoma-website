@@ -15,5 +15,10 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@kickstartds/base@4.2.0": "patches/@kickstartds__base@4.2.0.patch"
+    }
   }
 }
