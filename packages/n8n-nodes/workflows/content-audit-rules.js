@@ -101,8 +101,13 @@ function getAltText(node, imageKey) {
     return node[imageKey].alt;
   }
   // Pattern 3: standalone "alt" field on the same node
-  if (node.alt !== undefined && imageKey === "image") {
+  // Covers "image" fields and logo sub-components where src + alt are siblings
+  if (node.alt !== undefined && (imageKey === "image" || imageKey === "src")) {
     return node.alt;
+  }
+  // Pattern 4: camelCase alt field (e.g. imageAlt for image on teaser-card)
+  if (imageKey === "image" && node.imageAlt !== undefined) {
+    return node.imageAlt;
   }
   return undefined;
 }
@@ -190,10 +195,15 @@ function walkContent(node, path, storySlug, storyName) {
       // Rule: Missing alt text
       // Skip SEO images — they are only used as social graph / OG meta images
       // and are never rendered with an alt attribute.
+      // Skip backgroundImage — decorative CSS background, no alt attribute.
       if (
         filename &&
         !isEmptyAsset(node[field]) &&
-        !(component === "seo" && (field === "image" || field === "cardImage"))
+        !(
+          component === "seo" &&
+          (field === "image" || field === "cardImage")
+        ) &&
+        field !== "backgroundImage"
       ) {
         const alt = getAltText(node, field);
         if (
