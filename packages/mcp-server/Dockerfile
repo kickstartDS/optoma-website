@@ -6,6 +6,8 @@ WORKDIR /app
 
 # Copy workspace config files first for layer caching
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
+# Copy pnpm patches so they are applied during install
+COPY patches/ ./patches/
 # Copy package.json files for required workspace packages
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
 COPY packages/mcp-server/package.json ./packages/mcp-server/
