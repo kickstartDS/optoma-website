@@ -3,7 +3,7 @@ FROM node:24-alpine AS base
 # Disabling Telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN apk add --no-cache libc6-compat curl
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 FROM base AS deps
 WORKDIR /app

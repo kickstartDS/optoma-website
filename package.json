@@ -1,7 +1,7 @@
 {
   "name": "@kickstartds/storyblok-starter-premium-monorepo",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "build": "pnpm -r run build",
     "dev:web": "pnpm --filter website dev",
@@ -19,6 +19,13 @@
   "pnpm": {
     "patchedDependencies": {
       "@kickstartds/base@4.2.0": "patches/@kickstartds__base@4.2.0.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "fsevents",
+      "protobufjs",
+      "unrs-resolver"
+    ]
   }
 }

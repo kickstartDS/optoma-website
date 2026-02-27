@@ -1,2 +1,11 @@
 packages:
   - "packages/*"
+
+# Migrated from .npmrc for pnpm 10
+shamefullyHoist: true
+strictPeerDependencies: false
+linkWorkspacePackages: true
+saveWorkspaceProtocol: rolling
+
+# Required for pnpm deploy (pnpm 10 breaking change)
+injectWorkspacePackages: true

@@ -1,6 +1,6 @@
 # Build stage
 FROM node:20-alpine AS builder
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN pnpm --filter @kickstartds/storyblok-mcp-server run build
 
 # Production stage — use pnpm deploy for a pruned, self-contained bundle
 FROM node:20-alpine AS production
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 WORKDIR /app
 
