@@ -378,6 +378,9 @@ for (const story of stories) {
   const content = story.content;
   if (!content) continue;
 
+  // Skip import/migration staging pages
+  if (slug.includes("import")) continue;
+
   const contentType = content.component || "unknown";
 
   // ── SEO RULES ─────────────────────────────────────────────────────
