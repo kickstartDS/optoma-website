@@ -289,13 +289,14 @@ The host passes tool results to the UI via `ui/notifications/tool-result`:
       "component": "hero",
       "headline": "Transform Your Business",
       "sub_headline": "...",
-      "cta_text": "Get Started"
+      "cta_text": "Get Started",
+      "renderedHtml": "<div class='dsa-hero'>...pre-rendered HTML...</div>"
     }
   }
 }
 ```
 
-The preview UI receives `structuredContent` and renders the section using the kickstartDS component HTML structure with inlined design tokens.
+The preview UI receives `structuredContent` — including `renderedHtml`, which is **pre-rendered on the server** using `renderToStaticMarkup` from `react-dom/server` with the actual kickstartDS React components (see [Section 6.3](#63-server-side-rendering-with-rendertostaticmarkup)). The UI template simply inserts the pre-rendered HTML and lets the inlined CSS and client-side JS activate on the DOM.
 
 #### Preview Scope
 
@@ -558,7 +559,7 @@ The flagship feature: serve interactive HTML previews via `ui://` resources usin
 | 4.9  | Implement app-only tools: `approve_plan`, `reorder_plan` for plan-review UI                             | `packages/mcp-server/src/ui/app-tools.ts`               | M      |
 | 4.10 | Build host-theme-to-kickstartDS token mapping in preview templates (CSS variable bridge)                | `packages/mcp-server/src/ui/theme-bridge.css` (new)     | M      |
 | 4.11 | Extract and inline kickstartDS design tokens (branding, semantic, component) into HTML templates        | `packages/mcp-server/src/ui/tokens.ts` (new)            | M      |
-| 4.12 | Implement component HTML renderers for top-10 components (hero, features, cta, faq, etc.)               | `packages/mcp-server/src/ui/renderers/` (new directory) | L      |
+| 4.12 | Implement `renderToStaticMarkup` pipeline using actual kickstartDS React components + `DsaProviders`    | `packages/mcp-server/src/ui/render.ts` (new)            | M      |
 | 4.13 | Add `ui/notifications/tool-input-partial` support for streaming preview while section generates         | `packages/mcp-server/src/ui/section-preview.html`       | M      |
 | 4.14 | Add display mode support (`inline` default, `fullscreen` for page preview) via `appCapabilities`        | `packages/mcp-server/src/ui/section-preview.html`       | S      |
 | 4.15 | Implement `ui/update-model-context` in preview UIs to feed visual feedback back to the model            | `packages/mcp-server/src/ui/section-preview.html`       | S      |
@@ -752,10 +753,17 @@ Each UI resource is a self-contained HTML5 document that:
       const app = new App({ name: "section-preview", version: "1.0.0" });
       await app.connect(transport);
 
-      // Receive tool result and render section
+      let currentSection = null;
+
+      // Receive tool result and render pre-built HTML
       app.onToolResult((result) => {
-        const section = result.structuredContent;
-        renderSection(section); // kickstartDS HTML renderer
+        currentSection = result.structuredContent;
+        // Server pre-rendered the HTML via renderToStaticMarkup — just insert it
+        document.getElementById("preview-container").innerHTML =
+          currentSection.renderedHtml;
+        // Initialize kickstartDS client-side behaviors on the new DOM
+        // (accordions, sliders, scroll animations, etc.)
+        window._ks?.init?.();
       });
 
       // App-only tool calls (no LLM roundtrip)
@@ -764,33 +772,91 @@ Each UI resource is a self-contained HTML5 document that:
 
       document.getElementById("reject").onclick = () =>
         app.callTool("reject_section", { reason: "user rejected" });
-
-      function renderSection(data) {
-        // Map structuredContent to kickstartDS component HTML
-        const html = componentRenderers[data.component](data);
-        document.getElementById("preview-container").innerHTML = html;
-      }
     </script>
   </body>
 </html>
 ```
 
-### 6.3 Component HTML Renderers
+### 6.3 Server-Side Rendering with `renderToStaticMarkup`
 
-Each component type needs a client-side HTML renderer. These are lightweight functions that map `structuredContent` to kickstartDS-compatible HTML markup:
+Instead of writing custom HTML renderer functions for each component type, the MCP server uses `renderToStaticMarkup` from `react-dom/server` with the **actual kickstartDS React components**. This is possible because the kickstartDS Design System has a **three-layer independence** architecture:
 
-| Priority | Component      | Renderer Complexity | Key Elements                                   |
-| -------- | -------------- | ------------------- | ---------------------------------------------- |
-| 1        | `hero`         | M                   | Headline, sub-headline, CTA button, background |
-| 2        | `features`     | M                   | Grid of feature cards with icons               |
-| 3        | `cta`          | S                   | Headline, text, button group                   |
-| 4        | `faq`          | M                   | Accordion-style Q&A items                      |
-| 5        | `testimonials` | M                   | Quote cards with author info                   |
-| 6        | `text`         | S                   | Rich text block with markdown rendering        |
-| 7        | `image-text`   | M                   | Split layout with image placeholder            |
-| 8        | `stats`        | S                   | Number cards with labels                       |
-| 9        | `gallery`      | M                   | Image grid with placeholder thumbnails         |
-| 10       | `logos`        | S                   | Logo row with image placeholders               |
+1. **CSS** — `@kickstartds/ds-agency-premium/global.css` plus component-specific CSS files target DOM class names and `data-*` attributes, not React component instances. They are plain CSS files that work on any HTML with the correct DOM structure.
+2. **Client-side JS** — All `*.client.js` files (bundled via esbuild into `public/_/client.js` on the website) use the kickstartDS `Component` base class — vanilla JavaScript with lifecycle management that attaches to DOM nodes by CSS selectors. Completely React-independent.
+3. **React components** — Pure functional, no local state, `forwardRef`-based. They produce HTML markup and get out of the way. No `useEffect`, no `useState`, no browser API dependencies.
+
+This means the server can render any kickstartDS component to clean HTML without a browser:
+
+```typescript
+import { renderToStaticMarkup } from "react-dom/server";
+import React from "react";
+import DsaProviders from "@kickstartds/ds-agency-premium/providers";
+import { Hero } from "@kickstartds/ds-agency-premium/hero";
+import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
+
+function renderSectionToHtml(sectionData: Record<string, any>): string {
+  const componentMap: Record<string, React.ComponentType<any>> = {
+    hero: Hero,
+    // ... all section-level components
+  };
+
+  const Component = componentMap[sectionData.component];
+  if (!Component)
+    return `<div>Unknown component: ${sectionData.component}</div>`;
+
+  // DsaProviders supplies rendering-time configuration (no browser APIs needed)
+  return renderToStaticMarkup(
+    <DsaProviders>
+      <Section>
+        <Component {...sectionData} />
+      </Section>
+    </DsaProviders>
+  );
+}
+```
+
+`renderToStaticMarkup` produces **clean HTML without React hydration markers** — no `data-reactroot`, no `<!-- -->` comment placeholders. The output is identical to the DOM structure that the website renders in the browser, which is exactly what the CSS and client JS expect.
+
+#### Why This Works (Existing Architecture Proof)
+
+The website's existing build pipeline already proves this separation:
+
+- [bundleStaticAssets.js](packages/website/scripts/bundleStaticAssets.js) bundles all `*.client.js` files independently via esbuild (format: ESM, tree-shaking enabled, CSS/SCSS treated as empty)
+- The built pages (e.g., `.next/server/pages/index.html`) include the client JS as a plain `<script>` tag: `<script defer type="module" src="/_/client.js?cacheBuster=AUtqdX4ujD0"></script>`
+- CSS is imported in [\_app.tsx](packages/website/pages/_app.tsx) as side-effect imports (`import "@kickstartds/ds-agency-premium/global.css"`) and compiled by Next.js into standalone CSS files
+
+The MCP server rendering pipeline mirrors this exact separation — just without Next.js in the middle.
+
+#### Rendering Flow
+
+```
+generate_section tool call
+  → OpenAI produces section data (JSON)
+  → processForStoryblok() transforms data for Storyblok
+  → renderToStaticMarkup() renders React component → clean HTML string
+  → Tool returns:
+      content: [{ type: "text", text: "Generated hero section..." }]
+      structuredContent: {
+        component: "hero",
+        data: { headline: "...", ... },
+        renderedHtml: "<div class='dsa-hero'>...</div>"  // ← pre-rendered
+      }
+  → Host passes structuredContent to ui:// resource iframe
+  → UI template inserts renderedHtml into DOM
+  → Inlined CSS styles the markup
+  → Inlined client JS initializes behaviors (accordions, sliders, etc.)
+```
+
+#### Advantages Over Custom HTML Renderers
+
+| Aspect                | Custom Renderers (per-component)        | `renderToStaticMarkup` (actual components)      |
+| --------------------- | --------------------------------------- | ----------------------------------------------- |
+| **Fidelity**          | Approximation of DS markup              | Exact DS output — same components as production |
+| **Maintenance**       | Must update renderers when DS changes   | Automatically in sync — uses the DS package     |
+| **Coverage**          | Must build 10+ renderers, one per type  | All components supported immediately            |
+| **Effort**            | L (per-component development & testing) | S (one rendering pipeline, all components)      |
+| **Provider support**  | N/A — no React context available        | Full provider chain (DsaProviders, etc.)        |
+| **Nested components** | Must handle recursive nesting manually  | React handles composition naturally             |
 
 ### 6.4 Design Token Integration
 
@@ -972,6 +1038,10 @@ For complex interactions (like reordering a section sequence), the workflow fall
 
 9. **Preview template testing:** How do we test HTML templates outside of a host? The ext-apps repo includes a `basic-host` reference implementation — should we set that up as a dev dependency for local testing?
 
+10. **DS component dependency scope:** The `renderToStaticMarkup` approach requires `@kickstartds/ds-agency-premium` as a dependency of the MCP server. Should we depend on the full package (simplest, all components available), or extract a lightweight rendering-only subset? The full package adds React components + CSS + client JS but no browser dependencies. For multi-site deployments, should the DS package be configurable per-space?
+
+11. **Provider parity:** The website wraps components in `DsaProviders` → `ComponentProviders` → `ImageSizeProviders` → `ImageRatioProviders`. For `renderToStaticMarkup` in the MCP server, which providers are needed? `DsaProviders` is likely sufficient for rendering, but custom overrides (e.g., `PictureContext.Provider` for Next.js `Image`) may produce different HTML than the website. Should preview rendering use a minimal provider set or mirror the full website provider chain?
+
 ---
 
 ## 10. Success Metrics
@@ -992,7 +1062,13 @@ For complex interactions (like reordering a section sequence), the workflow fall
   - `@modelcontextprotocol/ext-apps/server` — `getUiCapability()`, `RESOURCE_MIME_TYPE`, tool registration helpers
   - `@modelcontextprotocol/ext-apps` — `App`, `PostMessageTransport` for view-side code
   - `@modelcontextprotocol/ext-apps/react` — React hooks (`useApp`, `useHostStyles`) if we use React in templates
-- **No Puppeteer/Satori** — ext-apps eliminates all server-side rendering dependencies
+- **React + ReactDOM (Phase 4):** `react` and `react-dom` as dependencies for `renderToStaticMarkup` — used **server-side only** to render kickstartDS components to static HTML for preview templates. No browser, no hydration, no Puppeteer.
+- **kickstartDS Design System (Phase 4):** `@kickstartds/ds-agency-premium` as a dependency for:
+  - React components (`Hero`, `Section`, `Features`, etc.) — used with `renderToStaticMarkup`
+  - `DsaProviders` — rendering-time context providers (no browser APIs needed)
+  - `global.css` — complete CSS bundle, inlined into preview templates at build time
+  - `*.client.js` — vanilla JS behaviors (accordions, sliders), bundled and inlined into preview templates
+- **No Puppeteer/Satori** — ext-apps renders client-side; `renderToStaticMarkup` runs in Node.js without a browser
 - **Design tokens:** Access to `branding-token.css` and semantic token files for preview styling (build-time extraction)
 - **Schema registry:** `packages/storyblok-services/src/registry.ts` for dynamic component type enumeration
 - **Existing infrastructure:** All current tools, resources, patterns cache, and section recipes remain unchanged
@@ -1070,23 +1146,23 @@ No breaking changes. No API version bump required. The server continues to retur
 
 ### C. File Inventory (new files)
 
-| File                                                 | Phase | Purpose                                          |
-| ---------------------------------------------------- | ----- | ------------------------------------------------ |
-| `packages/mcp-server/src/prompts.ts`                 | 1     | Prompt definitions and handlers                  |
-| `packages/mcp-server/src/schemas/output-schemas.ts`  | 2     | Output schema definitions for all tools          |
-| `packages/mcp-server/src/elicitation.ts`             | 3     | Elicitation helpers and schema builders          |
-| `packages/mcp-server/src/ui/resources.ts`            | 4     | UI resource registration (`ui://kds/*`)          |
-| `packages/mcp-server/src/ui/app-tools.ts`            | 4     | App-only tool handlers (approve, reject, modify) |
-| `packages/mcp-server/src/ui/section-preview.html`    | 4     | Section preview HTML template                    |
-| `packages/mcp-server/src/ui/page-preview.html`       | 4     | Full page preview HTML template                  |
-| `packages/mcp-server/src/ui/plan-review.html`        | 4     | Plan review/approval HTML template               |
-| `packages/mcp-server/src/ui/theme-bridge.css`        | 4     | Host CSS variable → kickstartDS token mapping    |
-| `packages/mcp-server/src/ui/tokens.ts`               | 4     | Design token extraction for preview templates    |
-| `packages/mcp-server/src/ui/renderers/`              | 4     | Component HTML renderers (hero, features, etc.)  |
-| `packages/mcp-server/test/prompts.test.ts`           | 1     | Prompt tests                                     |
-| `packages/mcp-server/test/structured-output.test.ts` | 2     | Structured output tests                          |
-| `packages/mcp-server/test/elicitation.test.ts`       | 3     | Elicitation tests                                |
-| `packages/mcp-server/test/ui.test.ts`                | 4     | UI resource and app-only tool tests              |
+| File                                                 | Phase | Purpose                                                            |
+| ---------------------------------------------------- | ----- | ------------------------------------------------------------------ |
+| `packages/mcp-server/src/prompts.ts`                 | 1     | Prompt definitions and handlers                                    |
+| `packages/mcp-server/src/schemas/output-schemas.ts`  | 2     | Output schema definitions for all tools                            |
+| `packages/mcp-server/src/elicitation.ts`             | 3     | Elicitation helpers and schema builders                            |
+| `packages/mcp-server/src/ui/resources.ts`            | 4     | UI resource registration (`ui://kds/*`)                            |
+| `packages/mcp-server/src/ui/app-tools.ts`            | 4     | App-only tool handlers (approve, reject, modify)                   |
+| `packages/mcp-server/src/ui/section-preview.html`    | 4     | Section preview HTML template                                      |
+| `packages/mcp-server/src/ui/page-preview.html`       | 4     | Full page preview HTML template                                    |
+| `packages/mcp-server/src/ui/plan-review.html`        | 4     | Plan review/approval HTML template                                 |
+| `packages/mcp-server/src/ui/theme-bridge.css`        | 4     | Host CSS variable → kickstartDS token mapping                      |
+| `packages/mcp-server/src/ui/tokens.ts`               | 4     | Design token extraction for preview templates                      |
+| `packages/mcp-server/src/ui/render.ts`               | 4     | `renderToStaticMarkup` pipeline using kickstartDS React components |
+| `packages/mcp-server/test/prompts.test.ts`           | 1     | Prompt tests                                                       |
+| `packages/mcp-server/test/structured-output.test.ts` | 2     | Structured output tests                                            |
+| `packages/mcp-server/test/elicitation.test.ts`       | 3     | Elicitation tests                                                  |
+| `packages/mcp-server/test/ui.test.ts`                | 4     | UI resource and app-only tool tests                                |
 
 ### D. Effort Summary
 
