@@ -63,7 +63,7 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 24+
 - Storyblok space with API tokens
 - (Optional) OpenAI API key for content generation
 
