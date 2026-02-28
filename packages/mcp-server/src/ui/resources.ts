@@ -22,6 +22,7 @@ import {
   SECTION_PREVIEW_URI,
   PAGE_PREVIEW_URI,
   PLAN_REVIEW_URI,
+  RESOURCE_MIME_TYPE,
 } from "./capability.js";
 import {
   SECTION_PREVIEW_HTML,
@@ -65,6 +66,7 @@ export function registerUiResources(server: McpServer): void {
       contents: [
         {
           uri: uri.href,
+          mimeType: RESOURCE_MIME_TYPE,
           text: SECTION_PREVIEW_HTML,
         },
       ],
@@ -91,6 +93,7 @@ export function registerUiResources(server: McpServer): void {
       contents: [
         {
           uri: uri.href,
+          mimeType: RESOURCE_MIME_TYPE,
           text: PAGE_PREVIEW_HTML,
         },
       ],
@@ -111,6 +114,7 @@ export function registerUiResources(server: McpServer): void {
       contents: [
         {
           uri: uri.href,
+          mimeType: RESOURCE_MIME_TYPE,
           text: PLAN_REVIEW_HTML,
         },
       ],
