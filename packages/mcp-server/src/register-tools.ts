@@ -34,6 +34,7 @@ import {
   PAGE_PREVIEW_URI,
   PLAN_REVIEW_URI,
 } from "./ui/capability.js";
+import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 // Lazy-loaded to avoid ESM directory import errors from kickstartDS at startup.
 // The render module imports @kickstartds/ds-agency-premium components which
 // internally use CJS-style directory imports (e.g. `@kickstartds/base/lib/button`)
@@ -1784,6 +1785,10 @@ async function handleEnsurePath(
  * 3. Attaching Zod outputSchema from OUTPUT_SCHEMAS
  * 4. Wrapping the handler with error formatting + structuredContent extraction
  *
+ * For tools with UI metadata, delegates to `registerAppTool()` from the
+ * ext-apps SDK which normalizes the `_meta` key formats automatically.
+ * For tools without UI, falls back to `server.registerTool()` directly.
+ *
  * For tools with no input parameters, pass `undefined` as inputSchema.
  * The SDK's ToolCallback type is conditional: when inputSchema is undefined,
  * the callback is `(extra) => ...`; when present, it's `(args, extra) => ...`.
@@ -1860,7 +1865,14 @@ function registerSingleTool(
     }
   };
 
-  server.registerTool(name, config, wrappedHandler as any);
+  // Use registerAppTool() for tools with UI metadata — it normalizes the
+  // _meta to include both nested and flat key formats for host compatibility.
+  // For tools without UI, use server.registerTool() directly.
+  if (meta?.ui?.resourceUri) {
+    registerAppTool(server, name, config as any, wrappedHandler as any);
+  } else {
+    server.registerTool(name, config, wrappedHandler as any);
+  }
 }
 
 /**
