@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 WORKDIR /app
@@ -26,10 +26,15 @@ COPY packages/mcp-server/ ./packages/mcp-server/
 
 # Build shared lib first, then MCP server
 RUN pnpm --filter @kickstartds/storyblok-services run build
+
+# With injectWorkspacePackages the workspace dep is copied (not symlinked)
+# during install. Re-install so the injected copy includes the built dist/.
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
 RUN pnpm --filter @kickstartds/storyblok-mcp-server run build
 
 # Production stage — use pnpm deploy for a pruned, self-contained bundle
-FROM node:20-alpine AS production
+FROM node:24-alpine AS production
 RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 WORKDIR /app

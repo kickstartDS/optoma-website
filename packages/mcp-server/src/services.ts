@@ -89,7 +89,9 @@ const PAGE_VALIDATION_RULES: ValidationRules = registry.page.rules;
 function rules_rootMatchesSchema(content: Record<string, any>): boolean {
   const entry = registry.detectContentType(content);
   const rules = entry ? entry.rules : PAGE_VALIDATION_RULES;
-  return rules.rootArrayFields.some((field) => Array.isArray(content[field]));
+  return rules.rootArrayFields.some((field: string) =>
+    Array.isArray(content[field])
+  );
 }
 
 /**

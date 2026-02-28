@@ -1085,15 +1085,15 @@ async function handleListComponents(
     for (const ct of allContentTypes) {
       const entry = registry.get(ct);
       const slots = entry.rules.componentToSlots.get(name) || [];
-      slots.forEach((s) => allSlots.add(s));
+      slots.forEach((s: string) => allSlots.add(s));
     }
     const slots = [...allSlots];
 
     const isSubComponent =
       slots.length > 0 &&
-      slots.every((s) => {
+      slots.every((s: string) => {
         const parts = s.split(".");
-        return !allContentTypes.some((ct) => {
+        return !allContentTypes.some((ct: string) => {
           const entry = registry.get(ct);
           return (
             parts.length === 2 && entry.rules.rootArrayFields.includes(parts[0])
@@ -1151,7 +1151,7 @@ async function handleGetComponent(
   for (const ct of allCTs) {
     const entry = registry.get(ct);
     const s = entry.rules.componentToSlots.get(name) || [];
-    s.forEach((slot) => allComponentSlots.add(slot));
+    s.forEach((slot: string) => allComponentSlots.add(slot));
   }
   const slots = [...allComponentSlots];
 
