@@ -157,9 +157,9 @@ Complete rewrite of PrompterComponent with new sub-components and state machine 
 - [x] 5.5.5 Wire new props through `PrompterComponent.tsx` → `usePrompter()` hook
 - [x] 5.5.6 `defaultContentType` prop overrides auto-detection from story
 
-### 5.6 Documentation — ⬜ Follow-up
+### 5.6 Documentation — ✅
 
-- [ ] 5.6 Documentation update (`docs/skills/`, `README.md`, `copilot-instructions.md`)
+- [x] 5.6 Documentation update (`docs/skills/`, `README.md`, `copilot-instructions.md`)
 
 ### Key Files Modified
 

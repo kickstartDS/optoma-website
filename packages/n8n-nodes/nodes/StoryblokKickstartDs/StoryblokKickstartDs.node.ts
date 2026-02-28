@@ -35,6 +35,8 @@ import {
   // Convenience update shared functions
   replaceSection,
   updateSeo,
+  // Validation & quality
+  checkCompositionalQuality,
   // Space introspection shared functions
   scrapeUrl,
   listComponents,
@@ -958,12 +960,19 @@ async function executeImport(
       placementDetail = `replaced prompter ${prompterUid}`;
     }
 
+    // Check compositional quality (non-blocking warnings)
+    const warnings = checkCompositionalQuality(
+      page.content.section,
+      registry.page.rules
+    );
+
     return {
       success: true,
       message: publish
         ? "Content imported and published successfully"
         : "Content imported as draft successfully",
       story: updatedStory,
+      warnings: warnings.length > 0 ? warnings : undefined,
       _meta: {
         storyUid,
         placementMode,
@@ -1219,9 +1228,13 @@ async function executeCreatePage(
       rootArrayField: entry.rootArrayFields[0] || "section",
     });
 
+    // Check compositional quality (non-blocking warnings)
+    const warnings = checkCompositionalQuality(sections, entry.rules);
+
     return {
       success: true,
       story: result,
+      warnings: warnings.length > 0 ? warnings : undefined,
       _meta: {
         operation: "createPage",
         name,
@@ -1462,10 +1475,14 @@ async function executeReplaceSection(
       assetFolderName,
     });
 
+    // Check compositional quality (non-blocking warnings)
+    const warnings = checkCompositionalQuality([section], registry.page.rules);
+
     return {
       success: true,
       story: result,
       replacedIndex: (result as any).replacedIndex,
+      warnings: warnings.length > 0 ? warnings : undefined,
       _meta: {
         operation: "replaceSection",
         storyUid,
@@ -1644,8 +1661,29 @@ async function executeGenerateSection(
 
   const componentType = this.getNodeParameter(
     "sectionComponentType",
-    itemIndex
+    itemIndex,
+    ""
   ) as string;
+
+  if (!componentType) {
+    // List available component types for a helpful error
+    const ct = this.getNodeParameter(
+      "sectionContentType",
+      itemIndex,
+      "page"
+    ) as string;
+    const entry = registry.has(ct) ? registry.get(ct) : registry.page;
+    const allowed: string[] = [];
+    for (const [, types] of entry.rules.containerSlots) {
+      for (const t of types) if (!allowed.includes(t)) allowed.push(t);
+    }
+    throw new NodeOperationError(
+      this.getNode(),
+      `componentType is required. Available types: ${allowed.join(", ")}`,
+      { itemIndex }
+    );
+  }
+
   const prompt = this.getNodeParameter("sectionPrompt", itemIndex) as string;
   const systemOverride = this.getNodeParameter(
     "sectionSystem",
@@ -2112,6 +2150,7 @@ Return a JSON object with:
 
     return {
       plan: result,
+      reviewStatus: "pending",
       usage:
         'Use "Generate Section" for each section in the plan, then "Create Page" to assemble the full page.',
       _meta: {

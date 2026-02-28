@@ -22,6 +22,7 @@ import {
   buildValidationRules,
   validateSections,
   formatValidationErrors,
+  checkCompositionalQuality,
   createRegistryFromSchemaDir,
   // Story CRUD + search shared functions
   createContentClient,
@@ -120,6 +121,8 @@ export {
   // Convenience updates
   replaceSection,
   updateSeo,
+  // Validation & quality
+  checkCompositionalQuality,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,

@@ -249,6 +249,40 @@ The MCP server provides two **convenience tools** for targeted, low-token-cost u
 
 Both tools support `publish`, `uploadAssets`, and `assetFolderName` parameters.
 
+### MCP Prompts
+
+The MCP server exposes **6 guided workflow prompts** via `prompts/list` and `prompts/get`. Each prompt returns a user+assistant message pair that instructs the LLM through a multi-step workflow using the available tools:
+
+| Prompt             | Required Args                  | Workflow                                                                                                                                               |
+| ------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `create-page`      | `intent`                       | `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `generate_seo` → `create_page_with_content`                                       |
+| `migrate-from-url` | `url`                          | `scrape_url` → `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `create_page_with_content`                                         |
+| `create-blog-post` | `topic`                        | `plan_page(contentType: 'blog-post')` → `generate_section` (×N) → `generate_root_field` (head/aside/cta) → `generate_seo` → `create_page_with_content` |
+| `content-audit`    | —                              | `analyze_content_patterns` → `list_stories` → `get_story` (inspect problematic pages) → structured report                                              |
+| `extend-page`      | `storyId`                      | `get_story` → `generate_section` (×N) → `import_content_at_position`                                                                                   |
+| `translate-page`   | `sourceSlug`, `targetLanguage` | `get_story` → `generate_section` (×N, same componentTypes) → `generate_seo` → `create_page_with_content`                                               |
+
+Prompts are discoverable by any MCP client that supports the `prompts` capability. They appear as slash commands or in prompt picker UIs.
+
+### Structured Output & Elicitation
+
+The MCP server declares `outputSchema` on write and generation tools so clients can parse results programmatically. Write tools return structured results with `success`, `storyId`, `storySlug`, `warnings` (compositional quality), and resource link annotations.
+
+The server also supports **elicitation** — interactive form-based prompts during tool execution:
+
+- `generate_section`: Elicits a component type picker when `componentType` is omitted
+- `plan_page`: Elicits plan review (approve/modify/cancel) after plan generation
+- `create_page_with_content`: Elicits publish confirmation after page creation
+- `delete_story`: Elicits delete confirmation before permanent deletion
+
+All elicitation uses graceful degradation via `tryElicit()` — clients that don't support elicitation get sensible defaults or error messages with available options.
+
+### Progress Notifications & UI Previews
+
+Multi-step tools (`generate_section`, `create_page_with_content`) emit progress notifications with step counts. The server declares `listChanged: true` on all three capabilities (tools, resources, prompts).
+
+When connected to clients supporting the **MCP Apps extension** (`@modelcontextprotocol/ext-apps`), the server provides interactive HTML previews via `ui://` resources (section preview, page preview, plan review) with approve/reject/modify action bars, rendered with actual kickstartDS React components.
+
 ### Transport Modes
 
 - **stdio** (default): For local usage with Claude Desktop — `npm start`
@@ -286,6 +320,11 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-services/src/plan.ts](packages/storyblok-services/src/plan.ts) - Page planning (`planPageContent()`) — AI-assisted section sequence via OpenAI, extracted from MCP server
 - [packages/storyblok-services/src/generate-section.ts](packages/storyblok-services/src/generate-section.ts) - Single-section generation (`generateSectionContent()`) with site-aware context injection, extracted from MCP server
 - [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
+- [packages/mcp-server/src/prompts.ts](packages/mcp-server/src/prompts.ts) - 6 MCP prompt definitions + message generator
+- [packages/mcp-server/src/output-schemas.ts](packages/mcp-server/src/output-schemas.ts) - Output schemas for 15 tools + annotation helpers
+- [packages/mcp-server/src/elicitation.ts](packages/mcp-server/src/elicitation.ts) - tryElicit() helper + 5 pre-built elicitation form schemas
+- [packages/mcp-server/src/progress.ts](packages/mcp-server/src/progress.ts) - ProgressReporter class for step-by-step progress notifications
+- [packages/mcp-server/src/ui/](packages/mcp-server/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
 - [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component

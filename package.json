@@ -26,6 +26,9 @@
       "fsevents",
       "protobufjs",
       "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@modelcontextprotocol/ext-apps"
     ]
   }
 }

@@ -651,6 +651,21 @@ The server also exposes MCP resources:
 - `storyblok://stories` - Overview of all stories
 - `recipes://section-recipes` - Curated section recipes, page templates, and anti-patterns for guided content generation
 
+## Prompts
+
+The server exposes **6 MCP prompts** — guided workflows that clients can discover via `prompts/list` and invoke with `prompts/get`. Each prompt returns a multi-step instruction sequence that guides the LLM through a complete workflow using the available tools.
+
+| Prompt             | Required Args                  | Description                                                                                                                            |
+| ------------------ | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `create-page`      | `intent`                       | Plan and create a new page with AI-generated content. Optional: `slug`, `sectionCount`, `contentType`, `path`                          |
+| `migrate-from-url` | `url`                          | Scrape a web page, analyze its structure, and recreate it in Storyblok using Design System components. Optional: `slug`, `contentType` |
+| `create-blog-post` | `topic`                        | Create a complete blog post with sections, head/aside/cta root fields, and SEO. Optional: `slug`, `author`                             |
+| `content-audit`    | —                              | Audit existing content: component usage, section patterns, content quality, SEO health. Optional: `startsWith`                         |
+| `extend-page`      | `storyId`                      | Add new sections to an existing page at a specified position. Optional: `intent`, `position`                                           |
+| `translate-page`   | `sourceSlug`, `targetLanguage` | Translate an existing page to another language and create it in the target language folder. Optional: `targetPath`                     |
+
+Prompts are available in any MCP client that supports the `prompts` capability (Claude Desktop, VS Code Copilot, etc.). They appear as slash commands or in a prompt picker UI.
+
 ## Guided Generation
 
 The server supports a **section-by-section generation workflow** that produces higher-quality content than generating entire pages at once. The recommended flow:
@@ -666,6 +681,72 @@ For standard pages, steps 4–5 can be skipped. For hybrid content types like `b
 `plan_page` → `generate_section` (per section) → `generate_root_field` (per root field) → `generate_seo` → `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`
 
 Alternatively, use `list_recipes` for a single-call overview of proven component combinations merged with the site's live patterns.
+
+## Structured Output (`outputSchema`)
+
+Write and generation tools declare a JSON Schema `outputSchema` so that MCP clients can parse results programmatically instead of relying on free-text. Each write tool (e.g. `create_page_with_content`, `import_content`, `replace_section`, `update_seo`) returns a structured result with:
+
+- `success` (boolean) — Whether the operation succeeded
+- `storyId` / `storySlug` — Identifiers for the created/updated story
+- `warnings` (optional array) — Compositional quality warnings (non-blocking)
+- Resource link annotations pointing to `storyblok://stories/{slug}` for easy follow-up
+
+Generation tools (`generate_section`, `plan_page`, etc.) also declare output schemas for their specific result shapes.
+
+## Elicitation for Interactive Workflows
+
+The server supports MCP **elicitation** — interactive form-based prompts that ask the user for input during tool execution. This enables richer, guided workflows:
+
+| Elicitation Point            | Tool                       | When Triggered                          |
+| ---------------------------- | -------------------------- | --------------------------------------- |
+| Component type picker        | `generate_section`         | When `componentType` is omitted         |
+| Plan review (approve/modify) | `plan_page`                | After plan generation, before returning |
+| Publish confirmation         | `create_page_with_content` | After page creation, before publishing  |
+| Delete confirmation          | `delete_story`             | Before permanent deletion               |
+
+All elicitation uses **graceful degradation**: if the client doesn't support elicitation, the tool falls back to sensible defaults or returns an error with available options. The `tryElicit()` helper detects client capability and returns `{ accepted: false, reason: 'unsupported' }` when elicitation is unavailable.
+
+## Progress Notifications
+
+Multi-step tools emit **progress notifications** so clients can display real-time status:
+
+| Tool                       | Steps                                         |
+| -------------------------- | --------------------------------------------- |
+| `generate_section`         | Patterns → Generate → Complete (3 steps)      |
+| `create_page_with_content` | Path resolution → Create → Complete (3 steps) |
+
+Progress uses MCP's `notifications/progress` with `progressToken`, `progress` (current step), `total` (total steps), and a human-readable `message`. Clients that support progress tokens (e.g. VS Code Copilot) display these as inline status updates.
+
+## Interactive UI Previews (MCP Apps)
+
+When connected to a client that supports the **MCP Apps extension** (`@modelcontextprotocol/ext-apps`), the server provides interactive HTML previews rendered with actual kickstartDS Design System components:
+
+### UI Resources
+
+| Resource URI               | Description                                                     |
+| -------------------------- | --------------------------------------------------------------- |
+| `ui://kds/section-preview` | Live section preview with approve/reject/modify action bar      |
+| `ui://kds/page-preview`    | Full-page preview with section badges and fullscreen support    |
+| `ui://kds/plan-review`     | Interactive plan review with drag-to-reorder and approve/reject |
+
+### App-Only Tools
+
+These tools have `visibility: ["app"]` — they're hidden from the LLM and can only be called from the UI iframe:
+
+| Tool              | Description                                    |
+| ----------------- | ---------------------------------------------- |
+| `approve_section` | Approve a generated section from the preview   |
+| `reject_section`  | Reject a section and request regeneration      |
+| `modify_section`  | Modify section with user feedback              |
+| `approve_plan`    | Approve the planned section sequence           |
+| `reorder_plan`    | Reorder sections in the plan via drag-and-drop |
+
+### Features
+
+- **Server-side rendering** — Sections are rendered to static HTML using `renderToStaticMarkup` with `DsaProviders` and actual kickstartDS React components
+- **Streaming preview** — `ontoolinputpartial` support shows a live preview while the section is being generated
+- **Theme bridge** — Host application CSS variables are mapped to kickstartDS design tokens for visual consistency
+- **Display modes** — Section previews use `inline` mode; page previews request `fullscreen` via `requestDisplayMode()`
 
 ### Compositional Quality Warnings
 
@@ -730,21 +811,41 @@ config/
 # MCP server package
 packages/mcp-server/
 ├── src/
-│   ├── index.ts                # Main server with tool handlers (stdio + HTTP transport)
+│   ├── index.ts                # Main server entry (stdio + HTTP transport)
 │   ├── config.ts               # Configuration and Zod schemas
-│   ├── services.ts             # Storyblok and OpenAI service classes (delegates to shared lib)
-│   └── errors.ts               # Error types and handling
+│   ├── services.ts             # Storyblok and OpenAI service classes
+│   ├── errors.ts               # Error types and handling
+│   ├── prompts.ts              # 6 MCP prompt definitions + message generator
+│   ├── register-prompts.ts     # Prompt capability + request handlers
+│   ├── register-tools.ts       # Tool definitions, dispatch, outputSchema injection
+│   ├── register-resources.ts   # Resource registrations + ext-apps UI resources
+│   ├── output-schemas.ts       # Output schemas for 15 tools + annotation helpers
+│   ├── elicitation.ts          # tryElicit() helper + 5 pre-built form schemas
+│   ├── progress.ts             # ProgressReporter class for step-by-step progress
+│   └── ui/
+│       ├── index.ts            # Barrel export for ext-apps UI module
+│       ├── capability.ts       # clientSupportsExtApps(), URI constants
+│       ├── theme-bridge.ts     # Host→kickstartDS CSS variable bridge
+│       ├── templates.ts        # 3 HTML preview templates (section, page, plan)
+│       ├── app-tools.ts        # 5 app-only tools (approve/reject/modify/reorder)
+│       ├── resources.ts        # 3 ui:// resource registrations
+│       ├── render.tsx          # SSR pipeline with kickstartDS React components
+│       └── tokens.generated.ts # Auto-generated kickstartDS CSS (~240KB)
 ├── schemas/
-│   ├── page.schema.dereffed.json           # Design System page schema
-│   ├── blog-post.schema.dereffed.json      # Design System blog-post schema
-│   ├── blog-overview.schema.dereffed.json  # Design System blog-overview schema
-│   ├── event-detail.schema.dereffed.json   # Design System event-detail schema
-│   ├── event-list.schema.dereffed.json     # Design System event-list schema
-│   └── section-recipes.json               # Curated section recipes, page templates, and anti-patterns
+│   ├── page.schema.dereffed.json
+│   ├── blog-post.schema.dereffed.json
+│   ├── blog-overview.schema.dereffed.json
+│   ├── event-detail.schema.dereffed.json
+│   ├── event-list.schema.dereffed.json
+│   └── section-recipes.json
+├── scripts/
+│   └── extract-tokens.js       # Build-time CSS extraction for UI previews
+├── test/                       # 9 suites, 241+ tests
 ├── .kamal/
-│   └── secrets                 # MCP-specific Kamal secrets (reads from environment)
+│   └── secrets
 ├── package.json
 ├── tsconfig.json
+├── jest.config.js
 ├── Dockerfile
 └── README.md
 
@@ -760,6 +861,7 @@ Core Storyblok and OpenAI logic — including schema preparation for OpenAI, con
 | Package                           | Version       | Purpose                                                      |
 | --------------------------------- | ------------- | ------------------------------------------------------------ |
 | `@modelcontextprotocol/sdk`       | `^1.0.0`      | MCP protocol implementation                                  |
+| `@modelcontextprotocol/ext-apps`  | `^1.0.0`      | MCP Apps extension for interactive UI previews               |
 | `@kickstartds/storyblok-services` | `workspace:*` | Shared Storyblok + OpenAI service functions (pnpm workspace) |
 | `openai`                          | `^6.18.0`     | OpenAI API client                                            |
 | `storyblok-js-client`             | `^7.2.3`      | Storyblok Management API client                              |

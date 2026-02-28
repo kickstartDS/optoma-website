@@ -461,7 +461,10 @@ export const schemas = {
   generateSection: z.object({
     componentType: z
       .string()
-      .describe("Component type to generate (e.g. 'hero', 'features', 'faq')"),
+      .optional()
+      .describe(
+        "Component type to generate (e.g. 'hero', 'features', 'faq'). If omitted, you will be asked to select one."
+      ),
     prompt: z.string().describe("Content description for this section"),
     system: z.string().optional().describe("System prompt override"),
     previousSection: z

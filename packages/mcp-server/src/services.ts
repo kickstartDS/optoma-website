@@ -157,6 +157,11 @@ export class StoryblokService {
     return this.contentClient;
   }
 
+  /** Expose the space ID for resource link construction. */
+  getSpaceId(): string {
+    return this.spaceId;
+  }
+
   /**
    * Fetch ideas from the Storyblok space
    */

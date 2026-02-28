@@ -31,7 +31,7 @@
     "build:esm": "tsc --project tsconfig.esm.json",
     "build:cjs": "tsc --project tsconfig.cjs.json && node -e \"require('fs').writeFileSync('dist/cjs/package.json','{\\\"type\\\":\\\"commonjs\\\"}\\n')\"",
     "typecheck": "tsc --noEmit --project tsconfig.esm.json",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

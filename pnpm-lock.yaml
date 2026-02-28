@@ -20,9 +20,30 @@ importers:
 
   packages/mcp-server:
     dependencies:
+      '@kickstartds/base':
+        specifier: ^4.1.0
+        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))))(react@18.2.0)
+      '@kickstartds/blog':
+        specifier: ^4.1.0
+        version: 4.2.0(42e56769ce7266145234b8f2648b03b0)
+      '@kickstartds/content':
+        specifier: ^4.1.1
+        version: 4.1.4(42e56769ce7266145234b8f2648b03b0)
+      '@kickstartds/core':
+        specifier: ^4.1.0
+        version: 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))
+      '@kickstartds/ds-agency-premium':
+        specifier: ^2.0.2
+        version: 2.2.0(ec0a9f84fc16812a9ec6731071df6b33)
+      '@kickstartds/form':
+        specifier: ^4.1.0
+        version: 4.2.0(42e56769ce7266145234b8f2648b03b0)
       '@kickstartds/storyblok-services':
         specifier: workspace:*
         version: file:packages/storyblok-services(@noble/hashes@1.8.0)(ws@8.19.0)(zod@3.25.76)
+      '@modelcontextprotocol/ext-apps':
+        specifier: ^1.0.0
+        version: 1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(zod@3.25.76)
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.27.1(zod@3.25.76)
@@ -35,6 +56,12 @@ importers:
       openai:
         specifier: ^6.18.0
         version: 6.25.0(ws@8.19.0)(zod@3.25.76)
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
       storyblok-js-client:
         specifier: ^7.2.3
         version: 7.2.3
@@ -45,15 +72,30 @@ importers:
         specifier: ^3.22.0
         version: 3.25.76
     devDependencies:
+      '@types/jest':
+        specifier: ^29.5.0
+        version: 29.5.14
       '@types/jsdom':
         specifier: ^27.0.0
         version: 27.0.0
       '@types/node':
         specifier: ^20.0.0
         version: 20.4.5
+      '@types/react':
+        specifier: ^18.2.0
+        version: 18.2.17
+      '@types/react-dom':
+        specifier: ^18.2.0
+        version: 18.2.7
       '@types/turndown':
         specifier: ^5.0.6
         version: 5.0.6
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.4.5)
+      ts-jest:
+        specifier: ^29.2.0
+        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.18.20)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6)
       typescript:
         specifier: ^5.0.0
         version: 5.1.6
@@ -87,7 +129,7 @@ importers:
         version: 1.120.9
       ts-jest:
         specifier: ^29.1.0
-        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6)
+        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.18.20)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6)
       typescript:
         specifier: ^5.0.0
         version: 5.1.6
@@ -133,7 +175,7 @@ importers:
         version: 29.7.0(@types/node@20.4.5)
       ts-jest:
         specifier: ^29.0.0
-        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6)
+        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.18.20)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6)
       typescript:
         specifier: ^5.0.0
         version: 5.1.6
@@ -1602,6 +1644,19 @@ packages:
   '@mixmark-io/domino@2.2.0':
     resolution: {integrity: sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==}
 
+  '@modelcontextprotocol/ext-apps@1.1.2':
+    resolution: {integrity: sha512-Gx4TEo3/F8yq1Ix6LdgLwMrKqfZqD7++eakZdbMUewrYtHeeJn3nKpeNhgEfO7nYRwonqWYomOAszWZWJS0IbA==}
+    peerDependencies:
+      '@modelcontextprotocol/sdk': ^1.24.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+      zod: ^3.25.0 || ^4.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   '@modelcontextprotocol/sdk@1.27.1':
     resolution: {integrity: sha512-sr6GbP+4edBwFndLbM60gf07z0FQ79gaExpnsjMGePXqFcSSb7t6iscpjk9DhFhwd+mTEQrzNafGP8/iGGFYaA==}
     engines: {node: '>=18'}
@@ -1980,6 +2035,61 @@ packages:
       '@orpc/contract': 1.8.1
       '@orpc/server': 1.8.1
       zod: '>=3.25.0'
+
+  '@oven/bun-darwin-aarch64@1.3.10':
+    resolution: {integrity: sha512-PXgg5gqcS/rHwa1hF0JdM1y5TiyejVrMHoBmWY/DjtfYZoFTXie1RCFOkoG0b5diOOmUcuYarMpH7CSNTqwj+w==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@oven/bun-darwin-x64-baseline@1.3.10':
+    resolution: {integrity: sha512-w1gaTlqU0IJCmJ1X+PGHkdNU1n8Gemx5YKkjhkJIguvFINXEBB5U1KG82QsT65Tk4KyNMfbLTlmy4giAvUoKfA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oven/bun-darwin-x64@1.3.10':
+    resolution: {integrity: sha512-Nhssuh7GBpP5PiDSOl3+qnoIG7PJo+ec2oomDevnl9pRY6x6aD2gRt0JE+uf+A8Om2D6gjeHCxjEdrw5ZHE8mA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oven/bun-linux-aarch64-musl@1.3.10':
+    resolution: {integrity: sha512-Ui5pAgM7JE9MzHokF0VglRMkbak3lTisY4Mf1AZutPACXWgKJC5aGrgnHBfkl7QS6fEeYb0juy1q4eRznRHOsw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@oven/bun-linux-aarch64@1.3.10':
+    resolution: {integrity: sha512-OUgPHfL6+PM2Q+tFZjcaycN3D7gdQdYlWnwMI31DXZKY1r4HINWk9aEz9t/rNaHg65edwNrt7dsv9TF7xK8xIA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@oven/bun-linux-x64-baseline@1.3.10':
+    resolution: {integrity: sha512-oqvMDYpX6dGJO03HgO5bXuccEsH3qbdO3MaAiAlO4CfkBPLUXz3N0DDElg5hz0L6ktdDVKbQVE5lfe+LAUISQg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oven/bun-linux-x64-musl-baseline@1.3.10':
+    resolution: {integrity: sha512-/hOZ6S1VsTX6vtbhWVL9aAnOrdpuO54mAGUWpTdMz7dFG5UBZ/VUEiK0pBkq9A1rlBk0GeD/6Y4NBFl8Ha7cRA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oven/bun-linux-x64-musl@1.3.10':
+    resolution: {integrity: sha512-poVXvOShekbexHq45b4MH/mRjQKwACAC8lHp3Tz/hEDuz0/20oncqScnmKwzhBPEpqJvydXficXfBYuSim8opw==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oven/bun-linux-x64@1.3.10':
+    resolution: {integrity: sha512-bzUgYj/PIZziB/ZesIP9HUyfvh6Vlf3od+TrbTTyVEuCSMKzDPQVW/yEbRp0tcHO3alwiEXwJDrWrHAguXlgiQ==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oven/bun-windows-x64-baseline@1.3.10':
+    resolution: {integrity: sha512-gh3UAHbUdDUG6fhLc1Csa4IGdtghue6U8oAIXWnUqawp6lwb3gOCRvp25IUnLF5vUHtgfMxuEUYV7YA2WxVutw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@oven/bun-windows-x64@1.3.10':
+    resolution: {integrity: sha512-qaS1In3yfC/Z/IGQriVmF8GWwKuNqiw7feTSJWaQhH5IbL6ENR+4wGNPniZSJFaM/SKUO0e/YCRdoVBvgU4C1g==}
+    cpu: [x64]
+    os: [win32]
 
   '@pagefind/darwin-arm64@1.4.0':
     resolution: {integrity: sha512-2vMqkbv3lbx1Awea90gTaBsvpzgRs7MuSgKDxW0m9oV1GPZCZbZBJg/qL83GIUEN2BFlY46dtUZi54pwH+/pTQ==}
@@ -2557,11 +2667,37 @@ packages:
   '@reach/observe-rect@1.2.0':
     resolution: {integrity: sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==}
 
+  '@rollup/rollup-darwin-arm64@4.59.0':
+    resolution: {integrity: sha512-W2Psnbh1J8ZJw0xKAd8zdNgF9HRLkdWwwdWqubSVk0pUuQkoHnv7rx4GiF9rT4t5DIZGAsConRE3AxCdJ4m8rg==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@rollup/rollup-darwin-x64@4.59.0':
+    resolution: {integrity: sha512-ZW2KkwlS4lwTv7ZVsYDiARfFCnSGhzYPdiOU4IM2fDbL+QGlyAbjgSFuqNRbSthybLbIJ915UtZBtmuLrQAT/w==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rollup/rollup-linux-arm64-gnu@4.59.0':
+    resolution: {integrity: sha512-jYgUGk5aLd1nUb1CtQ8E+t5JhLc9x5WdBKew9ZgAXg7DBk0ZHErLHdXM24rfX+bKrFe+Xp5YuJo54I5HFjGDAA==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
   '@rollup/rollup-linux-x64-gnu@4.59.0':
     resolution: {integrity: sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
+
+  '@rollup/rollup-win32-arm64-msvc@4.59.0':
+    resolution: {integrity: sha512-V5B6mG7OrGTwnxaNUzZTDTjDS7F75PO1ae6MJYdiMu60sq0CqN5CVeVsbhPxalupvTX8gXVSU9gq+Rx1/hvu6A==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rollup/rollup-win32-x64-msvc@4.59.0':
+    resolution: {integrity: sha512-2HRCml6OztYXyJXAvdDXPKcawukWY2GpR5/nxKp4iBgiO3wcoEGkAaqctIbZcNB6KlUQBIqt8VYkNSj2397EfA==}
+    cpu: [x64]
+    os: [win32]
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -10330,6 +10466,15 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
+  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))))(react@18.2.0)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))
+      classnames: 2.5.1
+      markdown-to-jsx: 7.7.17(react@18.2.0)
+      photoswipe: 5.4.4
+      react: 18.2.0
+
   '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12))))(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.28.6
@@ -10344,6 +10489,15 @@ snapshots:
       '@babel/runtime': 7.28.6
       '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12))))(react@18.2.0)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12)))
+      classnames: 2.5.1
+      date-fns: 2.30.0
+      react: 18.2.0
+
+  '@kickstartds/blog@4.2.0(42e56769ce7266145234b8f2648b03b0)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))))(react@18.2.0)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))
       classnames: 2.5.1
       date-fns: 2.30.0
       react: 18.2.0
@@ -10364,6 +10518,34 @@ snapshots:
       classnames: 2.5.1
       countup.js: 2.9.0
       react: 18.2.0
+
+  '@kickstartds/content@4.1.4(42e56769ce7266145234b8f2648b03b0)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@glidejs/glide': 3.7.1
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))))(react@18.2.0)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))
+      classnames: 2.5.1
+      countup.js: 2.9.0
+      react: 18.2.0
+
+  '@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@storybook/types': 7.6.23
+      bourbon: 7.3.0
+      classnames: 2.5.1
+      del: 6.1.1
+      dependency-graph: 0.11.0
+      esbuild: 0.17.19
+      fast-glob: 3.3.3
+      fs-extra: 11.3.3
+      json-schema: 0.4.0
+      lazysizes: 5.3.2
+      pubsub-js: 1.9.5
+      react: 18.2.0
+      sass: 1.97.3
+      storybook-design-token: 3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))
 
   '@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12)))':
     dependencies:
@@ -10403,11 +10585,39 @@ snapshots:
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
+  '@kickstartds/ds-agency-premium@2.2.0(ec0a9f84fc16812a9ec6731071df6b33)':
+    dependencies:
+      '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@18.2.0)
+      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))))(react@18.2.0)
+      '@kickstartds/blog': 4.2.0(42e56769ce7266145234b8f2648b03b0)
+      '@kickstartds/content': 4.1.4(42e56769ce7266145234b8f2648b03b0)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))
+      '@kickstartds/form': 4.2.0(42e56769ce7266145234b8f2648b03b0)
+      classnames: 2.5.1
+      markdown-to-jsx: 7.7.17(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      tinycolor2: 1.6.0
+      traverse: 0.6.11
+    optionalDependencies:
+      c15t: 1.8.3(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@18.2.17)(react@18.2.0)(typeorm@0.3.28)(ws@8.19.0)
+    transitivePeerDependencies:
+      - '@bedrock-layout/css'
+
   '@kickstartds/form@4.2.0(2ee9d08e6ebf57ccad39482fd927676f)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12))))(react@18.2.0)
       '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12)))
+      classnames: 2.5.1
+      react: 18.2.0
+
+  '@kickstartds/form@4.2.0(42e56769ce7266145234b8f2648b03b0)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20))))(react@18.2.0)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.23)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)))
       classnames: 2.5.1
       react: 18.2.0
 
@@ -10597,6 +10807,31 @@ snapshots:
       stringify-object: 3.3.0
 
   '@mixmark-io/domino@2.2.0': {}
+
+  '@modelcontextprotocol/ext-apps@1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(zod@3.25.76)':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.27.1(zod@3.25.76)
+      zod: 3.25.76
+    optionalDependencies:
+      '@oven/bun-darwin-aarch64': 1.3.10
+      '@oven/bun-darwin-x64': 1.3.10
+      '@oven/bun-darwin-x64-baseline': 1.3.10
+      '@oven/bun-linux-aarch64': 1.3.10
+      '@oven/bun-linux-aarch64-musl': 1.3.10
+      '@oven/bun-linux-x64': 1.3.10
+      '@oven/bun-linux-x64-baseline': 1.3.10
+      '@oven/bun-linux-x64-musl': 1.3.10
+      '@oven/bun-linux-x64-musl-baseline': 1.3.10
+      '@oven/bun-windows-x64': 1.3.10
+      '@oven/bun-windows-x64-baseline': 1.3.10
+      '@rollup/rollup-darwin-arm64': 4.59.0
+      '@rollup/rollup-darwin-x64': 4.59.0
+      '@rollup/rollup-linux-arm64-gnu': 4.59.0
+      '@rollup/rollup-linux-x64-gnu': 4.59.0
+      '@rollup/rollup-win32-arm64-msvc': 4.59.0
+      '@rollup/rollup-win32-x64-msvc': 4.59.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   '@modelcontextprotocol/sdk@1.27.1(zod@3.25.76)':
     dependencies:
@@ -11092,6 +11327,39 @@ snapshots:
       - '@opentelemetry/api'
       - crossws
       - ws
+
+  '@oven/bun-darwin-aarch64@1.3.10':
+    optional: true
+
+  '@oven/bun-darwin-x64-baseline@1.3.10':
+    optional: true
+
+  '@oven/bun-darwin-x64@1.3.10':
+    optional: true
+
+  '@oven/bun-linux-aarch64-musl@1.3.10':
+    optional: true
+
+  '@oven/bun-linux-aarch64@1.3.10':
+    optional: true
+
+  '@oven/bun-linux-x64-baseline@1.3.10':
+    optional: true
+
+  '@oven/bun-linux-x64-musl-baseline@1.3.10':
+    optional: true
+
+  '@oven/bun-linux-x64-musl@1.3.10':
+    optional: true
+
+  '@oven/bun-linux-x64@1.3.10':
+    optional: true
+
+  '@oven/bun-windows-x64-baseline@1.3.10':
+    optional: true
+
+  '@oven/bun-windows-x64@1.3.10':
+    optional: true
 
   '@pagefind/darwin-arm64@1.4.0':
     optional: true
@@ -11590,7 +11858,22 @@ snapshots:
 
   '@reach/observe-rect@1.2.0': {}
 
+  '@rollup/rollup-darwin-arm64@4.59.0':
+    optional: true
+
+  '@rollup/rollup-darwin-x64@4.59.0':
+    optional: true
+
+  '@rollup/rollup-linux-arm64-gnu@4.59.0':
+    optional: true
+
   '@rollup/rollup-linux-x64-gnu@4.59.0':
+    optional: true
+
+  '@rollup/rollup-win32-arm64-msvc@4.59.0':
+    optional: true
+
+  '@rollup/rollup-win32-x64-msvc@4.59.0':
     optional: true
 
   '@rtsao/scc@1.1.0': {}
@@ -17216,6 +17499,12 @@ snapshots:
       iconv-lite: 0.7.2
       unpipe: 1.0.0
 
+  raw-loader@4.0.2(webpack@5.105.3(esbuild@0.18.20)):
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.3.0
+      webpack: 5.105.3(esbuild@0.18.20)
+
   raw-loader@4.0.2(webpack@5.105.3(esbuild@0.19.12)):
     dependencies:
       loader-utils: 2.0.4
@@ -17957,6 +18246,43 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.18.20)):
+    dependencies:
+      '@storybook/blocks': 7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/components': 7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/core-events': 7.6.23
+      '@storybook/manager-api': 7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/preview-api': 7.6.23
+      '@storybook/theming': 7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/types': 7.6.23
+      glob: 9.3.5
+      jsdom: 21.1.2
+      polished: 4.3.1
+      postcss: 8.5.6
+      postcss-scss: 4.0.9(postcss@8.5.6)
+      prettier: 2.8.8
+      raw-loader: 4.0.2(webpack@5.105.3(esbuild@0.18.20))
+      react-storage-hooks: 4.0.1(react@18.2.0)
+      react-use-clipboard: 1.0.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-virtual: 2.10.4(react@18.2.0)
+      vite: 4.5.14(@types/node@20.4.5)(sass@1.97.3)(terser@5.46.0)
+    optionalDependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/node'
+      - bufferutil
+      - canvas
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - utf-8-validate
+      - webpack
+
   storybook-design-token@3.0.0-beta.3(@storybook/blocks@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/components@7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/core-events@7.6.23)(@storybook/manager-api@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/preview-api@7.6.23)(@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@storybook/types@7.6.23)(@types/node@20.4.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)(terser@5.46.0)(webpack@5.105.3(esbuild@0.19.12)):
     dependencies:
       '@storybook/blocks': 7.6.23(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -18224,6 +18550,17 @@ snapshots:
 
   term-size@2.2.1: {}
 
+  terser-webpack-plugin@5.3.16(esbuild@0.18.20)(webpack@5.105.3(esbuild@0.18.20)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.3
+      serialize-javascript: 6.0.2
+      terser: 5.46.0
+      webpack: 5.105.3(esbuild@0.18.20)
+    optionalDependencies:
+      esbuild: 0.18.20
+
   terser-webpack-plugin@5.3.16(esbuild@0.19.12)(webpack@5.105.3(esbuild@0.19.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -18412,7 +18749,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6):
+  ts-jest@29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.18.20)(jest-util@29.7.0)(jest@29.7.0(@types/node@20.4.5))(typescript@5.1.6):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -18430,6 +18767,7 @@ snapshots:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       babel-jest: 29.7.0(@babel/core@7.29.0)
+      esbuild: 0.18.20
       jest-util: 29.7.0
 
   ts-toolbelt@9.6.0: {}
@@ -18902,6 +19240,38 @@ snapshots:
   webidl-conversions@8.0.1: {}
 
   webpack-sources@3.3.4: {}
+
+  webpack@5.105.3(esbuild@0.18.20):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.8
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.16.0
+      acorn-import-phases: 1.0.4(acorn@8.16.0)
+      browserslist: 4.28.1
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.19.0
+      es-module-lexer: 2.0.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.1
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 4.3.3
+      tapable: 2.3.0
+      terser-webpack-plugin: 5.3.16(esbuild@0.18.20)(webpack@5.105.3(esbuild@0.18.20))
+      watchpack: 2.5.1
+      webpack-sources: 3.3.4
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
 
   webpack@5.105.3(esbuild@0.19.12):
     dependencies:

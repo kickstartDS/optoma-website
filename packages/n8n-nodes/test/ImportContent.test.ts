@@ -73,9 +73,14 @@ describe("Import Content", () => {
 
       const newSections = [
         {
-          component: "hero",
-          headline: "Generated Hero",
-          text: "AI-generated content",
+          component: "section",
+          components: [
+            {
+              component: "hero",
+              headline: "Generated Hero",
+              text: "AI-generated content",
+            },
+          ],
         },
         {
           component: "section",
@@ -104,7 +109,8 @@ describe("Import Content", () => {
       const sections = putBody.story.content.section;
       expect(sections).toHaveLength(4); // 1 existing + 2 new + 1 existing
       expect(sections[0]._uid).toBe("section-1");
-      expect(sections[1].component).toBe("hero");
+      expect(sections[1].component).toBe("section");
+      expect(sections[1].components[0].component).toBe("hero");
       expect(sections[2].component).toBe("section");
       expect(sections[3]._uid).toBe("section-3");
     });
@@ -122,7 +128,12 @@ describe("Import Content", () => {
         spaceId,
         "999",
         prompterUid,
-        [{ component: "hero", headline: "Test" }],
+        [
+          {
+            component: "section",
+            components: [{ component: "hero", headline: "Test" }],
+          },
+        ],
         true // publish = true
       );
 
@@ -139,7 +150,7 @@ describe("Import Content", () => {
           spaceId,
           "999",
           "nonexistent-uid",
-          [{ component: "hero" }],
+          [{ component: "section", components: [{ component: "hero" }] }],
           false
         )
       ).rejects.toThrow(/not found/);
@@ -154,7 +165,7 @@ describe("Import Content", () => {
           spaceId,
           "999",
           "wrong-uid",
-          [{ component: "hero" }],
+          [{ component: "section", components: [{ component: "hero" }] }],
           false
         );
         fail("Should have thrown");
@@ -184,7 +195,7 @@ describe("Import Content", () => {
           spaceId,
           "999",
           "any-uid",
-          [{ component: "hero" }],
+          [{ component: "section", components: [{ component: "hero" }] }],
           false
         )
       ).rejects.toThrow(/section/);
@@ -203,13 +214,19 @@ describe("Import Content", () => {
         spaceId,
         "999",
         prompterUid,
-        [{ component: "faq", questions: [] }],
+        [
+          {
+            component: "section",
+            components: [{ component: "faq", questions: [] }],
+          },
+        ],
         false
       );
 
       const sections = mockPut.mock.calls[0][1].story.content.section;
       expect(sections).toHaveLength(3); // 1 existing + 1 new + 1 existing
-      expect(sections[1].component).toBe("faq");
+      expect(sections[1].component).toBe("section");
+      expect(sections[1].components[0].component).toBe("faq");
     });
   });
 
@@ -226,9 +243,17 @@ describe("Import Content", () => {
             content: {
               component: "page",
               section: [
-                { _uid: "s-1", component: "hero", headline: "First" },
+                {
+                  _uid: "s-1",
+                  component: "section",
+                  components: [{ component: "hero", headline: "First" }],
+                },
                 { _uid: "s-2", component: "section", headline_text: "Second" },
-                { _uid: "s-3", component: "cta", headline: "Third" },
+                {
+                  _uid: "s-3",
+                  component: "section",
+                  components: [{ component: "cta", headline: "Third" }],
+                },
               ],
             },
           },
@@ -245,14 +270,19 @@ describe("Import Content", () => {
         spaceId,
         "999",
         0,
-        [{ component: "text", text: "Prepended" }],
+        [
+          {
+            component: "section",
+            components: [{ component: "text", text: "Prepended" }],
+          },
+        ],
         false
       );
 
       const sections = mockPut.mock.calls[0][1].story.content.section;
       expect(sections).toHaveLength(4);
-      expect(sections[0].component).toBe("text");
-      expect(sections[0].text).toBe("Prepended");
+      expect(sections[0].component).toBe("section");
+      expect(sections[0].components[0].text).toBe("Prepended");
       expect(sections[1]._uid).toBe("s-1");
     });
 
@@ -265,13 +295,19 @@ describe("Import Content", () => {
         spaceId,
         "999",
         -1,
-        [{ component: "faq", questions: [] }],
+        [
+          {
+            component: "section",
+            components: [{ component: "faq", questions: [] }],
+          },
+        ],
         false
       );
 
       const sections = mockPut.mock.calls[0][1].story.content.section;
       expect(sections).toHaveLength(4);
-      expect(sections[3].component).toBe("faq");
+      expect(sections[3].component).toBe("section");
+      expect(sections[3].components[0].component).toBe("faq");
       expect(sections[0]._uid).toBe("s-1");
     });
 
@@ -285,8 +321,14 @@ describe("Import Content", () => {
         "999",
         2, // after s-1 and s-2
         [
-          { component: "features", feature: [] },
-          { component: "testimonials", testimonial: [] },
+          {
+            component: "section",
+            components: [{ component: "features", feature: [] }],
+          },
+          {
+            component: "section",
+            components: [{ component: "testimonials", testimonial: [] }],
+          },
         ],
         false
       );
@@ -295,8 +337,10 @@ describe("Import Content", () => {
       expect(sections).toHaveLength(5);
       expect(sections[0]._uid).toBe("s-1");
       expect(sections[1]._uid).toBe("s-2");
-      expect(sections[2].component).toBe("features");
-      expect(sections[3].component).toBe("testimonials");
+      expect(sections[2].component).toBe("section");
+      expect(sections[2].components[0].component).toBe("features");
+      expect(sections[3].component).toBe("section");
+      expect(sections[3].components[0].component).toBe("testimonials");
       expect(sections[4]._uid).toBe("s-3");
     });
 
@@ -309,13 +353,14 @@ describe("Import Content", () => {
         spaceId,
         "999",
         100, // way past the end
-        [{ component: "stats" }],
+        [{ component: "section", components: [{ component: "stats" }] }],
         false
       );
 
       const sections = mockPut.mock.calls[0][1].story.content.section;
       expect(sections).toHaveLength(4);
-      expect(sections[3].component).toBe("stats"); // appended at end
+      expect(sections[3].component).toBe("section"); // appended at end
+      expect(sections[3].components[0].component).toBe("stats");
     });
 
     it("should create section array if story has none", async () => {
@@ -334,13 +379,19 @@ describe("Import Content", () => {
         spaceId,
         "999",
         0,
-        [{ component: "hero", headline: "Brand New" }],
+        [
+          {
+            component: "section",
+            components: [{ component: "hero", headline: "Brand New" }],
+          },
+        ],
         false
       );
 
       const sections = mockPut.mock.calls[0][1].story.content.section;
       expect(sections).toHaveLength(1);
-      expect(sections[0].headline).toBe("Brand New");
+      expect(sections[0].component).toBe("section");
+      expect(sections[0].components[0].headline).toBe("Brand New");
     });
 
     it("should not remove any existing sections", async () => {
@@ -352,7 +403,12 @@ describe("Import Content", () => {
         spaceId,
         "999",
         1,
-        [{ component: "text", text: "Inserted" }],
+        [
+          {
+            component: "section",
+            components: [{ component: "text", text: "Inserted" }],
+          },
+        ],
         false
       );
 
@@ -371,7 +427,7 @@ describe("Import Content", () => {
         spaceId,
         "999",
         0,
-        [{ component: "hero" }],
+        [{ component: "section", components: [{ component: "hero" }] }],
         true
       );
 
