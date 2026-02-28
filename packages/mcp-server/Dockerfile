@@ -12,8 +12,9 @@ COPY patches/ ./patches/
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
 COPY packages/mcp-server/package.json ./packages/mcp-server/
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (--ignore-scripts prevents prepublishOnly from firing
+# before source/tsconfig files are copied into the image)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Cache-bust: everything below here rebuilds when source changes.
 # Pass --build-arg CACHEBUST=$(date +%s) to force a fresh build.
