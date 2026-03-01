@@ -25,15 +25,10 @@ import {
   tryElicit,
   elicitDeleteConfirmation,
   elicitComponentType,
-  elicitPlanApproval,
   elicitPublishConfirmation,
 } from "./elicitation.js";
 import { ProgressReporter, type ProgressExtra } from "./progress.js";
-import {
-  PAGE_BUILDER_URI,
-  PLAN_REVIEW_URI,
-  clientSupportsExtApps,
-} from "./ui/capability.js";
+import { PAGE_BUILDER_URI, PLAN_REVIEW_URI } from "./ui/capability.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 // Lazy-loaded to avoid ESM directory import errors from kickstartDS at startup.
 // The render module imports @kickstartds/ds-agency-premium components which
@@ -893,48 +888,71 @@ async function handleGetStory(
     ],
   };
 
-  // When ext-apps is available, SSR-render sections for the page builder
-  if (clientSupportsExtApps(server.server)) {
-    try {
-      const story = (result as any)?.story || result;
-      const storyContent = story?.content;
-      // Try common root array field names
-      const sections =
-        storyContent?.section || storyContent?.sections || storyContent?.body;
+  // Always attach structuredContent when sections exist so the page builder
+  // UI can render them. No clientSupportsExtApps guard — non-ext-apps
+  // clients harmlessly ignore the extra field (same pattern as
+  // generate_section and create_page_with_content).
+  try {
+    const story = (result as any)?.story || result;
+    const storyContent = story?.content;
+    // Try common root array field names
+    const sections =
+      storyContent?.section || storyContent?.sections || storyContent?.body;
 
-      if (Array.isArray(sections) && sections.length > 0) {
+    if (Array.isArray(sections) && sections.length > 0) {
+      // SSR-render each section (best-effort — null on failure)
+      let rendered: Array<{
+        componentType: string;
+        renderedHtml: string | null;
+        index: number;
+      }>;
+      try {
         const { renderPageSectionsToHtml } = await getRenderModule();
-        const rendered = renderPageSectionsToHtml(sections);
-
-        (textResult as any).structuredContent = {
-          story: {
-            uid: story.uuid || story.uid,
-            name: story.name,
-            slug: story.full_slug || story.slug,
-            id: story.id,
-          },
-          sections: rendered.map(
-            (
-              r: {
-                componentType: string;
-                renderedHtml: string | null;
-                index: number;
-              },
-              i: number
-            ) => ({
-              componentType: r.componentType || "section",
-              renderedHtml: r.renderedHtml || null,
-              sectionData: sections[i],
-            })
-          ),
-        };
+        rendered = renderPageSectionsToHtml(sections);
+      } catch (renderErr) {
+        console.error(
+          `[MCP] get_story SSR preview render failed (non-fatal):`,
+          renderErr
+        );
+        // Fall back to metadata-only (no rendered HTML)
+        rendered = sections.map((s: any, i: number) => ({
+          componentType:
+            s.component === "section"
+              ? s.components?.[0]?.component || "section"
+              : s.component || "unknown",
+          renderedHtml: null,
+          index: i,
+        }));
       }
-    } catch (renderErr) {
-      console.error(
-        `[MCP] get_story SSR preview render failed (non-fatal):`,
-        renderErr
-      );
+
+      (textResult as any).structuredContent = {
+        story: {
+          uid: story.uuid || story.uid,
+          name: story.name,
+          slug: story.full_slug || story.slug,
+          id: story.id,
+        },
+        sections: rendered.map(
+          (
+            r: {
+              componentType: string;
+              renderedHtml: string | null;
+              index: number;
+            },
+            i: number
+          ) => ({
+            componentType: r.componentType || "section",
+            renderedHtml: r.renderedHtml || null,
+            sectionData: sections[i],
+          })
+        ),
+      };
     }
+  } catch (err) {
+    console.error(
+      `[MCP] get_story structuredContent assembly failed (non-fatal):`,
+      err
+    );
   }
 
   return textResult;
@@ -1469,82 +1487,14 @@ async function handlePlanPage(
     }
   );
 
-  // Plan review: skip elicitation when the client supports ext-apps UI.
-  // The plan-review UI (ui://kds/plan-review) provides a better experience
-  // with drag-and-drop reordering and visual section cards. Elicitation is
-  // only used as a fallback for text-only clients.
-  const hasUi = clientSupportsExtApps(server.server);
-
-  let planStatus: "approved" | "modify" | "cancelled" | "not_reviewed" =
-    "not_reviewed";
-
-  if (!hasUi) {
-    // No UI available — use elicitation for plan review
-    const plannedSections = (planResult.plan as any).sections as
-      | Array<{ componentType: string; description?: string }>
-      | undefined;
-    const planSummary = plannedSections
-      ? plannedSections
-          .map(
-            (s, i) =>
-              `${i + 1}. **${s.componentType}**${
-                s.description ? ` — ${s.description}` : ""
-              }`
-          )
-          .join("\n")
-      : planResult.plan.reasoning || "No sections planned.";
-
-    const planReview = elicitPlanApproval(planSummary);
-    const planElicitResult = await tryElicit(
-      server.server,
-      planReview.message,
-      planReview.properties,
-      planReview.required
-    );
-
-    if (planElicitResult.accepted) {
-      const action = planElicitResult.content?.approval as string;
-      if (action === "cancel") {
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(
-                { success: false, message: "Page planning cancelled by user" },
-                null,
-                2
-              ),
-            },
-          ],
-        };
-      }
-      planStatus = action === "approve" ? "approved" : "modify";
-    } else if (
-      planElicitResult.reason === "cancelled" ||
-      planElicitResult.reason === "declined"
-    ) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(
-              { success: false, message: "Page planning cancelled by user" },
-              null,
-              2
-            ),
-          },
-        ],
-      };
-    }
-    // If elicitation was unsupported, planStatus stays "not_reviewed" — proceed normally
-  }
-  // When hasUi is true, planStatus stays "not_reviewed" — the plan-review UI
-  // handles approval via the approve_plan app-only tool instead
+  // Plan review is handled by the plan-review UI (ui://kds/plan-review)
+  // for ext-apps clients, or conversationally by the LLM for text-only
+  // clients. No elicitation — it would be redundant with the UI and
+  // blocking for clients that support both.
 
   const planResponseData = {
     plan: planResult.plan,
     contentType: planResult.contentType,
-    ...(planStatus !== "not_reviewed" && { reviewStatus: planStatus }),
     ...(planResult.rootFieldMeta && {
       rootFieldMeta: planResult.rootFieldMeta,
     }),
