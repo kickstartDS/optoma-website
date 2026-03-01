@@ -9,8 +9,7 @@
 
 export {
   clientSupportsExtApps,
-  SECTION_PREVIEW_URI,
-  PAGE_PREVIEW_URI,
+  PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
   RESOURCE_MIME_TYPE,
 } from "./capability.js";
@@ -23,11 +22,9 @@ export { THEME_BRIDGE_CSS, PREVIEW_CHROME_CSS } from "./theme-bridge.js";
 
 export { KDS_GLOBAL_CSS } from "./tokens.generated.js";
 
-export {
-  SECTION_PREVIEW_HTML,
-  PAGE_PREVIEW_HTML,
-  PLAN_REVIEW_HTML,
-} from "./templates.js";
+export { KDS_COMPONENT_CSS } from "./components-css.generated.js";
+
+export { PAGE_BUILDER_HTML, PLAN_REVIEW_HTML } from "./templates.js";
 
 export {
   renderComponentToHtml,

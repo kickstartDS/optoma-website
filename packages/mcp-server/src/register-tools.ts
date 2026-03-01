@@ -30,9 +30,9 @@ import {
 } from "./elicitation.js";
 import { ProgressReporter, type ProgressExtra } from "./progress.js";
 import {
-  SECTION_PREVIEW_URI,
-  PAGE_PREVIEW_URI,
+  PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
+  clientSupportsExtApps,
 } from "./ui/capability.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 // Lazy-loaded to avoid ESM directory import errors from kickstartDS at startup.
@@ -826,12 +826,22 @@ async function handleCreatePageWithContent(
   );
 
   // Attach structuredContent for ext-apps page preview
-  if (renderedSections && renderedSections.length > 0) {
-    (writeResult as any).structuredContent = {
-      ...(writeResult as any).structuredContent,
-      renderedSections,
-    };
-  }
+  const storySlug =
+    (result as any)?.slug || (result as any)?.story?.slug || validated.slug;
+  const storyName =
+    (result as any)?.name || (result as any)?.story?.name || validated.name;
+  (writeResult as any).structuredContent = {
+    ...(writeResult as any).structuredContent,
+    success: true,
+    message: data.message,
+    storyName,
+    storySlug,
+    sectionCount: (validated.sections as any[])?.length || 0,
+    wasPublished,
+    ...(renderedSections &&
+      renderedSections.length > 0 && { renderedSections }),
+    ...(warnings.length > 0 && { warnings }),
+  };
 
   return writeResult;
 }
@@ -866,14 +876,15 @@ async function handleGetStory(
   args: Record<string, unknown>,
   ctx: ToolContext
 ): Promise<Record<string, any>> {
-  const { deps } = ctx;
+  const { deps, server } = ctx;
   const validated = schemas.getStory.parse(args);
   const result = await deps.storyblokService.getStory(
     validated.identifier,
     validated.findBy,
     validated.version
   );
-  return {
+
+  const textResult = {
     content: [
       {
         type: "text",
@@ -881,6 +892,52 @@ async function handleGetStory(
       },
     ],
   };
+
+  // When ext-apps is available, SSR-render sections for the page builder
+  if (clientSupportsExtApps(server.server)) {
+    try {
+      const story = (result as any)?.story || result;
+      const storyContent = story?.content;
+      // Try common root array field names
+      const sections =
+        storyContent?.section || storyContent?.sections || storyContent?.body;
+
+      if (Array.isArray(sections) && sections.length > 0) {
+        const { renderPageSectionsToHtml } = await getRenderModule();
+        const rendered = renderPageSectionsToHtml(sections);
+
+        (textResult as any).structuredContent = {
+          story: {
+            uid: story.uuid || story.uid,
+            name: story.name,
+            slug: story.full_slug || story.slug,
+            id: story.id,
+          },
+          sections: rendered.map(
+            (
+              r: {
+                componentType: string;
+                renderedHtml: string | null;
+                index: number;
+              },
+              i: number
+            ) => ({
+              componentType: r.componentType || "section",
+              renderedHtml: r.renderedHtml || null,
+              sectionData: sections[i],
+            })
+          ),
+        };
+      }
+    } catch (renderErr) {
+      console.error(
+        `[MCP] get_story SSR preview render failed (non-fatal):`,
+        renderErr
+      );
+    }
+  }
+
+  return textResult;
 }
 
 async function handleCreateStory(
@@ -1412,34 +1469,60 @@ async function handlePlanPage(
     }
   );
 
-  // Elicit plan review from user
-  const plannedSections = (planResult.plan as any).sections as
-    | Array<{ componentType: string; description?: string }>
-    | undefined;
-  const planSummary = plannedSections
-    ? plannedSections
-        .map(
-          (s, i) =>
-            `${i + 1}. **${s.componentType}**${
-              s.description ? ` — ${s.description}` : ""
-            }`
-        )
-        .join("\n")
-    : planResult.plan.reasoning || "No sections planned.";
-
-  const planReview = elicitPlanApproval(planSummary);
-  const planElicitResult = await tryElicit(
-    server.server,
-    planReview.message,
-    planReview.properties,
-    planReview.required
-  );
+  // Plan review: skip elicitation when the client supports ext-apps UI.
+  // The plan-review UI (ui://kds/plan-review) provides a better experience
+  // with drag-and-drop reordering and visual section cards. Elicitation is
+  // only used as a fallback for text-only clients.
+  const hasUi = clientSupportsExtApps(server.server);
 
   let planStatus: "approved" | "modify" | "cancelled" | "not_reviewed" =
     "not_reviewed";
-  if (planElicitResult.accepted) {
-    const action = planElicitResult.content?.approval as string;
-    if (action === "cancel") {
+
+  if (!hasUi) {
+    // No UI available — use elicitation for plan review
+    const plannedSections = (planResult.plan as any).sections as
+      | Array<{ componentType: string; description?: string }>
+      | undefined;
+    const planSummary = plannedSections
+      ? plannedSections
+          .map(
+            (s, i) =>
+              `${i + 1}. **${s.componentType}**${
+                s.description ? ` — ${s.description}` : ""
+              }`
+          )
+          .join("\n")
+      : planResult.plan.reasoning || "No sections planned.";
+
+    const planReview = elicitPlanApproval(planSummary);
+    const planElicitResult = await tryElicit(
+      server.server,
+      planReview.message,
+      planReview.properties,
+      planReview.required
+    );
+
+    if (planElicitResult.accepted) {
+      const action = planElicitResult.content?.approval as string;
+      if (action === "cancel") {
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                { success: false, message: "Page planning cancelled by user" },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      }
+      planStatus = action === "approve" ? "approved" : "modify";
+    } else if (
+      planElicitResult.reason === "cancelled" ||
+      planElicitResult.reason === "declined"
+    ) {
       return {
         content: [
           {
@@ -1453,25 +1536,10 @@ async function handlePlanPage(
         ],
       };
     }
-    planStatus = action === "approve" ? "approved" : "modify";
-  } else if (
-    planElicitResult.reason === "cancelled" ||
-    planElicitResult.reason === "declined"
-  ) {
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(
-            { success: false, message: "Page planning cancelled by user" },
-            null,
-            2
-          ),
-        },
-      ],
-    };
+    // If elicitation was unsupported, planStatus stays "not_reviewed" — proceed normally
   }
-  // If elicitation was unsupported, planStatus stays "not_reviewed" — proceed normally
+  // When hasUi is true, planStatus stays "not_reviewed" — the plan-review UI
+  // handles approval via the approve_plan app-only tool instead
 
   const planResponseData = {
     plan: planResult.plan,
@@ -1902,7 +1970,7 @@ export function registerTools(
     "generate_content",
     schemas.generateContent.shape,
     (args, extra) => handleGenerateContent(args, ctx(extra)),
-    { ui: { resourceUri: SECTION_PREVIEW_URI } }
+    { ui: { resourceUri: PAGE_BUILDER_URI } }
   );
 
   // ── import_content ───────────────────────────────────────────
@@ -1927,7 +1995,7 @@ export function registerTools(
     "create_page_with_content",
     schemas.createPageWithContent.shape,
     (args, extra) => handleCreatePageWithContent(args, ctx(extra)),
-    { ui: { resourceUri: PAGE_PREVIEW_URI } }
+    { ui: { resourceUri: PAGE_BUILDER_URI } }
   );
 
   // ── get_ideas ────────────────────────────────────────────────
@@ -1948,7 +2016,8 @@ export function registerTools(
     server,
     "get_story",
     schemas.getStory.shape,
-    (args, extra) => handleGetStory(args, ctx(extra))
+    (args, extra) => handleGetStory(args, ctx(extra)),
+    { ui: { resourceUri: PAGE_BUILDER_URI } }
   );
 
   // ── create_story ─────────────────────────────────────────────
@@ -2064,7 +2133,7 @@ export function registerTools(
     "generate_section",
     schemas.generateSection.shape,
     (args, extra) => handleGenerateSection(args, ctx(extra)),
-    { ui: { resourceUri: SECTION_PREVIEW_URI } }
+    { ui: { resourceUri: PAGE_BUILDER_URI } }
   );
 
   // ── generate_root_field ──────────────────────────────────────

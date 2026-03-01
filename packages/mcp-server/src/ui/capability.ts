@@ -22,11 +22,8 @@ import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 /** URI prefix for all kickstartDS UI resources */
 export const UI_URI_PREFIX = "ui://kds";
 
-/** Section preview resource URI */
-export const SECTION_PREVIEW_URI = `${UI_URI_PREFIX}/section-preview`;
-
-/** Page preview resource URI */
-export const PAGE_PREVIEW_URI = `${UI_URI_PREFIX}/page-preview`;
+/** Page builder resource URI (replaces section-preview + page-preview) */
+export const PAGE_BUILDER_URI = `${UI_URI_PREFIX}/page-builder`;
 
 /** Plan review resource URI */
 export const PLAN_REVIEW_URI = `${UI_URI_PREFIX}/plan-review`;
