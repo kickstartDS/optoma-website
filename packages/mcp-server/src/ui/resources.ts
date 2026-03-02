@@ -1,9 +1,10 @@
 /**
  * UI resource registration for ext-apps previews.
  *
- * Registers two `ui://` resources that serve HTML preview templates:
- * - `ui://kds/page-builder`  — Unified page builder (single + multi section)
- * - `ui://kds/plan-review`   — Section sequence planner with drag-to-reorder
+ * Registers three `ui://` resources that serve HTML preview templates:
+ * - `ui://kds/section-preview` — Stateless single-section preview with approve/reject/modify
+ * - `ui://kds/page-builder`    — Final assembly view for reviewing all sections before saving
+ * - `ui://kds/plan-review`     — Section sequence planner with drag-to-reorder
  *
  * These resources are only registered when the connected client
  * supports ext-apps (detected via capability negotiation).
@@ -18,11 +19,16 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerAppResource } from "@modelcontextprotocol/ext-apps/server";
 
 import {
+  SECTION_PREVIEW_URI,
   PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
   RESOURCE_MIME_TYPE,
 } from "./capability.js";
-import { PAGE_BUILDER_HTML, PLAN_REVIEW_HTML } from "./templates.js";
+import {
+  SECTION_PREVIEW_HTML,
+  PAGE_BUILDER_HTML,
+  PLAN_REVIEW_HTML,
+} from "./templates.js";
 
 // ── Registration ───────────────────────────────────────────────────
 
@@ -57,6 +63,29 @@ const SHARED_UI_META = {
 };
 
 export function registerUiResources(server: McpServer): void {
+  // ── Section Preview ────────────────────────────────────────────
+
+  registerAppResource(
+    server,
+    "Section Preview",
+    SECTION_PREVIEW_URI,
+    {
+      description:
+        "Stateless single-section preview. Shows one generated section in isolation with approve/reject/modify actions. Each generate_section call gets its own preview — no state accumulation.",
+      _meta: SHARED_UI_META,
+    },
+    async (uri) => ({
+      contents: [
+        {
+          uri: uri.href,
+          mimeType: RESOURCE_MIME_TYPE,
+          text: SECTION_PREVIEW_HTML,
+          _meta: SHARED_UI_META,
+        },
+      ],
+    })
+  );
+
   // ── Page Builder ───────────────────────────────────────────────
 
   registerAppResource(
@@ -65,7 +94,7 @@ export function registerUiResources(server: McpServer): void {
     PAGE_BUILDER_URI,
     {
       description:
-        "Unified page builder that accumulates sections across multiple generate_section calls. Supports single-section preview, multi-section page assembly, and editing existing pages. Provides approve/reject/modify, remove, reorder, and save actions.",
+        "Final assembly view for reviewing all generated sections together before saving to Storyblok. Supports reorder, remove, and save actions. Also used for editing existing pages via get_story.",
       _meta: SHARED_UI_META,
     },
     async (uri) => ({

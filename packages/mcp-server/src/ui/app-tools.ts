@@ -22,7 +22,11 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 import { z } from "zod";
-import { PAGE_BUILDER_URI, PLAN_REVIEW_URI } from "./capability.js";
+import {
+  SECTION_PREVIEW_URI,
+  PAGE_BUILDER_URI,
+  PLAN_REVIEW_URI,
+} from "./capability.js";
 
 // ── Zod schemas for app-only tool inputs ───────────────────────────
 
@@ -86,7 +90,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Approve a generated section. Called from the section preview UI when the user clicks the approve button.",
       inputSchema: SectionInputSchema,
       _meta: {
-        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
+        ui: { resourceUri: SECTION_PREVIEW_URI, visibility: ["app"] },
       },
     },
     async ({ section }) => {
@@ -116,7 +120,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Reject a generated section. Called from the preview UI when the user clicks reject.",
       inputSchema: RejectInputSchema,
       _meta: {
-        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
+        ui: { resourceUri: SECTION_PREVIEW_URI, visibility: ["app"] },
       },
     },
     async ({ reason }) => {
@@ -147,7 +151,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Request modifications to a generated section. Called from the preview UI when the user wants changes.",
       inputSchema: SectionInputSchema,
       _meta: {
-        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
+        ui: { resourceUri: SECTION_PREVIEW_URI, visibility: ["app"] },
       },
     },
     async ({ section }) => {

@@ -197,7 +197,7 @@ Visual Editor → usePrompter hook → /api/prompter/* routes → storyblok-serv
 
 The project includes a Storyblok MCP server ([packages/mcp-server/](packages/mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
 
-The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
+The MCP server supports **auto-schema derivation**: the `generate_content` and `generate_section` tools can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
 
 ### Multi-Content-Type Support
 
@@ -208,7 +208,8 @@ The MCP server supports **5 root content types** via a schema registry:
 
 All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `packages/mcp-server/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
 
-- `generate_content(contentType: "blog-post", componentType: "hero")` — uses blog-post schema
+- `generate_section(componentType: "hero", contentType: "blog-post")` — generates a single section using blog-post schema (preferred for interactive use)
+- `generate_content(contentType: "blog-post", componentType: "hero")` — bulk generation using blog-post schema (for automation only)
 - `plan_page(intent: "...", contentType: "event-detail")` — returns a field population plan for flat types
 - `import_content_at_position(contentType: "blog-post", targetField: "section")` — specifies target array
 - `create_page_with_content(contentType: "event-detail", sections: [], rootFields: { title: "...", categories: [...] })` — the `rootFields` parameter sets root-level fields for flat content types

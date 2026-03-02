@@ -1,7 +1,7 @@
 /**
  * Tests for ext-apps app-only tool registration.
  *
- * Verifies that `registerAppOnlyTools` registers all 5 app-only tools
+ * Verifies that `registerAppOnlyTools` registers all 8 app-only tools
  * with correct names, schemas, and response formats.
  *
  * @see src/ui/app-tools.ts
@@ -27,10 +27,10 @@ describe("registerAppOnlyTools", () => {
     mockRegisterAppTool.mockClear();
   });
 
-  it("registers exactly 5 app-only tools", () => {
+  it("registers exactly 8 app-only tools", () => {
     const mockServer = {} as any;
     registerAppOnlyTools(mockServer);
-    expect(mockRegisterAppTool).toHaveBeenCalledTimes(5);
+    expect(mockRegisterAppTool).toHaveBeenCalledTimes(8);
   });
 
   it("registers the expected tool names", () => {
@@ -45,6 +45,9 @@ describe("registerAppOnlyTools", () => {
     expect(toolNames).toContain("modify_section");
     expect(toolNames).toContain("approve_plan");
     expect(toolNames).toContain("reorder_plan");
+    expect(toolNames).toContain("remove_section");
+    expect(toolNames).toContain("move_section");
+    expect(toolNames).toContain("save_page");
   });
 
   it("passes the McpServer instance to each registration", () => {
@@ -174,6 +177,59 @@ describe("registerAppOnlyTools", () => {
       const parsed = JSON.parse(result.content[0].text);
       expect(parsed.action).toBe("plan_reordered");
       expect(parsed.order).toEqual(order);
+    });
+
+    it("remove_section returns section_removed with index", async () => {
+      const mockServer = {} as any;
+      registerAppOnlyTools(mockServer);
+
+      const removeCall = mockRegisterAppTool.mock.calls.find(
+        (call: any[]) => call[1] === "remove_section"
+      );
+      const handler = removeCall![removeCall!.length - 1];
+      const result = await handler({ index: 2, sectionId: "abc" });
+
+      const parsed = JSON.parse(result.content[0].text);
+      expect(parsed.action).toBe("section_removed");
+      expect(parsed.index).toBe(2);
+    });
+
+    it("move_section returns section_moved with fromIndex/toIndex", async () => {
+      const mockServer = {} as any;
+      registerAppOnlyTools(mockServer);
+
+      const moveCall = mockRegisterAppTool.mock.calls.find(
+        (call: any[]) => call[1] === "move_section"
+      );
+      const handler = moveCall![moveCall!.length - 1];
+      const result = await handler({ fromIndex: 0, toIndex: 2 });
+
+      const parsed = JSON.parse(result.content[0].text);
+      expect(parsed.action).toBe("section_moved");
+      expect(parsed.fromIndex).toBe(0);
+      expect(parsed.toIndex).toBe(2);
+    });
+
+    it("save_page returns save_page action with sections", async () => {
+      const mockServer = {} as any;
+      registerAppOnlyTools(mockServer);
+
+      const saveCall = mockRegisterAppTool.mock.calls.find(
+        (call: any[]) => call[1] === "save_page"
+      );
+      const handler = saveCall![saveCall!.length - 1];
+      const sections = [{ component: "hero" }, { component: "faq" }];
+      const result = await handler({
+        mode: "create",
+        sections,
+        name: "Test",
+        slug: "test",
+      });
+
+      const parsed = JSON.parse(result.content[0].text);
+      expect(parsed.action).toBe("save_page");
+      expect(parsed.sections).toEqual(sections);
+      expect(parsed.mode).toBe("create");
     });
   });
 });

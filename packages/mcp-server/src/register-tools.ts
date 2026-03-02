@@ -28,7 +28,11 @@ import {
   elicitPublishConfirmation,
 } from "./elicitation.js";
 import { ProgressReporter, type ProgressExtra } from "./progress.js";
-import { PAGE_BUILDER_URI, PLAN_REVIEW_URI } from "./ui/capability.js";
+import {
+  SECTION_PREVIEW_URI,
+  PAGE_BUILDER_URI,
+  PLAN_REVIEW_URI,
+} from "./ui/capability.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 // Lazy-loaded to avoid ESM directory import errors from kickstartDS at startup.
 // The render module imports @kickstartds/ds-agency-premium components which
@@ -2098,7 +2102,7 @@ export function registerTools(
     "generate_section",
     schemas.generateSection.shape,
     (args, extra) => handleGenerateSection(args, ctx(extra)),
-    { ui: { resourceUri: PAGE_BUILDER_URI } }
+    { ui: { resourceUri: SECTION_PREVIEW_URI } }
   );
 
   // ── generate_root_field ──────────────────────────────────────

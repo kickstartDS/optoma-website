@@ -9,6 +9,7 @@
 
 export {
   clientSupportsExtApps,
+  SECTION_PREVIEW_URI,
   PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
   RESOURCE_MIME_TYPE,
@@ -24,7 +25,11 @@ export { KDS_GLOBAL_CSS } from "./tokens.generated.js";
 
 export { KDS_COMPONENT_CSS } from "./components-css.generated.js";
 
-export { PAGE_BUILDER_HTML, PLAN_REVIEW_HTML } from "./templates.js";
+export {
+  SECTION_PREVIEW_HTML,
+  PAGE_BUILDER_HTML,
+  PLAN_REVIEW_HTML,
+} from "./templates.js";
 
 export {
   renderComponentToHtml,

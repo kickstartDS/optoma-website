@@ -3,6 +3,9 @@
  *
  * Verifies that `registerUiResources` correctly registers all three
  * preview resources via the ext-apps SDK's `registerAppResource`.
+ * - Section Preview (stateless single-section approve/reject/modify)
+ * - Page Builder (final assembly view with reorder/remove/save)
+ * - Plan Review (section sequence planner with drag-to-reorder)
  *
  * @see src/ui/resources.ts
  */
@@ -45,14 +48,14 @@ describe("registerUiResources", () => {
     expect(sectionCall![2]).toBe("ui://kds/section-preview");
   });
 
-  it("registers page preview resource", () => {
+  it("registers page builder resource", () => {
     const mockServer = {} as any;
     registerUiResources(mockServer);
 
     const calls = mockRegisterAppResource.mock.calls;
-    const pageCall = calls.find((call: any[]) => call[1] === "Page Preview");
+    const pageCall = calls.find((call: any[]) => call[1] === "Page Builder");
     expect(pageCall).toBeDefined();
-    expect(pageCall![2]).toBe("ui://kds/page-preview");
+    expect(pageCall![2]).toBe("ui://kds/page-builder");
   });
 
   it("registers plan review resource", () => {

@@ -28,37 +28,42 @@ Der Editor möchte eine bestehende Seite in eine andere Sprache übersetzen – 
 
 ### Schritt 3: Übersetzung generieren
 
-- **Tool:** `generate_content`
+Für JEDE Sektion der Originalseite `generate_section` mit dem gleichen `componentType` aufrufen:
+
+- **Tool:** `generate_section`
 - **Parameter:**
 
-  - `system`: Einen spezialisierten Übersetzungs-Prompt verwenden:
+  - `componentType`: Der gleiche Sektionstyp wie im Original (z.B. `"hero"`, `"features"`)
+  - `prompt`: Die Original-Sektion als JSON + Übersetzungsanweisung:
 
     ```
-    Du bist ein professioneller Übersetzer für Marketing- und Website-Texte.
-    Übersetze den folgenden Seiteninhalt von [Quellsprache] nach [Zielsprache].
+    Übersetze den folgenden Sektionsinhalt von [Quellsprache] nach [Zielsprache].
+    Behalte die exakt gleiche Struktur und Feldanzahl bei.
+    Übersetze alle Texte, Headlines, Button-Labels und Alt-Texte.
+    Lasse URLs, Bild-Pfade und technische Felder unverändert.
+    Passe Redewendungen kulturell an, statt wörtlich zu übersetzen.
+    [Optional: Glossar einfügen]
 
-    Regeln:
-    - Behalte die exakt gleiche Sektions-Struktur und Komponententypen bei
-    - Übersetze alle Texte, Headlines, Button-Labels und Alt-Texte
-    - Lasse URLs, Bild-Pfade und technische Felder unverändert
-    - Passe Redewendungen und Formulierungen kulturell an, statt wörtlich zu übersetzen
-    - [Optional: Glossar einfügen, z.B. „Firmenname XYZ nicht übersetzen"]
+    Original-Sektion:
+    [JSON der Sektion]
     ```
 
-  - `prompt`: Den gesamten Content-Baum aus Schritt 1 als strukturiertes JSON übergeben
-  - `sectionCount`: Gleiche Anzahl wie das Original
+  - `previousSection` / `nextSection`: Gleiche Nachbar-Typen wie im Original
 
+- **Vorteil:** Jede übersetzte Sektion wird isoliert angezeigt — der Editor kann sofort prüfen, ob die Übersetzung korrekt ist, bevor die nächste generiert wird
 - ⚠️ **Besonders wichtig:** Die Komponentenstruktur muss 1:1 erhalten bleiben – nur Textinhalte werden übersetzt
+
+> 💡 **Warum nicht `generate_content`?** Bei Übersetzungen ist die sektionsweise Kontrolle besonders wertvoll — der Editor kann jede Sektion sofort mit dem Original vergleichen und Korrekturen bei Fachterminologie oder Markennamen anfordern.
 
 ### Schritt 4: Ergebnis prüfen
 
-- Dem Editor die übersetzte Version zeigen
+- Dem Editor die übersetzten Sektionen im Vergleich zum Original zeigen
 - Besonders auf diese Punkte achten:
   - Wurden alle Sektionen übersetzt?
   - Stimmen Fachbegriffe und Markennamen?
   - Sind CTAs und Button-Texte passend formuliert?
   - Wurden URLs versehentlich verändert?
-- Bei Korrekturbedarf: `generate_content` mit angepasstem Prompt erneut aufrufen
+- Bei Korrekturbedarf: `generate_section` für die betreffende Sektion mit angepasstem Prompt erneut aufrufen
 
 ### Schritt 5: Übersetzte Seite anlegen
 
@@ -90,5 +95,5 @@ Der Editor möchte eine bestehende Seite in eine andere Sprache übersetzen – 
 ## Varianten
 
 - **Mehrere Seiten übersetzen:** Workflow pro Seite wiederholen. Für Bulk-Übersetzungen besser n8n verwenden.
-- **Bestehende Übersetzung aktualisieren:** `get_story` mit dem Slug der übersetzten Version laden → Änderungen identifizieren → `update_story`
-- **Nur bestimmte Sektionen übersetzen:** Original laden, nur ausgewählte Sektionen durch `generate_content` übersetzen, dann `update_story` mit gemischtem Content
+- **Bestehende Übersetzung aktualisieren:** `get_story` mit dem Slug der übersetzten Version laden → Änderungen identifizieren → betroffene Sektionen per `generate_section` neu übersetzen → `replace_section` für chirurgische Updates
+- **Nur bestimmte Sektionen übersetzen:** Original laden, nur ausgewählte Sektionen durch `generate_section` übersetzen, dann `update_story` mit gemischtem Content

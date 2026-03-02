@@ -71,7 +71,7 @@ Stories werden gegen SEO-Regeln geprüft (Meta-Titel, Description, Heading-Hiera
 | -------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------- |
 | Stories laden        | `list_stories` (`excludeContent: false`) + `get_story` | Inhalte pro Seite holen                                                                 |
 | SEO analysieren      | _n8n Code Node_                                        | H1-Existenz, Meta-Länge, Alt-Texte, Keyword-Dichte prüfen                               |
-| Fix generieren       | `generate_content`                                     | KI schlägt verbesserte Meta-Texte / Headlines vor                                       |
+| Fix generieren       | `generate_section` oder `generate_seo`                 | KI schlägt verbesserte Sektionen / Meta-Texte / Headlines vor                           |
 | Optional: einspielen | `update_seo`                                           | SEO-Fixes gezielt als Draft speichern (oder `update_story` für umfassendere Änderungen) |
 | Report               | _n8n E-Mail/Notion Node_                               | SEO-Scorecard pro Seite                                                                 |
 
@@ -97,7 +97,7 @@ Regelmäßig werden Wettbewerber-Websites gescrapt und per KI zusammengefasst �
 | Schritt                 | Tool                       | Zweck                                             |
 | ----------------------- | -------------------------- | ------------------------------------------------- |
 | Competitor-URLs scrapen | `scrape_url`               | Inhalte der Wettbewerber extrahieren              |
-| Zusammenfassen          | `generate_content`         | KI erstellt Zusammenfassung & Content-Gap-Analyse |
+| Zusammenfassen          | `generate_section`         | KI erstellt Zusammenfassung & Content-Gap-Analyse |
 | Ideen speichern         | _n8n Notion/Airtable Node_ | Themenideen im Redaktionsplan ablegen             |
 | Optional: Entwurf       | `create_page_with_content` | Direkt Gegeninhalt als Draft erzeugen             |
 
@@ -108,7 +108,7 @@ Bei Anlage eines Events in einem externen System (Eventbrite, CRM, Kalender) wir
 | Schritt            | Tool                                                                                             | Zweck                                                      |
 | ------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
 | Event-Trigger      | _n8n Webhook / Eventbrite Node_                                                                  | Neues Event erkannt                                        |
-| Content generieren | `generate_content` mit `contentType: "event-detail"`                                             | KI erzeugt Event-Inhalte (Titel, Beschreibung, Kategorien) |
+| Content generieren | `generate_root_field` mit `contentType: "event-detail"` (pro Feld)                               | KI erzeugt Event-Inhalte (Titel, Beschreibung, Kategorien) |
 | Seite erstellen    | `create_page_with_content` mit `contentType: "event-detail"`, `rootFields`, `uploadAssets: true` | Event-Seite live oder als Draft                            |
 | Kalender-Link      | _n8n HTTP Node_                                                                                  | .ics Datei generieren und als Asset hochladen              |
 
@@ -116,12 +116,12 @@ Bei Anlage eines Events in einem externen System (Eventbrite, CRM, Kalender) wir
 
 Bestehende Stories werden automatisch in andere Sprachen übersetzt und als neue Sprachversionen angelegt.
 
-| Schritt               | Tool                                           | Zweck                                                   |
-| --------------------- | ---------------------------------------------- | ------------------------------------------------------- |
-| Quelle laden          | `get_story`                                    | Originalinhalt holen                                    |
-| Übersetzen            | `generate_content` (Prompt: „Übersetze …")     | KI-basierte Übersetzung unter Beibehaltung der Struktur |
-| Sprachversion anlegen | `create_page_with_content` oder `update_story` | Übersetzte Version speichern                            |
-| Review-Reminder       | _n8n Slack Node_                               | Native Speaker zur Prüfung einladen                     |
+| Schritt               | Tool                                                  | Zweck                                                   |
+| --------------------- | ----------------------------------------------------- | ------------------------------------------------------- |
+| Quelle laden          | `get_story`                                           | Originalinhalt holen                                    |
+| Übersetzen            | `generate_section` (pro Sektion, Übersetzungs-Prompt) | KI-basierte Übersetzung unter Beibehaltung der Struktur |
+| Sprachversion anlegen | `create_page_with_content` oder `update_story`        | Übersetzte Version speichern                            |
+| Review-Reminder       | _n8n Slack Node_                                      | Native Speaker zur Prüfung einladen                     |
 
 ---
 
@@ -208,7 +208,7 @@ Alle im MCP Server verfügbaren Tools auf einen Blick:
 |                    | `import_content_at_position` | Sektionen an bestimmter Position einfügen, ohne bestehende Inhalte zu entfernen                                                                        |
 |                    | `replace_section`            | Einzelne Sektion per Index ersetzen – ohne die gesamte Story laden/zurückschreiben zu müssen                                                           |
 | **Convenience**    | `update_seo`                 | SEO-Metadaten (Titel, Description, Keywords, Bild) setzen/aktualisieren – erstellt die SEO-Komponente automatisch, falls nicht vorhanden               |
-| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen, passend zum Design-System-Schema                                                                        |
+| **KI-Generierung** | `generate_content`           | Strukturierte Inhalte per KI (GPT-4) erzeugen — für automatisierte Workflows (n8n). In Chat-Interfaces `generate_section` bevorzugen.                  |
 | **Guided Gen.**    | `analyze_content_patterns`   | Strukturmuster aller Stories aus Startup-Cache (sofort, kein API-Call; `refresh: true` nach Publish)                                                   |
 |                    | `list_recipes`               | Kuratierte Sektions-Rezepte und Seitentemplates, optional mit Live-Mustern aus dem Space                                                               |
 |                    | `plan_page`                  | KI-gestützte Seitenstruktur-Planung anhand von Intent und Website-Mustern (bei Hybrid-Typen inkl. `rootFieldMeta`)                                     |
@@ -252,11 +252,11 @@ Eine Seite existiert bereits, aber es fehlt z.B. ein Testimonial-Bereich oder ei
 
 #### Iteratives Verfeinern im Dialog
 
-Anders als bei n8n-Workflows kann der Editor im Claude-Desktop-Gespräch **nachsteuern**: _„Mach die Hero-Headline kürzer“_, _„Tausche die Testimonials-Sektion gegen eine Stats-Sektion“_, _„Füge noch ein CTA am Ende ein“_. Claude behält den Kontext und kann gezielt `replace_section` für einzelne Sektionen, `update_seo` für SEO-Metadaten oder `update_story` für umfassendere Änderungen aufrufen, bis das Ergebnis stimmt.
+_„Mach die Hero-Headline kürzer"_, _„Tausche die Testimonials-Sektion gegen eine Stats-Sektion"_, _„Füge noch ein CTA am Ende ein"_. Claude behält den Kontext und kann gezielt `generate_section` für neue oder ersetzte Sektionen, `replace_section` für chirurgische Updates einzelner Sektionen, `update_seo` für SEO-Metadaten oder `update_story` für umfassendere Änderungen aufrufen, bis das Ergebnis stimmt.
 
 | Tool               | Zweck                                     |
 | ------------------ | ----------------------------------------- |
-| `generate_content` | Inhalte schrittweise verfeinern           |
+| `generate_section` | Einzelne Sektion neu generieren           |
 | `replace_section`  | Einzelne Sektion gezielt ersetzen         |
 | `update_seo`       | SEO-Metadaten setzen/aktualisieren        |
 | `update_story`     | Umfassende Änderungen als Draft speichern |
@@ -266,22 +266,24 @@ Anders als bei n8n-Workflows kann der Editor im Claude-Desktop-Gespräch **nachs
 
 #### Webseiten scrapen und aufbereiten
 
-Der Editor nennt eine URL – z.B. von einer Konkurrenz-Seite, einem Artikel oder einer alten Website – und bittet Claude, den Inhalt als neue Storyblok-Seite aufzubereiten. Claude scrapt die Seite, konvertiert den Inhalt in Design-System-Komponenten und legt die Seite an.
+Der Editor nennt eine URL – z.B. von einer Konkurrenz-Seite, einem Artikel oder einer alten Website – und bittet Claude, den Inhalt als neue Storyblok-Seite aufzubereiten. Claude scrapt die Seite, plant die Sektionsstruktur, generiert jede Sektion einzeln und legt die Seite an.
 
-| Tool                                                | Zweck                                           |
-| --------------------------------------------------- | ----------------------------------------------- |
-| `scrape_url`                                        | Webseite → Markdown extrahieren                 |
-| `generate_content`                                  | Markdown → strukturierter Design-System-Content |
-| `create_page_with_content` mit `uploadAssets: true` | Seite inkl. Bilder in Storyblok anlegen         |
+| Tool                                                | Zweck                                      |
+| --------------------------------------------------- | ------------------------------------------ |
+| `scrape_url`                                        | Webseite → Markdown extrahieren            |
+| `plan_page`                                         | Seitenstruktur planen                      |
+| `generate_section` (pro Sektion)                    | Markdown → Design-System-Sektionen einzeln |
+| `create_page_with_content` mit `uploadAssets: true` | Seite inkl. Bilder in Storyblok anlegen    |
 
 #### Inhalte aus Dokumenten übernehmen
 
-Der Editor kopiert Fließtext aus einem PDF, Word-Dokument oder einer E-Mail direkt in den Claude-Desktop-Chat und bittet darum, daraus eine CMS-Seite zu machen. Claude strukturiert den Text in passende Sektionen (Hero, Text/Bild, CTA) und importiert ihn.
+Der Editor kopiert Fließtext aus einem PDF, Word-Dokument oder einer E-Mail direkt in den Claude-Desktop-Chat und bittet darum, daraus eine CMS-Seite zu machen. Claude plant die Seitenstruktur, generiert passende Sektionen (Hero, Text/Bild, CTA) und importiert sie.
 
-| Tool                       | Zweck                                          |
-| -------------------------- | ---------------------------------------------- |
-| `generate_content`         | Unstrukturierten Text in Komponenten umwandeln |
-| `create_page_with_content` | Fertige Seite anlegen                          |
+| Tool                             | Zweck                                     |
+| -------------------------------- | ----------------------------------------- |
+| `plan_page`                      | Seitenstruktur aus dem Text ableiten      |
+| `generate_section` (pro Sektion) | Text in Komponenten pro Sektion umwandeln |
+| `create_page_with_content`       | Fertige Seite anlegen                     |
 
 ### Bestehende Inhalte durchsuchen & verstehen
 
@@ -337,34 +339,34 @@ _„Welche Icons kann ich im Hero-Button verwenden?"_ – Claude listet alle ver
 
 #### Seiten umschreiben oder aktualisieren
 
-_„Aktualisiere die About-Seite, wir sind jetzt 50 Mitarbeiter statt 35"_ – Claude lädt die aktuelle Seite, findet die relevante Stelle, generiert den aktualisierten Inhalt und speichert ihn.
+_„Aktualisiere die About-Seite, wir sind jetzt 50 Mitarbeiter statt 35"_ – Claude lädt die aktuelle Seite, findet die relevante Sektion, generiert den aktualisierten Inhalt und ersetzt nur diese eine Sektion.
 
-| Tool               | Zweck                             |
-| ------------------ | --------------------------------- |
-| `get_story`        | Aktuellen Inhalt laden            |
-| `generate_content` | Überarbeiteten Abschnitt erzeugen |
-| `update_story`     | Änderung speichern                |
+| Tool               | Zweck                                           |
+| ------------------ | ----------------------------------------------- |
+| `get_story`        | Aktuellen Inhalt laden                          |
+| `generate_section` | Überarbeitete Sektion generieren                |
+| `replace_section`  | Nur die betroffene Sektion chirurgisch ersetzen |
 
 #### Tonalität oder Zielgruppe anpassen
 
-_„Schreibe die Startseite um, wir wollen jünger und lockerer klingen"_ – Claude lädt den Content, generiert eine neue Version mit angepasster Tonalität und speichert sie als Draft.
+_„Schreibe die Startseite um, wir wollen jünger und lockerer klingen"_ – Claude lädt den Content, generiert jede Sektion mit angepasster Tonalität und zeigt sie einzeln zur Prüfung.
 
-| Tool               | Zweck                                         |
-| ------------------ | --------------------------------------------- |
-| `get_story`        | Originalinhalt laden                          |
-| `generate_content` | Neu formulieren mit angepasstem System-Prompt |
-| `update_story`     | Als Draft speichern                           |
+| Tool               | Zweck                                                    |
+| ------------------ | -------------------------------------------------------- |
+| `get_story`        | Originalinhalt laden                                     |
+| `generate_section` | Sektion für Sektion mit angepasster Tonalität generieren |
+| `replace_section`  | Jede genehmigte Sektion einzeln ersetzen                 |
 
 #### Quick-Cleanup: Alt-Texte, CTAs, Meta-Daten ergänzen
 
 _„Geh alle Seiten durch und schlage fehlende Alt-Texte vor"_ – Claude iteriert über Stories, identifiziert Lücken und generiert passende Texte. Der Editor bestätigt im Dialog, bevor gespeichert wird.
 
-| Tool               | Zweck                      |
-| ------------------ | -------------------------- |
-| `list_stories`     | Alle Seiten durchgehen     |
-| `get_story`        | Inhalte inspizieren        |
-| `generate_content` | Fehlende Texte generieren  |
-| `update_story`     | Nach Bestätigung speichern |
+| Tool               | Zweck                       |
+| ------------------ | --------------------------- |
+| `list_stories`     | Alle Seiten durchgehen      |
+| `get_story`        | Inhalte inspizieren         |
+| `generate_section` | Bereinigte Sektion erzeugen |
+| `replace_section`  | Nach Bestätigung ersetzen   |
 
 ### Ideen & Planung
 
@@ -392,4 +394,4 @@ Der Editor startet mit einer vagen Idee, Claude hilft bei der Strukturierung, ge
 
 ---
 
-> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **Muster-Analyse** (`analyze_content_patterns`) → **Planung** (`plan_page`, `list_recipes`) → **KI-Generierung** (`generate_section` für Guided Generation oder `generate_content` für einfache Fälle) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `replace_section`, `update_seo`, `update_story`) → **Benachrichtigung**. Die Convenience-Tools `replace_section` und `update_seo` ermöglichen dabei **chirurgische Eingriffe** – einzelne Sektionen oder SEO-Metadaten aktualisieren, ohne die gesamte Story laden und zurückschreiben zu müssen. n8n kann diese Ketten vollautomatisch oder per Trigger auslösen, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.
+> **Das Muster:** Fast jeder Workflow kombiniert **Daten-Input** (extern oder aus Storyblok selbst) → **Muster-Analyse** (`analyze_content_patterns`) → **Planung** (`plan_page`, `list_recipes`) → **KI-Generierung** (`generate_section` pro Sektion für maximale Kontrolle; `generate_content` nur in vollautomatisierten n8n-Workflows) → **CMS-Aktion** (`create_page_with_content`, `import_content_at_position`, `replace_section`, `update_seo`, `update_story`) → **Benachrichtigung**. Die Convenience-Tools `replace_section` und `update_seo` ermöglichen dabei **chirurgische Eingriffe** – einzelne Sektionen oder SEO-Metadaten aktualisieren, ohne die gesamte Story laden und zurückschreiben zu müssen. n8n kann diese Ketten vollautomatisch oder per Trigger auslösen, während Claude Desktop dieselben Tools für **interaktive, explorative Arbeit** bereitstellt – der Editor wird vom Produzenten zum Kurator.

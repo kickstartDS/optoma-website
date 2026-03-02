@@ -37,25 +37,316 @@ const SHARED_HEAD = `
  */
 const EXT_APPS_SDK_SCRIPT = `https://unpkg.com/@modelcontextprotocol/ext-apps@1/dist/src/app-with-deps.js`;
 
+// ── Section Preview Template ───────────────────────────────────────
+
+/**
+ * Stateless single-section preview template.
+ *
+ * Shows one generated section in isolation with Approve/Modify/Reject
+ * buttons. Each `generate_section` call produces its own preview —
+ * no state accumulation, no sessionStorage.
+ *
+ * On approve/reject/modify, the UI:
+ * 1. Calls the corresponding app-only tool via `callServerTool`
+ * 2. Sends a synthetic user message via `sendMessage` so the LLM
+ *    knows the decision and can continue (or stop)
+ *
+ * Supports token theming (branding CSS + Google Fonts) for design
+ * fidelity in the preview.
+ *
+ * @see PRD Section 3.2 — Section Preview
+ */
+export const SECTION_PREVIEW_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    ${SHARED_HEAD}
+    <title>Section Preview</title>
+</head>
+<body>
+    <div id="preview-container" class="kds-preview kds-preview--loading">
+        Waiting for section data…
+    </div>
+    <div id="actions" class="kds-preview-actions" style="display: none;">
+        <button id="btn-approve" class="primary">✅ Approve</button>
+        <button id="btn-modify">✏️ Modify</button>
+        <button id="btn-reject" class="danger">❌ Reject</button>
+    </div>
+
+    <script type="module">
+        import { App, applyDocumentTheme, applyHostStyleVariables, applyHostFonts } from "${EXT_APPS_SDK_SCRIPT}";
+
+        const app = new App(
+            { name: "kds-section-preview", version: "1.0.0" },
+            { availableDisplayModes: ["inline"] }
+        );
+
+        let currentSection = null;
+
+        // ── Host styling ─────────────────────────────────────────────
+        function applyHostStyles(ctx) {
+            if (ctx.theme) applyDocumentTheme(ctx.theme);
+            if (ctx.styles?.variables) applyHostStyleVariables(ctx.styles.variables);
+            if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts);
+        }
+
+        // ── Token theme + Google Fonts ───────────────────────────────
+        let _tokenStyleEl = null;
+        const _loadedFontLinks = new Set();
+
+        function applyTokenTheme(tokenCss) {
+            if (!tokenCss || typeof tokenCss !== "string") return;
+
+            if (!_tokenStyleEl) {
+                _tokenStyleEl = document.createElement("style");
+                _tokenStyleEl.id = "kds-token-theme";
+                document.head.appendChild(_tokenStyleEl);
+            }
+            _tokenStyleEl.textContent = tokenCss;
+
+            const fontTypes = ["display", "copy", "interface", "mono"];
+            for (const fontType of fontTypes) {
+                const re = new RegExp(
+                    "ks-brand-font-family-" + fontType + ':\\\\s*"?([a-zA-Z0-9_,]+(?:\\\\s+[a-zA-Z0-9_,]+)*)"?',
+                    "m"
+                );
+                const match = tokenCss.match(re);
+                if (!match) continue;
+                const family = match[1].trim();
+                if (!family || family.includes(",") || family.includes('"')) continue;
+                if (_loadedFontLinks.has(family)) continue;
+                _loadedFontLinks.add(family);
+
+                if (_loadedFontLinks.size === 1) {
+                    const preconnect = document.createElement("link");
+                    preconnect.rel = "preconnect";
+                    preconnect.href = "https://fonts.gstatic.com";
+                    preconnect.crossOrigin = "anonymous";
+                    document.head.appendChild(preconnect);
+                }
+
+                const params = new URLSearchParams({ family: family + ":wght@300;400;500;600;700" });
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = "https://fonts.googleapis.com/css2?" + params;
+                document.head.appendChild(link);
+            }
+        }
+
+        function applyContainerDimensions(ctx) {
+            if (!ctx?.containerDimensions) return;
+            const dims = ctx.containerDimensions;
+            const html = document.documentElement;
+            if ('width' in dims) {
+                html.style.width = '100vw';
+                document.body.style.minWidth = '0';
+            } else if ('maxWidth' in dims && dims.maxWidth) {
+                html.style.maxWidth = dims.maxWidth + 'px';
+            }
+            if ('height' in dims) {
+                html.style.height = '100vh';
+            } else if ('maxHeight' in dims && dims.maxHeight) {
+                html.style.maxHeight = dims.maxHeight + 'px';
+            }
+        }
+
+        // ── Render the section ───────────────────────────────────────
+        function renderSection(data) {
+            const container = document.getElementById("preview-container");
+            const actions = document.getElementById("actions");
+
+            if (data.tokenCss) {
+                applyTokenTheme(data.tokenCss);
+            }
+
+            currentSection = data;
+
+            if (data.renderedHtml) {
+                container.className = "kds-preview";
+                container.innerHTML = data.renderedHtml;
+                actions.style.display = "flex";
+                wireActions();
+            } else {
+                container.className = "kds-preview";
+                container.innerHTML = "<p>No preview available for this section.</p>";
+            }
+        }
+
+        // ── Action wiring ────────────────────────────────────────────
+        function wireActions() {
+            document.getElementById("btn-approve").addEventListener("click", async () => {
+                const actions = document.getElementById("actions");
+                const buttons = actions.querySelectorAll("button");
+                buttons.forEach(b => b.disabled = true);
+                try {
+                    await app.callServerTool({
+                        name: "approve_section",
+                        arguments: { section: currentSection.sectionData },
+                    });
+                    actions.classList.add("submitted");
+                    actions.innerHTML = '<span class="kds-action-status success">✅ Section approved</span>';
+                    try {
+                        await app.sendMessage({
+                            role: "user",
+                            content: [{ type: "text", text: "approve_section: Section approved" }],
+                        });
+                    } catch {}
+                } catch (err) {
+                    buttons.forEach(b => b.disabled = false);
+                    const errSpan = document.createElement("span");
+                    errSpan.className = "kds-action-status error";
+                    errSpan.textContent = "⚠️ " + (err.message || "Action failed");
+                    actions.prepend(errSpan);
+                    setTimeout(() => errSpan.remove(), 4000);
+                }
+            });
+
+            document.getElementById("btn-modify").addEventListener("click", async () => {
+                const actions = document.getElementById("actions");
+                const buttons = actions.querySelectorAll("button");
+                buttons.forEach(b => b.disabled = true);
+                try {
+                    await app.callServerTool({
+                        name: "modify_section",
+                        arguments: { section: currentSection.sectionData },
+                    });
+                    actions.classList.add("submitted");
+                    actions.innerHTML = '<span class="kds-action-status success">✏️ Modification requested — describe your changes in the chat</span>';
+                    try {
+                        await app.sendMessage({
+                            role: "user",
+                            content: [{ type: "text", text: "modify_section: Modification requested" }],
+                        });
+                    } catch {}
+                } catch (err) {
+                    buttons.forEach(b => b.disabled = false);
+                    const errSpan = document.createElement("span");
+                    errSpan.className = "kds-action-status error";
+                    errSpan.textContent = "⚠️ " + (err.message || "Action failed");
+                    actions.prepend(errSpan);
+                    setTimeout(() => errSpan.remove(), 4000);
+                }
+            });
+
+            document.getElementById("btn-reject").addEventListener("click", async () => {
+                const actions = document.getElementById("actions");
+                const buttons = actions.querySelectorAll("button");
+                buttons.forEach(b => b.disabled = true);
+                try {
+                    await app.callServerTool({
+                        name: "reject_section",
+                        arguments: { reason: "User rejected section" },
+                    });
+                    actions.classList.add("submitted");
+                    actions.innerHTML = '<span class="kds-action-status success">❌ Section rejected</span>';
+                    try {
+                        await app.sendMessage({
+                            role: "user",
+                            content: [{ type: "text", text: "reject_section: Section rejected" }],
+                        });
+                    } catch {}
+                } catch (err) {
+                    buttons.forEach(b => b.disabled = false);
+                    const errSpan = document.createElement("span");
+                    errSpan.className = "kds-action-status error";
+                    errSpan.textContent = "⚠️ " + (err.message || "Action failed");
+                    actions.prepend(errSpan);
+                    setTimeout(() => errSpan.remove(), 4000);
+                }
+            });
+        }
+
+        // ── Tool lifecycle handlers ──────────────────────────────────
+
+        app.ontoolinput = (params) => {
+            const container = document.getElementById("preview-container");
+            const args = params?.arguments;
+            if (args?.componentType) {
+                container.className = "kds-preview kds-preview--loading";
+                container.textContent = "Generating " + args.componentType + " section…";
+            }
+        };
+
+        app.ontoolinputpartial = (partial) => {
+            const container = document.getElementById("preview-container");
+            const args = partial?.arguments;
+            if (args?.componentType) {
+                container.className = "kds-preview kds-preview--loading";
+                container.textContent = "Generating " + args.componentType + " section…";
+            }
+        };
+
+        app.ontoolresult = (result) => {
+            const data = result?.structuredContent || result;
+            if (data?.renderedHtml) {
+                renderSection(data);
+            } else {
+                const container = document.getElementById("preview-container");
+                container.className = "kds-preview";
+                container.innerHTML = "<p>No preview available.</p>";
+            }
+        };
+
+        app.ontoolcancelled = (params) => {
+            const container = document.getElementById("preview-container");
+            container.className = "kds-preview";
+            container.innerHTML = "<p>Generation cancelled" + (params?.reason ? ": " + params.reason : "") + "</p>";
+        };
+
+        app.onteardown = async () => {
+            return {};
+        };
+
+        app.onhostcontextchanged = (ctx) => {
+            applyHostStyles(ctx);
+            applyContainerDimensions(ctx);
+        };
+
+        // ── Connect with timeout ─────────────────────────────────────
+        try {
+            const connectTimeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Connection timed out")), 10000)
+            );
+            await Promise.race([app.connect(), connectTimeout]);
+            const hostCtx = app.getHostContext();
+            if (hostCtx) {
+                applyHostStyles(hostCtx);
+                applyContainerDimensions(hostCtx);
+            }
+        } catch (err) {
+            const container = document.getElementById("preview-container");
+            container.className = "kds-preview";
+            container.innerHTML = '<div class="kds-connection-error">'
+                + '<div class="kds-connection-error__icon">⚠️</div>'
+                + '<div class="kds-connection-error__title">Could not connect to host</div>'
+                + '<div class="kds-connection-error__detail">' + (err.message || "Unknown error") + '</div>'
+                + '</div>';
+        }
+    </script>
+</body>
+</html>`;
+
 // ── Page Builder Template ──────────────────────────────────────────
 
 /**
- * Unified page builder template — replaces section-preview and page-preview.
+ * Page builder template — final assembly view for reviewing all
+ * generated sections together before saving to Storyblok.
  *
- * Handles both single-section (standalone generate_section) and multi-section
- * (accumulated page building) workflows in one template. Automatically
- * transitions from single to multi mode when sections accumulate.
+ * This template is NOT linked to `generate_section` — individual
+ * sections get their own isolated previews via `SECTION_PREVIEW_HTML`.
  *
- * State persistence: sessionStorage (with fallback to in-memory when
- * unavailable). State is also seeded via structuredContent so iframe
- * recreation across tool calls can reconstruct accumulated sections.
+ * The page builder is triggered by `save_page` or when loading an
+ * existing page via `get_story`. It shows all sections stacked
+ * together with:
+ * - Per-section reorder (move up/down) and remove controls
+ * - Section badges showing component type and position
+ * - A save bar to persist to Storyblok
+ * - Fullscreen toggle for better review
+ * - Edit mode when loading an existing page
  *
- * ontoolresult routing:
- * - generate_section → append pending section
- * - create_page_with_content → show save confirmation
- * - get_story → load existing page (edit mode)
- *
- * Display mode: inline (Phase 4 adds fullscreen)
+ * Sections are provided via `ontoolresult` structuredContent:
+ * - `save_page` → receives sections array from the app-only tool
+ * - `get_story` → receives existing page sections for editing
+ * - `create_page_with_content` → shows save confirmation
  *
  * @see PRD Section 5 — Builder UI Layout
  */
@@ -76,13 +367,9 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
         </div>
     </div>
     <div id="preview-container" class="kds-preview kds-preview--loading">
-        Waiting for section data…
+        Waiting for page data…
     </div>
-    <div id="actions" class="kds-preview-actions" style="display: none;">
-        <button id="btn-approve" class="primary">✅ Approve</button>
-        <button id="btn-modify">✏️ Modify</button>
-        <button id="btn-reject" class="danger">❌ Reject</button>
-    </div>
+    <div id="actions" class="kds-preview-actions" style="display: none;"></div>
     <div id="save-bar" class="kds-builder-save-bar" style="display: none;">
         <span id="save-status"></span>
         <button id="btn-save">💾 Save to Storyblok</button>
@@ -97,23 +384,8 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
         );
         let currentDisplayMode = "inline";
 
-        // ── Session storage helpers (with sandbox guard) ─────────────
-        const STORAGE_KEY = "kds-builder-state";
-        function storageAvailable() {
-            try { sessionStorage.setItem("__test", "1"); sessionStorage.removeItem("__test"); return true; }
-            catch { return false; }
-        }
-        const useStorage = storageAvailable();
-        function saveState(state) {
-            if (useStorage) try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
-        }
-        function loadState() {
-            if (useStorage) try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY)); } catch {}
-            return null;
-        }
-
-        // ── Builder state ────────────────────────────────────────────
-        let state = loadState() || {
+        // ── Builder state (in-memory only — no sessionStorage) ───────
+        let state = {
             mode: "empty",
             sections: [],
             sourceStory: null,
@@ -121,8 +393,7 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
             saved: false,
             saveResult: null,
         };
-
-        let nextSectionId = state.sections.length + 1;
+        let nextSectionId = 1;
 
         // ── Host styling ─────────────────────────────────────────────
         function applyHostStyles(ctx) {
@@ -132,16 +403,12 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
         }
 
         // ── Token theme + Google Fonts ───────────────────────────────
-        // Mirrors the logic from packages/website/pages/_document.tsx:
-        // 1. Inject raw branding-token CSS from the Storyblok story/settings
-        // 2. Extract Google Font family names and load them via <link> tags
         let _tokenStyleEl = null;
         const _loadedFontLinks = new Set();
 
         function applyTokenTheme(tokenCss) {
             if (!tokenCss || typeof tokenCss !== "string") return;
 
-            // 1. Inject/update the branding token <style> block
             if (!_tokenStyleEl) {
                 _tokenStyleEl = document.createElement("style");
                 _tokenStyleEl.id = "kds-token-theme";
@@ -149,7 +416,6 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
             }
             _tokenStyleEl.textContent = tokenCss;
 
-            // 2. Extract Google Font families and load them
             const fontTypes = ["display", "copy", "interface", "mono"];
             for (const fontType of fontTypes) {
                 const re = new RegExp(
@@ -159,12 +425,10 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 const match = tokenCss.match(re);
                 if (!match) continue;
                 const family = match[1].trim();
-                // Only load single-word names (not system font stacks with commas/quotes)
                 if (!family || family.includes(",") || family.includes('"')) continue;
                 if (_loadedFontLinks.has(family)) continue;
                 _loadedFontLinks.add(family);
 
-                // Preconnect to Google Fonts (once)
                 if (_loadedFontLinks.size === 1) {
                     const preconnect = document.createElement("link");
                     preconnect.rel = "preconnect";
@@ -200,7 +464,7 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
 
         // ── Render functions ─────────────────────────────────────────
 
-        function getCommittedSections() {
+        function getActiveSections() {
             return state.sections.filter(s => s.status !== "removed");
         }
 
@@ -216,51 +480,20 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 return;
             }
 
-            const active = getCommittedSections();
-            const pendingSections = state.sections.filter(s => s.status === "pending");
+            const active = getActiveSections();
 
             // No sections yet — loading state
-            if (active.length === 0 && pendingSections.length === 0) {
+            if (active.length === 0) {
                 container.className = "kds-preview kds-preview--loading";
-                container.textContent = "Waiting for section data…";
+                container.textContent = "Waiting for page data…";
                 actions.style.display = "none";
                 header.style.display = "none";
                 saveBar.style.display = "none";
                 return;
             }
 
-            // Single section mode: only 1 section total and it's pending
-            if (state.sections.length === 1 && pendingSections.length === 1) {
-                renderSingleMode(pendingSections[0]);
-                return;
-            }
-
-            // Multi-section mode
+            // Render all sections in multi mode
             renderMultiMode();
-        }
-
-        function renderSingleMode(section) {
-            const container = document.getElementById("preview-container");
-            const actions = document.getElementById("actions");
-            const header = document.getElementById("builder-header");
-            const saveBar = document.getElementById("save-bar");
-
-            header.style.display = "none";
-            saveBar.style.display = "none";
-
-            container.className = "kds-preview";
-            if (section.renderedHtml) {
-                container.innerHTML = section.renderedHtml;
-            } else {
-                container.innerHTML = "<p>No preview available for this section.</p>";
-            }
-
-            actions.style.display = "flex";
-            actions.innerHTML =
-                '<button id="btn-approve" class="primary">✅ Approve</button>'
-                + '<button id="btn-modify">✏️ Modify</button>'
-                + '<button id="btn-reject" class="danger">❌ Reject</button>';
-            wireSingleActions(section);
         }
 
         function renderMultiMode() {
@@ -269,8 +502,7 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
             const header = document.getElementById("builder-header");
             const saveBar = document.getElementById("save-bar");
 
-            // Show header
-            const active = getCommittedSections();
+            const active = getActiveSections();
             const isEdit = state.mode === "edit-page";
 
             header.style.display = "flex";
@@ -303,58 +535,36 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 if (section.status === "removed") continue;
                 visibleIndex++;
 
-                const isPending = section.status === "pending";
-                const label = (visibleIndex) + ". " + (section.componentType || "section");
+                const label = visibleIndex + ". " + (section.componentType || "section");
 
-                html += '<div class="kds-builder-section'
-                    + (isPending ? ' kds-builder-section--pending' : '')
-                    + '" data-section-id="' + section.id + '">';
+                html += '<div class="kds-builder-section" data-section-id="' + section.id + '">';
 
                 // Section badge
                 html += '<div class="kds-section-badge" data-section-label="' + label + '">';
-                if (isPending) {
-                    html += '<div class="kds-builder-section__badge">NEW</div>';
-                }
                 html += (section.renderedHtml || '<p>No preview</p>');
                 html += '</div>';
 
-                // Per-section controls
-                if (isPending) {
-                    html += '<div class="kds-builder-pending-actions">'
-                        + '<button class="primary" onclick="window.__builderAction(\\'keep\\', \\'' + section.id + '\\')">✓ Keep</button>'
-                        + '<button class="danger" onclick="window.__builderAction(\\'discard\\', \\'' + section.id + '\\')">✕ Discard</button>'
-                        + '</div>';
-                } else {
-                    html += '<div class="kds-builder-section__controls">'
-                        + '<button class="move" onclick="window.__builderAction(\\'moveUp\\', \\'' + section.id + '\\')" title="Move up">↑</button>'
-                        + '<button class="move" onclick="window.__builderAction(\\'moveDown\\', \\'' + section.id + '\\')" title="Move down">↓</button>'
-                        + '<button class="danger" onclick="window.__builderAction(\\'remove\\', \\'' + section.id + '\\')" title="Remove">✕</button>'
-                        + '</div>';
-                }
+                // Per-section controls (reorder + remove)
+                html += '<div class="kds-builder-section__controls">'
+                    + '<button class="move" onclick="window.__builderAction(\\'moveUp\\', \\'' + section.id + '\\')" title="Move up">↑</button>'
+                    + '<button class="move" onclick="window.__builderAction(\\'moveDown\\', \\'' + section.id + '\\')" title="Move down">↓</button>'
+                    + '<button class="danger" onclick="window.__builderAction(\\'remove\\', \\'' + section.id + '\\')" title="Remove">✕</button>'
+                    + '</div>';
 
                 html += '</div>';
             }
 
             container.innerHTML = html;
 
-            // Show save bar when there are 2+ committed sections
-            const committed = state.sections.filter(s => s.status === "committed");
-            if (committed.length >= 2) {
+            // Show save bar
+            if (active.length >= 1) {
                 saveBar.style.display = "flex";
                 document.getElementById("save-status").textContent =
-                    committed.length + " section" + (committed.length !== 1 ? "s" : "") + " ready";
+                    active.length + " section" + (active.length !== 1 ? "s" : "") + " ready";
                 wireSaveButton();
             } else {
                 saveBar.style.display = "none";
             }
-
-            // Scroll to the latest pending section
-            const pendingEl = container.querySelector(".kds-builder-section--pending");
-            if (pendingEl) {
-                pendingEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            }
-
-            saveState(state);
         }
 
         function showSaveResult(data) {
@@ -390,18 +600,15 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
 
         // ── Section management ───────────────────────────────────────
 
-        function addPendingSection(data) {
-            const section = {
+        function loadSections(sections) {
+            state.sections = sections.map((s, i) => ({
                 id: "s" + (nextSectionId++),
-                componentType: data.componentType || "section",
-                renderedHtml: data.renderedHtml || null,
-                sectionData: data.sectionData || data,
-                status: "pending",
-                origin: "generated",
-            };
-            state.sections.push(section);
-            if (state.mode === "empty") state.mode = "new-page";
-            saveState(state);
+                componentType: s.componentType || "section",
+                renderedHtml: s.renderedHtml || null,
+                sectionData: s.sectionData || s,
+                status: "committed",
+                origin: s.origin || "generated",
+            }));
             renderBuilder();
         }
 
@@ -425,7 +632,6 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
             }));
             state.saved = false;
             state.saveResult = null;
-            saveState(state);
             renderBuilder();
         }
 
@@ -435,17 +641,7 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
             const idx = state.sections.findIndex(s => s.id === sectionId);
             if (idx === -1) return;
 
-            if (action === "keep") {
-                state.sections[idx].status = "committed";
-                saveState(state);
-                renderBuilder();
-            } else if (action === "discard") {
-                state.sections.splice(idx, 1);
-                if (state.sections.length === 0) state.mode = "empty";
-                saveState(state);
-                renderBuilder();
-            } else if (action === "remove") {
-                // Use the remove_section app tool
+            if (action === "remove") {
                 try {
                     await app.callServerTool({
                         name: "remove_section",
@@ -454,7 +650,6 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 } catch {}
                 state.sections.splice(idx, 1);
                 if (state.sections.length === 0) state.mode = "empty";
-                saveState(state);
                 renderBuilder();
                 try {
                     await app.sendMessage({
@@ -463,23 +658,19 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                     });
                 } catch {}
             } else if (action === "moveUp") {
-                if (idx > 0) {
-                    const visible = state.sections.filter(s => s.status !== "removed");
-                    const visIdx = visible.indexOf(state.sections[idx]);
-                    if (visIdx > 0) {
-                        // Swap in the main array
-                        const prevVisible = visible[visIdx - 1];
-                        const prevIdx = state.sections.indexOf(prevVisible);
-                        [state.sections[prevIdx], state.sections[idx]] = [state.sections[idx], state.sections[prevIdx]];
-                        try {
-                            await app.callServerTool({
-                                name: "move_section",
-                                arguments: { fromIndex: visIdx, toIndex: visIdx - 1 },
-                            });
-                        } catch {}
-                        saveState(state);
-                        renderBuilder();
-                    }
+                const visible = state.sections.filter(s => s.status !== "removed");
+                const visIdx = visible.indexOf(state.sections[idx]);
+                if (visIdx > 0) {
+                    const prevVisible = visible[visIdx - 1];
+                    const prevIdx = state.sections.indexOf(prevVisible);
+                    [state.sections[prevIdx], state.sections[idx]] = [state.sections[idx], state.sections[prevIdx]];
+                    try {
+                        await app.callServerTool({
+                            name: "move_section",
+                            arguments: { fromIndex: visIdx, toIndex: visIdx - 1 },
+                        });
+                    } catch {}
+                    renderBuilder();
                 }
             } else if (action === "moveDown") {
                 const visible = state.sections.filter(s => s.status !== "removed");
@@ -494,109 +685,15 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                             arguments: { fromIndex: visIdx, toIndex: visIdx + 1 },
                         });
                     } catch {}
-                    saveState(state);
                     renderBuilder();
                 }
             }
         };
 
-        // ── Single-mode action wiring ────────────────────────────────
-
-        function wireSingleActions(section) {
-            document.getElementById("btn-approve").addEventListener("click", async () => {
-                const actions = document.getElementById("actions");
-                const buttons = actions.querySelectorAll("button");
-                buttons.forEach(b => b.disabled = true);
-                try {
-                    await app.callServerTool({
-                        name: "approve_section",
-                        arguments: { section: section.sectionData },
-                    });
-                    // Mark as committed
-                    section.status = "committed";
-                    saveState(state);
-                    actions.classList.add("submitted");
-                    actions.innerHTML = '<span class="kds-action-status success">✅ Section approved</span>';
-                    try {
-                        await app.sendMessage({
-                            role: "user",
-                            content: [{ type: "text", text: "approve_section: Section approved" }],
-                        });
-                    } catch {}
-                } catch (err) {
-                    buttons.forEach(b => b.disabled = false);
-                    const errSpan = document.createElement("span");
-                    errSpan.className = "kds-action-status error";
-                    errSpan.textContent = "⚠️ " + (err.message || "Action failed");
-                    actions.prepend(errSpan);
-                    setTimeout(() => errSpan.remove(), 4000);
-                }
-            });
-
-            document.getElementById("btn-modify").addEventListener("click", async () => {
-                const actions = document.getElementById("actions");
-                const buttons = actions.querySelectorAll("button");
-                buttons.forEach(b => b.disabled = true);
-                try {
-                    await app.callServerTool({
-                        name: "modify_section",
-                        arguments: { section: section.sectionData },
-                    });
-                    actions.classList.add("submitted");
-                    actions.innerHTML = '<span class="kds-action-status success">✏️ Modification requested — describe your changes in the chat</span>';
-                    try {
-                        await app.sendMessage({
-                            role: "user",
-                            content: [{ type: "text", text: "modify_section: Modification requested" }],
-                        });
-                    } catch {}
-                } catch (err) {
-                    buttons.forEach(b => b.disabled = false);
-                    const errSpan = document.createElement("span");
-                    errSpan.className = "kds-action-status error";
-                    errSpan.textContent = "⚠️ " + (err.message || "Action failed");
-                    actions.prepend(errSpan);
-                    setTimeout(() => errSpan.remove(), 4000);
-                }
-            });
-
-            document.getElementById("btn-reject").addEventListener("click", async () => {
-                const actions = document.getElementById("actions");
-                const buttons = actions.querySelectorAll("button");
-                buttons.forEach(b => b.disabled = true);
-                try {
-                    await app.callServerTool({
-                        name: "reject_section",
-                        arguments: { reason: "User rejected section" },
-                    });
-                    // Remove the section
-                    state.sections = [];
-                    state.mode = "empty";
-                    saveState(state);
-                    actions.classList.add("submitted");
-                    actions.innerHTML = '<span class="kds-action-status success">❌ Section rejected</span>';
-                    try {
-                        await app.sendMessage({
-                            role: "user",
-                            content: [{ type: "text", text: "reject_section: Section rejected" }],
-                        });
-                    } catch {}
-                } catch (err) {
-                    buttons.forEach(b => b.disabled = false);
-                    const errSpan = document.createElement("span");
-                    errSpan.className = "kds-action-status error";
-                    errSpan.textContent = "⚠️ " + (err.message || "Action failed");
-                    actions.prepend(errSpan);
-                    setTimeout(() => errSpan.remove(), 4000);
-                }
-            });
-        }
-
         // ── Save button wiring ───────────────────────────────────────
 
         function wireSaveButton() {
             const btn = document.getElementById("btn-save");
-            // Remove old listener by cloning
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             newBtn.addEventListener("click", async () => {
@@ -624,7 +721,6 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                         sectionCount: committed.length,
                         wasPublished: false,
                     };
-                    saveState(state);
                     renderBuilder();
                     try {
                         await app.sendMessage({
@@ -648,47 +744,25 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
         // ── Tool lifecycle handlers ──────────────────────────────────
 
         app.ontoolinput = (params) => {
-            const container = document.getElementById("preview-container");
-            const args = params?.arguments;
-            if (args?.componentType) {
-                // Only show loading if this is the first/only section
-                if (state.sections.length === 0) {
-                    container.className = "kds-preview kds-preview--loading";
-                    container.textContent = "Generating " + args.componentType + " section…";
-                }
-            }
-        };
-
-        app.ontoolinputpartial = (partial) => {
-            const container = document.getElementById("preview-container");
-            const args = partial?.arguments;
-            if (args?.componentType && state.sections.length === 0) {
-                container.className = "kds-preview kds-preview--loading";
-                container.textContent = "Generating " + args.componentType + " section…";
-            }
+            // No loading state needed — builder receives fully formed data
         };
 
         app.ontoolresult = (result) => {
             const data = result?.structuredContent || result;
 
-            // Apply page-specific token CSS if present (branding overrides + Google Fonts)
+            // Apply token CSS if present
             if (data?.tokenCss) {
-                state.tokenCss = data.tokenCss;
-                saveState(state);
                 applyTokenTheme(data.tokenCss);
-            } else if (state.tokenCss) {
-                // Re-apply cached token CSS (e.g. after page reload)
-                applyTokenTheme(state.tokenCss);
             }
 
-            if (data?.renderedHtml && data?.componentType && data?.sectionData) {
-                // generate_section result → add pending section
-                addPendingSection(data);
-            } else if (data?.story && data?.sections && Array.isArray(data.sections)) {
-                // get_story result → load existing page
+            if (data?.story && data?.sections && Array.isArray(data.sections)) {
+                // get_story result → load existing page for editing
                 loadExistingPage(data);
+            } else if (data?.sections && Array.isArray(data.sections)) {
+                // save_page result or assembled sections → load them
+                loadSections(data.sections);
             } else if (data?.renderedSections && Array.isArray(data.renderedSections)) {
-                // create_page_with_content result with rendered sections → show save confirmation
+                // create_page_with_content result → show save confirmation
                 state.saved = true;
                 state.saveResult = {
                     success: true,
@@ -699,31 +773,24 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                     wasPublished: data.wasPublished || false,
                     warnings: data.warnings,
                 };
-                saveState(state);
                 showSaveResult(state.saveResult);
             } else if (data?.success && data?.message) {
                 // Generic write result
                 state.saved = true;
                 state.saveResult = data;
-                saveState(state);
                 showSaveResult(data);
-            } else if (data?.renderedHtml) {
-                // Fallback: single section without componentType
-                addPendingSection({ componentType: "section", renderedHtml: data.renderedHtml, sectionData: data });
             } else {
-                // Unknown — show as-is
                 const container = document.getElementById("preview-container");
                 container.className = "kds-preview";
-                container.innerHTML = "<p>No preview available.</p>";
+                container.innerHTML = "<p>No page data available.</p>";
             }
         };
 
         app.ontoolcancelled = (params) => {
-            const container = document.getElementById("preview-container");
-            // Only reset to cancelled if nothing is accumulated yet
             if (state.sections.length === 0) {
+                const container = document.getElementById("preview-container");
                 container.className = "kds-preview";
-                container.innerHTML = "<p>Generation cancelled" + (params?.reason ? ": " + params.reason : "") + "</p>";
+                container.innerHTML = "<p>Cancelled" + (params?.reason ? ": " + params.reason : "") + "</p>";
             }
         };
 
@@ -746,9 +813,7 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 const result = await app.requestDisplayMode({ mode: newMode });
                 currentDisplayMode = result.mode;
                 document.body.classList.toggle("fullscreen", result.mode === "fullscreen");
-            } catch {
-                // Display mode not supported by this host
-            }
+            } catch {}
         }
 
         // ── Connect with timeout ─────────────────────────────────────
@@ -762,8 +827,6 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 applyHostStyles(hostCtx);
                 applyContainerDimensions(hostCtx);
             }
-            // Render any restored state
-            if (state.tokenCss) applyTokenTheme(state.tokenCss);
             renderBuilder();
         } catch (err) {
             const container = document.getElementById("preview-container");
@@ -798,7 +861,6 @@ export const PLAN_REVIEW_HTML = `<!DOCTYPE html>
         .kds-plan-item.dragging {
             opacity: 0.5;
             border-style: dashed;
-        }
         .kds-plan-item.drag-over {
             border-color: var(--color-ring-primary, var(--ks-background-color-accent, #4e63e0));
             border-width: 2px;

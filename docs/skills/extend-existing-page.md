@@ -41,13 +41,16 @@ Der Editor hat eine bestehende Seite in Storyblok und möchte eine oder mehrere 
 
 ### Schritt 3: Neue Sektion(en) generieren
 
-- **Tool:** `generate_content`
+- **Tool:** `generate_section`
 - **Parameter:**
-  - `system`: System-Prompt, der den Kontext der bestehenden Seite berücksichtigt – z.B. _„Die Seite hat bereits einen Hero-Bereich. Generiere eine ergänzende FAQ-Sektion, die thematisch passt."_
-  - `prompt`: Beschreibung des Editors
   - `componentType`: Der gewünschte Sektionstyp (z.B. `"faq"`)
-  - `sectionCount`: Anzahl der neuen Sektionen (meist `1`)
-- **Ergebnis dem Editor zeigen** und bestätigen lassen
+  - `prompt`: Beschreibung des Editors — was soll die Sektion kommunizieren?
+  - `previousSection`: Typ der Sektion, die davor steht (z.B. `"features"`) — für fließende Übergänge
+  - `nextSection`: Typ der Sektion, die danach kommt (falls bekannt)
+- **Vorteil:** Die generierte Sektion wird isoliert angezeigt — der Editor kann sie sofort prüfen, genehmigen, ablehnen oder Änderungen anfordern
+- **Vorteil:** Site-Kontext wird automatisch injiziert (Komponentenfrequenz, Sub-Item-Counts, Feldwert-Verteilungen)
+
+> 💡 **Warum nicht `generate_content`?** `generate_section` zeigt die Sektion isoliert und ermöglicht direktes Feedback (Approve/Modify/Reject). `generate_content` bietet keine interaktive Review-Möglichkeit und ist nur für automatisierte Pipelines sinnvoll.
 
 ### Schritt 4: An der richtigen Position einfügen
 

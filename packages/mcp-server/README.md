@@ -22,7 +22,7 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 | Tool                         | Description                                                                                                                                                                                 |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generate_content`           | Generate structured content using OpenAI GPT-4 — with optional auto-schema derivation                                                                                                       |
+| `generate_content`           | Bulk content generation using OpenAI GPT-4 — primarily for n8n automation. For interactive chat use, prefer `generate_section`                                                              |
 | `import_content`             | Import generated content into a Storyblok story (replace a prompter), with automatic transform, optional asset upload, and **schema validation**                                            |
 | `import_content_at_position` | Insert generated sections at a specific position in a story, with automatic transform, optional asset upload, and **schema validation**                                                     |
 | `create_page_with_content`   | Create a new page story with sections, auto-wrapping in page/section structure, with automatic transform, optional asset upload, `path` for auto-folder creation, and **schema validation** |
@@ -50,14 +50,14 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 
 ### Guided Generation & Planning
 
-| Tool                       | Description                                                                                                                                                                                                                                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes, field value distributions). Cached at startup; pass `refresh: true` after publishing new content                                                                                         |
-| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                                                                                                                                    |
-| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns. Accepts optional `startsWith` to use filtered patterns from a specific site section. For hybrid types (blog-post, blog-overview) also returns `rootFieldMeta` with priority annotations |
-| `generate_section`         | Generate a single section with auto-injected site context, transition hints, recipe-based best practices, and **field-level compositional guidance** (field value distributions from existing content + composition hints from recipes)                                                                 |
-| `generate_root_field`      | Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types. Uses OpenAI structured output with field-specific sub-schema                                                                                                                                      |
-| `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image) for any content type with a `seo` root field. Uses a specialized SEO-expert system prompt                                                                                                                                                |
+| Tool                       | Description                                                                                                                                                                                                                                                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `analyze_content_patterns` | Structural patterns across all published stories (component frequency, sequences, sub-item counts, archetypes, field value distributions). Cached at startup; pass `refresh: true` after publishing new content                                                                                                                            |
+| `list_recipes`             | List curated section recipes and page templates, optionally merged with live patterns from the space                                                                                                                                                                                                                                       |
+| `plan_page`                | AI-assisted page structure planning — returns a recommended section sequence based on intent and site patterns. Accepts optional `startsWith` to use filtered patterns from a specific site section. For hybrid types (blog-post, blog-overview) also returns `rootFieldMeta` with priority annotations                                    |
+| `generate_section`         | **Recommended for interactive use.** Generate a single section with auto-injected site context, transition hints, recipe-based best practices, and **field-level compositional guidance** (field value distributions from existing content + composition hints from recipes). Returns isolated preview with approve/modify/reject controls |
+| `generate_root_field`      | Generate content for a single root-level field (e.g. `head`, `aside`, `cta`) on hybrid content types. Uses OpenAI structured output with field-specific sub-schema                                                                                                                                                                         |
+| `generate_seo`             | Generate SEO metadata (title, description, keywords, OG image) for any content type with a `seo` root field. Uses a specialized SEO-expert system prompt                                                                                                                                                                                   |
 
 ## Installation
 
@@ -240,44 +240,53 @@ pnpm --filter @kickstartds/storyblok-mcp-server start
 }
 ```
 
-### Generate a hero section (auto-schema mode)
+### Generate a hero section (recommended: `generate_section`)
 
-When `componentType` is provided, the schema is automatically derived from the kickstartDS Design System schema — no manual schema needed. Use `contentType` to target a specific content type (default: `"page"`):
+For interactive chat interfaces (Claude Desktop, ChatGPT, etc.), use `generate_section` — it generates one section at a time with site-aware context injection and returns an isolated preview with approve/modify/reject controls:
 
 ```json
 {
-  "tool": "generate_content",
+  "tool": "generate_section",
   "arguments": {
-    "system": "You are a content writer for a digital agency website. Create engaging, professional content.",
-    "prompt": "Create a hero section for a landing page about AI-powered content generation",
     "componentType": "hero",
+    "prompt": "Create a hero section for a landing page about AI-powered content generation",
     "contentType": "page"
   }
 }
 ```
 
-The response includes both Design System–shaped props and Storyblok-ready content:
+`generate_section` automatically injects sub-component counts, component frequency, transition context, recipe best practices, and field-level compositional guidance into the system prompt — no manual `system` prompt needed.
+
+> **For n8n automation only:** Use `generate_content` when you need bulk generation without interactive review (e.g. in scheduled workflows). It returns both Design System–shaped props and Storyblok-ready content but offers no per-section feedback loop.
+
+### Generate a full page (section-by-section)
+
+Instead of generating all sections at once, use the `plan_page` → `generate_section` workflow for better control and quality:
 
 ```json
+// Step 1: Plan the page structure
 {
-  "designSystemProps": { "headline": "...", "sub": "...", "text": "..." },
-  "storyblokContent": { "component": "hero", "headline": "...", "sub": "...", "text": "..." },
-  "rawResponse": { ... }
-}
-```
-
-### Generate a full page (auto-schema, multi-section)
-
-```json
-{
-  "tool": "generate_content",
+  "tool": "plan_page",
   "arguments": {
-    "system": "You are a content writer for a digital agency website.",
-    "prompt": "Create a landing page about sustainable energy solutions",
-    "sectionCount": 4
+    "intent": "Landing page about sustainable energy solutions",
+    "contentType": "page"
+  }
+}
+
+// Step 2: Generate each section individually (repeat per planned section)
+{
+  "tool": "generate_section",
+  "arguments": {
+    "componentType": "hero",
+    "prompt": "Hero section about sustainable energy solutions",
+    "contentType": "page",
+    "previousSection": null,
+    "nextSection": "features"
   }
 }
 ```
+
+Each `generate_section` call returns an isolated preview — approve, modify, or reject each section before moving to the next.
 
 ### Generate content for a blog post
 
@@ -288,11 +297,10 @@ All generation, import, and validation tools accept a `contentType` parameter. T
 
 ```json
 {
-  "tool": "generate_content",
+  "tool": "generate_section",
   "arguments": {
-    "system": "You are a content writer for a tech blog.",
-    "prompt": "Create a hero section for a blog post about AI trends in 2026",
-    "componentType": "hero",
+    "componentType": "text",
+    "prompt": "Create a text section for a blog post about AI trends in 2026",
     "contentType": "blog-post"
   }
 }

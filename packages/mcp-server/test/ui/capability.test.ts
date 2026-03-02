@@ -17,7 +17,7 @@ jest.unstable_mockModule("@modelcontextprotocol/ext-apps/server", () => ({
 const {
   clientSupportsExtApps,
   SECTION_PREVIEW_URI,
-  PAGE_PREVIEW_URI,
+  PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
   UI_URI_PREFIX,
 } = await import("../../src/ui/capability.js");
@@ -33,8 +33,8 @@ describe("UI URI constants", () => {
     expect(SECTION_PREVIEW_URI).toBe("ui://kds/section-preview");
   });
 
-  it("has correct page preview URI", () => {
-    expect(PAGE_PREVIEW_URI).toBe("ui://kds/page-preview");
+  it("has correct page builder URI", () => {
+    expect(PAGE_BUILDER_URI).toBe("ui://kds/page-builder");
   });
 
   it("has correct plan review URI", () => {
@@ -43,7 +43,7 @@ describe("UI URI constants", () => {
 
   it("all preview URIs start with the prefix", () => {
     expect(SECTION_PREVIEW_URI).toMatch(/^ui:\/\/kds\//);
-    expect(PAGE_PREVIEW_URI).toMatch(/^ui:\/\/kds\//);
+    expect(PAGE_BUILDER_URI).toMatch(/^ui:\/\/kds\//);
     expect(PLAN_REVIEW_URI).toMatch(/^ui:\/\/kds\//);
   });
 });

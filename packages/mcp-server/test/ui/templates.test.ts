@@ -10,7 +10,7 @@
 
 import {
   SECTION_PREVIEW_HTML,
-  PAGE_PREVIEW_HTML,
+  PAGE_BUILDER_HTML,
   PLAN_REVIEW_HTML,
 } from "../../src/ui/templates.js";
 
@@ -18,7 +18,7 @@ import {
 
 describe.each([
   ["SECTION_PREVIEW_HTML", SECTION_PREVIEW_HTML],
-  ["PAGE_PREVIEW_HTML", PAGE_PREVIEW_HTML],
+  ["PAGE_BUILDER_HTML", PAGE_BUILDER_HTML],
   ["PLAN_REVIEW_HTML", PLAN_REVIEW_HTML],
 ])("%s — common structure", (_name, html) => {
   it("is a non-empty string", () => {
@@ -158,51 +158,65 @@ describe("SECTION_PREVIEW_HTML — section-specific", () => {
   });
 });
 
-// ── Page Preview specifics ─────────────────────────────────────────
+// ── Page Builder specifics ─────────────────────────────────────────
 
-describe("PAGE_PREVIEW_HTML — page-specific", () => {
-  it("has approve, modify, reject, and fullscreen buttons", () => {
-    expect(PAGE_PREVIEW_HTML).toContain('id="btn-approve"');
-    expect(PAGE_PREVIEW_HTML).toContain('id="btn-modify"');
-    expect(PAGE_PREVIEW_HTML).toContain('id="btn-reject"');
-    expect(PAGE_PREVIEW_HTML).toContain('id="btn-fullscreen"');
+describe("PAGE_BUILDER_HTML — builder-specific", () => {
+  it("has save and fullscreen buttons (no approve/modify/reject)", () => {
+    expect(PAGE_BUILDER_HTML).toContain('id="btn-save"');
+    expect(PAGE_BUILDER_HTML).toContain('id="btn-fullscreen"');
+    // Page builder does NOT have approve/modify/reject — those are on section preview
+    expect(PAGE_BUILDER_HTML).not.toContain('id="btn-approve"');
+    expect(PAGE_BUILDER_HTML).not.toContain('id="btn-modify"');
+    expect(PAGE_BUILDER_HTML).not.toContain('id="btn-reject"');
   });
 
   it("creates App with fullscreen in availableDisplayModes", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("availableDisplayModes");
-    expect(PAGE_PREVIEW_HTML).toContain('"fullscreen"');
+    expect(PAGE_BUILDER_HTML).toContain("availableDisplayModes");
+    expect(PAGE_BUILDER_HTML).toContain('"fullscreen"');
   });
 
   it("uses requestDisplayMode (not setDisplayMode)", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("app.requestDisplayMode");
-    expect(PAGE_PREVIEW_HTML).not.toContain("app.setDisplayMode");
+    expect(PAGE_BUILDER_HTML).toContain("app.requestDisplayMode");
+    expect(PAGE_BUILDER_HTML).not.toContain("app.setDisplayMode");
   });
 
   it("passes mode object to requestDisplayMode", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("requestDisplayMode({ mode:");
+    expect(PAGE_BUILDER_HTML).toContain("requestDisplayMode({ mode:");
   });
 
   it("has onhostcontextchanged handler", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("app.onhostcontextchanged");
-    expect(PAGE_PREVIEW_HTML).not.toContain("app.onHostContextChanged");
+    expect(PAGE_BUILDER_HTML).toContain("app.onhostcontextchanged");
+    expect(PAGE_BUILDER_HTML).not.toContain("app.onHostContextChanged");
   });
 
   it("renders multiple sections with badges", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("kds-section-badge");
-    expect(PAGE_PREVIEW_HTML).toContain("renderedSections");
+    expect(PAGE_BUILDER_HTML).toContain("kds-section-badge");
+    expect(PAGE_BUILDER_HTML).toContain("renderedSections");
   });
 
   it("has the correct title", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("<title>Page Preview</title>");
+    expect(PAGE_BUILDER_HTML).toContain("<title>Page Builder</title>");
   });
 
-  it("creates App with page-preview name", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("kds-page-preview");
+  it("creates App with page-builder name", () => {
+    expect(PAGE_BUILDER_HTML).toContain("kds-page-builder");
   });
 
   it("toggles fullscreen class on body", () => {
-    expect(PAGE_PREVIEW_HTML).toContain("classList.toggle");
-    expect(PAGE_PREVIEW_HTML).toContain('"fullscreen"');
+    expect(PAGE_BUILDER_HTML).toContain("classList.toggle");
+    expect(PAGE_BUILDER_HTML).toContain('"fullscreen"');
+  });
+
+  it("calls save_page tool on save", () => {
+    expect(PAGE_BUILDER_HTML).toContain('"save_page"');
+  });
+
+  it("calls remove_section tool for section removal", () => {
+    expect(PAGE_BUILDER_HTML).toContain('"remove_section"');
+  });
+
+  it("calls move_section tool for section reorder", () => {
+    expect(PAGE_BUILDER_HTML).toContain('"move_section"');
   });
 });
 

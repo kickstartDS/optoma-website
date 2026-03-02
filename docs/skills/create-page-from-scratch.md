@@ -33,29 +33,32 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 - **Zweck:** Sicherstellen, dass nur gültige Icon-Bezeichner im generierten Inhalt verwendet werden
 - **Wichtig:** Icon-Bezeichner nicht erfinden! Nur Werte aus `list_icons` verwenden (z.B. `arrow-right`, `star`, `email`, `phone`)
 
-### Schritt 2: Inhalte generieren
+### Schritt 2: Seitenstruktur planen
 
-- **Tool:** `generate_content`
-- **Empfohlener Ansatz — Sektion für Sektion:**
-  Für beste Ergebnisse jede Sektion einzeln generieren statt `sectionCount` zu nutzen:
+- **Tool:** `plan_page`
+- **Parameter:**
+  - `intent`: Kurzbeschreibung der Seite (z.B. _„Landing Page für KI-gestützte Content-Generierung"_)
+  - `contentType`: `"page"` (oder `"blog-post"`, `"event-detail"` etc.)
+  - `startsWith` (optional): Slug-Präfix, wenn die neue Seite zu einem bestimmten Seitenbereich passen soll
+- **Ergebnis:** Empfohlene Sektionsfolge (z.B. hero → features → testimonials → cta)
+- Plan dem Editor vorstellen und bestätigen lassen — Reihenfolge, fehlende Sektionen oder ungewünschte Sektionen besprechen
 
-  1. Sektionsfolge planen (z.B. hero → features → testimonials → cta)
-  2. Für jede Sektion: `generate_content` mit `componentType` und sektionsspezifischem Prompt
-  3. Alle Sektionen sammeln und zusammen an `create_page_with_content` übergeben
-     → Siehe Skill _„Seite Sektion für Sektion planen und erstellen"_ für den detaillierten Ablauf
+### Schritt 3: Sektionen einzeln generieren
 
-- **Schneller Ansatz — alles auf einmal:**
+Für JEDE geplante Sektion `generate_section` separat aufrufen:
 
-  - `sectionCount`: Anzahl der gewünschten Sektionen (nur für ≤ 4 Sektionen empfohlen)
-  - `componentType`: Optional, falls nur eine bestimmte Sektion generiert werden soll
+- **Tool:** `generate_section`
+- **Parameter:**
+  - `componentType`: Der Sektionstyp aus dem Plan (z.B. `"hero"`)
+  - `prompt`: Spezifische Beschreibung für NUR diese Sektion — was soll sie kommunizieren?
+  - `previousSection` / `nextSection`: Typ der Nachbar-Sektionen für fließende Übergänge
+- **Vorteil:** Jede Sektion wird einzeln angezeigt — der Editor kann sie direkt prüfen, genehmigen, ablehnen oder Änderungen anfordern, bevor die nächste generiert wird
+- **Vorteil:** Site-Kontext (Komponentenfrequenz, Sub-Item-Counts, Feldwert-Verteilungen, Rezept-Best-Practices) wird automatisch injiziert
+- ⚠️ Jede Sektion braucht einen spezifischen Prompt — nicht alle mit derselben generischen Beschreibung generieren
 
-- **Für beide Ansätze:**
-  - `system`: Einen passenden System-Prompt formulieren, der Tonalität, Zielgruppe und Marke berücksichtigt – z.B. _„Du bist ein erfahrener Content-Autor für eine B2B-Softwarefirma. Schreibe professionell aber zugänglich."_
-  - `prompt`: Die Beschreibung des Editors + ggf. bereitgestelltes Material
-- **Ergebnis dem Editor zeigen** und fragen, ob Anpassungen nötig sind
-- ⚠️ Bei Bedarf `generate_content` mit angepasstem Prompt erneut aufrufen
+> 💡 **Warum nicht `generate_content`?** `generate_section` gibt dem Editor maximale Kontrolle: jede Sektion wird isoliert angezeigt und kann einzeln genehmigt/abgelehnt/modifiziert werden. `generate_content` erzeugt alles auf einmal ohne Feedback-Möglichkeit und ist nur für vollautomatisierte Workflows (z.B. n8n) sinnvoll.
 
-### Schritt 3: SEO-Metadaten generieren
+### Schritt 4: SEO-Metadaten generieren
 
 - **Tool:** `generate_seo`
 - **Zweck:** Optimierte SEO-Metadaten (Titel, Beschreibung, Keywords, OG-Image) für die Seite erzeugen
@@ -65,21 +68,21 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 - **Wann:** Immer als letzten Generierungsschritt aufrufen, NACHDEM alle Sektionen generiert wurden — so kann der Prompt den tatsächlichen Seiteninhalt widerspiegeln
 - **Ergebnis:** Wird als `rootFields.seo` an `create_page_with_content` übergeben
 
-### Schritt 4: Seite in Storyblok anlegen
+### Schritt 5: Seite in Storyblok anlegen
 
 - **Tool:** `create_page_with_content`
 - **Parameter:**
   - `name`: Seitenname (vom Editor erfragen oder aus Kontext ableiten)
   - `slug`: URL-Slug vorschlagen (z.B. aus dem Seitennamen, Kleinbuchstaben, Bindestriche)
-  - `sections`: Die generierten Sektionen aus Schritt 2
-  - `rootFields`: `{ seo: <Ergebnis von generate_seo()> }` — SEO-Metadaten aus Schritt 3
+  - `sections`: Die generierten Sektionen aus Schritt 3
+  - `rootFields`: `{ seo: <Ergebnis von generate_seo()> }` — SEO-Metadaten aus Schritt 4
   - `uploadAssets: true` ← **immer setzen**, damit KI-generierte Bilder nach Storyblok hochgeladen werden
   - `assetFolderName`: Sinnvollen Ordnernamen vorschlagen (z.B. _„Landing Page - [Thema]"_)
   - `publish: false` ← **immer als Draft**, der Editor soll im Visual Editor prüfen
 - ⚠️ `parentId` nur setzen, wenn der Editor explizit einen Ordner nennt
 - 💡 Alternativ: `path` verwenden (z.B. `"en/services"`), um Ordner automatisch anlegen zu lassen (wie `mkdir -p`). `path` und `parentId` sind gegenseitig exklusiv.
 
-### Schritt 5: Bestätigung
+### Schritt 6: Bestätigung
 
 - Dem Editor den Slug / Link zur neuen Seite nennen
 - Darauf hinweisen, dass die Seite als **Draft** vorliegt und im Storyblok Visual Editor geprüft werden sollte
@@ -87,20 +90,20 @@ Der Editor möchte eine neue Seite in Storyblok erstellen und beschreibt den gew
 
 ## Häufige Fehler
 
-| Fehler                         | Auswirkung                                                              | Vermeidung                                                                                                    |
-| ------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `uploadAssets: true` vergessen | Bilder bleiben als externe URLs, brechen evtl. später                   | Immer setzen                                                                                                  |
-| `publish: true` ohne Review    | Ungeprüfter Content geht live                                           | Immer `false`, Editor entscheidet                                                                             |
-| `list_components` übersprungen | Claude generiert Sektionstypen, die es nicht gibt → Import schlägt fehl | Immer zuerst Komponenten prüfen                                                                               |
-| Icon-Bezeichner erfunden       | Ungültige Icons werden nicht gerendert                                  | Immer `list_icons` aufrufen vor Icon-Nutzung                                                                  |
-| Slug nicht abgestimmt          | Doppelte Slugs → Storyblok-Fehler                                       | Slug mit Editor besprechen                                                                                    |
-| Zu viele Sektionen auf einmal  | Ergebnis schwer zu überblicken                                          | Bei > 4 Sektionen den Sektion-für-Sektion Ansatz verwenden (siehe Skill _„Seite Sektion für Sektion planen"_) |
-| Bestehende Muster ignoriert    | Neuer Content passt nicht zum Rest der Website                          | Immer zuerst `analyze_content_patterns` oder Rezepte prüfen                                                   |
-| `generate_seo` übersprungen    | Fehlende SEO-Metadaten (Titel, Beschreibung, Keywords, OG-Image)        | Immer als letzten Generierungsschritt vor Seitenerstellung aufrufen                                           |
+| Fehler                              | Auswirkung                                                              | Vermeidung                                                                          |
+| ----------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `uploadAssets: true` vergessen      | Bilder bleiben als externe URLs, brechen evtl. später                   | Immer setzen                                                                        |
+| `publish: true` ohne Review         | Ungeprüfter Content geht live                                           | Immer `false`, Editor entscheidet                                                   |
+| `list_components` übersprungen      | Claude generiert Sektionstypen, die es nicht gibt → Import schlägt fehl | Immer zuerst Komponenten prüfen                                                     |
+| Icon-Bezeichner erfunden            | Ungültige Icons werden nicht gerendert                                  | Immer `list_icons` aufrufen vor Icon-Nutzung                                        |
+| Slug nicht abgestimmt               | Doppelte Slugs → Storyblok-Fehler                                       | Slug mit Editor besprechen                                                          |
+| Alle Sektionen auf einmal generiert | Editor kann einzelne Sektionen nicht prüfen/ablehnen                    | `generate_section` pro Sektion verwenden — ermöglicht einzelnes Review und Feedback |
+| Bestehende Muster ignoriert         | Neuer Content passt nicht zum Rest der Website                          | Immer zuerst `analyze_content_patterns` oder Rezepte prüfen                         |
+| `generate_seo` übersprungen         | Fehlende SEO-Metadaten (Titel, Beschreibung, Keywords, OG-Image)        | Immer als letzten Generierungsschritt vor Seitenerstellung aufrufen (Schritt 4)     |
 
 ## Varianten
 
-- **Nur eine einzelne Sektion generieren:** `componentType` statt `sectionCount` verwenden
+- **Nur eine einzelne Sektion generieren:** `generate_section` mit `componentType` aufrufen — Ergebnis wird isoliert angezeigt und kann direkt genehmigt/abgelehnt werden
 - **Seite in einem Unterordner:** `path` verwenden (z.B. `"en/services/consulting"`) — Ordner werden automatisch erstellt. Alternativ `parentId` des Zielordners angeben (über `list_stories` mit `startsWith` ermitteln).
-- **Blogpost statt Seite:** `contentType: "blog-post"` bei allen Tools übergeben. Blog-Posts sind Hybrid-Typen mit Sektionen UND Root-Feldern (`head`, `aside`, `cta`, `seo`). **Wichtig:** Blog-Sektionen sollten überwiegend aus `text` und `split-even` bestehen — niemals `hero` oder `cta` als Sektionen verwenden (diese werden über die Root-Felder `head` und `cta` abgedeckt). Andere Komponenten wie `faq` nur ausnahmsweise. Nach den Sektionen `generate_root_field` für jedes Root-Feld (`head`, `aside`, `cta`) aufrufen. `generate_seo` wird wie bei regulären Seiten in Schritt 3 aufgerufen (mit `contentType: "blog-post"`). Dann `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`. Siehe Skill _„Seite Sektion für Sektion planen und erstellen"_ → Abschnitt Hybrid-Typen.
+- **Blogpost statt Seite:** `contentType: "blog-post"` bei allen Tools übergeben. Blog-Posts sind Hybrid-Typen mit Sektionen UND Root-Feldern (`head`, `aside`, `cta`, `seo`). **Wichtig:** Blog-Sektionen sollten überwiegend aus `text` und `split-even` bestehen — niemals `hero` oder `cta` als Sektionen verwenden (diese werden über die Root-Felder `head` und `cta` abgedeckt). Andere Komponenten wie `faq` nur ausnahmsweise. Nach den Sektionen `generate_root_field` für jedes Root-Feld (`head`, `aside`, `cta`) aufrufen. `generate_seo` wird wie bei regulären Seiten in Schritt 4 aufgerufen (mit `contentType: "blog-post"`). Dann `create_page_with_content(sections: [...], rootFields: { head, aside, cta, seo })`. Siehe Skill _„Seite Sektion für Sektion planen und erstellen"_ → Abschnitt Hybrid-Typen.
 - **Events:** `contentType: "event-detail"` verwenden. Bei Tier-2-Typen (event-detail, event-list) `rootFields` für die Wurzel-Felder setzen, da keine Sektionen vorhanden sind.
