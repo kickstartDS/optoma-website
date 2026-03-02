@@ -131,6 +131,56 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
             if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts);
         }
 
+        // ── Token theme + Google Fonts ───────────────────────────────
+        // Mirrors the logic from packages/website/pages/_document.tsx:
+        // 1. Inject raw branding-token CSS from the Storyblok story/settings
+        // 2. Extract Google Font family names and load them via <link> tags
+        let _tokenStyleEl = null;
+        const _loadedFontLinks = new Set();
+
+        function applyTokenTheme(tokenCss) {
+            if (!tokenCss || typeof tokenCss !== "string") return;
+
+            // 1. Inject/update the branding token <style> block
+            if (!_tokenStyleEl) {
+                _tokenStyleEl = document.createElement("style");
+                _tokenStyleEl.id = "kds-token-theme";
+                document.head.appendChild(_tokenStyleEl);
+            }
+            _tokenStyleEl.textContent = tokenCss;
+
+            // 2. Extract Google Font families and load them
+            const fontTypes = ["display", "copy", "interface", "mono"];
+            for (const fontType of fontTypes) {
+                const re = new RegExp(
+                    "ks-brand-font-family-" + fontType + ':\\\\s*"?([a-zA-Z0-9_,]+(?:\\\\s+[a-zA-Z0-9_,]+)*)"?',
+                    "m"
+                );
+                const match = tokenCss.match(re);
+                if (!match) continue;
+                const family = match[1].trim();
+                // Only load single-word names (not system font stacks with commas/quotes)
+                if (!family || family.includes(",") || family.includes('"')) continue;
+                if (_loadedFontLinks.has(family)) continue;
+                _loadedFontLinks.add(family);
+
+                // Preconnect to Google Fonts (once)
+                if (_loadedFontLinks.size === 1) {
+                    const preconnect = document.createElement("link");
+                    preconnect.rel = "preconnect";
+                    preconnect.href = "https://fonts.gstatic.com";
+                    preconnect.crossOrigin = "anonymous";
+                    document.head.appendChild(preconnect);
+                }
+
+                const params = new URLSearchParams({ family: family + ":wght@300;400;500;600;700" });
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = "https://fonts.googleapis.com/css2?" + params;
+                document.head.appendChild(link);
+            }
+        }
+
         function applyContainerDimensions(ctx) {
             if (!ctx?.containerDimensions) return;
             const dims = ctx.containerDimensions;
@@ -621,6 +671,16 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
         app.ontoolresult = (result) => {
             const data = result?.structuredContent || result;
 
+            // Apply page-specific token CSS if present (branding overrides + Google Fonts)
+            if (data?.tokenCss) {
+                state.tokenCss = data.tokenCss;
+                saveState(state);
+                applyTokenTheme(data.tokenCss);
+            } else if (state.tokenCss) {
+                // Re-apply cached token CSS (e.g. after page reload)
+                applyTokenTheme(state.tokenCss);
+            }
+
             if (data?.renderedHtml && data?.componentType && data?.sectionData) {
                 // generate_section result → add pending section
                 addPendingSection(data);
@@ -703,6 +763,7 @@ export const PAGE_BUILDER_HTML = `<!DOCTYPE html>
                 applyContainerDimensions(hostCtx);
             }
             // Render any restored state
+            if (state.tokenCss) applyTokenTheme(state.tokenCss);
             renderBuilder();
         } catch (err) {
             const container = document.getElementById("preview-container");

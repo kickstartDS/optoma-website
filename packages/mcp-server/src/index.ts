@@ -174,6 +174,13 @@ const cachedPatterns: { current: ContentPatternAnalysis | null } = {
   current: null,
 };
 
+/**
+ * Cached global branding token CSS from the Storyblok settings story.
+ * Fetched at startup and passed by reference to tool handlers so they
+ * can inject it into ext-apps preview iframes.
+ */
+const globalTokenCss: { current: string | null } = { current: null };
+
 async function warmPatternCache(): Promise<ContentPatternAnalysis> {
   console.error("[MCP] Warming content pattern cache...");
   cachedPatterns.current = await analyzeContentPatterns(
@@ -209,6 +216,7 @@ function createMcpServer(): McpServer {
     cachedPatterns,
     sectionRecipes,
     availableIcons: AVAILABLE_ICONS,
+    globalTokenCss,
   };
   registerTools(mcpServer, toolDeps);
 
@@ -244,6 +252,19 @@ async function main() {
     console.error(
       "[MCP] Patterns will be fetched on first analyze_content_patterns call."
     );
+  }
+
+  // Fetch global branding token CSS from Storyblok settings
+  try {
+    const tokenCss = await storyblokService.getSettingsTokenCss();
+    if (tokenCss) {
+      globalTokenCss.current = tokenCss;
+      console.error(`[MCP] Global token CSS loaded (${tokenCss.length} chars)`);
+    } else {
+      console.error("[MCP] No global token CSS found in settings.");
+    }
+  } catch (err) {
+    console.error(`[MCP] Warning: Could not fetch settings token CSS: ${err}`);
   }
 
   const transportMode = process.env.MCP_TRANSPORT || "stdio";

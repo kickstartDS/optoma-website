@@ -217,7 +217,21 @@ export async function listStories(
   }
 
   if (options.excludeContent) {
-    params.excluding_fields = "content";
+    // Storyblok's `excluding_fields` works on fields *inside* story content,
+    // not on `content` itself. List all known content-level fields to
+    // effectively return metadata-only responses.
+    params.excluding_fields = [
+      "seo",
+      "token",
+      "section",
+      "component",
+      "footer_logo",
+      "header_logo",
+      "footer_inverted",
+      "header_floating",
+      "header_inverted",
+      "hidePageBreadcrumbs",
+    ].join(",");
   }
 
   const response = await client.get("cdn/stories", params);

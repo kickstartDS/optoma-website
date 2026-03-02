@@ -48,6 +48,8 @@ const SHARED_UI_META = {
         "https://a.storyblok.com", // Storyblok CDN assets
         "https://img2.storyblok.com", // Storyblok image service (resized/optimized)
         "https://placehold.co", // Placeholder images in AI-generated content
+        "https://fonts.googleapis.com", // Google Fonts CSS stylesheets
+        "https://fonts.gstatic.com", // Google Fonts font files (woff2)
       ],
     },
     prefersBorder: true,

@@ -74,6 +74,8 @@ export interface ToolRegistrationDeps {
   cachedPatterns: { current: ContentPatternAnalysis | null };
   sectionRecipes: Record<string, any>;
   availableIcons: string[];
+  /** Global branding token CSS from the Storyblok settings story. */
+  globalTokenCss: { current: string | null };
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -598,6 +600,9 @@ async function handleGenerateContent(
         structuredContent = {
           renderedSections: rendered,
           componentType: validated.componentType || "page",
+          ...(deps.globalTokenCss.current && {
+            tokenCss: deps.globalTokenCss.current,
+          }),
         };
       }
     } catch (renderErr) {
@@ -836,6 +841,9 @@ async function handleCreatePageWithContent(
     ...(renderedSections &&
       renderedSections.length > 0 && { renderedSections }),
     ...(warnings.length > 0 && { warnings }),
+    ...(deps.globalTokenCss.current && {
+      tokenCss: deps.globalTokenCss.current,
+    }),
   };
 
   return writeResult;
@@ -946,6 +954,10 @@ async function handleGetStory(
             sectionData: sections[i],
           })
         ),
+        // Per-story token CSS (from content.token) with global settings fallback
+        ...((storyContent?.token || deps.globalTokenCss.current) && {
+          tokenCss: storyContent?.token || deps.globalTokenCss.current,
+        }),
       };
     }
   } catch (err) {
@@ -1672,6 +1684,9 @@ async function handleGenerateSection(
         renderedHtml,
         componentType: sectionResult.componentType,
         sectionData: sectionResult.section,
+        ...(deps.globalTokenCss.current && {
+          tokenCss: deps.globalTokenCss.current,
+        }),
       },
     }),
   };
