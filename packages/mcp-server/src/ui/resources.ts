@@ -39,6 +39,19 @@ import { PAGE_BUILDER_HTML, PLAN_REVIEW_HTML } from "./templates.js";
  * When Storyblok CDN images are added, `resourceDomains` will be
  * extended to include `https://a.storyblok.com`.
  */
+/** Shared CSP metadata — ext-apps SDK is loaded from unpkg.com */
+const SHARED_UI_META = {
+  ui: {
+    csp: {
+      resourceDomains: [
+        "https://unpkg.com", // ext-apps SDK (app-with-deps.js)
+        "https://a.storyblok.com", // Storyblok CDN images in previews
+      ],
+    },
+    prefersBorder: true,
+  },
+};
+
 export function registerUiResources(server: McpServer): void {
   // ── Page Builder ───────────────────────────────────────────────
 
@@ -49,12 +62,7 @@ export function registerUiResources(server: McpServer): void {
     {
       description:
         "Unified page builder that accumulates sections across multiple generate_section calls. Supports single-section preview, multi-section page assembly, and editing existing pages. Provides approve/reject/modify, remove, reorder, and save actions.",
-      _meta: {
-        ui: {
-          // Future: add CSP for Storyblok CDN images
-          // csp: { resourceDomains: ["https://a.storyblok.com"] },
-        },
-      },
+      _meta: SHARED_UI_META,
     },
     async (uri) => ({
       contents: [
@@ -62,6 +70,7 @@ export function registerUiResources(server: McpServer): void {
           uri: uri.href,
           mimeType: RESOURCE_MIME_TYPE,
           text: PAGE_BUILDER_HTML,
+          _meta: SHARED_UI_META,
         },
       ],
     })
@@ -76,6 +85,7 @@ export function registerUiResources(server: McpServer): void {
     {
       description:
         "Interactive plan review showing the planned section sequence. Supports drag-to-reorder and approve/reject actions for the overall page plan.",
+      _meta: SHARED_UI_META,
     },
     async (uri) => ({
       contents: [
@@ -83,6 +93,7 @@ export function registerUiResources(server: McpServer): void {
           uri: uri.href,
           mimeType: RESOURCE_MIME_TYPE,
           text: PLAN_REVIEW_HTML,
+          _meta: SHARED_UI_META,
         },
       ],
     })

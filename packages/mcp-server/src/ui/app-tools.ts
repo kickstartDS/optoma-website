@@ -22,6 +22,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 import { z } from "zod";
+import { PAGE_BUILDER_URI, PLAN_REVIEW_URI } from "./capability.js";
 
 // ── Zod schemas for app-only tool inputs ───────────────────────────
 
@@ -85,7 +86,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Approve a generated section. Called from the section preview UI when the user clicks the approve button.",
       inputSchema: SectionInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
       },
     },
     async ({ section }) => {
@@ -115,7 +116,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Reject a generated section. Called from the preview UI when the user clicks reject.",
       inputSchema: RejectInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
       },
     },
     async ({ reason }) => {
@@ -146,7 +147,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Request modifications to a generated section. Called from the preview UI when the user wants changes.",
       inputSchema: SectionInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
       },
     },
     async ({ section }) => {
@@ -177,7 +178,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Approve a page plan (section sequence). Called from the plan review UI.",
       inputSchema: OrderInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PLAN_REVIEW_URI, visibility: ["app"] },
       },
     },
     async ({ order }) => {
@@ -208,7 +209,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Update the section order after the user reorders via drag-and-drop in the plan review UI.",
       inputSchema: OrderInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PLAN_REVIEW_URI, visibility: ["app"] },
       },
     },
     async ({ order }) => {
@@ -238,7 +239,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Remove a committed section from the page builder by index. Called from the builder UI when the user clicks the remove button on a section.",
       inputSchema: RemoveSectionInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
       },
     },
     async ({ index, sectionId }) => {
@@ -269,7 +270,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Move a section up or down in the page builder. Called from the builder UI when the user clicks the move buttons.",
       inputSchema: MoveSectionInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
       },
     },
     async ({ fromIndex, toIndex }) => {
@@ -302,7 +303,7 @@ export function registerAppOnlyTools(server: McpServer): void {
         "Save the accumulated page sections to Storyblok. Called from the builder's Save button. Supports both creating new pages and updating existing ones.",
       inputSchema: SavePageInputSchema,
       _meta: {
-        ui: { visibility: ["app"] },
+        ui: { resourceUri: PAGE_BUILDER_URI, visibility: ["app"] },
       },
     },
     async ({ mode, sections, storyUid, name, slug, publish, rootFields }) => {
