@@ -45,7 +45,9 @@ const SHARED_UI_META = {
     csp: {
       resourceDomains: [
         "https://unpkg.com", // ext-apps SDK (app-with-deps.js)
-        "https://a.storyblok.com", // Storyblok CDN images in previews
+        "https://a.storyblok.com", // Storyblok CDN assets
+        "https://img2.storyblok.com", // Storyblok image service (resized/optimized)
+        "https://placehold.co", // Placeholder images in AI-generated content
       ],
     },
     prefersBorder: true,

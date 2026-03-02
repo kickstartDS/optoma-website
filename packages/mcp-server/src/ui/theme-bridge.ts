@@ -94,6 +94,36 @@ body {
   min-width: 600px;
 }
 
+/* ─── Light-theme lockdown for component preview areas ──────────── */
+/* kickstartDS component CSS assumes a light background. When the    */
+/* host is in dark mode, applyHostStyleVariables() sets CSS vars     */
+/* using light-dark() (e.g. --color-background-primary:              */
+/* light-dark(white, dark)), and applyDocumentTheme() sets           */
+/* color-scheme: dark on the document root. Component tokens like    */
+/* --dsa-section--background-color_default chain through the theme   */
+/* bridge to these host variables, causing light-dark() to resolve   */
+/* to dark values.                                                   */
+/*                                                                   */
+/* Fix: force color-scheme: light on the preview container. This     */
+/* makes ALL inherited light-dark() values resolve to their light    */
+/* variant within the preview area — a single rule that covers every */
+/* token path, not just the handful we can enumerate explicitly.     */
+.kds-preview {
+  color-scheme: light;
+  --ks-background-color-default: #ffffff;
+  --ks-background-color-bold: #f5f5f5;
+  --ks-foreground-color-default: #171717;
+  --ks-foreground-color-muted: #6b7280;
+  --ks-foreground-color-inverted: #ffffff;
+  --ks-border-color-default: #e5e7eb;
+  --ks-border-color-bold: #d1d5db;
+  --ks-link-color: #4e63e0;
+  --ks-link-color-hover: #3b4fd6;
+  --ks-shadow-card: 0 4px 6px -1px rgba(0,0,0,0.1);
+  background: #ffffff;
+  color: #171717;
+}
+
 /* Fullscreen mode fills the viewport */
 body.fullscreen {
   min-width: 0;

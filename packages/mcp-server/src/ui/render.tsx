@@ -15,11 +15,159 @@
  * in `structuredContent`, where the host's sandboxed iframe inserts it
  * into the DOM and applies the inlined CSS.
  *
+ * Input data is in **Storyblok format** (flattened keys like `image_src`,
+ * asset objects like `{ filename, fieldtype: "asset" }`). Before passing
+ * to React components, data is transformed back to **Design System format**
+ * (nested objects like `{ image: { src } }`, plain URL strings).
+ *
  * @see PRD Section 6.3 — Server-Side Rendering with renderToStaticMarkup
  */
 
 import React, { type ComponentType } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+
+// ── Storyblok → Design System data preparation ────────────────────
+
+/**
+ * Resolve a Storyblok asset object to a plain URL string.
+ *
+ * Storyblok stores image fields as `{ filename: "https://...", fieldtype: "asset", ... }`.
+ * kickstartDS React components expect plain URL strings.
+ * Protocol-relative URLs (`//a.storyblok.com/...`) are prefixed with `https:`.
+ */
+function resolveAssetUrl(value: unknown): string | null {
+  if (typeof value === "string") {
+    return value.startsWith("//") ? `https:${value}` : value;
+  }
+  if (
+    value &&
+    typeof value === "object" &&
+    "filename" in value &&
+    typeof (value as any).filename === "string" &&
+    (value as any).filename.length > 0
+  ) {
+    const url = (value as any).filename;
+    return url.startsWith("//") ? `https:${url}` : url;
+  }
+  return null;
+}
+
+/**
+ * Unflatten Storyblok `key_subkey` props back to nested objects.
+ *
+ * Reverses the `flattenNestedObjects` transform:
+ * `{ image_src: "x", image_alt: "y" }` → `{ image: { src: "x", alt: "y" } }`
+ *
+ * Preserves keys starting with `_` (like `_uid`) and doesn't split
+ * known single-word keys that contain underscores in the component
+ * name (like `image_story` — handled by leaving `component` keys intact).
+ */
+function unflattenProps(obj: Record<string, any>): Record<string, any> {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (key.startsWith("_")) {
+      acc[key] = value;
+      return acc;
+    }
+
+    const parts = key.split("_");
+    if (parts.length === 1) {
+      acc[key] = value;
+      return acc;
+    }
+
+    // Build nested structure
+    let current = acc;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+      if (
+        !current[part] ||
+        typeof current[part] !== "object" ||
+        Array.isArray(current[part])
+      ) {
+        // If the non-split key already exists (e.g. set by a previous entry),
+        // don't clobber it — this key genuinely has underscores.
+        if (i === 0 && key in obj && parts.length === 2) {
+          // Simple heuristic: if `image_src` exists and `image` also exists
+          // as a non-object, treat the whole key as flat.
+          if (
+            current[part] !== undefined &&
+            typeof current[part] !== "object"
+          ) {
+            acc[key] = value;
+            return acc;
+          }
+        }
+        current[part] = {};
+      }
+      current = current[part];
+    }
+    current[parts[parts.length - 1]] = value;
+    return acc;
+  }, {} as Record<string, any>);
+}
+
+/**
+ * Recursively prepare Storyblok-format data for rendering with React components.
+ *
+ * Performs three transformations at every level of the content tree:
+ * 1. **Resolve asset objects** → plain URL strings
+ * 2. **Unflatten keys** → nested objects (`image_src` → `image.src`)
+ * 3. **Recurse into arrays and sub-component objects**
+ *
+ * This mirrors what the website does via `storyProcessing` + `unflatten()`.
+ */
+function prepareForRender(data: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (key === "component" || key === "type" || key === "_uid") {
+      result[key] = value;
+      continue;
+    }
+
+    if (Array.isArray(value)) {
+      result[key] = value.map((item) => {
+        if (item && typeof item === "object" && !Array.isArray(item)) {
+          // Sub-component or nested object
+          if (item.component || item.type) {
+            return prepareForRender(item);
+          }
+          // Asset object
+          const url = resolveAssetUrl(item);
+          if (url) return url;
+          // Regular nested object — recurse
+          return prepareForRender(item);
+        }
+        return item;
+      });
+      continue;
+    }
+
+    // Asset object → plain URL
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      (value as any).fieldtype === "asset"
+    ) {
+      const url = resolveAssetUrl(value);
+      result[key] = url || "";
+      continue;
+    }
+
+    // Protocol-relative URL string
+    if (typeof value === "string" && value.startsWith("//")) {
+      result[key] = `https:${value}`;
+      continue;
+    }
+
+    // Nested object without component/type — keep as-is (will be unflattened later)
+    result[key] = value;
+  }
+
+  // Now unflatten: image_src → image.src
+  return unflattenProps(result);
+}
 
 // ── kickstartDS component imports ──────────────────────────────────
 
@@ -75,6 +223,25 @@ const COMPONENT_MAP: Record<string, ComponentType<any>> = {
 // ── Render functions ───────────────────────────────────────────────
 
 /**
+ * Post-process rendered HTML to eagerly load lazy images.
+ *
+ * kickstartDS components use lazysizes for lazy loading: images get
+ * `class="lazyload"` and `data-src` / `data-srcset` instead of `src` /
+ * `srcset`. In the preview iframe there is no lazysizes runtime, so
+ * images would never load. This function:
+ * 1. Moves `data-src` → `src` and `data-srcset` → `srcset`
+ * 2. Removes the `lazyload` class
+ * 3. Strips `<noscript>` fallbacks (no longer needed)
+ */
+function eagerLoadImages(html: string): string {
+  return html
+    .replace(/\sdata-src="/g, ' src="')
+    .replace(/\sdata-srcset="/g, ' srcset="')
+    .replace(/\blazyload\b/g, "")
+    .replace(/<noscript>[\s\S]*?<\/noscript>/g, "");
+}
+
+/**
  * Render a single section's inner component to static HTML.
  *
  * Takes a Design System component data object (with `component` discriminator)
@@ -87,7 +254,8 @@ const COMPONENT_MAP: Record<string, ComponentType<any>> = {
 export function renderComponentToHtml(
   componentData: Record<string, any>
 ): string | null {
-  const { component, type, _uid, ...props } = componentData;
+  const prepared = prepareForRender(componentData);
+  const { component, type, _uid, ...props } = prepared;
   const Component = COMPONENT_MAP[component];
 
   if (!Component) {
@@ -105,7 +273,7 @@ export function renderComponentToHtml(
         <Component {...props} />
       </DsaProviders>
     );
-    return html;
+    return eagerLoadImages(html);
   } catch (err) {
     console.error(`[render] Failed to render component "${component}":`, err);
     return null;
@@ -133,16 +301,21 @@ export function renderSectionToHtml(
     return renderComponentToHtml(sectionData);
   }
 
+  // Prepare section-level props (unflatten, resolve assets)
+  const preparedSectionProps = prepareForRender(sectionProps);
+
   try {
     // Render each child component inside the Section wrapper
     const childElements = (components || []).map(
       (child: Record<string, any>, index: number) => {
+        // Prepare child data (unflatten, resolve asset objects to URLs)
+        const prepared = prepareForRender(child);
         const {
           component: childComponent,
           type: childType,
           _uid: childUid,
           ...childProps
-        } = child;
+        } = prepared;
         const ChildComponent = COMPONENT_MAP[childComponent];
 
         if (!ChildComponent) {
@@ -159,10 +332,10 @@ export function renderSectionToHtml(
 
     const html = renderToStaticMarkup(
       <DsaProviders>
-        <Section {...sectionProps}>{childElements}</Section>
+        <Section {...preparedSectionProps}>{childElements}</Section>
       </DsaProviders>
     );
-    return html;
+    return eagerLoadImages(html);
   } catch (err) {
     console.error(`[render] Failed to render section:`, err);
     return null;
