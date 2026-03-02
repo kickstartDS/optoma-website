@@ -15,6 +15,8 @@ import {
   elicitPublishConfirmation,
   elicitContentType,
   elicitDeleteConfirmation,
+  elicitSectionApproval,
+  elicitPageConfirmation,
   type ElicitationResult,
   type ElicitationProperty,
 } from "../src/elicitation.js";
@@ -405,6 +407,143 @@ describe("elicitDeleteConfirmation()", () => {
   });
 });
 
+// ── elicitSectionApproval() ────────────────────────────────────────
+
+describe("elicitSectionApproval()", () => {
+  it("returns a valid elicitation schema", () => {
+    const result = elicitSectionApproval("hero");
+
+    expect(result.message).toContain("hero");
+    expect(result.properties.action).toBeDefined();
+    expect(result.properties.action.type).toBe("string");
+    expect(result.required).toContain("action");
+  });
+
+  it("offers approve, modify, and reject options", () => {
+    const result = elicitSectionApproval("features");
+
+    expect(result.properties.action.enum).toContain("approve");
+    expect(result.properties.action.enum).toContain("modify");
+    expect(result.properties.action.enum).toContain("reject");
+  });
+
+  it("defaults to approve", () => {
+    const result = elicitSectionApproval("hero");
+    expect(result.properties.action.default).toBe("approve");
+  });
+
+  it("has human-readable enumNames for each option", () => {
+    const result = elicitSectionApproval("cta");
+
+    expect(result.properties.action.enumNames).toHaveLength(3);
+    result.properties.action.enumNames!.forEach((name) => {
+      expect(typeof name).toBe("string");
+      expect(name.length).toBeGreaterThan(5);
+    });
+  });
+
+  it("includes component type in the message", () => {
+    const result = elicitSectionApproval("testimonials");
+    expect(result.message).toContain("testimonials");
+  });
+
+  it("includes section summary when provided", () => {
+    const result = elicitSectionApproval(
+      "hero",
+      'Headline: "Welcome"\nSubheadline: "To our site"'
+    );
+    expect(result.message).toContain("Welcome");
+    expect(result.message).toContain("To our site");
+  });
+
+  it("works without a section summary", () => {
+    const result = elicitSectionApproval("faq");
+    expect(result.message).toContain("faq");
+    expect(result.message).not.toContain("undefined");
+  });
+});
+
+// ── elicitPageConfirmation() ───────────────────────────────────────
+
+describe("elicitPageConfirmation()", () => {
+  it("returns a valid elicitation schema", () => {
+    const result = elicitPageConfirmation("My Page", 3, [
+      "hero",
+      "features",
+      "cta",
+    ]);
+
+    expect(result.message).toContain("My Page");
+    expect(result.properties.action).toBeDefined();
+    expect(result.properties.action.type).toBe("string");
+    expect(result.required).toContain("action");
+  });
+
+  it("offers draft, publish, and discard options", () => {
+    const result = elicitPageConfirmation("Test", 1, ["hero"]);
+
+    expect(result.properties.action.enum).toContain("draft");
+    expect(result.properties.action.enum).toContain("publish");
+    expect(result.properties.action.enum).toContain("discard");
+  });
+
+  it("defaults to draft", () => {
+    const result = elicitPageConfirmation("Test", 1, ["hero"]);
+    expect(result.properties.action.default).toBe("draft");
+  });
+
+  it("has human-readable enumNames for each option", () => {
+    const result = elicitPageConfirmation("Test", 1, ["hero"]);
+
+    expect(result.properties.action.enumNames).toHaveLength(3);
+    result.properties.action.enumNames!.forEach((name) => {
+      expect(typeof name).toBe("string");
+      expect(name.length).toBeGreaterThan(5);
+    });
+  });
+
+  it("includes the page name in the message", () => {
+    const result = elicitPageConfirmation("About Us", 2, ["hero", "text"]);
+    expect(result.message).toContain("About Us");
+  });
+
+  it("includes the section count in the message", () => {
+    const result = elicitPageConfirmation("Test", 4, [
+      "hero",
+      "features",
+      "faq",
+      "cta",
+    ]);
+    expect(result.message).toContain("4");
+  });
+
+  it("lists section types in the message", () => {
+    const result = elicitPageConfirmation("Test", 3, [
+      "hero",
+      "features",
+      "cta",
+    ]);
+    expect(result.message).toContain("hero");
+    expect(result.message).toContain("features");
+    expect(result.message).toContain("cta");
+  });
+
+  it("handles singular section count", () => {
+    const result = elicitPageConfirmation("Test", 1, ["hero"]);
+    expect(result.message).toContain("1 section");
+    expect(result.message).not.toContain("1 sections");
+  });
+
+  it("handles plural section count", () => {
+    const result = elicitPageConfirmation("Test", 3, [
+      "hero",
+      "features",
+      "cta",
+    ]);
+    expect(result.message).toContain("3 sections");
+  });
+});
+
 // ── Integration patterns ───────────────────────────────────────────
 
 describe("Elicitation integration patterns", () => {
@@ -497,6 +636,98 @@ describe("Elicitation integration patterns", () => {
     expect(result.content?.confirm).toBe("delete");
   });
 
+  it("elicitSectionApproval can be used with tryElicit", async () => {
+    const approval = elicitSectionApproval("hero", 'Headline: "Welcome"');
+
+    const mockServer = {
+      getClientCapabilities: () => ({ elicitation: {} }),
+      elicitInput: async () => ({
+        action: "accept",
+        content: { action: "approve" },
+      }),
+    } as any;
+
+    const result = await tryElicit(
+      mockServer,
+      approval.message,
+      approval.properties,
+      approval.required
+    );
+
+    expect(result.accepted).toBe(true);
+    expect(result.content?.action).toBe("approve");
+  });
+
+  it("elicitSectionApproval modify action can be used with tryElicit", async () => {
+    const approval = elicitSectionApproval("features");
+
+    const mockServer = {
+      getClientCapabilities: () => ({ elicitation: {} }),
+      elicitInput: async () => ({
+        action: "accept",
+        content: { action: "modify" },
+      }),
+    } as any;
+
+    const result = await tryElicit(
+      mockServer,
+      approval.message,
+      approval.properties,
+      approval.required
+    );
+
+    expect(result.accepted).toBe(true);
+    expect(result.content?.action).toBe("modify");
+  });
+
+  it("elicitPageConfirmation can be used with tryElicit", async () => {
+    const confirm = elicitPageConfirmation("My Page", 3, [
+      "hero",
+      "features",
+      "cta",
+    ]);
+
+    const mockServer = {
+      getClientCapabilities: () => ({ elicitation: {} }),
+      elicitInput: async () => ({
+        action: "accept",
+        content: { action: "draft" },
+      }),
+    } as any;
+
+    const result = await tryElicit(
+      mockServer,
+      confirm.message,
+      confirm.properties,
+      confirm.required
+    );
+
+    expect(result.accepted).toBe(true);
+    expect(result.content?.action).toBe("draft");
+  });
+
+  it("elicitPageConfirmation discard action can be used with tryElicit", async () => {
+    const confirm = elicitPageConfirmation("Test", 1, ["hero"]);
+
+    const mockServer = {
+      getClientCapabilities: () => ({ elicitation: {} }),
+      elicitInput: async () => ({
+        action: "accept",
+        content: { action: "discard" },
+      }),
+    } as any;
+
+    const result = await tryElicit(
+      mockServer,
+      confirm.message,
+      confirm.properties,
+      confirm.required
+    );
+
+    expect(result.accepted).toBe(true);
+    expect(result.content?.action).toBe("discard");
+  });
+
   it("graceful degradation preserves all schema shapes", () => {
     // Verify all schema generators return compatible shapes
     const schemas = [
@@ -505,6 +736,8 @@ describe("Elicitation integration patterns", () => {
       elicitPublishConfirmation("page name"),
       elicitContentType(),
       elicitDeleteConfirmation("story name"),
+      elicitSectionApproval("hero", "Headline: Test"),
+      elicitPageConfirmation("page", 2, ["hero", "cta"]),
     ];
 
     schemas.forEach((schema) => {

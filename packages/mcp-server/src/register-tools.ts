@@ -25,13 +25,15 @@ import {
   tryElicit,
   elicitDeleteConfirmation,
   elicitComponentType,
-  elicitPublishConfirmation,
+  elicitSectionApproval,
+  elicitPageConfirmation,
 } from "./elicitation.js";
 import { ProgressReporter, type ProgressExtra } from "./progress.js";
 import {
   SECTION_PREVIEW_URI,
   PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
+  clientSupportsExtApps,
 } from "./ui/capability.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 // Lazy-loaded to avoid ESM directory import errors from kickstartDS at startup.
@@ -83,6 +85,45 @@ export interface ToolRegistrationDeps {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
+
+/**
+ * Build a short human-readable summary of a generated section
+ * for display in the section approval elicitation message.
+ */
+function buildSectionSummary(sectionResult: GenerateSectionResult): string {
+  const props = sectionResult.designSystemProps;
+  if (!props || typeof props !== "object") return "";
+
+  const lines: string[] = [];
+
+  // Extract key text fields for a quick overview
+  if (props.headline) lines.push(`Headline: "${props.headline}"`);
+  if (props.sub) lines.push(`Subheadline: "${props.sub}"`);
+
+  // Count sub-items (features, FAQs, testimonials, etc.)
+  for (const [key, value] of Object.entries(props)) {
+    if (Array.isArray(value) && value.length > 0) {
+      lines.push(
+        `${key}: ${value.length} item${value.length !== 1 ? "s" : ""}`
+      );
+    }
+  }
+
+  return lines.length > 0 ? lines.join("\n") : "";
+}
+
+/**
+ * Extract component types from sections for display in the page
+ * confirmation elicitation message.
+ */
+function extractSectionTypes(sections: Record<string, any>[]): string[] {
+  return sections.map((s) => {
+    if (s.component === "section" && Array.isArray(s.components)) {
+      return s.components[0]?.component || "section";
+    }
+    return s.component || "unknown";
+  });
+}
 
 /**
  * Run compositional quality checks on sections and return warnings.
@@ -213,8 +254,19 @@ pre-built content. It handles all the boilerplate:
 1. Validates sections against the Design System's JSON Schema
 2. Auto-generates _uid fields for every nested component that is missing one
 3. Wraps sections in a standard "page" component envelope
-4. Creates the story in Storyblok
-5. Optionally publishes it
+4. Presents a page preview for user confirmation before creating
+5. Creates the story in Storyblok
+
+Before creating the page, a confirmation gate ensures the user reviews:
+
+- When the response contains \`awaitUserAction: true\`, a page builder UI
+  preview with all sections is displayed. STOP and do NOT create the page
+  or call any other tool. Wait for the user to reorder/remove sections and
+  then save or discard via the UI (which triggers the save_page app-only tool).
+- When elicitation is available (no UI preview), the user is asked to choose:
+  save as draft, publish immediately, or discard entirely.
+- In automation contexts (no UI and no elicitation), the tool uses the
+  explicit \`publish\` parameter without blocking.
 
 Sections are validated against the Design System's JSON Schema before saving.
 Each container slot (e.g. a section's component list) only accepts the component
@@ -396,6 +448,21 @@ A convenience wrapper around \`generate_content\` that automatically:
 2. Injects site-specific context into the system prompt (e.g. typical sub-item counts)
 3. Accepts optional previous/next section context for better transitions
 4. Validates the output against recipe anti-patterns
+5. Presents the section for user review before proceeding
+
+After generating the section, a review gate ensures the user has a chance
+to approve, modify, or reject before you continue:
+
+- When the response contains \`awaitUserAction: true\`, a UI preview with
+  approve/modify/reject buttons is displayed. STOP and do NOT call any
+  further tools until the user clicks a button (which triggers
+  approve_section, modify_section, or reject_section).
+- When the response contains \`action: "modify_requested"\`, the user wants
+  changes. Ask what they'd like to change and call generate_section again.
+- When the response contains \`action: "rejected"\`, the user rejected.
+  Ask if they want a different component type or prompt.
+- In automation contexts (no UI and no elicitation), the section data is
+  returned immediately.
 
 Use this instead of \`generate_content\` when building a page section-by-section.
 For best results, call \`plan_page\` first, then \`generate_section\` for each
@@ -712,7 +779,7 @@ async function handleCreatePageWithContent(
 ): Promise<Record<string, any>> {
   const { deps, server, extra } = ctx;
   const validated = schemas.createPageWithContent.parse(args);
-  const createPageProgress = new ProgressReporter(extra, 3);
+  const createPageProgress = new ProgressReporter(extra, 4);
 
   // Step 1: Resolve path
   await createPageProgress.advance("Resolving folder path...");
@@ -726,8 +793,8 @@ async function handleCreatePageWithContent(
     parentId = await deps.storyblokService.ensurePath(validated.path);
   }
 
-  // Step 2: Create page
-  await createPageProgress.advance("Creating page in Storyblok...");
+  // Step 2: Pre-creation validation & preview render
+  await createPageProgress.advance("Validating and rendering preview...");
   const warnings = getCompositionalWarnings(
     validated.sections as Record<string, any>[],
     validated.contentType
@@ -751,50 +818,7 @@ async function handleCreatePageWithContent(
     });
   }
 
-  const result = await deps.storyblokService.createPageWithContent({
-    ...validated,
-    parentId,
-    contentType: validated.contentType,
-    rootFields: validated.rootFields as Record<string, unknown> | undefined,
-    skipValidation: validated.skipValidation,
-    uploadAssets: validated.uploadAssets,
-    assetFolderName: validated.assetFolderName,
-  });
-
-  // Step 3: Done
-  await createPageProgress.complete("Page created successfully");
-
-  // If the page was not explicitly published, offer to publish via elicitation
-  let wasPublished = !!validated.publish;
-  if (!wasPublished) {
-    const storyName = validated.name || (result as any)?.name || "Untitled";
-    const publishPrompt = elicitPublishConfirmation(storyName);
-    const publishResult = await tryElicit(
-      server.server,
-      publishPrompt.message,
-      publishPrompt.properties,
-      publishPrompt.required
-    );
-
-    if (
-      publishResult.accepted &&
-      publishResult.content?.publish === "publish"
-    ) {
-      // User chose to publish — update the story
-      const storyId = (result as any)?.id || (result as any)?.story?.id;
-      if (storyId) {
-        try {
-          await deps.storyblokService.updateStory(storyId, {}, true);
-          wasPublished = true;
-        } catch (pubErr) {
-          console.error(`[MCP] Failed to publish after creation:`, pubErr);
-        }
-      }
-    }
-    // If elicitation unsupported, declined, or cancelled — keep as draft
-  }
-
-  // Attempt SSR preview render of all sections (best-effort, non-fatal)
+  // Pre-render sections for preview (best-effort, non-fatal)
   let renderedSections:
     | Array<{
         componentType: string;
@@ -815,9 +839,120 @@ async function handleCreatePageWithContent(
     );
   }
 
+  // Pre-compute page metadata for the gate (needed by all tiers)
+  const pageName = validated.name || "Untitled";
+  const sectionTypes = extractSectionTypes(
+    validated.sections as Record<string, any>[]
+  );
+
+  // Step 3: User confirmation gate — three tiers:
+  // 1. Ext-apps UI available → page builder preview with save/discard buttons
+  //    is rendered; tell the LLM to STOP and wait for the save_page app-only tool
+  // 2. No ext-apps, but elicitation supported → block with elicitation form
+  // 3. Neither (automation) → use explicit `publish` parameter, no gate
+  const hasExtAppsUi = clientSupportsExtApps(server.server);
+
+  if (hasExtAppsUi) {
+    // Tier 1: Page builder UI preview is rendered with save/discard buttons.
+    // The LLM MUST stop and wait for the user to use the UI controls.
+    // The user can reorder sections, remove sections, then save or discard.
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              awaitUserAction: true,
+              pageName,
+              sectionCount: sectionTypes.length,
+              sectionTypes,
+              sections: validated.sections,
+              rootFields: validated.rootFields,
+              ...(warnings.length > 0 && { warnings }),
+              message:
+                "Page preview displayed with all sections. STOP and wait for the user to review, reorder, remove sections, and then save (as draft or published) or discard using the page builder UI. Do NOT create the page or call any other tool until the user has acted via the UI.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+      ...(renderedSections &&
+        renderedSections.length > 0 && {
+          structuredContent: {
+            pageName,
+            sectionCount: sectionTypes.length,
+            renderedSections,
+            ...(warnings.length > 0 && { warnings }),
+            ...(deps.globalTokenCss.current && {
+              tokenCss: deps.globalTokenCss.current,
+            }),
+          },
+        }),
+    };
+  }
+
+  // Tier 2: No ext-apps UI — try elicitation to block before creating
+  const confirmPrompt = elicitPageConfirmation(
+    pageName,
+    sectionTypes.length,
+    sectionTypes
+  );
+  const confirmResult = await tryElicit(
+    server.server,
+    confirmPrompt.message,
+    confirmPrompt.properties,
+    confirmPrompt.required
+  );
+
+  let shouldPublish = !!validated.publish;
+  if (confirmResult.accepted) {
+    const userAction = confirmResult.content?.action as string;
+
+    if (userAction === "discard") {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                success: false,
+                action: "discarded",
+                message:
+                  "Page creation cancelled by user. No changes were made in Storyblok.",
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+
+    // Override publish based on user choice
+    shouldPublish = userAction === "publish";
+  }
+  // Tier 3: Elicitation unsupported — use validated.publish as-is (automation)
+
+  // Step 4: Create page in Storyblok
+  await createPageProgress.advance("Creating page in Storyblok...");
+  const result = await deps.storyblokService.createPageWithContent({
+    ...validated,
+    parentId,
+    publish: shouldPublish,
+    contentType: validated.contentType,
+    rootFields: validated.rootFields as Record<string, unknown> | undefined,
+    skipValidation: validated.skipValidation,
+    uploadAssets: validated.uploadAssets,
+    assetFolderName: validated.assetFolderName,
+  });
+
+  // Step 5: Done
+  await createPageProgress.complete("Page created successfully");
+
   const data = {
     success: true,
-    message: wasPublished
+    message: shouldPublish
       ? "Page created and published"
       : "Page created (draft)",
     story: result,
@@ -841,7 +976,7 @@ async function handleCreatePageWithContent(
     storyName,
     storySlug,
     sectionCount: (validated.sections as any[])?.length || 0,
-    wasPublished,
+    wasPublished: shouldPublish,
     ...(renderedSections &&
       renderedSections.length > 0 && { renderedSections }),
     ...(warnings.length > 0 && { warnings }),
@@ -1675,6 +1810,108 @@ async function handleGenerateSection(
     note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains a single Storyblok-ready section object (with component: 'section' and nested components). Collect multiple section objects into an array and pass as 'sections' to create_page_with_content.",
   };
 
+  // Step 5: User review gate — three tiers:
+  // 1. Ext-apps UI available → preview with approve/modify/reject buttons
+  //    is rendered; tell the LLM to STOP and wait for the app-only tool call
+  // 2. No ext-apps, but elicitation supported → block with elicitation form
+  // 3. Neither (automation) → return immediately, no gate
+  const hasExtAppsUi = clientSupportsExtApps(server.server);
+
+  if (hasExtAppsUi) {
+    // Tier 1: UI preview is rendered with inline action buttons.
+    // The LLM MUST stop and wait for the user to click approve/modify/reject
+    // in the UI, which triggers app-only tools (approve_section, etc.).
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              ...responseData,
+              awaitUserAction: true,
+              message:
+                "Section generated and preview displayed. STOP and wait for the user to approve, modify, or reject the section using the preview UI buttons before proceeding. Do NOT generate the next section or call any other tool until the user has acted.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+      ...(renderedHtml && {
+        structuredContent: {
+          renderedHtml,
+          componentType: sectionResult.componentType,
+          sectionData: sectionResult.section,
+          ...(deps.globalTokenCss.current && {
+            tokenCss: deps.globalTokenCss.current,
+          }),
+        },
+      }),
+    };
+  }
+
+  // Tier 2: No ext-apps UI — try elicitation to block until user reviews
+  const sectionSummary = buildSectionSummary(sectionResult);
+  const approvalPrompt = elicitSectionApproval(
+    sectionResult.componentType,
+    sectionSummary
+  );
+  const approvalResult = await tryElicit(
+    server.server,
+    approvalPrompt.message,
+    approvalPrompt.properties,
+    approvalPrompt.required
+  );
+
+  if (approvalResult.accepted) {
+    const userAction = approvalResult.content?.action as string;
+
+    if (userAction === "reject") {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                action: "rejected",
+                componentType: sectionResult.componentType,
+                message:
+                  "Section rejected by user. Ask if they want to try a different component type or prompt.",
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+
+    if (userAction === "modify") {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                action: "modify_requested",
+                componentType: sectionResult.componentType,
+                section: sectionResult.section,
+                designSystemProps: sectionResult.designSystemProps,
+                message:
+                  "User wants modifications. Ask what changes they'd like, then call generate_section again with an updated prompt.",
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+
+    // userAction === "approve" — fall through to normal return
+  }
+
+  // Tier 3: Elicitation unsupported (automation) — return immediately
   return {
     content: [
       {
@@ -1682,7 +1919,6 @@ async function handleGenerateSection(
         text: JSON.stringify(responseData, null, 2),
       },
     ],
-    // ext-apps structured content for UI preview rendering
     ...(renderedHtml && {
       structuredContent: {
         renderedHtml,

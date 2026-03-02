@@ -236,3 +236,84 @@ export function elicitDeleteConfirmation(storyName: string): {
     required: ["confirm"],
   };
 }
+
+/**
+ * Elicit section approval after generation.
+ *
+ * This is the key gate that blocks the LLM from continuing to the
+ * next section until the user has reviewed the current one.
+ * In automation contexts (n8n, clients without elicitation), tryElicit()
+ * returns unsupported and the tool falls through to immediate return.
+ */
+export function elicitSectionApproval(
+  componentType: string,
+  sectionSummary?: string
+): {
+  message: string;
+  properties: Record<string, ElicitationProperty>;
+  required: string[];
+} {
+  const summaryBlock = sectionSummary
+    ? `\n\nGenerated content summary:\n${sectionSummary}`
+    : "";
+
+  return {
+    message: `A "${componentType}" section has been generated.${summaryBlock}\n\nPlease review and choose an action:`,
+    properties: {
+      action: {
+        type: "string",
+        title: "Section Review",
+        description: "Approve, modify, or reject this section",
+        enum: ["approve", "modify", "reject"],
+        enumNames: [
+          "Approve — use this section",
+          "Modify — request changes",
+          "Reject — skip this section",
+        ],
+        default: "approve",
+      },
+    },
+    required: ["action"],
+  };
+}
+
+/**
+ * Elicit page confirmation before creating in Storyblok.
+ *
+ * Shows a summary of the planned page and asks whether to create
+ * it as a draft, publish immediately, or discard entirely.
+ * This blocks the tool BEFORE the Storyblok API call, giving the
+ * user full control over whether the page is created at all.
+ */
+export function elicitPageConfirmation(
+  pageName: string,
+  sectionCount: number,
+  sectionTypes: string[]
+): {
+  message: string;
+  properties: Record<string, ElicitationProperty>;
+  required: string[];
+} {
+  const sectionList = sectionTypes.map((t, i) => `  ${i + 1}. ${t}`).join("\n");
+
+  return {
+    message: `Ready to create page "${pageName}" with ${sectionCount} section${
+      sectionCount !== 1 ? "s" : ""
+    }:\n\n${sectionList}\n\nWhat would you like to do?`,
+    properties: {
+      action: {
+        type: "string",
+        title: "Page Action",
+        description: "Choose how to save this page",
+        enum: ["draft", "publish", "discard"],
+        enumNames: [
+          "Save as draft — review in Storyblok first",
+          "Publish — make it live immediately",
+          "Discard — don't create the page",
+        ],
+        default: "draft",
+      },
+    },
+    required: ["action"],
+  };
+}
