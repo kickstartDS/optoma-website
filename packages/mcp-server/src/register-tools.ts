@@ -33,6 +33,7 @@ import {
   SECTION_PREVIEW_URI,
   PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
+  AUDIT_REPORT_URI,
   clientSupportsExtApps,
 } from "./ui/capability.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
@@ -60,10 +61,12 @@ import {
   planPageContent,
   generateSectionContent,
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
+  runContentAudit,
   type ContentPatternAnalysis,
   type SectionRecipes,
   type PlanPageResult,
   type GenerateSectionResult,
+  type RunAuditOptions,
   stripEmptyAssetFields,
 } from "./services.js";
 import {
@@ -549,6 +552,22 @@ a folder hierarchy before creating pages. The returned folder ID can be
 passed as \`parentId\` to \`create_page_with_content\` or \`create_story\`.
 
 Idempotent: calling with an already-existing path simply returns its ID.`,
+
+  content_audit: `Run a comprehensive content quality audit across all stories.
+
+Analyzes every published story for content quality issues across four categories:
+- **Images**: Missing alt text, empty src, placeholder/external URLs
+- **Content**: Short text, empty sections, missing headlines, thin pages, duplicate heroes
+- **SEO**: Missing metadata, title/description length, missing OG images
+- **Freshness**: Stale content, never-published drafts, unpublished changes
+
+Returns a structured report with:
+- Health score (0–100) based on findings severity
+- Findings grouped by category and severity (high/medium/low)
+- Top offenders (stories with the most issues)
+- Summary statistics by category, severity, and rule
+
+Use this tool for periodic content quality reviews or before major site updates.`,
 };
 
 // ── Component usage hints ──────────────────────────────────────────
@@ -2033,6 +2052,41 @@ async function handleGenerateSeo(
   };
 }
 
+async function handleContentAudit(
+  args: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<Record<string, any>> {
+  const { deps, extra } = ctx;
+  const validated = schemas.contentAudit.parse(args);
+
+  const progress = new ProgressReporter(extra, 3);
+
+  const auditOptions: RunAuditOptions = {
+    startsWith: validated.startsWith,
+    config: validated.staleMonths
+      ? { staleMonths: validated.staleMonths }
+      : undefined,
+    onProgress: (_step, _total, message) => {
+      progress.advance(message);
+    },
+  };
+
+  const auditResults = await runContentAudit(
+    deps.storyblokService.getContentClient(),
+    auditOptions
+  );
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(auditResults, null, 2),
+      },
+    ],
+    structuredContent: auditResults,
+  };
+}
+
 async function handleEnsurePath(
   args: Record<string, unknown>,
   ctx: ToolContext
@@ -2367,6 +2421,15 @@ export function registerTools(
     "generate_seo",
     schemas.generateSeo.shape,
     (args, extra) => handleGenerateSeo(args, ctx(extra))
+  );
+
+  // ── content_audit ────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "content_audit",
+    schemas.contentAudit.shape,
+    (args, extra) => handleContentAudit(args, ctx(extra)),
+    { ui: { resourceUri: AUDIT_REPORT_URI } }
   );
 
   // ── ensure_path ──────────────────────────────────────────────
