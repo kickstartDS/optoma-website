@@ -265,8 +265,8 @@ Before creating the page, a confirmation gate ensures the user reviews:
   then save or discard via the UI (which triggers the save_page app-only tool).
 - When elicitation is available (no UI preview), the user is asked to choose:
   save as draft, publish immediately, or discard entirely.
-- In automation contexts (no UI and no elicitation), the tool uses the
-  explicit \`publish\` parameter without blocking.
+- Otherwise, the page is created using the explicit \`publish\` parameter.
+  Present the result to the user for confirmation.
 
 Sections are validated against the Design System's JSON Schema before saving.
 Each container slot (e.g. a section's component list) only accepts the component
@@ -461,8 +461,12 @@ to approve, modify, or reject before you continue:
   changes. Ask what they'd like to change and call generate_section again.
 - When the response contains \`action: "rejected"\`, the user rejected.
   Ask if they want a different component type or prompt.
-- In automation contexts (no UI and no elicitation), the section data is
-  returned immediately.
+- Otherwise, the section data is returned with \`awaitUserAction: true\`.
+  Present the generated section to the user and WAIT for them to approve,
+  request modifications, or reject before continuing to the next section.
+
+IMPORTANT: NEVER generate the next section until the user has explicitly
+approved the current one. Always present each section and wait for feedback.
 
 Use this instead of \`generate_content\` when building a page section-by-section.
 For best results, call \`plan_page\` first, then \`generate_section\` for each
@@ -1810,11 +1814,25 @@ async function handleGenerateSection(
     note: "Use import_content_at_position or create_page_with_content to add this section to a story. The 'section' field contains a single Storyblok-ready section object (with component: 'section' and nested components). Collect multiple section objects into an array and pass as 'sections' to create_page_with_content.",
   };
 
+  // Build structuredContent once — always include it when renderedHtml is
+  // available so the ext-apps UI preview works regardless of which gate tier
+  // fires (the app's ontoolresult handler needs this data to render).
+  const structuredContent = renderedHtml
+    ? {
+        renderedHtml,
+        componentType: sectionResult.componentType,
+        sectionData: sectionResult.section,
+        ...(deps.globalTokenCss.current && {
+          tokenCss: deps.globalTokenCss.current,
+        }),
+      }
+    : undefined;
+
   // Step 5: User review gate — three tiers:
   // 1. Ext-apps UI available → preview with approve/modify/reject buttons
   //    is rendered; tell the LLM to STOP and wait for the app-only tool call
   // 2. No ext-apps, but elicitation supported → block with elicitation form
-  // 3. Neither (automation) → return immediately, no gate
+  // 3. Neither → return with awaitUserAction so the LLM asks the user
   const hasExtAppsUi = clientSupportsExtApps(server.server);
 
   if (hasExtAppsUi) {
@@ -1837,16 +1855,7 @@ async function handleGenerateSection(
           ),
         },
       ],
-      ...(renderedHtml && {
-        structuredContent: {
-          renderedHtml,
-          componentType: sectionResult.componentType,
-          sectionData: sectionResult.section,
-          ...(deps.globalTokenCss.current && {
-            tokenCss: deps.globalTokenCss.current,
-          }),
-        },
-      }),
+      ...(structuredContent && { structuredContent }),
     };
   }
 
@@ -1911,24 +1920,27 @@ async function handleGenerateSection(
     // userAction === "approve" — fall through to normal return
   }
 
-  // Tier 3: Elicitation unsupported (automation) — return immediately
+  // Tier 3: No ext-apps UI and no elicitation — return section data with
+  // awaitUserAction flag so the LLM presents the section to the user and
+  // waits for explicit approval before continuing. Automation clients (e.g.
+  // n8n) process the JSON programmatically and ignore the flag.
   return {
     content: [
       {
         type: "text",
-        text: JSON.stringify(responseData, null, 2),
+        text: JSON.stringify(
+          {
+            ...responseData,
+            awaitUserAction: true,
+            message:
+              "Section generated successfully. Present this section to the user and WAIT for their explicit approval before generating the next section or calling any other tool. Ask the user if they want to: (1) approve and continue, (2) request modifications, or (3) reject and try a different approach.",
+          },
+          null,
+          2
+        ),
       },
     ],
-    ...(renderedHtml && {
-      structuredContent: {
-        renderedHtml,
-        componentType: sectionResult.componentType,
-        sectionData: sectionResult.section,
-        ...(deps.globalTokenCss.current && {
-          tokenCss: deps.globalTokenCss.current,
-        }),
-      },
-    }),
+    ...(structuredContent && { structuredContent }),
   };
 }
 

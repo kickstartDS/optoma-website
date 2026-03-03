@@ -663,6 +663,19 @@ export const schemas = {
         "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
       ),
   }),
+
+  contentAudit: z.object({
+    startsWith: z
+      .string()
+      .optional()
+      .describe(
+        "Filter stories by slug prefix (e.g. 'en/' for English pages). When omitted, all stories are audited."
+      ),
+    staleMonths: z
+      .number()
+      .optional()
+      .describe("Months after which content is considered stale (default: 6)"),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -694,3 +707,4 @@ export type GenerateRootFieldInput = z.infer<typeof schemas.generateRootField>;
 export type GenerateSeoInput = z.infer<typeof schemas.generateSeo>;
 export type ReplaceSectionInput = z.infer<typeof schemas.replaceSection>;
 export type UpdateSeoInput = z.infer<typeof schemas.updateSeo>;
+export type ContentAuditInput = z.infer<typeof schemas.contentAudit>;

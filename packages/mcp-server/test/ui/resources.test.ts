@@ -19,6 +19,7 @@ jest.unstable_mockModule("@modelcontextprotocol/ext-apps/server", () => ({
   registerAppResource: mockRegisterAppResource,
   registerAppTool: jest.fn(),
   getUiCapability: jest.fn(),
+  EXTENSION_ID: "io.modelcontextprotocol/ui",
   RESOURCE_MIME_TYPE: "text/html;profile=mcp-app",
 }));
 

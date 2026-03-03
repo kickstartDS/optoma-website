@@ -25,6 +25,7 @@ import {
   type ResourceRegistrationDeps,
 } from "./register-resources.js";
 import { registerPrompts } from "./register-prompts.js";
+import { installCapabilityInterceptor } from "./ui/capability.js";
 
 /**
  * MCP Server for Storyblok CMS integration
@@ -326,6 +327,10 @@ async function main() {
         });
 
         await mcpServer.connect(transport);
+
+        // Intercept raw initialize to capture extensions before Zod strips them
+        installCapabilityInterceptor(mcpServer.server, transport);
+
         await transport.handleRequest(req, res, body);
 
         // Clean up after the response is sent
@@ -380,6 +385,10 @@ async function main() {
     );
 
     await mcpServer.connect(transport);
+
+    // Intercept raw initialize to capture extensions before Zod strips them
+    installCapabilityInterceptor(mcpServer.server, transport);
+
     console.error("Storyblok MCP Server running on stdio");
   }
 }

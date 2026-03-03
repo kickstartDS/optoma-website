@@ -365,20 +365,22 @@ function getContentAuditMessages(
           `Audit the existing content in our Storyblok space${startsWith}.`,
           "",
           "Follow this workflow:",
-          `1. Call \`analyze_content_patterns\`${
+          `1. Call \`content_audit\`${
             args.startsWith ? ` with startsWith: '${args.startsWith}'` : ""
-          } to get component frequency, section sequences, and patterns`,
-          `2. Call \`list_stories\`${
+          } to run the full automated audit (images, content quality, SEO, freshness)`,
+          "2. Review the audit report — it includes a health score, findings by severity, and top offenders",
+          `3. Optionally call \`analyze_content_patterns\`${
             args.startsWith ? ` with startsWith: '${args.startsWith}'` : ""
-          } to get all stories`,
-          "3. For any stories that look problematic, call `get_story` to inspect their content",
+          } for additional structural analysis (component frequency, section sequences)`,
+          "4. For any stories that look problematic, call `get_story` to inspect their content",
           "",
-          "Analyze and report on:",
-          "- **Component usage:** Which components are used most/least? Are any unused?",
-          "- **Section patterns:** What are the common section sequences? Any anti-patterns?",
-          "- **Content quality:** Are there sparse sections (too few items)? Missing headlines?",
-          "- **SEO health:** Which pages are missing SEO metadata?",
-          "- **Structure consistency:** Do pages follow similar patterns or is there high variance?",
+          "The `content_audit` tool provides a comprehensive report with:",
+          "- **Health score** (0–100) — overall content quality",
+          "- **Image issues:** Empty sources, missing alt text, placeholder/external images",
+          "- **Content quality:** Empty sections, missing headlines, sparse pages, thin content",
+          "- **SEO health:** Missing metadata, title/description length violations",
+          "- **Freshness:** Stale content, unpublished changes",
+          "- **Top offenders:** Stories with the most issues",
           "",
           "Present the findings as a structured report with specific recommendations.",
         ].join("\n"),
@@ -388,7 +390,7 @@ function getContentAuditMessages(
       role: "assistant",
       content: {
         type: "text",
-        text: `I'll audit your content${startsWith}. Let me start by analyzing the content patterns to understand component usage, common sequences, and the overall structure of your site.`,
+        text: `I'll audit your content${startsWith}. Let me run the comprehensive content audit to check images, SEO, content quality, and freshness across all stories.`,
       },
     },
   ];

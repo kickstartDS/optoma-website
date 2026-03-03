@@ -127,6 +127,16 @@ export { sharedAnalyzeContentPatterns as analyzeContentPatterns };
 export { assembleFieldGuidance };
 export type { ContentPatternAnalysis, SubComponentStats, SectionRecipes };
 
+// ─── Content Audit ────────────────────────────────────────────────────
+export { runContentAudit } from "@kickstartds/storyblok-services";
+export type {
+  AuditResults,
+  AuditConfig,
+  AuditFinding,
+  AuditSummary,
+  RunAuditOptions,
+} from "@kickstartds/storyblok-services";
+
 /**
  * Wrapper class for Storyblok API operations.
  *

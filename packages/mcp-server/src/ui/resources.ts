@@ -22,6 +22,7 @@ import {
   SECTION_PREVIEW_URI,
   PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
+  AUDIT_REPORT_URI,
   RESOURCE_MIME_TYPE,
 } from "./capability.js";
 import {
@@ -29,6 +30,7 @@ import {
   PAGE_BUILDER_HTML,
   PLAN_REVIEW_HTML,
 } from "./templates.js";
+import { AUDIT_REPORT_HTML } from "./audit-report-template.js";
 
 // ── Registration ───────────────────────────────────────────────────
 
@@ -126,6 +128,29 @@ export function registerUiResources(server: McpServer): void {
           uri: uri.href,
           mimeType: RESOURCE_MIME_TYPE,
           text: PLAN_REVIEW_HTML,
+          _meta: SHARED_UI_META,
+        },
+      ],
+    })
+  );
+
+  // ── Audit Report ───────────────────────────────────────────────
+
+  registerAppResource(
+    server,
+    "Audit Report",
+    AUDIT_REPORT_URI,
+    {
+      description:
+        "Interactive content audit dashboard showing health score, findings by category/severity, rule breakdown, top offenders, and orphaned assets.",
+      _meta: SHARED_UI_META,
+    },
+    async (uri) => ({
+      contents: [
+        {
+          uri: uri.href,
+          mimeType: RESOURCE_MIME_TYPE,
+          text: AUDIT_REPORT_HTML,
           _meta: SHARED_UI_META,
         },
       ],

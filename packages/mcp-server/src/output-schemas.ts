@@ -255,6 +255,32 @@ export const writeResultOutputSchema = z
   })
   .passthrough();
 
+// ── Content audit result schema ────────────────────────────────────
+
+/** Output schema for content_audit */
+export const contentAuditOutputSchema = z
+  .object({
+    generatedAt: z.string().describe("ISO timestamp of when the audit ran"),
+    config: z.record(z.unknown()).describe("Audit configuration used"),
+    summary: z
+      .object({
+        totalStories: z.number(),
+        totalFindings: z.number(),
+        byCategory: z.record(z.unknown()),
+        bySeverity: z.record(z.number()),
+        byRule: z.record(z.number()),
+        healthScore: z.number().describe("Health score from 0–100"),
+      })
+      .passthrough(),
+    findings: z
+      .array(z.record(z.unknown()))
+      .describe("All audit findings with rule, severity, category, and story"),
+    topOffenders: z
+      .array(z.record(z.unknown()))
+      .describe("Top 10 stories with the most issues"),
+  })
+  .passthrough();
+
 // ── Mapping of tool name → output schema ───────────────────────────
 
 /**
@@ -271,6 +297,7 @@ export const OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
   generate_content: generateContentOutputSchema,
   analyze_content_patterns: analyzeContentPatternsOutputSchema,
   get_component: getComponentOutputSchema,
+  content_audit: contentAuditOutputSchema,
 
   // Write operations all share the same result shape
   import_content: writeResultOutputSchema,

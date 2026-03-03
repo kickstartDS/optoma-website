@@ -9,9 +9,11 @@
 
 export {
   clientSupportsExtApps,
+  installCapabilityInterceptor,
   SECTION_PREVIEW_URI,
   PAGE_BUILDER_URI,
   PLAN_REVIEW_URI,
+  AUDIT_REPORT_URI,
   RESOURCE_MIME_TYPE,
 } from "./capability.js";
 
@@ -30,6 +32,8 @@ export {
   PAGE_BUILDER_HTML,
   PLAN_REVIEW_HTML,
 } from "./templates.js";
+
+export { AUDIT_REPORT_HTML } from "./audit-report-template.js";
 
 export {
   renderComponentToHtml,

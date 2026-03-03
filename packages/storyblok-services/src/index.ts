@@ -214,3 +214,16 @@ export type {
   GenerateSectionOptions,
   GenerateSectionResult,
 } from "./generate-section.js";
+
+// ─── Content audit ──────────────────────────────────────────────────
+export { runContentAudit } from "./audit.js";
+export type {
+  AuditConfig,
+  AuditFinding,
+  AuditResults,
+  AuditSummary,
+  CategorySummary,
+  FindingCategory,
+  FindingSeverity,
+  RunAuditOptions,
+} from "./audit.js";
