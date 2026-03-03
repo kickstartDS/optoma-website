@@ -22,8 +22,6 @@ export const SECTION_COMPONENT_TYPES: Array<{
   { value: "mosaic", label: "Mosaic" },
   { value: "video-curtain", label: "Video Curtain" },
   { value: "slider", label: "Slider" },
-  { value: "split-even", label: "Split Even" },
-  { value: "split-weighted", label: "Split Weighted" },
   { value: "downloads", label: "Downloads" },
   { value: "business-card", label: "Business Card" },
   { value: "content-nav", label: "Content Nav" },

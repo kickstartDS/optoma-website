@@ -32,8 +32,6 @@ const labelMap: Record<string, string> = {
   mosaic: "Mosaic",
   "video-curtain": "Video Curtain",
   slider: "Slider",
-  "split-even": "Split Even",
-  "split-weighted": "Split Weighted",
   downloads: "Downloads",
   "business-card": "Business Card",
   "content-nav": "Content Nav",
