@@ -439,6 +439,14 @@ Returns a recommended section sequence based on the page intent, available
 components, and the site's existing content patterns. Does NOT generate
 content — only plans the structure.
 
+After planning, a review gate ensures the user can approve or modify the plan:
+
+- When the response contains \`awaitUserAction: true\`, a plan review UI is
+  displayed. STOP and do NOT call any further tools until the user has acted
+  via the UI (which triggers approve_plan).
+- Otherwise, present the plan to the user and wait for their approval before
+  generating sections.
+
 Use the returned plan to generate each section individually with
 \`generate_content(componentType=...)\` for best results.
 
@@ -893,7 +901,7 @@ async function handleCreatePageWithContent(
               rootFields: validated.rootFields,
               ...(warnings.length > 0 && { warnings }),
               message:
-                "Page preview displayed with all sections. STOP and wait for the user to review, reorder, remove sections, and then save (as draft or published) or discard using the page builder UI. Do NOT create the page or call any other tool until the user has acted via the UI.",
+                "Page preview is now visible to the user. Do NOT respond, summarize, or describe next steps. Say nothing. Wait silently for the user's next message.",
             },
             null,
             2
@@ -1661,10 +1669,11 @@ async function handlePlanPage(
     }
   );
 
-  // Plan review is handled by the plan-review UI (ui://kds/plan-review)
-  // for ext-apps clients, or conversationally by the LLM for text-only
-  // clients. No elicitation — it would be redundant with the UI and
-  // blocking for clients that support both.
+  // Plan review gate — two tiers:
+  // 1. Ext-apps UI available → plan review UI with approve/modify buttons;
+  //    tell the LLM to STOP and wait for the approve_plan app-only tool
+  // 2. No ext-apps → return plan data for conversational review by the LLM
+  const hasExtAppsUi = clientSupportsExtApps(server.server);
 
   const planResponseData = {
     plan: planResult.plan,
@@ -1675,6 +1684,32 @@ async function handlePlanPage(
     usage: planResult.usage,
   };
 
+  if (hasExtAppsUi) {
+    // Tier 1: Plan review UI is rendered with approve/modify controls.
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              ...planResponseData,
+              awaitUserAction: true,
+              message:
+                "Plan review is now visible to the user. Do NOT respond, summarize, or describe next steps. Say nothing. Wait silently for the user's next message.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+      structuredContent: {
+        plan: planResult.plan,
+        contentType: planResult.contentType,
+      },
+    };
+  }
+
+  // Tier 2: No ext-apps UI — return plan for conversational review
   return {
     content: [
       {
@@ -1682,7 +1717,6 @@ async function handlePlanPage(
         text: JSON.stringify(planResponseData, null, 2),
       },
     ],
-    // ext-apps structured content for plan review UI
     structuredContent: {
       plan: planResult.plan,
       contentType: planResult.contentType,
@@ -1867,7 +1901,7 @@ async function handleGenerateSection(
               ...responseData,
               awaitUserAction: true,
               message:
-                "Section generated and preview displayed. STOP and wait for the user to approve, modify, or reject the section using the preview UI buttons before proceeding. Do NOT generate the next section or call any other tool until the user has acted.",
+                "Section preview is now visible to the user. Do NOT respond, summarize, or describe next steps. Say nothing. Wait silently for the user's next message.",
             },
             null,
             2

@@ -178,13 +178,12 @@ body.fullscreen {
 }
 
 .kds-preview-actions button.primary {
-  background: var(--ks-background-color-accent, #4e63e0);
-  color: var(--ks-foreground-color-inverted, #ffffff);
-  border-color: transparent;
+  color: #16a34a;
+  border-color: #bbf7d0;
 }
 
 .kds-preview-actions button.primary:hover {
-  opacity: 0.9;
+  background: #f0fdf4;
 }
 
 .kds-preview-actions button.danger {

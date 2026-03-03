@@ -45,7 +45,6 @@ describe("registerAppOnlyTools", () => {
     expect(toolNames).toContain("reject_section");
     expect(toolNames).toContain("modify_section");
     expect(toolNames).toContain("approve_plan");
-    expect(toolNames).toContain("reorder_plan");
     expect(toolNames).toContain("remove_section");
     expect(toolNames).toContain("move_section");
     expect(toolNames).toContain("save_page");
@@ -161,22 +160,6 @@ describe("registerAppOnlyTools", () => {
 
       const parsed = JSON.parse(result.content[0].text);
       expect(parsed.action).toBe("plan_approved");
-      expect(parsed.order).toEqual(order);
-    });
-
-    it("reorder_plan returns plan_reordered with new order", async () => {
-      const mockServer = {} as any;
-      registerAppOnlyTools(mockServer);
-
-      const reorderCall = mockRegisterAppTool.mock.calls.find(
-        (call: any[]) => call[1] === "reorder_plan"
-      );
-      const handler = reorderCall![reorderCall!.length - 1];
-      const order = ["cta", "hero", "features"];
-      const result = await handler({ order });
-
-      const parsed = JSON.parse(result.content[0].text);
-      expect(parsed.action).toBe("plan_reordered");
       expect(parsed.order).toEqual(order);
     });
 

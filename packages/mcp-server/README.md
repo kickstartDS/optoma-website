@@ -741,13 +741,12 @@ When connected to a client that supports the **MCP Apps extension** (`@modelcont
 
 These tools have `visibility: ["app"]` — they're hidden from the LLM and can only be called from the UI iframe:
 
-| Tool              | Description                                    |
-| ----------------- | ---------------------------------------------- |
-| `approve_section` | Approve a generated section from the preview   |
-| `reject_section`  | Reject a section and request regeneration      |
-| `modify_section`  | Modify section with user feedback              |
-| `approve_plan`    | Approve the planned section sequence           |
-| `reorder_plan`    | Reorder sections in the plan via drag-and-drop |
+| Tool              | Description                                  |
+| ----------------- | -------------------------------------------- |
+| `approve_section` | Approve a generated section from the preview |
+| `reject_section`  | Reject a section and request regeneration    |
+| `modify_section`  | Modify section with user feedback            |
+| `approve_plan`    | Approve the planned section sequence         |
 
 ### Features
 

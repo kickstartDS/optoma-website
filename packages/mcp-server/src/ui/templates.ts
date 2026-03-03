@@ -163,6 +163,11 @@ export const SECTION_PREVIEW_HTML = `<!DOCTYPE html>
             if (data.renderedHtml) {
                 container.className = "kds-preview";
                 container.innerHTML = data.renderedHtml;
+                // Remove c-visual--full from hero components — 100vh is
+                // arbitrary inside the MCP Apps iframe preview
+                container.querySelectorAll(".c-visual--full").forEach(el =>
+                    el.classList.remove("c-visual--full")
+                );
                 actions.style.display = "flex";
                 wireActions();
             } else {
@@ -930,10 +935,7 @@ export const PLAN_REVIEW_HTML = `<!DOCTYPE html>
                 document.querySelectorAll(".kds-plan-item").forEach(el =>
                     el.classList.remove("drag-over")
                 );
-
-                // Send reorder to server via callServerTool
-                const newOrder = getCurrentOrder();
-                app.callServerTool({ name: "reorder_plan", arguments: { order: newOrder } });
+                // DOM order is captured by getCurrentOrder() at approve time
             });
 
             list.addEventListener("dragover", (e) => {

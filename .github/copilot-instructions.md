@@ -199,6 +199,10 @@ The project includes a Storyblok MCP server ([packages/mcp-server/](packages/mcp
 
 The MCP server supports **auto-schema derivation**: the `generate_content` and `generate_section` tools can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
 
+Current main MCP spec: https://modelcontextprotocol.io/specification/2025-11-25
+Current main MCP Schema Reference: https://modelcontextprotocol.io/specification/2025-11-25/schema
+Current MCP Apps: Interactive User Interfaces for MCP spec: https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx
+
 ### Multi-Content-Type Support
 
 The MCP server supports **5 root content types** via a schema registry:

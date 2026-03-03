@@ -234,10 +234,6 @@ describe("PLAN_REVIEW_HTML — plan-specific", () => {
     expect(PLAN_REVIEW_HTML).toContain('"approve_plan"');
   });
 
-  it("calls reorder_plan tool on drag end", () => {
-    expect(PLAN_REVIEW_HTML).toContain('"reorder_plan"');
-  });
-
   it("supports drag-and-drop reorder", () => {
     expect(PLAN_REVIEW_HTML).toContain('draggable="true"');
     expect(PLAN_REVIEW_HTML).toContain("dragstart");

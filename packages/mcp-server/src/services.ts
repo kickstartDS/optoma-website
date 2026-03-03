@@ -186,17 +186,15 @@ export class StoryblokService {
    */
   async getSettingsTokenCss(): Promise<string | null> {
     try {
-      const response = await this.contentClient.get("cdn/stories", {
-        content_type: "settings",
-        version: "published",
-        per_page: 1,
-      });
-      const stories = response.data?.stories;
-      if (Array.isArray(stories) && stories.length > 0) {
-        const token = stories[0]?.content?.token;
-        if (typeof token === "string" && token.length > 0) {
-          return token;
+      const response = await this.contentClient.get(
+        "cdn/stories/industry/settings/settings",
+        {
+          version: "published",
         }
+      );
+      const token = response.data?.story?.content?.token;
+      if (typeof token === "string" && token.length > 0) {
+        return token;
       }
       return null;
     } catch (err) {

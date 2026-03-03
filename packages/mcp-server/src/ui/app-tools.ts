@@ -14,7 +14,6 @@
  * - move_section    — User moves a section up or down
  * - save_page       — User saves accumulated sections to Storyblok
  * - approve_plan    — User approves a planned section sequence
- * - reorder_plan    — User reordered sections via drag-and-drop
  *
  * @see PRD Section 4.6 — App-Only Tools
  */
@@ -36,10 +35,6 @@ const SectionInputSchema = {
 
 const RejectInputSchema = {
   reason: z.string().optional().describe("Optional reason for rejection"),
-};
-
-const OrderInputSchema = {
-  order: z.array(z.string()).describe("Ordered list of component type names"),
 };
 
 const RemoveSectionInputSchema = {
@@ -180,7 +175,11 @@ export function registerAppOnlyTools(server: McpServer): void {
       title: "Approve Plan",
       description:
         "Approve a page plan (section sequence). Called from the plan review UI.",
-      inputSchema: OrderInputSchema,
+      inputSchema: {
+        order: z
+          .array(z.string())
+          .describe("Ordered list of component type names"),
+      },
       _meta: {
         ui: { resourceUri: PLAN_REVIEW_URI, visibility: ["app"] },
       },
@@ -195,36 +194,6 @@ export function registerAppOnlyTools(server: McpServer): void {
               order,
               message:
                 "Plan approved by user. Proceed with generating each section in the approved order.",
-            }),
-          },
-        ],
-      };
-    }
-  );
-
-  // ── reorder_plan ───────────────────────────────────────────────
-
-  registerAppTool(
-    server,
-    "reorder_plan",
-    {
-      title: "Reorder Plan",
-      description:
-        "Update the section order after the user reorders via drag-and-drop in the plan review UI.",
-      inputSchema: OrderInputSchema,
-      _meta: {
-        ui: { resourceUri: PLAN_REVIEW_URI, visibility: ["app"] },
-      },
-    },
-    async ({ order }) => {
-      return {
-        content: [
-          {
-            type: "text" as const,
-            text: JSON.stringify({
-              action: "plan_reordered",
-              order,
-              message: "Plan reordered by user. New section order applied.",
             }),
           },
         ],
