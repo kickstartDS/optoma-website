@@ -113,6 +113,8 @@ export interface FieldOverride {
   description?: string;
   /** x-cms-order value (undefined = no override) */
   order?: number;
+  /** default value override (undefined = no override) */
+  defaultValue?: unknown;
   /** For polymorphic fields: allowed component names (undefined = all allowed) */
   allowedComponents?: string[];
 }

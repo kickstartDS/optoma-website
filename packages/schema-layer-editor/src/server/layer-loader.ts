@@ -22,6 +22,7 @@ interface LayerProperty {
   title?: string;
   description?: string;
   "x-cms-order"?: number;
+  default?: unknown;
   properties?: Record<string, LayerProperty>;
   items?: {
     properties?: Record<string, LayerProperty>;
@@ -75,13 +76,17 @@ function extractOverrides(
     if (layerProp["x-cms-order"] !== undefined) {
       override.order = layerProp["x-cms-order"];
     }
+    if (layerProp.default !== undefined) {
+      override.defaultValue = layerProp.default;
+    }
 
     // Only add if there's at least one override value
     if (
       override.hidden !== undefined ||
       override.title !== undefined ||
       override.description !== undefined ||
-      override.order !== undefined
+      override.order !== undefined ||
+      override.defaultValue !== undefined
     ) {
       overrides.set(path, override);
     }

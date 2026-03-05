@@ -40,6 +40,14 @@ export function FieldBadges({
         {typeLabel}
       </span>
       {meta.required && <span className="badge badge-required">required</span>}
+      {meta.defaultValue !== undefined && (
+        <span
+          className="badge badge-default"
+          title={`Default: ${JSON.stringify(meta.defaultValue)}`}
+        >
+          default
+        </span>
+      )}
       {isHidden && !isInheritedHidden && (
         <span className="badge badge-hidden">hidden</span>
       )}

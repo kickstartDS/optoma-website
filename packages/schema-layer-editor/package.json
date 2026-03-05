@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "concurrently -P \"vite\" \"tsx watch src/cli.ts {@}\"",
+    "dev": "concurrently -P \"vite\" \"tsx watch src/cli.ts {@}\" --",
     "start": "tsx src/cli.ts",
     "build": "vite build && tsc --project tsconfig.server.json",
     "typecheck": "tsc --noEmit",

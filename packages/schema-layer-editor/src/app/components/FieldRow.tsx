@@ -290,6 +290,50 @@ export function FieldRow({
               }
             />
           </div>
+          <div className="detail-field">
+            <label>Default value</label>
+            <input
+              type="text"
+              value={
+                fieldOverride.defaultValue !== undefined
+                  ? JSON.stringify(fieldOverride.defaultValue)
+                  : field.meta.defaultValue !== undefined
+                  ? JSON.stringify(field.meta.defaultValue)
+                  : ""
+              }
+              placeholder={
+                field.meta.defaultValue !== undefined
+                  ? JSON.stringify(field.meta.defaultValue)
+                  : "No default"
+              }
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (raw === "") {
+                  // Clear the override
+                  dispatch({
+                    type: "SET_DEFAULT",
+                    component: componentName,
+                    path: field.meta.path,
+                    defaultValue: undefined,
+                  });
+                  return;
+                }
+                // Try parsing as JSON, fall back to raw string
+                let parsed: unknown;
+                try {
+                  parsed = JSON.parse(raw);
+                } catch {
+                  parsed = raw;
+                }
+                dispatch({
+                  type: "SET_DEFAULT",
+                  component: componentName,
+                  path: field.meta.path,
+                  defaultValue: parsed,
+                });
+              }}
+            />
+          </div>
           <div className="detail-readonly">
             <div>
               <strong>Type:</strong> {field.meta.type}

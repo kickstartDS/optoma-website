@@ -507,6 +507,11 @@ body {
   color: var(--color-warning);
 }
 
+.badge-default {
+  background: rgba(100, 180, 255, 0.15);
+  color: #64b4ff;
+}
+
 .badge-hidden {
   background: rgba(240, 96, 112, 0.15);
   color: var(--color-danger);

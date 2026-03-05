@@ -22,6 +22,7 @@ export function hasOverride(override: FieldOverride): boolean {
     override.title !== undefined ||
     override.description !== undefined ||
     override.order !== undefined ||
+    override.defaultValue !== undefined ||
     override.allowedComponents !== undefined
   );
 }

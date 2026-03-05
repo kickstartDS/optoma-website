@@ -31,6 +31,10 @@ program
   )
   .option("--layer <path>", "Path to existing layer directory to load")
   .option(
+    "--schemas-extra <paths...>",
+    "Additional directories with *.schema.dereffed.json files (shadow base schemas by name)"
+  )
+  .option(
     "--base-url <url>",
     "Custom base URL for $id generation (default: http://<namespace>.mydesignsystem.com)"
   )
@@ -43,6 +47,7 @@ program
 
 const opts = program.opts<{
   schemas: string;
+  schemasExtra?: string[];
   namespace: string;
   layer?: string;
   baseUrl?: string;
@@ -51,6 +56,7 @@ const opts = program.opts<{
 }>();
 
 const schemasDir = resolve(opts.schemas);
+const schemasExtraDirs = (opts.schemasExtra || []).map((p) => resolve(p));
 const layerDir = opts.layer ? resolve(opts.layer) : undefined;
 const namespace = opts.namespace;
 const baseUrl = opts.baseUrl || `http://${namespace}.mydesignsystem.com`;
@@ -63,6 +69,7 @@ const port = parseInt(opts.port, 10);
 
 const config: ServerConfig = {
   schemasDir,
+  schemasExtraDirs,
   layerDir,
   namespace,
   baseUrl,

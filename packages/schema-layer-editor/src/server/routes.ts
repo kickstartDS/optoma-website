@@ -29,6 +29,8 @@ import type {
 
 export interface ServerConfig {
   schemasDir: string;
+  /** Additional schema directories whose schemas shadow the base ones by name */
+  schemasExtraDirs?: string[];
   layerDir?: string;
   namespace: string;
   baseUrl: string;
@@ -125,7 +127,7 @@ export function createRoutes(config: ServerConfig): Router {
   router.get("/api/schemas", (_req: Request, res: Response) => {
     try {
       if (!cachedSchemas) {
-        cachedSchemas = loadSchemas(config.schemasDir);
+        cachedSchemas = loadSchemas(config.schemasDir, config.schemasExtraDirs);
       }
       res.json(cachedSchemas);
     } catch (err) {
@@ -143,7 +145,7 @@ export function createRoutes(config: ServerConfig): Router {
       // Detect stale overrides (paths not in the loaded schemas)
       let staleOverrides: string[] = [];
       if (!cachedSchemas) {
-        cachedSchemas = loadSchemas(config.schemasDir);
+        cachedSchemas = loadSchemas(config.schemasDir, config.schemasExtraDirs);
       }
       staleOverrides = detectStaleOverrides(inMemoryOverrides, cachedSchemas);
       if (staleOverrides.length > 0) {

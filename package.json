@@ -11,7 +11,8 @@
     "test": "pnpm -r run test",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "publish-packages": "changeset publish"
+    "publish-packages": "changeset publish",
+    "layer-editor": "bash -c 'ROOT=$PWD && LAYER=${0:-visibility} && pnpm --filter schema-layer-editor dev --schemas $ROOT/packages/website/node_modules/@kickstartds/ds-agency-premium/dist/components --schemas-extra $ROOT/packages/website/components --namespace $LAYER --layer $ROOT/packages/website/cms/$LAYER'"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0"

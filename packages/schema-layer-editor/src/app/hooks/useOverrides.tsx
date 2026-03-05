@@ -72,6 +72,8 @@ export function getDiffStatus(
       currentOvr!.title !== baselineOvr!.title ||
       currentOvr!.description !== baselineOvr!.description ||
       currentOvr!.order !== baselineOvr!.order ||
+      JSON.stringify(currentOvr!.defaultValue) !==
+        JSON.stringify(baselineOvr!.defaultValue) ||
       JSON.stringify(currentOvr!.allowedComponents) !==
         JSON.stringify(baselineOvr!.allowedComponents)
     ) {
@@ -98,6 +100,12 @@ export type OverrideAction =
       description: string;
     }
   | { type: "SET_ORDER"; component: string; path: string; order: number }
+  | {
+      type: "SET_DEFAULT";
+      component: string;
+      path: string;
+      defaultValue: unknown;
+    }
   | {
       type: "MOVE_FIELD";
       component: string;
@@ -170,6 +178,16 @@ function overridesReducer(
       const updated = setOverride(compOverrides, action.path, {
         ...existing,
         order: action.order,
+      });
+      return setComponentOverrides(state, action.component, updated);
+    }
+
+    case "SET_DEFAULT": {
+      const compOverrides = getComponentOverrides(state, action.component);
+      const existing = compOverrides.get(action.path) || {};
+      const updated = setOverride(compOverrides, action.path, {
+        ...existing,
+        defaultValue: action.defaultValue,
       });
       return setComponentOverrides(state, action.component, updated);
     }

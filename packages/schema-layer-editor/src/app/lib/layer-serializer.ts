@@ -33,6 +33,7 @@ interface LayerProperty {
   title?: string;
   description?: string;
   "x-cms-order"?: number;
+  default?: unknown;
   properties?: Record<string, LayerProperty>;
   items?: {
     properties?: Record<string, LayerProperty>;
@@ -166,6 +167,9 @@ function applyOverride(property: LayerProperty, override: FieldOverride): void {
   }
   if (override.order !== undefined) {
     property["x-cms-order"] = override.order;
+  }
+  if (override.defaultValue !== undefined) {
+    property.default = override.defaultValue;
   }
   if (override.allowedComponents !== undefined) {
     const anyOfValue = override.allowedComponents.map((name) => ({
