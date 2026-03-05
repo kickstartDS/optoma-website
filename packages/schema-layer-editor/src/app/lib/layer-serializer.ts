@@ -181,6 +181,56 @@ function applyOverride(property: LayerProperty, override: FieldOverride): void {
   }
 }
 
+// ─── Order Normalization ─────────────────────────────────────────────────────
+
+/**
+ * Normalize order values within sibling groups to sequential integers (1..N).
+ *
+ * When any field in a parent group has an x-cms-order override, all siblings
+ * in that group are renumbered sequentially based on their relative ordering,
+ * eliminating gaps and conflicts. (PRD §11: "Normalize on save")
+ */
+function normalizeOrders(overrides: OverrideMap): OverrideMap {
+  // Group paths by their parent prefix
+  const parentGroups = new Map<string, string[]>();
+
+  for (const [path, override] of overrides) {
+    if (override.order === undefined) continue;
+
+    // Determine parent: "image.src" → "image", "headline" → "", "buttons[].label" → "buttons[]"
+    const lastDot = path.lastIndexOf(".");
+    const parent = lastDot >= 0 ? path.slice(0, lastDot) : "";
+
+    if (!parentGroups.has(parent)) {
+      parentGroups.set(parent, []);
+    }
+    parentGroups.get(parent)!.push(path);
+  }
+
+  // Only normalize groups with more than 1 ordered field
+  let result = new Map(overrides);
+  for (const [_parent, paths] of parentGroups) {
+    if (paths.length <= 1) continue;
+
+    // Sort by current order value
+    paths.sort((a, b) => {
+      const orderA = overrides.get(a)?.order ?? 0;
+      const orderB = overrides.get(b)?.order ?? 0;
+      return orderA - orderB;
+    });
+
+    // Renumber sequentially starting from 0
+    paths.forEach((path, idx) => {
+      const existing = result.get(path);
+      if (existing) {
+        result.set(path, { ...existing, order: idx });
+      }
+    });
+  }
+
+  return result;
+}
+
 // ─── Public API ─────────────────────────────────────────────────────────────
 
 /**
@@ -200,8 +250,11 @@ export function serializeLayerFile(
   baseUrl?: string,
   baseSchemaUrl: string = "http://schema.mydesignsystem.com"
 ): LayerSchemaFile | null {
+  // Normalize order values before serializing
+  const normalizedOverrides = normalizeOrders(overrides);
+
   // Only include fields with actual overrides
-  const properties = buildNestedProperties(overrides);
+  const properties = buildNestedProperties(normalizedOverrides);
 
   if (Object.keys(properties).length === 0) {
     return null;

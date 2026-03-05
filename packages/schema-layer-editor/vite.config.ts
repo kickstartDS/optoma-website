@@ -18,4 +18,8 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    root: resolve(__dirname),
+    include: ["test/**/*.test.ts"],
+  },
 });

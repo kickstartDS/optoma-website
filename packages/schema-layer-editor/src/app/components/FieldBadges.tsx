@@ -1,14 +1,17 @@
 /**
- * Type badge, required badge, inherited-hidden badge.
+ * Type badge, required badge, inherited-hidden badge, diff badges, stale badge.
  */
 
 import type { FieldMeta } from "../../shared/types.js";
+import type { DiffStatus } from "../hooks/useOverrides.js";
 
 interface FieldBadgesProps {
   meta: FieldMeta;
   isHidden: boolean;
   isInheritedHidden: boolean;
   isPolymorphic: boolean;
+  diffStatus?: DiffStatus;
+  isStale?: boolean;
 }
 
 export function FieldBadges({
@@ -16,6 +19,8 @@ export function FieldBadges({
   isHidden,
   isInheritedHidden,
   isPolymorphic,
+  diffStatus,
+  isStale,
 }: FieldBadgesProps) {
   // Build type label
   let typeLabel: string = meta.type;
@@ -43,6 +48,23 @@ export function FieldBadges({
       )}
       {isPolymorphic && (
         <span className="badge badge-polymorphic">managed per component</span>
+      )}
+      {diffStatus === "new" && (
+        <span className="badge badge-diff badge-diff-new">new</span>
+      )}
+      {diffStatus === "changed" && (
+        <span className="badge badge-diff badge-diff-changed">changed</span>
+      )}
+      {diffStatus === "removed" && (
+        <span className="badge badge-diff badge-diff-removed">removed</span>
+      )}
+      {isStale && (
+        <span
+          className="badge badge-stale"
+          title="Override references a field not present in the base schema"
+        >
+          stale
+        </span>
       )}
     </span>
   );

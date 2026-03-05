@@ -13,7 +13,9 @@
     "dev": "concurrently -P \"vite\" \"tsx watch src/cli.ts {@}\"",
     "start": "tsx src/cli.ts",
     "build": "vite build && tsc --project tsconfig.server.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "commander": "^12.0.0",
@@ -33,7 +35,8 @@
     "concurrently": "^8.2.0",
     "tsx": "^4.7.0",
     "typescript": "^5.0.0",
-    "vite": "^5.1.0"
+    "vite": "^5.1.0",
+    "vitest": "^1.6.0"
   },
   "engines": {
     "node": ">=20.0.0"

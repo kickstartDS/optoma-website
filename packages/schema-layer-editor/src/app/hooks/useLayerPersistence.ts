@@ -24,7 +24,7 @@ interface UseLayerPersistenceResult {
 }
 
 export function useLayerPersistence(): UseLayerPersistenceResult {
-  const { overrides, dispatch } = useOverrides();
+  const { overrides, dispatch, setStaleOverrides } = useOverrides();
   const [config, setConfig] = useState<ConfigResponse | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveResult, setSaveResult] = useState<SaveResponse | null>(null);
@@ -46,10 +46,17 @@ export function useLayerPersistence(): UseLayerPersistenceResult {
       if (data.overrides && Object.keys(data.overrides).length > 0) {
         dispatch({ type: "LOAD_OVERRIDES", overrides: data.overrides });
       }
+      // Pass stale overrides to context if present
+      if (data.staleOverrides && data.staleOverrides.length > 0) {
+        setStaleOverrides(new Set(data.staleOverrides));
+        console.warn(
+          `${data.staleOverrides.length} stale override(s) detected — these reference fields not in the current schema`
+        );
+      }
     } catch (err) {
       console.error("Failed to load initial layer:", err);
     }
-  }, [dispatch]);
+  }, [dispatch, setStaleOverrides]);
 
   // Load on mount
   useEffect(() => {

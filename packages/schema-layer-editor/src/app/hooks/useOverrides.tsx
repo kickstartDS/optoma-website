@@ -3,10 +3,15 @@
  *
  * Manages the in-memory override state as a ComponentOverrides map,
  * providing typed actions for all editing operations.
+ *
+ * Also tracks the baseline (loaded) state for diff indicators and
+ * an expand/collapse toggle for bulk tree control.
  */
 
 import {
   useReducer,
+  useState,
+  useCallback,
   createContext,
   useContext,
   type Dispatch,
@@ -26,7 +31,55 @@ import {
   resetOverrides,
   componentHasOverrides,
   recordToComponentOverrides,
+  hasOverride,
 } from "../lib/override-model.js";
+
+// ─── Diff Status ────────────────────────────────────────────────────────────
+
+export type DiffStatus = "unchanged" | "new" | "changed" | "removed";
+
+/**
+ * Compute the diff status of a specific field's override.
+ *
+ * - "new": override exists now but not in baseline
+ * - "changed": override exists in both but values differ
+ * - "removed": override existed in baseline but was cleared
+ * - "unchanged": same or both absent
+ */
+export function getDiffStatus(
+  component: string,
+  path: string,
+  current: ComponentOverrides,
+  baseline: ComponentOverrides | null
+): DiffStatus {
+  if (!baseline) return "unchanged"; // no baseline loaded, no diffs to show
+
+  const currentOverrides = current.get(component);
+  const baselineOverrides = baseline.get(component);
+
+  const currentOvr = currentOverrides?.get(path);
+  const baselineOvr = baselineOverrides?.get(path);
+
+  const currentHas = currentOvr && hasOverride(currentOvr);
+  const baselineHas = baselineOvr && hasOverride(baselineOvr);
+
+  if (currentHas && !baselineHas) return "new";
+  if (!currentHas && baselineHas) return "removed";
+  if (currentHas && baselineHas) {
+    // Compare values
+    if (
+      currentOvr!.hidden !== baselineOvr!.hidden ||
+      currentOvr!.title !== baselineOvr!.title ||
+      currentOvr!.description !== baselineOvr!.description ||
+      currentOvr!.order !== baselineOvr!.order ||
+      JSON.stringify(currentOvr!.allowedComponents) !==
+        JSON.stringify(baselineOvr!.allowedComponents)
+    ) {
+      return "changed";
+    }
+  }
+  return "unchanged";
+}
 
 // ─── Actions ────────────────────────────────────────────────────────────────
 
@@ -221,18 +274,87 @@ function overridesReducer(
 interface OverridesContextValue {
   overrides: ComponentOverrides;
   dispatch: Dispatch<OverrideAction>;
+  /** Baseline overrides captured at load time, for diff indicators */
+  baseline: ComponentOverrides | null;
+  /** Monotonically increasing counter to trigger expand/collapse all */
+  expandGeneration: number;
+  /** true = expand all, false = collapse all (at current generation) */
+  expandAll: boolean;
+  /** Toggle expand-all / collapse-all */
+  toggleExpandAll: (expand: boolean) => void;
+  /** Stale override paths — overrides that reference fields not in the schema */
+  staleOverrides: Set<string>;
+  /** Set stale overrides discovered by layer loading */
+  setStaleOverrides: (stale: Set<string>) => void;
 }
 
 const OverridesContext = createContext<OverridesContextValue | null>(null);
+
+/** Deep-clone a ComponentOverrides map for baseline snapshot */
+function cloneOverrides(co: ComponentOverrides): ComponentOverrides {
+  const cloned: ComponentOverrides = new Map();
+  for (const [comp, overrideMap] of co.entries()) {
+    const clonedMap: OverrideMap = new Map();
+    for (const [path, ovr] of overrideMap.entries()) {
+      clonedMap.set(path, {
+        ...ovr,
+        allowedComponents: ovr.allowedComponents
+          ? [...ovr.allowedComponents]
+          : undefined,
+      });
+    }
+    cloned.set(comp, clonedMap);
+  }
+  return cloned;
+}
 
 export function OverridesProvider({ children }: { children: ReactNode }) {
   const [overrides, dispatch] = useReducer(
     overridesReducer,
     new Map() as ComponentOverrides
   );
+  const [baseline, setBaseline] = useState<ComponentOverrides | null>(null);
+  const [expandGeneration, setExpandGeneration] = useState(0);
+  const [expandAll, setExpandAll] = useState(true);
+  const [staleOverrides, setStaleOverridesState] = useState<Set<string>>(
+    new Set()
+  );
+
+  // Wrap dispatch to capture baseline on LOAD_OVERRIDES
+  const wrappedDispatch: Dispatch<OverrideAction> = useCallback(
+    (action: OverrideAction) => {
+      dispatch(action);
+      if (action.type === "LOAD_OVERRIDES") {
+        // Snapshot the loaded state as baseline for diff tracking
+        const loaded = recordToComponentOverrides(action.overrides);
+        setBaseline(cloneOverrides(loaded));
+      }
+    },
+    []
+  );
+
+  const toggleExpandAll = useCallback((expand: boolean) => {
+    setExpandAll(expand);
+    setExpandGeneration((g) => g + 1);
+  }, []);
+
+  const setStaleOverrides = useCallback((stale: Set<string>) => {
+    setStaleOverridesState(stale);
+  }, []);
 
   return (
-    <OverridesContext.Provider value={{ overrides, dispatch }}>
+    <OverridesContext.Provider
+      value={{
+        overrides,
+        dispatch: wrappedDispatch,
+        baseline,
+        expandGeneration,
+        expandAll,
+        toggleExpandAll,
+        staleOverrides,
+        setStaleOverrides,
+      }}
+    >
       {children}
     </OverridesContext.Provider>
   );

@@ -1,6 +1,6 @@
 # Schema Layer Editor — Implementation Checklist
 
-> **Status:** In progress — core implementation complete, tests & polish remaining
+> **Status:** In progress — core + UI features complete, integration tests remaining
 > **Created:** 2026-03-05
 > **PRD:** [schema-layer-editor-prd.md](schema-layer-editor-prd.md) > **ADRs:** [adr-schema-layer-editor.md](adr-schema-layer-editor.md)
 
@@ -15,8 +15,9 @@
 - [x] `src/server/schema-loader.ts` — recursively load `*.schema.dereffed.json`, classify into content types vs components, extract section/component hierarchy
 - [x] `src/app/lib/schema-tree.ts` — JSON Schema → tree model conversion for both content types and components
 - [x] `src/app/lib/override-model.ts` — override data structure (Map of component → path-based overrides)
-- [ ] Unit tests for tree parsing with sample schemas
-- [ ] Unit tests for content type classification
+- [x] Unit tests for tree parsing with sample schemas (38 tests in `test/schema-tree.test.ts`)
+- [x] Unit tests for content type classification (18 tests in `test/content-type-classification.test.ts`)
+- [x] `$ref` warning in `parseField()` for unexpected unresolved references in dereffed schemas
 
 ## Phase B — Server & CLI
 
@@ -48,7 +49,10 @@
 - [x] Detail expansion panel: description textarea, order spinner, read-only metadata
 - [x] Field reordering via ▴▾ buttons
 - [x] `src/app/components/BulkActions.tsx` — show all, hide all, reset buttons
-- [ ] Diff indicators for changed/new/removed overrides (when loaded from existing layer)
+- [x] Diff indicators for changed/new/removed overrides (baseline snapshot in context, badges in FieldBadges)
+- [x] Expand All / Collapse All bulk actions (generation-based state broadcast)
+- [x] Stale override warnings (server-side path comparison, `stale` badge in UI)
+- [x] Order normalization on save (`normalizeOrders()` in layer-serializer)
 
 ## Phase E — Save & Persistence
 
@@ -62,5 +66,5 @@
 
 - [x] TypeScript compilation passes (zero errors in both client and server configs)
 - [x] Vite build passes (42 modules, ~159 KB JS + ~10 KB CSS)
-- [ ] README.md with usage instructions
+- [x] README.md with usage instructions, CLI options, UI overview, output format, architecture
 - [ ] Verify `pnpm --filter schema-layer-editor dev` works end-to-end with real schemas

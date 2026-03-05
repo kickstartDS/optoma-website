@@ -22,6 +22,7 @@ import type {
   ConfigResponse,
   ComponentOverrides,
   FieldOverride,
+  FieldNode,
 } from "../shared/types.js";
 
 // ─── Config ─────────────────────────────────────────────────────────────────
@@ -38,6 +39,80 @@ export interface ServerConfig {
 
 let cachedSchemas: SchemaResponse | null = null;
 let inMemoryOverrides: ComponentOverrides = new Map();
+
+// ─── Stale Detection ────────────────────────────────────────────────────────
+
+/**
+ * Collect all valid field paths from a FieldNode tree recursively.
+ */
+function collectFieldPaths(fields: FieldNode[], paths: Set<string>): void {
+  for (const field of fields) {
+    paths.add(field.meta.path);
+    if (field.children.length > 0) {
+      collectFieldPaths(field.children, paths);
+    }
+  }
+}
+
+/**
+ * Detect stale overrides: override paths that don't correspond to any
+ * field path in the loaded schemas.
+ *
+ * Returns a list of "component::path" keys identifying stale overrides.
+ *
+ * Override keys use these conventions:
+ * - Regular components: component name (e.g. "hero")
+ * - Content type root fields: "contentType::fieldName" (e.g. "blog-post::head")
+ */
+function detectStaleOverrides(
+  overrides: ComponentOverrides,
+  schemas: SchemaResponse
+): string[] {
+  const stale: string[] = [];
+
+  // Build a map of override key → valid field paths
+  const validPathsByKey = new Map<string, Set<string>>();
+
+  // Components
+  for (const comp of schemas.components) {
+    const paths = new Set<string>();
+    collectFieldPaths(comp.fields, paths);
+    validPathsByKey.set(comp.name, paths);
+  }
+
+  // Content type root fields — keyed as "contentType::fieldName"
+  for (const ct of schemas.contentTypes) {
+    for (const rf of ct.rootFields) {
+      const key = `${ct.name}::${rf.name}`;
+      const paths = new Set<string>();
+      if (rf.fieldNode.children.length > 0) {
+        collectFieldPaths(rf.fieldNode.children, paths);
+      } else {
+        paths.add(rf.fieldNode.meta.path);
+      }
+      validPathsByKey.set(key, paths);
+    }
+  }
+
+  // Compare override paths against schema field paths
+  for (const [overrideKey, overrideMap] of overrides.entries()) {
+    const validPaths = validPathsByKey.get(overrideKey);
+    if (!validPaths) {
+      // Key itself doesn't exist in schemas — all overrides are stale
+      for (const path of overrideMap.keys()) {
+        stale.push(`${overrideKey}::${path}`);
+      }
+      continue;
+    }
+    for (const path of overrideMap.keys()) {
+      if (!validPaths.has(path)) {
+        stale.push(`${overrideKey}::${path}`);
+      }
+    }
+  }
+
+  return stale;
+}
 
 // ─── Route Factory ──────────────────────────────────────────────────────────
 
@@ -64,7 +139,21 @@ export function createRoutes(config: ServerConfig): Router {
   router.get("/api/layer", (_req: Request, res: Response) => {
     try {
       const record = componentOverridesToRecord(inMemoryOverrides);
-      const response: LayerResponse = { overrides: record };
+
+      // Detect stale overrides (paths not in the loaded schemas)
+      let staleOverrides: string[] = [];
+      if (!cachedSchemas) {
+        cachedSchemas = loadSchemas(config.schemasDir);
+      }
+      staleOverrides = detectStaleOverrides(inMemoryOverrides, cachedSchemas);
+      if (staleOverrides.length > 0) {
+        console.warn(
+          `Stale overrides detected (${staleOverrides.length}):`,
+          staleOverrides
+        );
+      }
+
+      const response: LayerResponse = { overrides: record, staleOverrides };
       res.json(response);
     } catch (err) {
       console.error("Error getting layer:", err);

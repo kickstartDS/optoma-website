@@ -2,10 +2,10 @@
  * Single field row with visibility toggle, title, description, type badge, and order.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FieldNode, FieldOverride } from "../../shared/types.js";
 import { FieldBadges } from "./FieldBadges.js";
-import { useOverrides } from "../hooks/useOverrides.js";
+import { useOverrides, getDiffStatus } from "../hooks/useOverrides.js";
 import { isParentHidden } from "../lib/override-model.js";
 import { sortFieldsByOrder } from "../lib/sort-fields.js";
 
@@ -23,10 +23,24 @@ export function FieldRow({
   depth,
   siblings,
 }: FieldRowProps) {
-  const { overrides, dispatch } = useOverrides();
+  const {
+    overrides,
+    dispatch,
+    baseline,
+    expandGeneration,
+    expandAll,
+    staleOverrides,
+  } = useOverrides();
   const [expanded, setExpanded] = useState(depth < 2);
   const [detailOpen, setDetailOpen] = useState(false);
   const [polyPickerOpen, setPolyPickerOpen] = useState(false);
+
+  // Respond to expand/collapse all
+  useEffect(() => {
+    if (expandGeneration > 0) {
+      setExpanded(expandAll);
+    }
+  }, [expandGeneration, expandAll]);
 
   const compOverrides = overrides.get(componentName) || new Map();
   const fieldOverride: FieldOverride = compOverrides.get(field.meta.path) || {};
@@ -39,6 +53,18 @@ export function FieldRow({
     field.isPolymorphic && field.polymorphicVariants.length > 0;
   const displayTitle =
     fieldOverride.title || field.meta.title || field.meta.name;
+
+  // Diff indicator: compare current override to baseline
+  const diffStatus = getDiffStatus(
+    componentName,
+    field.meta.path,
+    overrides,
+    baseline
+  );
+
+  // Stale indicator: check if this override path is flagged as stale
+  const staleKey = `${componentName}::${field.meta.path}`;
+  const isStale = staleOverrides.has(staleKey);
 
   // Allowed components for polymorphic fields
   const allVariants = field.polymorphicVariants;
@@ -221,6 +247,8 @@ export function FieldRow({
           isHidden={isHidden}
           isInheritedHidden={inheritedHidden}
           isPolymorphic={field.isPolymorphic}
+          diffStatus={diffStatus}
+          isStale={isStale}
         />
       </div>
 

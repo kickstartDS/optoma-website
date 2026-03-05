@@ -11,7 +11,7 @@ interface BulkActionsProps {
 }
 
 export function BulkActions({ componentName, fields }: BulkActionsProps) {
-  const { dispatch } = useOverrides();
+  const { dispatch, toggleExpandAll } = useOverrides();
 
   return (
     <div className="bulk-actions">
@@ -52,6 +52,21 @@ export function BulkActions({ componentName, fields }: BulkActionsProps) {
         title="Remove all overrides for this component"
       >
         Reset
+      </button>
+      <span className="bulk-separator" />
+      <button
+        className="bulk-btn"
+        onClick={() => toggleExpandAll(true)}
+        title="Expand all field groups"
+      >
+        Expand All
+      </button>
+      <button
+        className="bulk-btn"
+        onClick={() => toggleExpandAll(false)}
+        title="Collapse all field groups"
+      >
+        Collapse All
       </button>
     </div>
   );

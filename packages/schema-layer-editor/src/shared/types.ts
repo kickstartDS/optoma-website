@@ -132,6 +132,8 @@ export interface SchemaResponse {
 
 export interface LayerResponse {
   overrides: Record<string, Record<string, FieldOverride>>;
+  /** "component::path" keys for overrides that reference missing schema fields */
+  staleOverrides?: string[];
 }
 
 export interface SaveRequest {

@@ -165,6 +165,15 @@ export function parseField(
   requiredFields: Set<string>,
   schemaOrder: number = 0
 ): FieldNode {
+  // Warn about unexpected $ref in dereffed schemas (PRD §11)
+  if (schema.$ref) {
+    console.warn(
+      `Warning: Unexpected $ref in dereffed schema at "${
+        parentPath ? parentPath + "." : ""
+      }${name}". ` + `Field will be shown as opaque. $ref: ${schema.$ref}`
+    );
+  }
+
   const resolved = mergeAllOf(schema);
   const path = parentPath ? `${parentPath}.${name}` : name;
   const type = resolveType(resolved);
