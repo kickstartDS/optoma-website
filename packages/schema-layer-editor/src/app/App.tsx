@@ -59,10 +59,20 @@ function AppInner() {
       selectedItem.componentName
     ) {
       // Root field editing — use content type prefix as component name for overrides
+      const fieldNode = (selectedItem as any)._fieldNode as
+        | FieldNode
+        | undefined;
+      // For scalar fields (no children), show the field itself as a single row
+      const fields =
+        fieldNode && fieldNode.children.length > 0
+          ? fieldNode.children
+          : fieldNode
+          ? [fieldNode]
+          : [];
       return {
         componentName: `${selectedItem.componentName}::${selectedItem.name}`,
         displayName: `${selectedItem.componentName} → ${selectedItem.name}`,
-        fields: (selectedItem as any)._fieldNode?.children || [],
+        fields,
       };
     }
     return null;

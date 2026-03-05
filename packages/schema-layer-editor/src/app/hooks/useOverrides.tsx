@@ -46,6 +46,13 @@ export type OverrideAction =
     }
   | { type: "SET_ORDER"; component: string; path: string; order: number }
   | {
+      type: "MOVE_FIELD";
+      component: string;
+      path: string;
+      direction: "up" | "down";
+      siblings: FieldNode[];
+    }
+  | {
       type: "BULK_SHOW_ALL";
       component: string;
       fields: FieldNode[];
@@ -56,6 +63,12 @@ export type OverrideAction =
       fields: FieldNode[];
     }
   | { type: "RESET_COMPONENT"; component: string }
+  | {
+      type: "SET_ALLOWED_COMPONENTS";
+      component: string;
+      path: string;
+      allowedComponents: string[];
+    }
   | {
       type: "LOAD_OVERRIDES";
       overrides: Record<string, Record<string, FieldOverride>>;
@@ -108,6 +121,62 @@ function overridesReducer(
       return setComponentOverrides(state, action.component, updated);
     }
 
+    case "MOVE_FIELD": {
+      let compOverrides = getComponentOverrides(state, action.component);
+
+      // Step 1: Ensure all siblings have explicit order values
+      // (initialized from schemaOrder if not already set)
+      for (const sibling of action.siblings) {
+        const existing = compOverrides.get(sibling.meta.path) || {};
+        if (existing.order === undefined) {
+          compOverrides = setOverride(compOverrides, sibling.meta.path, {
+            ...existing,
+            order: sibling.meta.schemaOrder,
+          });
+        }
+      }
+
+      // Step 2: Sort siblings by their current effective order
+      const sorted = [...action.siblings].sort((a, b) => {
+        const aOrder =
+          compOverrides.get(a.meta.path)?.order ?? a.meta.schemaOrder;
+        const bOrder =
+          compOverrides.get(b.meta.path)?.order ?? b.meta.schemaOrder;
+        return aOrder - bOrder;
+      });
+
+      // Step 3: Find the target field's position in the sorted list
+      const idx = sorted.findIndex((f) => f.meta.path === action.path);
+      if (idx < 0)
+        return setComponentOverrides(state, action.component, compOverrides);
+
+      const swapIdx = action.direction === "up" ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= sorted.length) {
+        return setComponentOverrides(state, action.component, compOverrides);
+      }
+
+      // Step 4: Swap the order values of the two fields
+      const fieldA = sorted[idx];
+      const fieldB = sorted[swapIdx];
+      const orderA =
+        compOverrides.get(fieldA.meta.path)?.order ?? fieldA.meta.schemaOrder;
+      const orderB =
+        compOverrides.get(fieldB.meta.path)?.order ?? fieldB.meta.schemaOrder;
+
+      const existingA = compOverrides.get(fieldA.meta.path) || {};
+      const existingB = compOverrides.get(fieldB.meta.path) || {};
+      compOverrides = setOverride(compOverrides, fieldA.meta.path, {
+        ...existingA,
+        order: orderB,
+      });
+      compOverrides = setOverride(compOverrides, fieldB.meta.path, {
+        ...existingB,
+        order: orderA,
+      });
+
+      return setComponentOverrides(state, action.component, compOverrides);
+    }
+
     case "BULK_SHOW_ALL": {
       const compOverrides = getComponentOverrides(state, action.component);
       const updated = bulkSetVisibility(compOverrides, action.fields, false);
@@ -122,6 +191,19 @@ function overridesReducer(
 
     case "RESET_COMPONENT": {
       const updated = resetOverrides();
+      return setComponentOverrides(state, action.component, updated);
+    }
+
+    case "SET_ALLOWED_COMPONENTS": {
+      const compOverrides = getComponentOverrides(state, action.component);
+      const existing = compOverrides.get(action.path) || {};
+      const updated = setOverride(compOverrides, action.path, {
+        ...existing,
+        allowedComponents:
+          action.allowedComponents.length > 0
+            ? action.allowedComponents
+            : undefined,
+      });
       return setComponentOverrides(state, action.component, updated);
     }
 

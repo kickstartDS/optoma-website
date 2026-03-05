@@ -119,14 +119,31 @@ export function ComponentList({
                 </li>
               );
             })}
-            {scalarRootFields.map((rf) => (
-              <li key={rf.name} className="component-item scalar-field">
-                <span className="field-name-inline">{rf.name}</span>
-                <span className="field-type-small">
-                  {rf.fieldNode.meta.type}
-                </span>
-              </li>
-            ))}
+            {scalarRootFields.map((rf) => {
+              const key = `${contentType.name}::${rf.name}`;
+              return (
+                <li
+                  key={rf.name}
+                  className={`component-item ${
+                    selectedItem?.type === "rootField" &&
+                    selectedItem.name === rf.name
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    onSelectRootField(contentType.name, rf.name, rf.fieldNode)
+                  }
+                >
+                  {componentHasOverrides(overrides as any, key) && (
+                    <span className="override-indicator">●</span>
+                  )}
+                  <span>{rf.name}</span>
+                  <span className="field-type-small">
+                    {rf.fieldNode.meta.type}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

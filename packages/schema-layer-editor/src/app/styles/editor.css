@@ -377,6 +377,85 @@ body {
   color: var(--color-text);
 }
 
+/* ── Polymorphic Component Picker ─────────────────────────────────────── */
+
+.poly-count {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  padding: 1px 6px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.poly-count.poly-restricted {
+  background: rgba(124, 110, 240, 0.15);
+  color: var(--color-primary);
+}
+
+.poly-picker {
+  padding: 8px 12px 12px;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+}
+
+.poly-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.poly-picker-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-text-muted);
+}
+
+.poly-picker-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.poly-picker-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 2px;
+}
+
+.poly-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.1s;
+}
+
+.poly-picker-item:hover {
+  background: var(--color-surface-hover);
+}
+
+.poly-picker-item input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.poly-item-name {
+  color: var(--color-text);
+}
+
+.poly-item-excluded .poly-item-name {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
 /* ── Field Meta Row ───────────────────────────────────────────────────── */
 
 .field-row-meta {

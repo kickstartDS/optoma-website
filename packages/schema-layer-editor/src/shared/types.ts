@@ -55,6 +55,8 @@ export interface FieldMeta {
   defaultValue?: unknown;
   /** Whether this field is in the parent's `required` array */
   required: boolean;
+  /** Original position in the JSON Schema properties object (0-based) */
+  schemaOrder: number;
 }
 
 export interface FieldNode {
@@ -64,6 +66,8 @@ export interface FieldNode {
   children: FieldNode[];
   /** Whether this is a polymorphic slot that should not be expanded */
   isPolymorphic: boolean;
+  /** Available component names in a polymorphic anyOf/oneOf slot */
+  polymorphicVariants: string[];
   /** Whether this is the section array (identified during content type parsing) */
   isSectionArray: boolean;
 }
@@ -109,6 +113,8 @@ export interface FieldOverride {
   description?: string;
   /** x-cms-order value (undefined = no override) */
   order?: number;
+  /** For polymorphic fields: allowed component names (undefined = all allowed) */
+  allowedComponents?: string[];
 }
 
 /** Map from field path to override. Keyed by dot-separated path. */

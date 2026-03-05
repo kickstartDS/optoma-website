@@ -34,7 +34,13 @@ interface LayerProperty {
   description?: string;
   "x-cms-order"?: number;
   properties?: Record<string, LayerProperty>;
-  items?: { properties: Record<string, LayerProperty> };
+  items?: {
+    properties?: Record<string, LayerProperty>;
+    anyOf?: Array<{ title: string }>;
+    oneOf?: Array<{ title: string }>;
+  };
+  anyOf?: Array<{ title: string }>;
+  oneOf?: Array<{ title: string }>;
 }
 
 // ─── Serialization ──────────────────────────────────────────────────────────
@@ -108,6 +114,9 @@ function ensurePath(
       if (!arrayField.items) {
         arrayField.items = { properties: {} };
       }
+      if (!arrayField.items.properties) {
+        arrayField.items.properties = {};
+      }
 
       // If this is the second-to-last "real" segment and [] is the marker,
       // continue into items.properties
@@ -120,6 +129,11 @@ function ensurePath(
     if (i === segments.length - 1) {
       if (!current[segment]) {
         current[segment] = {};
+      }
+      // If override has allowedComponents and this is an array-like field,
+      // ensure items exists so applyOverride can place anyOf inside it
+      if (override.allowedComponents && !current[segment].items) {
+        current[segment].items = {};
       }
       applyOverride(current[segment], override);
       return;
@@ -152,6 +166,18 @@ function applyOverride(property: LayerProperty, override: FieldOverride): void {
   }
   if (override.order !== undefined) {
     property["x-cms-order"] = override.order;
+  }
+  if (override.allowedComponents !== undefined) {
+    const anyOfValue = override.allowedComponents.map((name) => ({
+      title: name,
+    }));
+    // If this field already has items (array), put anyOf inside items
+    if (property.items) {
+      property.items.anyOf = anyOfValue;
+    } else {
+      // Direct polymorphic field (non-array)
+      property.anyOf = anyOfValue;
+    }
   }
 }
 

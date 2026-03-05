@@ -21,7 +21,8 @@ export function hasOverride(override: FieldOverride): boolean {
     override.hidden !== undefined ||
     override.title !== undefined ||
     override.description !== undefined ||
-    override.order !== undefined
+    override.order !== undefined ||
+    override.allowedComponents !== undefined
   );
 }
 
@@ -40,6 +41,8 @@ export function mergeOverrides(
   if (patch.title !== undefined) merged.title = patch.title;
   if (patch.description !== undefined) merged.description = patch.description;
   if (patch.order !== undefined) merged.order = patch.order;
+  if (patch.allowedComponents !== undefined)
+    merged.allowedComponents = patch.allowedComponents;
   return merged;
 }
 

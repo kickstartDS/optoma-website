@@ -7,17 +7,26 @@ import type { FieldNode, FieldOverride } from "../../shared/types.js";
 import { FieldBadges } from "./FieldBadges.js";
 import { useOverrides } from "../hooks/useOverrides.js";
 import { isParentHidden } from "../lib/override-model.js";
+import { sortFieldsByOrder } from "../lib/sort-fields.js";
 
 interface FieldRowProps {
   field: FieldNode;
   componentName: string;
   depth: number;
+  /** Sibling fields at the same level (needed for swap-based reordering) */
+  siblings: FieldNode[];
 }
 
-export function FieldRow({ field, componentName, depth }: FieldRowProps) {
+export function FieldRow({
+  field,
+  componentName,
+  depth,
+  siblings,
+}: FieldRowProps) {
   const { overrides, dispatch } = useOverrides();
   const [expanded, setExpanded] = useState(depth < 2);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [polyPickerOpen, setPolyPickerOpen] = useState(false);
 
   const compOverrides = overrides.get(componentName) || new Map();
   const fieldOverride: FieldOverride = compOverrides.get(field.meta.path) || {};
@@ -26,8 +35,57 @@ export function FieldRow({ field, componentName, depth }: FieldRowProps) {
   const effectivelyHidden = isHidden || inheritedHidden;
 
   const hasChildren = field.children.length > 0 && !field.isPolymorphic;
+  const hasPolyVariants =
+    field.isPolymorphic && field.polymorphicVariants.length > 0;
   const displayTitle =
     fieldOverride.title || field.meta.title || field.meta.name;
+
+  // Allowed components for polymorphic fields
+  const allVariants = field.polymorphicVariants;
+  const allowedSet = fieldOverride.allowedComponents
+    ? new Set(fieldOverride.allowedComponents)
+    : null; // null = all allowed
+  const allowedCount = allowedSet ? allowedSet.size : allVariants.length;
+
+  const toggleVariant = (variantName: string) => {
+    // Start from current allowed set, or all variants if no restriction
+    const current = allowedSet ? new Set(allowedSet) : new Set(allVariants);
+
+    if (current.has(variantName)) {
+      current.delete(variantName);
+    } else {
+      current.add(variantName);
+    }
+
+    // If all are selected, clear the override (= no restriction)
+    const newAllowed =
+      current.size === allVariants.length ? [] : Array.from(current);
+
+    dispatch({
+      type: "SET_ALLOWED_COMPONENTS",
+      component: componentName,
+      path: field.meta.path,
+      allowedComponents: newAllowed,
+    });
+  };
+
+  const selectAllVariants = () => {
+    dispatch({
+      type: "SET_ALLOWED_COMPONENTS",
+      component: componentName,
+      path: field.meta.path,
+      allowedComponents: [],
+    });
+  };
+
+  const selectNoneVariants = () => {
+    dispatch({
+      type: "SET_ALLOWED_COMPONENTS",
+      component: componentName,
+      path: field.meta.path,
+      allowedComponents: ["__none__"],
+    });
+  };
 
   return (
     <div
@@ -36,13 +94,25 @@ export function FieldRow({ field, componentName, depth }: FieldRowProps) {
     >
       <div className="field-row-main">
         {/* Expand/collapse for nested fields */}
-        {hasChildren ? (
+        {hasChildren || hasPolyVariants ? (
           <button
             className="expand-btn"
-            onClick={() => setExpanded(!expanded)}
-            title={expanded ? "Collapse" : "Expand"}
+            onClick={() =>
+              hasPolyVariants
+                ? setPolyPickerOpen(!polyPickerOpen)
+                : setExpanded(!expanded)
+            }
+            title={
+              hasPolyVariants
+                ? polyPickerOpen
+                  ? "Close component picker"
+                  : "Open component picker"
+                : expanded
+                ? "Collapse"
+                : "Expand"
+            }
           >
-            {expanded ? "▾" : "▸"}
+            {(hasPolyVariants ? polyPickerOpen : expanded) ? "▾" : "▸"}
           </button>
         ) : (
           <span className="expand-spacer" />
@@ -67,6 +137,16 @@ export function FieldRow({ field, componentName, depth }: FieldRowProps) {
 
         {/* Field name */}
         <code className="field-name">{field.meta.name}</code>
+
+        {/* Polymorphic variant count badge */}
+        {hasPolyVariants && (
+          <span
+            className={`poly-count ${allowedSet ? "poly-restricted" : ""}`}
+            title={`${allowedCount} of ${allVariants.length} components allowed`}
+          >
+            {allowedCount}/{allVariants.length}
+          </span>
+        )}
 
         {/* Title override (inline editable) */}
         <input
@@ -96,16 +176,17 @@ export function FieldRow({ field, componentName, depth }: FieldRowProps) {
         {/* Order controls */}
         <span className="order-controls">
           {fieldOverride.order !== undefined && (
-            <span className="order-number">⑦</span>
+            <span className="order-number">{fieldOverride.order}</span>
           )}
           <button
             className="order-btn"
             onClick={() =>
               dispatch({
-                type: "SET_ORDER",
+                type: "MOVE_FIELD",
                 component: componentName,
                 path: field.meta.path,
-                order: (fieldOverride.order || 0) - 1,
+                direction: "up",
+                siblings,
               })
             }
             title="Move up"
@@ -116,10 +197,11 @@ export function FieldRow({ field, componentName, depth }: FieldRowProps) {
             className="order-btn"
             onClick={() =>
               dispatch({
-                type: "SET_ORDER",
+                type: "MOVE_FIELD",
                 component: componentName,
                 path: field.meta.path,
-                order: (fieldOverride.order || 0) + 1,
+                direction: "down",
+                siblings,
               })
             }
             title="Move down"
@@ -210,15 +292,64 @@ export function FieldRow({ field, componentName, depth }: FieldRowProps) {
         </div>
       )}
 
+      {/* Polymorphic component picker */}
+      {polyPickerOpen && hasPolyVariants && (
+        <div
+          className="poly-picker"
+          style={{ paddingLeft: `${depth * 20 + 56}px` }}
+        >
+          <div className="poly-picker-header">
+            <span className="poly-picker-title">Allowed Components</span>
+            <div className="poly-picker-actions">
+              <button
+                className="bulk-btn"
+                onClick={selectAllVariants}
+                title="Allow all"
+              >
+                All
+              </button>
+              <button
+                className="bulk-btn bulk-btn-danger"
+                onClick={selectNoneVariants}
+                title="Allow none"
+              >
+                None
+              </button>
+            </div>
+          </div>
+          <div className="poly-picker-list">
+            {allVariants.map((variant) => {
+              const isAllowed = !allowedSet || allowedSet.has(variant);
+              return (
+                <label
+                  key={variant}
+                  className={`poly-picker-item ${
+                    !isAllowed ? "poly-item-excluded" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isAllowed}
+                    onChange={() => toggleVariant(variant)}
+                  />
+                  <span className="poly-item-name">{variant}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Children */}
       {expanded && hasChildren && (
         <div className="field-children">
-          {field.children.map((child) => (
+          {sortFieldsByOrder(field.children, compOverrides).map((child) => (
             <FieldRow
               key={child.meta.path}
               field={child}
               componentName={componentName}
               depth={depth + 1}
+              siblings={field.children}
             />
           ))}
         </div>

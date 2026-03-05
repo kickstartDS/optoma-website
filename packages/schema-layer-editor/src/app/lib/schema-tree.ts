@@ -86,6 +86,28 @@ function isPolymorphic(schema: JsonSchema): boolean {
   return hasMultipleObjectSchemas;
 }
 
+/** Extract human-readable variant names from anyOf/oneOf schemas */
+function extractVariantNames(schema: JsonSchema): string[] {
+  const variants = schema.anyOf || schema.oneOf;
+  if (!variants) return [];
+  return variants
+    .map((v) => {
+      // Prefer title, then try to derive from $id or properties.type.const
+      if (v.title) return v.title;
+      if (v.$id) {
+        const match = v.$id.match(/\/([^/]+)\.schema\.json$/);
+        if (match) return match[1];
+      }
+      // Check for a discriminator const
+      const typeConst = v.properties?.type;
+      if (typeConst && typeof typeConst === "object" && "const" in typeConst) {
+        return String((typeConst as { const: unknown }).const);
+      }
+      return undefined;
+    })
+    .filter((n): n is string => !!n);
+}
+
 function mergeAllOf(schema: JsonSchema): JsonSchema {
   if (!schema.allOf || schema.allOf.length === 0) return schema;
 
@@ -140,7 +162,8 @@ export function parseField(
   name: string,
   schema: JsonSchema,
   parentPath: string,
-  requiredFields: Set<string>
+  requiredFields: Set<string>,
+  schemaOrder: number = 0
 ): FieldNode {
   const resolved = mergeAllOf(schema);
   const path = parentPath ? `${parentPath}.${name}` : name;
@@ -156,6 +179,7 @@ export function parseField(
     enumValues: resolved.enum?.map(String),
     defaultValue: resolved.default,
     required: requiredFields.has(name),
+    schemaOrder,
   };
 
   // Check for polymorphic before expanding children
@@ -165,6 +189,7 @@ export function parseField(
       meta: { ...meta, type: "polymorphic" },
       children: [],
       isPolymorphic: true,
+      polymorphicVariants: extractVariantNames(resolved),
       isSectionArray: false,
     };
   }
@@ -173,9 +198,10 @@ export function parseField(
 
   if (type === "object" && resolved.properties) {
     const reqSet = new Set(resolved.required || []);
-    for (const [propName, propSchema] of Object.entries(resolved.properties)) {
-      children.push(parseField(propName, propSchema, path, reqSet));
-    }
+    const entries = Object.entries(resolved.properties);
+    entries.forEach(([propName, propSchema], idx) => {
+      children.push(parseField(propName, propSchema, path, reqSet, idx));
+    });
   } else if (type === "array" && resolved.items) {
     const items = resolved.items;
 
@@ -186,6 +212,7 @@ export function parseField(
         meta: { ...meta, type: "array" },
         children: [],
         isPolymorphic: true,
+        polymorphicVariants: extractVariantNames(items),
         isSectionArray: false,
       };
     }
@@ -193,11 +220,12 @@ export function parseField(
     const resolvedItems = mergeAllOf(items);
     if (resolvedItems.properties) {
       const reqSet = new Set(resolvedItems.required || []);
-      for (const [propName, propSchema] of Object.entries(
-        resolvedItems.properties
-      )) {
-        children.push(parseField(propName, propSchema, `${path}[]`, reqSet));
-      }
+      const entries = Object.entries(resolvedItems.properties);
+      entries.forEach(([propName, propSchema], idx) => {
+        children.push(
+          parseField(propName, propSchema, `${path}[]`, reqSet, idx)
+        );
+      });
     }
   }
 
@@ -206,6 +234,7 @@ export function parseField(
     meta,
     children,
     isPolymorphic: false,
+    polymorphicVariants: [],
     isSectionArray: false,
   };
 }
@@ -222,10 +251,13 @@ export function parseComponent(
 
   if (resolved.properties) {
     const reqSet = new Set(resolved.required || []);
-    for (const [propName, propSchema] of Object.entries(resolved.properties)) {
+    const entries = Object.entries(resolved.properties);
+    let idx = 0;
+    for (const [propName, propSchema] of entries) {
       // Skip internal fields
       if (propName === "type" || propName === "component") continue;
-      fields.push(parseField(propName, propSchema, "", reqSet));
+      fields.push(parseField(propName, propSchema, "", reqSet, idx));
+      idx++;
     }
   }
 

@@ -23,7 +23,13 @@ interface LayerProperty {
   description?: string;
   "x-cms-order"?: number;
   properties?: Record<string, LayerProperty>;
-  items?: { properties?: Record<string, LayerProperty> };
+  items?: {
+    properties?: Record<string, LayerProperty>;
+    anyOf?: Array<{ title?: string; [key: string]: unknown }>;
+    oneOf?: Array<{ title?: string; [key: string]: unknown }>;
+  };
+  anyOf?: Array<{ title?: string; [key: string]: unknown }>;
+  oneOf?: Array<{ title?: string; [key: string]: unknown }>;
 }
 
 interface LayerFile {
@@ -80,6 +86,18 @@ function extractOverrides(
       overrides.set(path, override);
     }
 
+    // Check for polymorphic anyOf/oneOf component restrictions
+    const polyVariants = layerProp.anyOf || layerProp.oneOf;
+    if (polyVariants && polyVariants.length > 0) {
+      const allowed = polyVariants
+        .map((v) => v.title)
+        .filter((t): t is string => !!t);
+      if (allowed.length > 0) {
+        const existing = overrides.get(path) || {};
+        overrides.set(path, { ...existing, allowedComponents: allowed });
+      }
+    }
+
     // Recurse into nested object properties
     if (layerProp.properties) {
       extractOverrides(layerProp.properties, path, overrides);
@@ -88,6 +106,21 @@ function extractOverrides(
     // Recurse into array items
     if (layerProp.items?.properties) {
       extractOverrides(layerProp.items.properties, `${path}[]`, overrides);
+    }
+    // Check for polymorphic anyOf/oneOf in array items
+    if (layerProp.items) {
+      const itemVariants = layerProp.items.anyOf || layerProp.items.oneOf;
+      if (itemVariants && itemVariants.length > 0) {
+        const allowed = itemVariants
+          .map((v) => v.title)
+          .filter((t): t is string => !!t);
+        if (allowed.length > 0) {
+          // For array items, the override goes on the array field itself with []
+          const itemPath = `${path}[]`;
+          const existing = overrides.get(itemPath) || overrides.get(path) || {};
+          overrides.set(path, { ...existing, allowedComponents: allowed });
+        }
+      }
     }
   }
 }

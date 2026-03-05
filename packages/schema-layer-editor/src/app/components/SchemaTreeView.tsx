@@ -8,6 +8,8 @@
 import type { FieldNode, ComponentNode } from "../../shared/types.js";
 import { FieldRow } from "./FieldRow.js";
 import { BulkActions } from "./BulkActions.js";
+import { useOverrides } from "../hooks/useOverrides.js";
+import { sortFieldsByOrder } from "../lib/sort-fields.js";
 
 interface SchemaTreeViewProps {
   /** The component or root field being edited */
@@ -23,6 +25,10 @@ export function SchemaTreeView({
   displayName,
   fields,
 }: SchemaTreeViewProps) {
+  const { overrides } = useOverrides();
+  const compOverrides = overrides.get(componentName) || new Map();
+  const sorted = sortFieldsByOrder(fields, compOverrides);
+
   if (fields.length === 0) {
     return (
       <div className="panel panel-editor">
@@ -39,12 +45,13 @@ export function SchemaTreeView({
         <BulkActions componentName={componentName} fields={fields} />
       </div>
       <div className="field-tree">
-        {fields.map((field) => (
+        {sorted.map((field) => (
           <FieldRow
             key={field.meta.path}
             field={field}
             componentName={componentName}
             depth={0}
+            siblings={fields}
           />
         ))}
       </div>
