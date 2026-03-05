@@ -2,7 +2,8 @@
  * Content audit engine.
  *
  * Walks all published stories in a Storyblok space and applies quality rules
- * across four categories: images, content quality, SEO, and freshness.
+ * across five categories: images, content quality, SEO, freshness, and
+ * composition.
  *
  * Produces a structured audit result with findings, summary statistics,
  * health score, orphaned assets, and top offenders — identical output shape
@@ -12,6 +13,11 @@
  */
 
 import type StoryblokClient from "storyblok-js-client";
+import {
+  checkCompositionalQuality,
+  type ValidationRules,
+  type ValidationWarning,
+} from "./validate.js";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -31,7 +37,12 @@ export interface AuditConfig {
 }
 
 export type FindingSeverity = "high" | "medium" | "low" | "info";
-export type FindingCategory = "images" | "content" | "seo" | "freshness";
+export type FindingCategory =
+  | "images"
+  | "content"
+  | "seo"
+  | "freshness"
+  | "composition";
 
 export interface AuditFinding {
   rule: string;
@@ -84,6 +95,22 @@ export interface RunAuditOptions {
   config?: Partial<AuditConfig>;
   /** Progress callback: (step, total, message) */
   onProgress?: (step: number, total: number, message: string) => void;
+  /**
+   * Validation rules per content type.
+   *
+   * When provided, the audit runs `checkCompositionalQuality()` on every
+   * section-based story, producing findings in the `"composition"` category.
+   *
+   * Map keys are content type names (e.g. `"page"`, `"blog-post"`).
+   * Callers typically build this from a `SchemaRegistry`:
+   * ```ts
+   * const rulesMap = new Map([
+   *   ["page", registry.page.rules],
+   *   ["blog-post", registry.get("blog-post").rules],
+   * ]);
+   * ```
+   */
+  validationRulesMap?: Map<string, ValidationRules>;
 }
 
 // ── Default Configuration ──────────────────────────────────────────
@@ -452,6 +479,55 @@ function walkContent(
   }
 }
 
+// ── Compositional Warning → Audit Finding Helpers ──────────────────
+
+/**
+ * Map a `ValidationWarning.level` to an `AuditFinding.severity`.
+ *
+ * - `"warning"` → `"medium"` (design-system layout concern)
+ * - `"suggestion"` → `"low"` (field-level composition hint)
+ * - `"info"` → `"info"` (contextual observation)
+ */
+function warningLevelToSeverity(
+  level: ValidationWarning["level"]
+): FindingSeverity {
+  switch (level) {
+    case "warning":
+      return "medium";
+    case "suggestion":
+      return "low";
+    case "info":
+      return "info";
+    default:
+      return "info";
+  }
+}
+
+/**
+ * Derive a stable, kebab-case rule name from a `ValidationWarning`.
+ *
+ * Uses pattern matching on the warning message to produce descriptive
+ * rule identifiers. Prefixed with `"composition-"` to distinguish from
+ * the audit's own inline structural checks.
+ */
+function warningToRuleName(w: ValidationWarning): string {
+  const msg = w.message.toLowerCase();
+  if (msg.includes("multiple hero")) return "composition-duplicate-heroes";
+  if (msg.includes("adjacent sections both use"))
+    return "composition-adjacent-same-type";
+  if (msg.includes("minimum recommended"))
+    return "composition-sparse-sub-items";
+  if (msg.includes("blog-teaser") && msg.includes("no link"))
+    return "composition-blog-teaser-no-link";
+  if (msg.includes("no cta section")) return "composition-missing-cta";
+  if (msg.includes("headline_text") && msg.includes("own headline"))
+    return "composition-redundant-headline";
+  if (msg.includes("buttons") && msg.includes("two cta"))
+    return "composition-competing-ctas";
+  if (msg.includes("spacebefore")) return "composition-first-section-spacing";
+  return "composition-other";
+}
+
 // ── Main Audit Function ────────────────────────────────────────────
 
 /**
@@ -730,6 +806,42 @@ export async function runContentAudit(
 
     // Walk the full content tree
     walkContent(content, "content", slug, name, config, findings);
+
+    // ── COMPOSITIONAL QUALITY RULES ─────────────────────────────
+    // Run checkCompositionalQuality() when validation rules are available.
+    // This detects structural anti-patterns like duplicate heroes, sparse
+    // sub-items, adjacent same-type sections, missing CTAs, redundant
+    // headlines, competing buttons, and first-section spacing issues.
+    if (options.validationRulesMap) {
+      const rules = options.validationRulesMap.get(contentType);
+      if (rules) {
+        // Find the section array — varies by content type
+        const sectionField = rules.rootArrayFields[0];
+        const sections = sectionField ? content[sectionField] : null;
+        if (Array.isArray(sections) && sections.length > 0) {
+          try {
+            const warnings = checkCompositionalQuality(sections, rules, {
+              format: "storyblok",
+            });
+            for (const w of warnings) {
+              findings.push({
+                rule: warningToRuleName(w),
+                severity: warningLevelToSeverity(w.level),
+                category: "composition",
+                story: slug,
+                storyName: name,
+                path: w.path || `content.${sectionField}`,
+                component: contentType,
+                message: w.message,
+                detail: w.suggestion,
+              });
+            }
+          } catch {
+            // Non-fatal — skip compositional checks for this story
+          }
+        }
+      }
+    }
   }
 
   // Step 3: Build summary

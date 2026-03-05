@@ -67,6 +67,7 @@ import {
   type PlanPageResult,
   type GenerateSectionResult,
   type RunAuditOptions,
+  type ValidationRules,
   stripEmptyAssetFields,
 } from "./services.js";
 import {
@@ -563,17 +564,20 @@ Idempotent: calling with an already-existing path simply returns its ID.`,
 
   content_audit: `Run a comprehensive content quality audit across all stories.
 
-Analyzes every published story for content quality issues across four categories:
+Analyzes every published story for content quality issues across five categories:
 - **Images**: Missing alt text, empty src, placeholder/external URLs
 - **Content**: Short text, empty sections, missing headlines, thin pages, duplicate heroes
 - **SEO**: Missing metadata, title/description length, missing OG images
 - **Freshness**: Stale content, never-published drafts, unpublished changes
+- **Composition**: Structural anti-patterns from Design System quality rules — duplicate heroes, sparse sub-items, adjacent same-type sections, missing CTAs, redundant section headlines, competing CTA buttons, first-section spacing
 
 Returns a structured report with:
 - Health score (0–100) based on findings severity
 - Findings grouped by category and severity (high/medium/low)
 - Top offenders (stories with the most issues)
 - Summary statistics by category, severity, and rule
+
+Composition findings are prefixed with \`composition-\` (e.g. \`composition-sparse-sub-items\`, \`composition-missing-cta\`) and come from the same \`checkCompositionalQuality()\` engine used during content generation.
 
 Use this tool for periodic content quality reviews or before major site updates.`,
 };
@@ -2095,11 +2099,27 @@ async function handleContentAudit(
 
   const progress = new ProgressReporter(extra, 3);
 
+  // Build a validation-rules map from the schema registry so the audit
+  // engine can run checkCompositionalQuality() on every section-based story.
+  const validationRulesMap = new Map<string, ValidationRules>();
+  for (const ct of [
+    "page",
+    "blog-post",
+    "blog-overview",
+    "event-detail",
+    "event-list",
+  ] as const) {
+    if (registry.has(ct)) {
+      validationRulesMap.set(ct, registry.get(ct).rules);
+    }
+  }
+
   const auditOptions: RunAuditOptions = {
     startsWith: validated.startsWith,
     config: validated.staleMonths
       ? { staleMonths: validated.staleMonths }
       : undefined,
+    validationRulesMap,
     onProgress: (_step, _total, message) => {
       progress.advance(message);
     },

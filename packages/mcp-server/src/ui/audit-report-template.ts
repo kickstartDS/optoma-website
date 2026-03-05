@@ -504,9 +504,9 @@ export const AUDIT_REPORT_HTML = `<!DOCTYPE html>
         // ── Helpers ──────────────────────────────────────────────────
         const SEV_EMOJI = { high: "🔴", medium: "🟡", low: "🔵", info: "ℹ️" };
         const SEV_LABEL = { high: "High", medium: "Medium", low: "Low", info: "Info" };
-        const CAT_EMOJI = { images: "🖼️", content: "📝", seo: "🔎", freshness: "📅" };
-        const CAT_LABEL = { images: "Images", content: "Content Quality", seo: "SEO", freshness: "Freshness" };
-        const CAT_ORDER = ["images", "seo", "content", "freshness"];
+        const CAT_EMOJI = { images: "🖼️", content: "📝", seo: "🔎", freshness: "📅", composition: "🧩" };
+        const CAT_LABEL = { images: "Images", content: "Content Quality", seo: "SEO", freshness: "Freshness", composition: "Composition" };
+        const CAT_ORDER = ["images", "seo", "content", "composition", "freshness"];
         const SEV_ORDER = ["high", "medium", "low", "info"];
 
         function esc(s) { return s ? String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") : "—"; }

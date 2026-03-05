@@ -380,6 +380,7 @@ function getContentAuditMessages(
           "- **Content quality:** Empty sections, missing headlines, sparse pages, thin content",
           "- **SEO health:** Missing metadata, title/description length violations",
           "- **Freshness:** Stale content, unpublished changes",
+          "- **Composition:** Structural anti-patterns — duplicate heroes, sparse sub-items, adjacent same-type sections, missing CTAs, redundant headlines, competing buttons, first-section spacing",
           "- **Top offenders:** Stories with the most issues",
           "",
           "Present the findings as a structured report with specific recommendations.",

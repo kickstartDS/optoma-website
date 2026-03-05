@@ -54,6 +54,17 @@ Mit dem Content aus Schritt 1 und den Schemas aus Schritt 2 die folgenden Prüfu
 - Sehr kurze Seiten (nur 1 Sektion)
 - Doppelte Sektionstypen, die ungewollt sein könnten
 
+**Kompositions-Qualität (automatisch via `checkCompositionalQuality`):**
+
+- Doppelte Heroes (mehr als ein Hero/Video-Curtain pro Seite)
+- Benachbarte Sektionen gleichen Typs (wirkt repetitiv)
+- Zu wenige Sub-Items (z.B. Stats mit <3 Einträgen, Features mit <2 Items)
+- Fehlende CTA-Sektion auf Konversionsseiten (Hero + Features, aber kein CTA)
+- Redundante Section-Headlines (Section hat Headline UND enthält Hero/CTA mit eigener Headline)
+- Konkurrierende CTAs (Section-Buttons UND Kind-Komponente mit eigenen Buttons)
+- Erste Sektion mit `spaceBefore` (sollte `"none"` sein)
+- Blog-Teaser ohne Link-URL
+
 **Konsistenz mit Website-Mustern (aus `analyze_content_patterns` Startup-Cache):**
 
 - Sektionsfolge dieser Seite mit den typischen Mustern der Website vergleichen
@@ -71,6 +82,9 @@ Dem Editor einen übersichtlichen Report zeigen:
   - Hero-Bild hat keinen Alt-Text
   - Meta-Description fehlt
   - CTA-Button „Mehr erfahren" hat keine Ziel-URL
+🧩 2 Kompositions-Hinweise
+  - Features hat nur 1 Sub-Item (Minimum: 2)
+  - Benachbarte „split"-Sektionen wirken repetitiv
 ❌ 1 Fehler
   - Testimonials-Sektion ist komplett leer
 ```
@@ -99,4 +113,5 @@ Falls der Editor Fixes wünscht:
 - **Gesamter Space:** `list_stories` paginiert aufrufen, dann für jede Story `get_story` → Ergebnis als Gesamt-Report zusammenfassen. Besser über n8n automatisieren (siehe Content Operations Workflows).
 - **Nur SEO-Audit:** Fokus auf Meta-Daten und Heading-Struktur
 - **Nur Bilder-Audit:** Fokus auf fehlende Bilder, Alt-Texte, externe URLs
+- **Nur Kompositions-Audit:** Fokus auf strukturelle Anti-Patterns — duplicate Heroes, sparse Sub-Items, fehlende CTAs, redundante Headlines. Im `content_audit`-Report nach Kategorie `composition` filtern.
 - **Audit + Auto-Fix:** Nach dem Audit direkt `generate_section` für fehlende/leere Sektionen, `generate_seo` für SEO-Fixes, dann `replace_section` / `update_seo` / `update_story` zum Speichern

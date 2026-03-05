@@ -21,6 +21,7 @@ const categoryEmoji = {
   content: "📝",
   seo: "🔎",
   freshness: "📅",
+  composition: "🧩",
 };
 const severityLabel = {
   high: "High",
@@ -33,6 +34,7 @@ const categoryLabel = {
   content: "Content Quality",
   seo: "SEO",
   freshness: "Freshness",
+  composition: "Composition",
 };
 
 // ── Health score badge ────────────────────────────────────────────────
@@ -83,7 +85,7 @@ lines.push(
 );
 lines.push("|----------|:-----:|:-------:|:---:|:----:|------:|");
 
-const categoryOrder = ["images", "seo", "content", "freshness"];
+const categoryOrder = ["images", "seo", "content", "freshness", "composition"];
 let totalHigh = 0,
   totalMedium = 0,
   totalLow = 0,

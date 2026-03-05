@@ -320,8 +320,8 @@ describe("workflow instructions in messages", () => {
   it("content-audit references analysis tools", () => {
     const messages = getPromptMessages("content-audit", {});
     const text = messages[0].content.text;
+    expect(text).toContain("content_audit");
     expect(text).toContain("analyze_content_patterns");
-    expect(text).toContain("list_stories");
     expect(text).toContain("get_story");
   });
 

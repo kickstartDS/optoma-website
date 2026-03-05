@@ -1,7 +1,7 @@
 /**
  * Tests for ext-apps app-only tool registration.
  *
- * Verifies that `registerAppOnlyTools` registers all 8 app-only tools
+ * Verifies that `registerAppOnlyTools` registers all 7 app-only tools
  * with correct names, schemas, and response formats.
  *
  * @see src/ui/app-tools.ts
@@ -28,10 +28,10 @@ describe("registerAppOnlyTools", () => {
     mockRegisterAppTool.mockClear();
   });
 
-  it("registers exactly 8 app-only tools", () => {
+  it("registers exactly 7 app-only tools", () => {
     const mockServer = {} as any;
     registerAppOnlyTools(mockServer);
-    expect(mockRegisterAppTool).toHaveBeenCalledTimes(8);
+    expect(mockRegisterAppTool).toHaveBeenCalledTimes(7);
   });
 
   it("registers the expected tool names", () => {

@@ -1,11 +1,12 @@
 /**
  * Tests for ext-apps UI resource registration.
  *
- * Verifies that `registerUiResources` correctly registers all three
+ * Verifies that `registerUiResources` correctly registers all four
  * preview resources via the ext-apps SDK's `registerAppResource`.
  * - Section Preview (stateless single-section approve/reject/modify)
  * - Page Builder (final assembly view with reorder/remove/save)
  * - Plan Review (section sequence planner with drag-to-reorder)
+ * - Audit Report (interactive content audit dashboard)
  *
  * @see src/ui/resources.ts
  */
@@ -31,10 +32,10 @@ describe("registerUiResources", () => {
     mockRegisterAppResource.mockClear();
   });
 
-  it("registers exactly 3 resources", () => {
+  it("registers exactly 4 resources", () => {
     const mockServer = {} as any;
     registerUiResources(mockServer);
-    expect(mockRegisterAppResource).toHaveBeenCalledTimes(3);
+    expect(mockRegisterAppResource).toHaveBeenCalledTimes(4);
   });
 
   it("registers section preview resource", () => {
@@ -67,6 +68,16 @@ describe("registerUiResources", () => {
     const planCall = calls.find((call: any[]) => call[1] === "Plan Review");
     expect(planCall).toBeDefined();
     expect(planCall![2]).toBe("ui://kds/plan-review");
+  });
+
+  it("registers audit report resource", () => {
+    const mockServer = {} as any;
+    registerUiResources(mockServer);
+
+    const calls = mockRegisterAppResource.mock.calls;
+    const auditCall = calls.find((call: any[]) => call[1] === "Audit Report");
+    expect(auditCall).toBeDefined();
+    expect(auditCall![2]).toBe("ui://kds/audit-report");
   });
 
   it("passes the McpServer instance to each registration", () => {

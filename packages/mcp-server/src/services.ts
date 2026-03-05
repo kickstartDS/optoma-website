@@ -112,7 +112,12 @@ export {
   registry,
   checkCompositionalQuality,
 };
-export type { ValidationWarning, ContentTypeEntry, RootFieldMeta };
+export type {
+  ValidationRules,
+  ValidationWarning,
+  ContentTypeEntry,
+  RootFieldMeta,
+};
 export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
 export { stripEmptyAssetFields };
 

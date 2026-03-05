@@ -629,6 +629,152 @@ for (const story of stories) {
   // ── Walk the full content tree for component-level rules ────────────
   walkContent(content, "content", slug, name);
 
+  // ── COMPOSITIONAL QUALITY RULES ──────────────────────────────────────
+  // Checks structural anti-patterns that affect visual and UX quality.
+  // These mirror the checkCompositionalQuality() logic from storyblok-services.
+  if (Array.isArray(content.section) && content.section.length > 0) {
+    const sectionComponents = [];
+    for (let si = 0; si < content.section.length; si++) {
+      const section = content.section[si];
+      const comps = Array.isArray(section.components) ? section.components : [];
+      for (const comp of comps) {
+        if (comp.component) {
+          sectionComponents.push({
+            type: comp.component,
+            index: si,
+            section,
+            comp,
+          });
+        }
+      }
+    }
+
+    // Adjacent same-type sections
+    for (let j = 1; j < sectionComponents.length; j++) {
+      const prev = sectionComponents[j - 1];
+      const curr = sectionComponents[j];
+      if (
+        prev.type === curr.type &&
+        prev.type !== "divider" &&
+        prev.index !== curr.index
+      ) {
+        findings.push({
+          rule: "composition-adjacent-same-type",
+          severity: "low",
+          category: "composition",
+          story: slug,
+          storyName: name,
+          path: `content.section[${curr.index}]`,
+          component: curr.type,
+          message: `Adjacent sections both use "${curr.type}" — may look repetitive`,
+        });
+      }
+    }
+
+    // Sparse sub-items
+    const SUB_ITEM_MINS = {
+      stats: 3,
+      features: 2,
+      testimonials: 2,
+      slider: 3,
+      "logos-companies": 4,
+      mosaic: 3,
+      gallery: 3,
+    };
+    const SUB_KEYS = {
+      stats: "stat",
+      features: "feature",
+      testimonials: "testimonial",
+      slider: "components",
+      "logos-companies": "logo",
+      mosaic: "tile",
+      gallery: "image",
+    };
+    for (const sc of sectionComponents) {
+      if (!SUB_ITEM_MINS[sc.type]) continue;
+      const subKey = SUB_KEYS[sc.type];
+      if (!subKey) continue;
+      const subItems = sc.comp[subKey];
+      if (
+        Array.isArray(subItems) &&
+        subItems.length > 0 &&
+        subItems.length < SUB_ITEM_MINS[sc.type]
+      ) {
+        findings.push({
+          rule: "composition-sparse-sub-items",
+          severity: "medium",
+          category: "composition",
+          story: slug,
+          storyName: name,
+          path: `content.section[${sc.index}].${sc.type}.${subKey}`,
+          component: sc.type,
+          message: `"${sc.type}" has only ${
+            subItems.length
+          } ${subKey} items (minimum recommended: ${SUB_ITEM_MINS[sc.type]})`,
+        });
+      }
+    }
+
+    // Missing CTA on conversion pages
+    const sHasHero = sectionComponents.some((c) => c.type === "hero");
+    const sHasFeatures = sectionComponents.some(
+      (c) => c.type === "features" || c.type === "split"
+    );
+    const sHasCta = sectionComponents.some((c) => c.type === "cta");
+    if (sHasHero && sHasFeatures && !sHasCta && sectionComponents.length >= 4) {
+      findings.push({
+        rule: "composition-missing-cta",
+        severity: "low",
+        category: "composition",
+        story: slug,
+        storyName: name,
+        path: "content.section",
+        component: contentType,
+        message:
+          "Looks like a conversion page (hero + features) but has no CTA section",
+        detail: 'Consider adding a "cta" section near the end',
+      });
+    }
+
+    // Duplicate heroes (composition-level variant with video-curtain)
+    const heroTypes = sectionComponents.filter(
+      (c) => c.type === "hero" || c.type === "video-curtain"
+    );
+    if (heroTypes.length > 1) {
+      findings.push({
+        rule: "composition-duplicate-heroes",
+        severity: "medium",
+        category: "composition",
+        story: slug,
+        storyName: name,
+        path: `content.section[${heroTypes[1].index}]`,
+        component: contentType,
+        message: `Multiple hero-type components found (${heroTypes
+          .map((h) => h.type)
+          .join(", ")})`,
+        detail: "Pages typically have exactly one hero/video-curtain",
+      });
+    }
+
+    // First section spacing
+    if (content.section[0]) {
+      const spaceBefore =
+        content.section[0].spaceBefore || content.section[0].space_before;
+      if (spaceBefore && spaceBefore !== "none" && spaceBefore !== "") {
+        findings.push({
+          rule: "composition-first-section-spacing",
+          severity: "low",
+          category: "composition",
+          story: slug,
+          storyName: name,
+          path: "content.section[0].spaceBefore",
+          component: contentType,
+          message: `First section has spaceBefore "${spaceBefore}" — typically should be "none"`,
+        });
+      }
+    }
+  }
+
   // ── Collect all image URLs used in this story (for orphan detection) ─
   function collectImageUrls(node) {
     if (!node || typeof node !== "object") return;

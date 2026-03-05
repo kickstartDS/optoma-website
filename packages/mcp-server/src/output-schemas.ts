@@ -266,15 +266,25 @@ export const contentAuditOutputSchema = z
       .object({
         totalStories: z.number(),
         totalFindings: z.number(),
-        byCategory: z.record(z.unknown()),
+        byCategory: z
+          .record(z.unknown())
+          .describe(
+            "Findings by category (images, content, seo, freshness, composition)"
+          ),
         bySeverity: z.record(z.number()),
         byRule: z.record(z.number()),
-        healthScore: z.number().describe("Health score from 0–100"),
+        healthScore: z
+          .number()
+          .describe(
+            "Health score from 0–100 — composition findings contribute to the score alongside images, content, SEO, and freshness"
+          ),
       })
       .passthrough(),
     findings: z
       .array(z.record(z.unknown()))
-      .describe("All audit findings with rule, severity, category, and story"),
+      .describe(
+        "All audit findings with rule, severity, category, and story. Composition findings are prefixed with 'composition-'"
+      ),
     topOffenders: z
       .array(z.record(z.unknown()))
       .describe("Top 10 stories with the most issues"),

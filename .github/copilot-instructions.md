@@ -263,7 +263,7 @@ The MCP server exposes **6 guided workflow prompts** via `prompts/list` and `pro
 | `create-page`      | `intent`                       | `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `generate_seo` → `create_page_with_content`                                       |
 | `migrate-from-url` | `url`                          | `scrape_url` → `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `create_page_with_content`                                         |
 | `create-blog-post` | `topic`                        | `plan_page(contentType: 'blog-post')` → `generate_section` (×N) → `generate_root_field` (head/aside/cta) → `generate_seo` → `create_page_with_content` |
-| `content-audit`    | —                              | `analyze_content_patterns` → `list_stories` → `get_story` (inspect problematic pages) → structured report                                              |
+| `content-audit`    | —                              | `content_audit` (images, content, SEO, freshness, composition) → `analyze_content_patterns` → structured report with health score                       |
 | `extend-page`      | `storyId`                      | `get_story` → `generate_section` (×N) → `import_content_at_position`                                                                                   |
 | `translate-page`   | `sourceSlug`, `targetLanguage` | `get_story` → `generate_section` (×N, same componentTypes) → `generate_seo` → `create_page_with_content`                                               |
 
