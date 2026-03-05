@@ -11,7 +11,7 @@ interface BulkActionsProps {
 }
 
 export function BulkActions({ componentName, fields }: BulkActionsProps) {
-  const { dispatch, toggleExpandAll } = useOverrides();
+  const { dispatch, toggleExpandAll, safeMode } = useOverrides();
 
   return (
     <div className="bulk-actions">
@@ -35,9 +35,14 @@ export function BulkActions({ componentName, fields }: BulkActionsProps) {
             type: "BULK_HIDE_ALL",
             component: componentName,
             fields,
+            safeMode,
           })
         }
-        title="Set all fields to hidden"
+        title={
+          safeMode
+            ? "Hide all fields (scalar fields without defaults will be kept visible)"
+            : "Set all fields to hidden"
+        }
       >
         Hide All
       </button>

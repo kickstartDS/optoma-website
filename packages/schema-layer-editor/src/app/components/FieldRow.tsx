@@ -6,7 +6,10 @@ import { useState, useEffect } from "react";
 import type { FieldNode, FieldOverride } from "../../shared/types.js";
 import { FieldBadges } from "./FieldBadges.js";
 import { useOverrides, getDiffStatus } from "../hooks/useOverrides.js";
-import { isParentHidden } from "../lib/override-model.js";
+import {
+  isParentHidden,
+  isFieldSafetyProtected,
+} from "../lib/override-model.js";
 import { sortFieldsByOrder } from "../lib/sort-fields.js";
 
 interface FieldRowProps {
@@ -30,6 +33,7 @@ export function FieldRow({
     expandGeneration,
     expandAll,
     staleOverrides,
+    safeMode,
   } = useOverrides();
   const [expanded, setExpanded] = useState(depth < 2);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -47,6 +51,10 @@ export function FieldRow({
   const isHidden = fieldOverride.hidden === true;
   const inheritedHidden = isParentHidden(compOverrides, field.meta.path);
   const effectivelyHidden = isHidden || inheritedHidden;
+
+  // Safe mode protection: scalar fields without defaults can't be hidden
+  const isSafetyProtected =
+    safeMode && isFieldSafetyProtected(field, fieldOverride);
 
   const hasChildren = field.children.length > 0 && !field.isPolymorphic;
   const hasPolyVariants =
@@ -145,20 +153,38 @@ export function FieldRow({
         )}
 
         {/* Visibility checkbox */}
-        <label className="visibility-toggle">
+        <label
+          className={`visibility-toggle ${
+            isSafetyProtected ? "safety-protected" : ""
+          }`}
+          title={
+            isSafetyProtected
+              ? "Protected: this scalar field has no default value. Hiding it could break rendering. Set a default value to unlock."
+              : isHidden
+              ? "Hidden"
+              : "Visible"
+          }
+        >
           <input
             type="checkbox"
             checked={!isHidden}
-            disabled={field.isPolymorphic}
+            disabled={field.isPolymorphic || isSafetyProtected}
             onChange={(e) =>
               dispatch({
                 type: "SET_VISIBILITY",
                 component: componentName,
                 path: field.meta.path,
                 hidden: !e.target.checked,
+                safeMode,
+                fieldNode: field,
               })
             }
           />
+          {isSafetyProtected && (
+            <span className="safety-lock" title="Protected by safe mode">
+              🛡️
+            </span>
+          )}
         </label>
 
         {/* Field name */}

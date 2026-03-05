@@ -14,7 +14,7 @@ import type {
   FieldNode,
 } from "../shared/types.js";
 import { useSchemas } from "./hooks/useSchemas.js";
-import { OverridesProvider } from "./hooks/useOverrides.js";
+import { OverridesProvider, useOverrides } from "./hooks/useOverrides.js";
 import { ContentTypeList } from "./components/ContentTypeList.js";
 import {
   ComponentList,
@@ -25,6 +25,7 @@ import { SaveDialog } from "./components/SaveDialog.js";
 
 function AppInner() {
   const { contentTypes, components, loading, error } = useSchemas();
+  const { safeMode, toggleSafeMode } = useOverrides();
   const [selectedType, setSelectedType] = useState<ContentTypeName | null>(
     null
   );
@@ -91,6 +92,21 @@ function AppInner() {
       <header className="app-header">
         <h1>Schema Layer Editor</h1>
         <div className="header-actions">
+          <label
+            className={`safe-mode-toggle ${
+              safeMode ? "safe-mode-on" : "safe-mode-off"
+            }`}
+            title="Safe mode prevents hiding scalar fields that have no default value — protecting against missing props during rendering"
+          >
+            <input
+              type="checkbox"
+              checked={safeMode}
+              onChange={toggleSafeMode}
+            />
+            <span className="safe-mode-label">
+              {safeMode ? "🛡️ Safe Mode" : "Safe Mode"}
+            </span>
+          </label>
           <button className="save-btn" onClick={() => setSaveDialogOpen(true)}>
             💾 Save
           </button>
