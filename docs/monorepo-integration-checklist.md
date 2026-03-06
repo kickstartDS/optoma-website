@@ -155,8 +155,15 @@
 
 ### WP-7: Consolidate Deployment Configurations
 
-- [ ] Move `design-tokens-mcp/config/deploy.yml` → root `config/deploy-design-tokens-mcp.yml`
-- [ ] Decide on design-tokens-editor deployment (Netlify vs Kamal)
+- [x] Move `design-tokens-mcp/config/deploy.yml` → root `config/deploy-design-tokens-mcp.yml`
+- [x] Rewrite `config/deploy-design-tokens-mcp.yml` (was outdated: wrong image var, wrong port)
+- [x] Align `design-tokens-mcp/Dockerfile` production stage (non-root user, ENTRYPOINT, healthcheck)
+- [x] Create `component-builder-mcp/Dockerfile` + `config/deploy-component-builder-mcp.yml`
+- [x] Create `schema-layer-editor/Dockerfile` + `config/deploy-schema-layer-editor.yml`
+- [x] Decide on design-tokens-editor deployment → keep on Netlify (deep Netlify Functions/Blobs dependency)
+- [x] Move `db/` → `packages/umami-analytics/`, create `config/deploy-analytics.yml`
+- [x] Consolidate `.kamal/secrets` (analytics secrets added to root, removed per-package copies)
+- [x] Remove redundant `packages/mcp-server/.kamal/secrets`
 - [ ] Add Chromatic/Storybook deployment to monorepo CI
 
 ---
