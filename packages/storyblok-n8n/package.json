@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/kickstartDS/storyblok-starter-premium.git",
-    "directory": "packages/n8n-nodes"
+    "directory": "packages/storyblok-n8n"
   },
   "main": "dist/index.js",
   "scripts": {

@@ -287,8 +287,8 @@ The current Prompter runs `prepareSchemaForOpenAi` client-side on every render. 
 | 2.1 | Extract `planPageContent()` from MCP server into `storyblok-services/src/plan.ts`           | New file + MCP server refactor                   | ✅     |
 | 2.2 | Extract `generateSectionContent()` into `storyblok-services/src/generate-section.ts`        | New file + MCP server refactor                   | ✅     |
 | 2.3 | Verify `generateRootField()` and `generateSeo()` are already extractable from `pipeline.ts` | `storyblok-services/src/pipeline.ts`             | ✅     |
-| 2.4 | Update MCP server tool handlers to use extracted shared functions                           | `packages/mcp-server/src/index.ts`               | ✅     |
-| 2.5 | Update n8n node operations to use extracted shared functions                                | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | ⬜     |
+| 2.4 | Update MCP server tool handlers to use extracted shared functions                           | `packages/storyblok-mcp/src/index.ts`               | ✅     |
+| 2.5 | Update n8n node operations to use extracted shared functions                                | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | ⬜     |
 | 2.6 | Add tests for extracted functions                                                           | `packages/storyblok-services/test/`              | ⬜     |
 | 2.7 | Ensure patterns cache can be initialized from API routes (not just MCP server startup)      | `storyblok-services/src/patterns.ts`             | ⬜     |
 

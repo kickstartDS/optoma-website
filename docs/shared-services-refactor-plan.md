@@ -146,7 +146,7 @@ A "one call does it all" API for consumers who don't need fine-grained control.
 
 ## Phase 5: Update MCP Server
 
-**Files:** `mcp-server/src/index.ts`, `mcp-server/src/services.ts`
+**Files:** `storyblok-mcp/src/index.ts`, `storyblok-mcp/src/services.ts`
 
 Only `generate_content`, `import_content`, and `import_content_at_position` tools are affected.
 
@@ -283,13 +283,13 @@ The dereffed page schema (`page.schema.dereffed.json`) is the source input for a
 | `shared/storyblok-services/test/schema.test.ts`            | **Create**                                              |
 | `shared/storyblok-services/test/transform.test.ts`         | **Create**                                              |
 | `shared/storyblok-services/test/pipeline.test.ts`          | **Create**                                              |
-| `mcp-server/src/index.ts`                                  | **Update** — tool defs + handlers                       |
-| `mcp-server/src/services.ts`                               | **Update** — wire shared transforms                     |
-| `n8n-nodes/.../GenericFunctions.ts`                        | **Update** — replace static presets                     |
-| `n8n-nodes/.../schemas/`                                   | **Delete** — 9 JSON files                               |
-| `n8n-nodes/.../descriptions/GenerateContentDescription.ts` | **Update**                                              |
-| `n8n-nodes/.../descriptions/ImportContentDescription.ts`   | **Update**                                              |
-| `n8n-nodes/.../StoryblokKickstartDs.node.ts`               | **Update**                                              |
+| `storyblok-mcp/src/index.ts`                                  | **Update** — tool defs + handlers                       |
+| `storyblok-mcp/src/services.ts`                               | **Update** — wire shared transforms                     |
+| `storyblok-n8n/.../GenericFunctions.ts`                        | **Update** — replace static presets                     |
+| `storyblok-n8n/.../schemas/`                                   | **Delete** — 9 JSON files                               |
+| `storyblok-n8n/.../descriptions/GenerateContentDescription.ts` | **Update**                                              |
+| `storyblok-n8n/.../descriptions/ImportContentDescription.ts`   | **Update**                                              |
+| `storyblok-n8n/.../StoryblokKickstartDs.node.ts`               | **Update**                                              |
 | `components/prompter/PrompterComponent.tsx`                | **Update** — simplify                                   |
 
 ---

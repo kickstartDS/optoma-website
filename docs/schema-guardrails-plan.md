@@ -14,7 +14,7 @@ Additionally, the **`list_components` and `get_component` tools** expose raw Sto
 
 ### Concrete Example
 
-The dereferenced page schema (`mcp-server/schemas/page.schema.dereffed.json`) defines exactly 27 components in `section.components.anyOf`. The `tile` component is **not** among them. It only exists as an item type inside `mosaic.tile.items`. But an LLM calling `list_components` → `get_component("tile")` → `create_page_with_content` can place tiles directly as section children, producing a page that violates the Design System's compositional rules.
+The dereferenced page schema (`storyblok-mcp/schemas/page.schema.dereffed.json`) defines exactly 27 components in `section.components.anyOf`. The `tile` component is **not** among them. It only exists as an item type inside `mosaic.tile.items`. But an LLM calling `list_components` → `get_component("tile")` → `create_page_with_content` can place tiles directly as section children, producing a page that violates the Design System's compositional rules.
 
 ### Schema Origin & Layering
 
@@ -166,7 +166,7 @@ Where validation adds value is when an LLM **bypasses** `generate_content` and c
 
 **Goal:** All tools that write content to Storyblok validate the content structure _before_ calling the Storyblok Management API.
 
-**Affected tools** (in `mcp-server/src/services.ts` and `mcp-server/src/index.ts`):
+**Affected tools** (in `storyblok-mcp/src/services.ts` and `storyblok-mcp/src/index.ts`):
 
 | Tool                         | Input field to validate | Notes                                                 |
 | ---------------------------- | ----------------------- | ----------------------------------------------------- |
@@ -178,7 +178,7 @@ Where validation adds value is when an LLM **bypasses** `generate_content` and c
 
 **Steps:**
 
-1. **Load validation rules at startup** — In `mcp-server/src/services.ts`, the dereffed schema is already loaded as `PAGE_SCHEMA`. Call `buildValidationRules(PAGE_SCHEMA)` once and store the result alongside it. If the project ships additional root schemas (e.g. `blog-post.schema.dereffed.json`), load and build rules for those too.
+1. **Load validation rules at startup** — In `storyblok-mcp/src/services.ts`, the dereffed schema is already loaded as `PAGE_SCHEMA`. Call `buildValidationRules(PAGE_SCHEMA)` once and store the result alongside it. If the project ships additional root schemas (e.g. `blog-post.schema.dereffed.json`), load and build rules for those too.
 
 2. **Add validation calls** — In each tool handler, before calling the Storyblok API:
 
@@ -287,7 +287,7 @@ All annotations are **dynamically derived** from the `componentToSlots` and `con
 
 ### Phase 6: Update Zod Schemas for Stronger Typing
 
-**Goal:** Move the Zod schemas in `mcp-server/src/config.ts` from `z.record(z.unknown())` toward slightly more structured types, providing early signal to both TypeScript and the LLM.
+**Goal:** Move the Zod schemas in `storyblok-mcp/src/config.ts` from `z.record(z.unknown())` toward slightly more structured types, providing early signal to both TypeScript and the LLM.
 
 **Steps:**
 
@@ -324,9 +324,9 @@ All annotations are **dynamically derived** from the `componentToSlots` and `con
 | `shared/storyblok-services/src/validate.ts` | **New**     | `buildValidationRules()`, `validateContent()`, convenience wrappers, `ValidationResult` type                                                              |
 | `shared/storyblok-services/src/schema.ts`   | Modify      | Refactor `prepareSchemaForOpenAi()` to accept schema-derived rules instead of hardcoded constants; deprecate `SUPPORTED_COMPONENTS` / `SUB_COMPONENT_MAP` |
 | `shared/storyblok-services/src/index.ts`    | Modify      | Re-export new validate module                                                                                                                             |
-| `mcp-server/src/index.ts`                   | Modify      | Load validation rules at startup; add validation calls in tool handlers; update tool descriptions                                                         |
-| `mcp-server/src/services.ts`                | Modify      | Add validation hook in `createPageWithContent()`, `importContent()`, `importContentAtPosition()`                                                          |
-| `mcp-server/src/config.ts`                  | Modify      | Strengthen Zod schemas with `sectionSchema` base type                                                                                                     |
+| `storyblok-mcp/src/index.ts`                   | Modify      | Load validation rules at startup; add validation calls in tool handlers; update tool descriptions                                                         |
+| `storyblok-mcp/src/services.ts`                | Modify      | Add validation hook in `createPageWithContent()`, `importContent()`, `importContentAtPosition()`                                                          |
+| `storyblok-mcp/src/config.ts`                  | Modify      | Strengthen Zod schemas with `sectionSchema` base type                                                                                                     |
 
 ## Implementation Order
 
@@ -373,7 +373,7 @@ Phases 4 and 5 are independent of Phases 1–3 and can be done in parallel.
 
 2. **Schema versioning** — The dereferenced schema is static at build time. If components are added/removed in Storyblok without rebuilding the MCP server, validation rules become stale. Should the server re-derive rules from the live Storyblok schema periodically? Recommendation: no, for now. The JSON Schema is the source of truth, and changes should go through the build pipeline (`npm run create-storyblok-config` → `npm run push-components`).
 
-3. **Multiple root schemas** — Currently only `page.schema.dereffed.json` is shipped in `mcp-server/schemas/`. Should we also ship and validate against dereffed schemas for `blog-post`, `event-detail`, etc.? Recommendation: start with the page schema (covers the vast majority of write operations), then add others as needed. The `buildValidationRules()` function already supports any root schema.
+3. **Multiple root schemas** — Currently only `page.schema.dereffed.json` is shipped in `storyblok-mcp/schemas/`. Should we also ship and validate against dereffed schemas for `blog-post`, `event-detail`, etc.? Recommendation: start with the page schema (covers the vast majority of write operations), then add others as needed. The `buildValidationRules()` function already supports any root schema.
 
 4. **Cross-DS portability** — When a different project uses a different Design System package (not `ds-agency-premium`), the schema structure may differ significantly. The `buildValidationRules()` walker must be tested against schemas from other DS packages. Recommendation: add a few test fixtures from different DS packages to ensure the walker generalizes correctly.
 

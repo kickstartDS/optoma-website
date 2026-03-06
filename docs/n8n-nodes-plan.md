@@ -4,7 +4,7 @@
 
 ## Overview
 
-This plan covers adding two custom n8n community nodes that mirror the `generate_content` and `import_content` tools currently implemented in the Storyblok MCP server ([mcp-server/src/services.ts](../mcp-server/src/services.ts)). The nodes will allow n8n workflows to trigger AI-powered content generation via OpenAI and then import that content into Storyblok stories — enabling fully automated, event-driven content pipelines without an LLM intermediary.
+This plan covers adding two custom n8n community nodes that mirror the `generate_content` and `import_content` tools currently implemented in the Storyblok MCP server ([storyblok-mcp/src/services.ts](../storyblok-mcp/src/services.ts)). The nodes will allow n8n workflows to trigger AI-powered content generation via OpenAI and then import that content into Storyblok stories — enabling fully automated, event-driven content pipelines without an LLM intermediary.
 
 ---
 
@@ -71,7 +71,7 @@ The package follows the [n8n community node structure](https://docs.n8n.io/integ
 > **Goal:** Set up the n8n community node project and implement the credential types.
 
 - [x] Initialize n8n community node project
-  - Created `n8n-nodes-storyblok-kickstartds/` directory alongside `mcp-server/`
+  - Created `n8n-nodes-storyblok-kickstartds/` directory alongside `storyblok-mcp/`
   - Set up `package.json` with `n8n.nodes` and `n8n.credentials` fields
   - Configured TypeScript (CommonJS target es2021), Jest (ts-jest), Gulp build, `.gitignore`
 - [x] Implement `StoryblokApi` credential type
@@ -256,7 +256,7 @@ shared/storyblok-services/
 
 #### Cross-Module Type Note
 
-Sub-packages with their own `node_modules` (MCP server, n8n nodes) still maintain separate copies of `openai` and `storyblok-js-client`, causing TypeScript's private-property type mismatch across duplicate declarations. This requires `as any` casts when passing clients to shared library functions — specifically in `mcp-server/src/services.ts` (for the OpenAI client) and in the n8n test files (for mock clients). The n8n production code in `GenericFunctions.ts` does not need casts. The Next.js API routes also do **not** need casts because the bundler resolves all imports through the root `node_modules`.
+Sub-packages with their own `node_modules` (MCP server, n8n nodes) still maintain separate copies of `openai` and `storyblok-js-client`, causing TypeScript's private-property type mismatch across duplicate declarations. This requires `as any` casts when passing clients to shared library functions — specifically in `storyblok-mcp/src/services.ts` (for the OpenAI client) and in the n8n test files (for mock clients). The n8n production code in `GenericFunctions.ts` does not need casts. The Next.js API routes also do **not** need casts because the bundler resolves all imports through the root `node_modules`.
 
 #### Dependency Versions
 

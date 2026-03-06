@@ -6,8 +6,8 @@ This package provides pure, framework-agnostic functions consumed by three diffe
 
 | Consumer                                    | Module format | Description                                                               |
 | ------------------------------------------- | ------------- | ------------------------------------------------------------------------- |
-| [MCP Server](../mcp-server/)                | ESM           | Model Context Protocol server for AI assistants (stdio + Streamable HTTP) |
-| [n8n Nodes](../n8n-nodes/)                  | CJS           | n8n community nodes for workflow automation                               |
+| [MCP Server](../storyblok-mcp/)                | ESM           | Model Context Protocol server for AI assistants (stdio + Streamable HTTP) |
+| [n8n Nodes](../storyblok-n8n/)                  | CJS           | n8n community nodes for workflow automation                               |
 | [Next.js API Routes](../website/pages/api/) | ESM (bundled) | REST endpoints for the Storyblok starter site                             |
 
 ## API

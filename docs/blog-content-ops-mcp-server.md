@@ -41,7 +41,7 @@ Die Verbindung zwischen KI und CMS haben wir über das **Model Context Protocol 
 
 ## Der Storyblok MCP Server: Dein CMS bekommt einen Co-Piloten
 
-Unser [Storyblok MCP Server](https://github.com/kickstartDS/storyblok-starter-premium/tree/main/packages/mcp-server) ist ein Open-Source-Server, der dein Storyblok CMS mit KI-Assistenten verbindet. Er bietet über 25 spezialisierte Tools, die sich in fünf Kategorien gliedern:
+Unser [Storyblok MCP Server](https://github.com/kickstartDS/storyblok-starter-premium/tree/main/packages/storyblok-mcp) ist ein Open-Source-Server, der dein Storyblok CMS mit KI-Assistenten verbindet. Er bietet über 25 spezialisierte Tools, die sich in fünf Kategorien gliedern:
 
 | Kategorie                  | Was es tut                                          | Beispiel-Tools                                                |
 | -------------------------- | --------------------------------------------------- | ------------------------------------------------------------- |

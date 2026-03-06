@@ -10,8 +10,8 @@ This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyb
 packages/
   website/          — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
   storyblok-services/ — Shared library (schema, validation, transforms)
-  mcp-server/       — Storyblok MCP server (Model Context Protocol)
-  n8n-nodes/        — n8n community node for Storyblok workflows
+  storyblok-mcp/       — Storyblok MCP server (Model Context Protocol)
+  storyblok-n8n/        — n8n community node for Storyblok workflows
 ```
 
 **Package manager:** pnpm 9.15.0 (declared in root `packageManager` field)
@@ -23,7 +23,7 @@ packages/
 pnpm install                 # Install all workspaces
 pnpm -r run build            # Build all packages (topological order)
 pnpm --filter website dev    # Start website dev server
-pnpm --filter mcp-server dev # Start MCP server in dev mode
+pnpm --filter storyblok-mcp dev # Start MCP server in dev mode
 pnpm changeset               # Create a new changeset
 pnpm version-packages        # Bump versions from changesets
 pnpm publish-packages        # Publish to npm
@@ -195,7 +195,7 @@ Visual Editor → usePrompter hook → /api/prompter/* routes → storyblok-serv
 
 ## MCP Server
 
-The project includes a Storyblok MCP server ([packages/mcp-server/](packages/mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
+The project includes a Storyblok MCP server ([packages/storyblok-mcp/](packages/storyblok-mcp/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
 
 The MCP server supports **auto-schema derivation**: the `generate_content` and `generate_section` tools can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
 
@@ -210,7 +210,7 @@ The MCP server supports **5 root content types** via a schema registry:
 - **Tier 1 (section-based):** `page`, `blog-post`, `blog-overview` — these have a root array of polymorphic sections
 - **Tier 2 (flat):** `event-detail`, `event-list` — these use root-level scalar/array/object fields without sections
 
-All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `packages/mcp-server/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
+All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `packages/storyblok-mcp/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
 
 - `generate_section(componentType: "hero", contentType: "blog-post")` — generates a single section using blog-post schema (preferred for interactive use)
 - `generate_content(contentType: "blog-post", componentType: "hero")` — bulk generation using blog-post schema (for automation only)
@@ -324,14 +324,14 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-services/src/guidance.ts](packages/storyblok-services/src/guidance.ts) - Field-level compositional guidance (field discovery, distribution tracking, pruning, prompt assembly)
 - [packages/storyblok-services/src/plan.ts](packages/storyblok-services/src/plan.ts) - Page planning (`planPageContent()`) — AI-assisted section sequence via OpenAI, extracted from MCP server
 - [packages/storyblok-services/src/generate-section.ts](packages/storyblok-services/src/generate-section.ts) - Single-section generation (`generateSectionContent()`) with site-aware context injection, extracted from MCP server
-- [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
-- [packages/mcp-server/src/prompts.ts](packages/mcp-server/src/prompts.ts) - 6 MCP prompt definitions + message generator
-- [packages/mcp-server/src/output-schemas.ts](packages/mcp-server/src/output-schemas.ts) - Output schemas for 15 tools + annotation helpers
-- [packages/mcp-server/src/elicitation.ts](packages/mcp-server/src/elicitation.ts) - tryElicit() helper + 5 pre-built elicitation form schemas
-- [packages/mcp-server/src/progress.ts](packages/mcp-server/src/progress.ts) - ProgressReporter class for step-by-step progress notifications
-- [packages/mcp-server/src/ui/](packages/mcp-server/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
-- [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
-- [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
+- [packages/storyblok-mcp/schemas/section-recipes.json](packages/storyblok-mcp/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
+- [packages/storyblok-mcp/src/prompts.ts](packages/storyblok-mcp/src/prompts.ts) - 6 MCP prompt definitions + message generator
+- [packages/storyblok-mcp/src/output-schemas.ts](packages/storyblok-mcp/src/output-schemas.ts) - Output schemas for 15 tools + annotation helpers
+- [packages/storyblok-mcp/src/elicitation.ts](packages/storyblok-mcp/src/elicitation.ts) - tryElicit() helper + 5 pre-built elicitation form schemas
+- [packages/storyblok-mcp/src/progress.ts](packages/storyblok-mcp/src/progress.ts) - ProgressReporter class for step-by-step progress notifications
+- [packages/storyblok-mcp/src/ui/](packages/storyblok-mcp/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
+- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
+- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
 - [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
 - [packages/website/pages/api/prompter/\_helpers.ts](packages/website/pages/api/prompter/_helpers.ts) - Shared helpers for Prompter API routes
@@ -341,7 +341,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **22 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/storyblok-n8n/](packages/storyblok-n8n/)) that provides **22 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
 
 | Resource       | Operations | Description                                                                                  |
 | -------------- | ---------- | -------------------------------------------------------------------------------------------- |
@@ -351,7 +351,7 @@ The project includes an n8n community node package ([packages/n8n-nodes/](packag
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 
-Nine workflow templates are included in `packages/n8n-nodes/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
+Nine workflow templates are included in `packages/storyblok-n8n/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
 
 ## Common Patterns
 

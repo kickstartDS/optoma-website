@@ -187,7 +187,7 @@ The Prompter API routes (`/api/prompter/generate-section`, `/api/prompter/plan`)
 
 #### 5.3.1 New n8n Resource: "Schema Layer"
 
-Add a new resource group to the n8n node (`packages/n8n-nodes/`) with operations:
+Add a new resource group to the n8n node (`packages/storyblok-n8n/`) with operations:
 
 | Operation                 | Description                                                                                                                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -415,12 +415,12 @@ Rough estimate: if ~40% of fields across all components are hidden (based on cur
 
 ### 6.4 MCP Server Schema Bundling
 
-The MCP server's Docker image currently bundles `packages/mcp-server/schemas/*.dereffed.json`. For Phase 2+, it should also bundle:
+The MCP server's Docker image currently bundles `packages/storyblok-mcp/schemas/*.dereffed.json`. For Phase 2+, it should also bundle:
 
 - `cms/language/*.schema.json` (or a pre-compiled locale + descriptions index)
 - `cms/visibility/*.schema.json` (or a pre-compiled visibility map)
 
-The build step in `packages/mcp-server/package.json` should copy these from the website package.
+The build step in `packages/storyblok-mcp/package.json` should copy these from the website package.
 
 ---
 
@@ -445,7 +445,7 @@ The build step in `packages/mcp-server/package.json` should copy these from the 
 | OpenAI API key                         | Phases 2–4 | Already required for existing generation |
 | storyblok-services shared library      | All phases | All new utilities live here              |
 | Dereferenced schemas                   | Phases 1–2 | Already available in MCP server          |
-| n8n node framework                     | Phase 3    | Extends existing `packages/n8n-nodes/`   |
+| n8n node framework                     | Phase 3    | Extends existing `packages/storyblok-n8n/`   |
 
 ---
 

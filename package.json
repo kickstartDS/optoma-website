@@ -5,7 +5,7 @@
   "scripts": {
     "build": "pnpm -r run build",
     "dev:web": "pnpm --filter website dev",
-    "dev:mcp": "pnpm --filter mcp-server dev",
+    "dev:mcp": "pnpm --filter storyblok-mcp dev",
     "dev:design-system": "pnpm --filter @kickstartds/design-system storybook",
     "dev:tokens-editor": "pnpm --filter @kickstartds/design-tokens-editor dev",
     "dev:component-mcp": "pnpm --filter @kickstartds/component-builder-mcp dev",

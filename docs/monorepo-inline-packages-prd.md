@@ -311,7 +311,7 @@ Design-system specifics:
 Now that the design system lives in the monorepo as `@kickstartds/design-system` (renamed from `@kickstartds/ds-agency-premium`), all consumers must update their dependency name and switch to workspace protocol:
 
 - [ ] In `packages/website/package.json`: change `"@kickstartds/ds-agency-premium": "^2.0.2"` → `"@kickstartds/design-system": "workspace:*"`
-- [ ] In `packages/mcp-server/package.json`: change `"@kickstartds/ds-agency-premium": "^2.0.2"` → `"@kickstartds/design-system": "workspace:*"`
+- [ ] In `packages/storyblok-mcp/package.json`: change `"@kickstartds/ds-agency-premium": "^2.0.2"` → `"@kickstartds/design-system": "workspace:*"`
 - [ ] In `packages/design-tokens-editor/package.json`: change `"@kickstartds/ds-agency-premium": "1.6.74--canary.45.2772.0"` → `"@kickstartds/design-system": "workspace:*"`
 - [ ] Update all source-level import paths referencing `@kickstartds/ds-agency-premium` → `@kickstartds/design-system` across `website`, `mcp-server`, and `design-tokens-editor`
 - [ ] Update all CLI script arguments that reference `node_modules/@kickstartds/ds-agency-premium/` → `node_modules/@kickstartds/design-system/` in `packages/website/package.json`

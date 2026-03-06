@@ -8,16 +8,16 @@ A **pnpm workspaces monorepo** for building AI-powered websites with [Storyblok 
 packages/
   website/              — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
   storyblok-services/   — Shared library (schema, validation, transforms)
-  mcp-server/           — Storyblok MCP server (Model Context Protocol)
-  n8n-nodes/            — n8n community node for Storyblok workflows
+  storyblok-mcp/           — Storyblok MCP server (Model Context Protocol)
+  storyblok-n8n/            — n8n community node for Storyblok workflows
 ```
 
 | Package                                            | npm                                      | Description                                                                                                            |
 | -------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | [website](packages/website/)                       | `@kickstartds/storyblok-starter-premium` | Next.js 13 site with Storyblok CMS, ISR, Visual Editor, AI Prompter, and a three-layer design token system             |
 | [storyblok-services](packages/storyblok-services/) | `@kickstartds/storyblok-services`        | Framework-agnostic library for schema preparation, content validation, transforms, pattern analysis, and AI generation |
-| [mcp-server](packages/mcp-server/)                 | `@kickstartds/storyblok-mcp-server`      | MCP server exposing 30+ CMS tools to AI assistants (content CRUD, AI generation, component introspection)              |
-| [n8n-nodes](packages/n8n-nodes/)                   | `n8n-nodes-storyblok-kickstartds`        | n8n community node with 22 operations across 3 resources for automated content pipelines                               |
+| [storyblok-mcp](packages/storyblok-mcp/)                 | `@kickstartds/storyblok-mcp-server`      | MCP server exposing 30+ CMS tools to AI assistants (content CRUD, AI generation, component introspection)              |
+| [storyblok-n8n](packages/storyblok-n8n/)                   | `n8n-nodes-storyblok-kickstartds`        | n8n community node with 22 operations across 3 resources for automated content pipelines                               |
 
 **Package manager:** pnpm 9.15.0 · **Versioning:** [Changesets](https://github.com/changesets/changesets) for independent per-package publishing
 
@@ -52,7 +52,7 @@ Create `packages/website/.env.local` (see `.env.local.sample`):
 
 ```bash
 pnpm --filter website dev     # Website dev server (SSL on :3010)
-pnpm --filter mcp-server dev  # MCP server in dev mode
+pnpm --filter storyblok-mcp dev  # MCP server in dev mode
 ```
 
 Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
@@ -62,7 +62,7 @@ Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
 ```bash
 # Development
 pnpm --filter website dev                      # Website dev server
-pnpm --filter mcp-server dev                   # MCP server dev mode
+pnpm --filter storyblok-mcp dev                   # MCP server dev mode
 
 # Build
 pnpm -r run build                              # Build all packages
@@ -127,7 +127,7 @@ Key capabilities:
 
 Deploy with Kamal: `kamal deploy -d mcp`
 
-See [packages/mcp-server/README.md](packages/mcp-server/README.md) for setup and deployment instructions.
+See [packages/storyblok-mcp/README.md](packages/storyblok-mcp/README.md) for setup and deployment instructions.
 
 ### n8n Nodes
 
@@ -135,7 +135,7 @@ An **n8n community node** package providing 22 operations across 3 resources (AI
 
 Includes 9 workflow templates for content audit, blog autopilot, content migration, SEO fixes, and more.
 
-See [packages/n8n-nodes/README.md](packages/n8n-nodes/README.md) for the full node reference.
+See [packages/storyblok-n8n/README.md](packages/storyblok-n8n/README.md) for the full node reference.
 
 ## Architecture
 

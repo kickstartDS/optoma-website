@@ -10,7 +10,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 COPY patches/ ./patches/
 # Copy package.json files for required workspace packages
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
-COPY packages/mcp-server/package.json ./packages/mcp-server/
+COPY packages/storyblok-mcp/package.json ./packages/storyblok-mcp/
 
 # Install dependencies (--ignore-scripts prevents prepublishOnly from firing
 # before source/tsconfig files are copied into the image)
@@ -22,7 +22,7 @@ ARG CACHEBUST=0
 
 # Copy source code
 COPY packages/storyblok-services/ ./packages/storyblok-services/
-COPY packages/mcp-server/ ./packages/mcp-server/
+COPY packages/storyblok-mcp/ ./packages/storyblok-mcp/
 
 # Build shared lib first, then MCP server
 RUN pnpm --filter @kickstartds/storyblok-services run build
@@ -46,7 +46,7 @@ RUN pnpm --filter @kickstartds/storyblok-mcp-server deploy --prod /prod/mcp-serv
 WORKDIR /prod/mcp-server
 
 # Copy runtime assets (schemas and skill docs)
-COPY packages/mcp-server/schemas/ ./schemas/
+COPY packages/storyblok-mcp/schemas/ ./schemas/
 COPY docs/skills/ ./skills/
 
 # Set environment variables (these should be overridden at runtime)

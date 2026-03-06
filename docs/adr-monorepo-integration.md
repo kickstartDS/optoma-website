@@ -146,7 +146,7 @@
 **Decision:** Keep lightweight per-package `.gitignore` files containing only `node_modules` and `dist` (and package-specific build outputs). All other ignores are handled by the root `.gitignore`.
 
 **Rationale:**
-- Matches the existing pattern in `packages/storyblok-services/.gitignore` and `packages/mcp-server/.gitignore`
+- Matches the existing pattern in `packages/storyblok-services/.gitignore` and `packages/storyblok-mcp/.gitignore`
 - Root `.gitignore` handles cross-cutting concerns (lockfiles, `.env`, tooling caches)
 - Per-package files ensure `dist/` is ignored even if someone runs git commands from within a package directory
 

@@ -10,30 +10,30 @@
 
 ## Phase 2: Wire `excludeContent` into MCP `list_stories` tool
 
-- [x] Add `excludeContent` boolean property (default: `true`) to `list_stories` input schema in `packages/mcp-server/src/index.ts`
-- [x] Add `excludeContent` to Zod schema `schemas.listStories` in `packages/mcp-server/src/config.ts`
-- [x] Update `StoryblokService.listStories()` wrapper in `packages/mcp-server/src/services.ts` to pass `excludeContent` through
-- [x] Update `list_stories` handler in `packages/mcp-server/src/index.ts` to pass `excludeContent ?? true`
+- [x] Add `excludeContent` boolean property (default: `true`) to `list_stories` input schema in `packages/storyblok-mcp/src/index.ts`
+- [x] Add `excludeContent` to Zod schema `schemas.listStories` in `packages/storyblok-mcp/src/config.ts`
+- [x] Update `StoryblokService.listStories()` wrapper in `packages/storyblok-mcp/src/services.ts` to pass `excludeContent` through
+- [x] Update `list_stories` handler in `packages/storyblok-mcp/src/index.ts` to pass `excludeContent ?? true`
 - [x] Update `list_stories` tool description to mention metadata-only default
 
 ## Phase 3: Wire `excludeContent` into n8n `list` operation
 
-- [x] Add `excludeContent` boolean field to `storyFields` in `packages/n8n-nodes/nodes/StoryblokKickstartDs/descriptions/StoryDescription.ts`
-- [x] Read and pass `excludeContent` in `executeListStories()` in `packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts`
+- [x] Add `excludeContent` boolean field to `storyFields` in `packages/storyblok-n8n/nodes/StoryblokKickstartDs/descriptions/StoryDescription.ts`
+- [x] Read and pass `excludeContent` in `executeListStories()` in `packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts`
 
 ## Phase 4: Asset stripping for content-returning tools
 
 - [x] Create `stripEmptyAssetFields()` utility in `packages/storyblok-services/src/stories.ts`
 - [x] Export `stripEmptyAssetFields` from `packages/storyblok-services/src/index.ts`
-- [x] Apply to `get_story` handler in `packages/mcp-server/src/index.ts`
-- [x] Apply to `list_stories` handler (when `excludeContent: false`) in `packages/mcp-server/src/index.ts`
-- [x] Apply to `search_content` handler in `packages/mcp-server/src/index.ts`
+- [x] Apply to `get_story` handler in `packages/storyblok-mcp/src/index.ts`
+- [x] Apply to `list_stories` handler (when `excludeContent: false`) in `packages/storyblok-mcp/src/index.ts`
+- [x] Apply to `search_content` handler in `packages/storyblok-mcp/src/index.ts`
 
 ## Phase 5: Documentation updates
 
 ### 5a: MCP README
 
-- [x] Update token budget table in `packages/mcp-server/README.md` to reflect new defaults (metadata-only)
+- [x] Update token budget table in `packages/storyblok-mcp/README.md` to reflect new defaults (metadata-only)
 - [x] Update recommendations section
 
 ### 5b: Content operations doc
@@ -52,9 +52,9 @@
 
 ### 5d: n8n workflow templates
 
-- [x] Add `excludeContent: false` to template-4 (weekly content audit) — `packages/n8n-nodes/workflows/template-4-weekly-content-audit.json`
-- [x] Add `excludeContent: false` to template-7 (SEO fix pipeline) — `packages/n8n-nodes/workflows/template-7-seo-fix-pipeline.json`
-- [x] Add `excludeContent: false` to template-9 (broken asset detection) — `packages/n8n-nodes/workflows/template-9-broken-asset-detection.json`
+- [x] Add `excludeContent: false` to template-4 (weekly content audit) — `packages/storyblok-n8n/workflows/template-4-weekly-content-audit.json`
+- [x] Add `excludeContent: false` to template-7 (SEO fix pipeline) — `packages/storyblok-n8n/workflows/template-7-seo-fix-pipeline.json`
+- [x] Add `excludeContent: false` to template-9 (broken asset detection) — `packages/storyblok-n8n/workflows/template-9-broken-asset-detection.json`
 - [x] ~~Add `excludeContent: false` to website-content-operations.json MCP call~~ — Not needed: this workflow uses the MCP client (not n8n node), and the new metadata-only default is correct for its listing use case
 
 ### 5e: Plan status

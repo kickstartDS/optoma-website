@@ -80,7 +80,7 @@ pnpm install
 2. Create environment file:
 
 ```bash
-cp packages/mcp-server/.env.example packages/mcp-server/.env
+cp packages/storyblok-mcp/.env.example packages/storyblok-mcp/.env
 ```
 
 3. Configure environment variables in `.env`:
@@ -110,7 +110,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
   "mcpServers": {
     "storyblok": {
       "command": "node",
-      "args": ["/path/to/packages/mcp-server/dist/index.js"],
+      "args": ["/path/to/packages/storyblok-mcp/dist/index.js"],
       "env": {
         "STORYBLOK_API_TOKEN": "your-preview-token",
         "STORYBLOK_OAUTH_TOKEN": "your-oauth-token",
@@ -127,7 +127,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 Build the Docker image (from the repository root — the build context must be the repo root so workspace packages are available):
 
 ```bash
-docker build -t storyblok-mcp-server -f packages/mcp-server/Dockerfile .
+docker build -t storyblok-mcp-server -f packages/storyblok-mcp/Dockerfile .
 ```
 
 Run locally in **stdio** mode (default):
@@ -816,7 +816,7 @@ config/
 └── secrets                     # Kamal secrets (reads from environment)
 
 # MCP server package
-packages/mcp-server/
+packages/storyblok-mcp/
 ├── src/
 │   ├── index.ts                # Main server entry (stdio + HTTP transport)
 │   ├── config.ts               # Configuration and Zod schemas
@@ -881,7 +881,7 @@ Core Storyblok and OpenAI logic — including schema preparation for OpenAI, con
 pnpm --filter @kickstartds/storyblok-services run build
 pnpm --filter @kickstartds/storyblok-mcp-server run build
 
-# Or from packages/mcp-server/ (shared lib must already be built):
+# Or from packages/storyblok-mcp/ (shared lib must already be built):
 pnpm run build
 ```
 
@@ -967,7 +967,7 @@ When using this MCP server with LLM clients that have limited context windows (e
 
 ## n8n Integration
 
-For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../n8n-nodes/).
+For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../storyblok-n8n/).
 
 It provides **22 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
 

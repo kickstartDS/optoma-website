@@ -48,7 +48,7 @@
 ### WP-5: Workspace Dependency Wiring
 
 - [x] `website/package.json`: `ds-agency-premium ^2.0.2` → `@kickstartds/design-system: workspace:*`
-- [x] `mcp-server/package.json`: `ds-agency-premium ^2.0.2` → `@kickstartds/design-system: workspace:*`
+- [x] `storyblok-mcp/package.json`: `ds-agency-premium ^2.0.2` → `@kickstartds/design-system: workspace:*`
 - [x] `design-tokens-editor/package.json`: `ds-agency-premium 1.6.74--canary.45.2772.0` → `@kickstartds/design-system: workspace:*`
 - [x] Bulk rename imports: `@kickstartds/ds-agency-premium` → `@kickstartds/design-system` across all source files (35 files)
 - [x] Update CLI script paths in `website/package.json` (`node_modules/@kickstartds/ds-agency-premium/` → `node_modules/@kickstartds/design-system/`)
@@ -163,7 +163,7 @@
 - [x] Decide on design-tokens-editor deployment → keep on Netlify (deep Netlify Functions/Blobs dependency)
 - [x] Move `db/` → `packages/umami-analytics/`, create `config/deploy-analytics.yml`
 - [x] Consolidate `.kamal/secrets` (analytics secrets added to root, removed per-package copies)
-- [x] Remove redundant `packages/mcp-server/.kamal/secrets`
+- [x] Remove redundant `packages/storyblok-mcp/.kamal/secrets`
 - [ ] Add Chromatic/Storybook deployment to monorepo CI
 
 ---
@@ -187,4 +187,6 @@
 
 ### WP-13: Align package and directory naming:
 
-- [ ] Names should be: `packages/mcp-server` → `packages/storyblok-mcp`, `packages/n8n-nodes` → `packages/storyblok-n8n`
+- [x] Renamed `packages/mcp-server` → `packages/storyblok-mcp`, `packages/n8n-nodes` → `packages/storyblok-n8n`
+- [x] Updated all config files (deploy-mcp.yml, .vscode/mcp.json, .gitignore, root package.json, Dockerfile)
+- [x] Updated all references across README.md, copilot-instructions.md, package READMEs, and 15+ docs

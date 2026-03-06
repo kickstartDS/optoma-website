@@ -497,20 +497,20 @@ Add discoverable prompt templates for the 6 core workflows. This is the lowest-r
 
 | #    | Task                                                                                            | Files                                                              | Effort |
 | ---- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------ |
-| 1.1  | Add `prompts` capability to server initialization                                               | `packages/mcp-server/src/index.ts`                                 | S      |
-| 1.2  | Create prompt definitions module with 6 prompt templates                                        | `packages/mcp-server/src/prompts.ts` (new)                         | M      |
-| 1.3  | Implement `prompts/list` handler                                                                | `packages/mcp-server/src/index.ts`                                 | S      |
-| 1.4  | Implement `prompts/get` handler with argument interpolation                                     | `packages/mcp-server/src/index.ts`                                 | M      |
-| 1.5  | Add argument auto-completion for prompt arguments (component types, content types, story slugs) | `packages/mcp-server/src/index.ts`                                 | M      |
-| 1.6  | Load available component types dynamically from schema registry for prompt enumeration          | `packages/mcp-server/src/prompts.ts`                               | S      |
-| 1.7  | Add `create-page` prompt with full workflow instructions                                        | `packages/mcp-server/src/prompts.ts`                               | M      |
-| 1.8  | Add `migrate-from-url` prompt                                                                   | `packages/mcp-server/src/prompts.ts`                               | S      |
-| 1.9  | Add `create-blog-post` prompt                                                                   | `packages/mcp-server/src/prompts.ts`                               | S      |
-| 1.10 | Add `content-audit` prompt                                                                      | `packages/mcp-server/src/prompts.ts`                               | S      |
-| 1.11 | Add `extend-page` prompt                                                                        | `packages/mcp-server/src/prompts.ts`                               | S      |
-| 1.12 | Add `translate-page` prompt                                                                     | `packages/mcp-server/src/prompts.ts`                               | S      |
-| 1.13 | Write tests for prompt listing and retrieval                                                    | `packages/mcp-server/test/prompts.test.ts` (new)                   | M      |
-| 1.14 | Update README and copilot-instructions with prompt documentation                                | `packages/mcp-server/README.md`, `.github/copilot-instructions.md` | S      |
+| 1.1  | Add `prompts` capability to server initialization                                               | `packages/storyblok-mcp/src/index.ts`                                 | S      |
+| 1.2  | Create prompt definitions module with 6 prompt templates                                        | `packages/storyblok-mcp/src/prompts.ts` (new)                         | M      |
+| 1.3  | Implement `prompts/list` handler                                                                | `packages/storyblok-mcp/src/index.ts`                                 | S      |
+| 1.4  | Implement `prompts/get` handler with argument interpolation                                     | `packages/storyblok-mcp/src/index.ts`                                 | M      |
+| 1.5  | Add argument auto-completion for prompt arguments (component types, content types, story slugs) | `packages/storyblok-mcp/src/index.ts`                                 | M      |
+| 1.6  | Load available component types dynamically from schema registry for prompt enumeration          | `packages/storyblok-mcp/src/prompts.ts`                               | S      |
+| 1.7  | Add `create-page` prompt with full workflow instructions                                        | `packages/storyblok-mcp/src/prompts.ts`                               | M      |
+| 1.8  | Add `migrate-from-url` prompt                                                                   | `packages/storyblok-mcp/src/prompts.ts`                               | S      |
+| 1.9  | Add `create-blog-post` prompt                                                                   | `packages/storyblok-mcp/src/prompts.ts`                               | S      |
+| 1.10 | Add `content-audit` prompt                                                                      | `packages/storyblok-mcp/src/prompts.ts`                               | S      |
+| 1.11 | Add `extend-page` prompt                                                                        | `packages/storyblok-mcp/src/prompts.ts`                               | S      |
+| 1.12 | Add `translate-page` prompt                                                                     | `packages/storyblok-mcp/src/prompts.ts`                               | S      |
+| 1.13 | Write tests for prompt listing and retrieval                                                    | `packages/storyblok-mcp/test/prompts.test.ts` (new)                   | M      |
+| 1.14 | Update README and copilot-instructions with prompt documentation                                | `packages/storyblok-mcp/README.md`, `.github/copilot-instructions.md` | S      |
 
 ### Phase 2: Structured Output (`outputSchema`)
 
@@ -518,13 +518,13 @@ Add `outputSchema` to all tools and return `structuredContent` alongside text su
 
 | #   | Task                                                                   | Files                                                      | Effort |
 | --- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ------ |
-| 2.1 | Define output schemas for all 25 tools                                 | `packages/mcp-server/src/schemas/output-schemas.ts` (new)  | L      |
-| 2.2 | Update tool registration to include `outputSchema` in tool definitions | `packages/mcp-server/src/index.ts`                         | M      |
-| 2.3 | Update tool result handlers to include `structuredContent` field       | `packages/mcp-server/src/index.ts`                         | M      |
-| 2.4 | Add resource links to write tool results (create, update, import)      | `packages/mcp-server/src/index.ts`                         | M      |
-| 2.5 | Add annotations to content blocks (audience, priority)                 | `packages/mcp-server/src/index.ts`                         | S      |
-| 2.6 | Update MCP SDK to latest version if needed for `outputSchema` support  | `packages/mcp-server/package.json`                         | S      |
-| 2.7 | Write tests for structured output format                               | `packages/mcp-server/test/structured-output.test.ts` (new) | M      |
+| 2.1 | Define output schemas for all 25 tools                                 | `packages/storyblok-mcp/src/schemas/output-schemas.ts` (new)  | L      |
+| 2.2 | Update tool registration to include `outputSchema` in tool definitions | `packages/storyblok-mcp/src/index.ts`                         | M      |
+| 2.3 | Update tool result handlers to include `structuredContent` field       | `packages/storyblok-mcp/src/index.ts`                         | M      |
+| 2.4 | Add resource links to write tool results (create, update, import)      | `packages/storyblok-mcp/src/index.ts`                         | M      |
+| 2.5 | Add annotations to content blocks (audience, priority)                 | `packages/storyblok-mcp/src/index.ts`                         | S      |
+| 2.6 | Update MCP SDK to latest version if needed for `outputSchema` support  | `packages/storyblok-mcp/package.json`                         | S      |
+| 2.7 | Write tests for structured output format                               | `packages/storyblok-mcp/test/structured-output.test.ts` (new) | M      |
 
 ### Phase 3: Elicitation for Interactive Workflows
 
@@ -532,15 +532,15 @@ Add server-side Elicitation requests for component type selection, plan approval
 
 | #   | Task                                                                                  | Files                                                | Effort |
 | --- | ------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------ |
-| 3.1 | Check client Elicitation capability during initialization and store flag              | `packages/mcp-server/src/index.ts`                   | S      |
-| 3.2 | Create Elicitation helper module with schema builders for common patterns             | `packages/mcp-server/src/elicitation.ts` (new)       | M      |
-| 3.3 | Add component type picker Elicitation to `generate_section` (when type not specified) | `packages/mcp-server/src/index.ts`                   | M      |
-| 3.4 | Add plan review Elicitation to `plan_page` (approve/edit sequence)                    | `packages/mcp-server/src/index.ts`                   | M      |
-| 3.5 | Add content type picker Elicitation when intent is ambiguous                          | `packages/mcp-server/src/index.ts`                   | S      |
-| 3.6 | Add publish confirmation Elicitation to `create_page_with_content`                    | `packages/mcp-server/src/index.ts`                   | S      |
-| 3.7 | Add asset upload approval Elicitation when external images detected                   | `packages/mcp-server/src/index.ts`                   | S      |
-| 3.8 | Implement graceful degradation when client doesn't support Elicitation                | `packages/mcp-server/src/elicitation.ts`             | S      |
-| 3.9 | Write tests for Elicitation flows (accept, decline, cancel paths)                     | `packages/mcp-server/test/elicitation.test.ts` (new) | M      |
+| 3.1 | Check client Elicitation capability during initialization and store flag              | `packages/storyblok-mcp/src/index.ts`                   | S      |
+| 3.2 | Create Elicitation helper module with schema builders for common patterns             | `packages/storyblok-mcp/src/elicitation.ts` (new)       | M      |
+| 3.3 | Add component type picker Elicitation to `generate_section` (when type not specified) | `packages/storyblok-mcp/src/index.ts`                   | M      |
+| 3.4 | Add plan review Elicitation to `plan_page` (approve/edit sequence)                    | `packages/storyblok-mcp/src/index.ts`                   | M      |
+| 3.5 | Add content type picker Elicitation when intent is ambiguous                          | `packages/storyblok-mcp/src/index.ts`                   | S      |
+| 3.6 | Add publish confirmation Elicitation to `create_page_with_content`                    | `packages/storyblok-mcp/src/index.ts`                   | S      |
+| 3.7 | Add asset upload approval Elicitation when external images detected                   | `packages/storyblok-mcp/src/index.ts`                   | S      |
+| 3.8 | Implement graceful degradation when client doesn't support Elicitation                | `packages/storyblok-mcp/src/elicitation.ts`             | S      |
+| 3.9 | Write tests for Elicitation flows (accept, decline, cancel paths)                     | `packages/storyblok-mcp/test/elicitation.test.ts` (new) | M      |
 
 ### Phase 4: Interactive UI Previews (MCP Apps Extension)
 
@@ -548,32 +548,32 @@ The flagship feature: serve interactive HTML previews via `ui://` resources usin
 
 | #    | Task                                                                                                    | Files                                                   | Effort |
 | ---- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------ |
-| 4.1  | Add `@modelcontextprotocol/ext-apps` dependency and configure server extension                          | `packages/mcp-server/package.json`, `src/index.ts`      | S      |
-| 4.2  | Detect client ext-apps capability via `getUiCapability()` and branch tool registration accordingly      | `packages/mcp-server/src/index.ts`                      | M      |
-| 4.3  | Create section preview HTML template (`section-preview.html`) using kickstartDS CSS and design tokens   | `packages/mcp-server/src/ui/section-preview.html` (new) | L      |
-| 4.4  | Create page preview HTML template (`page-preview.html`) for multi-section stacked view                  | `packages/mcp-server/src/ui/page-preview.html` (new)    | L      |
-| 4.5  | Create plan review HTML template (`plan-review.html`) with section sequence display and approve/edit    | `packages/mcp-server/src/ui/plan-review.html` (new)     | M      |
-| 4.6  | Register `ui://kds/section-preview`, `ui://kds/page-preview`, `ui://kds/plan-review` as UI resources    | `packages/mcp-server/src/ui/resources.ts` (new)         | M      |
-| 4.7  | Add `_meta.ui.resourceUri` to `generate_section`, `generate_content`, `plan_page` tool definitions      | `packages/mcp-server/src/index.ts`                      | S      |
-| 4.8  | Implement app-only tools: `approve_section`, `reject_section`, `modify_section` (visibility: `["app"]`) | `packages/mcp-server/src/ui/app-tools.ts` (new)         | M      |
-| 4.9  | Implement app-only tools: `approve_plan`, `reorder_plan` for plan-review UI                             | `packages/mcp-server/src/ui/app-tools.ts`               | M      |
-| 4.10 | Build host-theme-to-kickstartDS token mapping in preview templates (CSS variable bridge)                | `packages/mcp-server/src/ui/theme-bridge.css` (new)     | M      |
-| 4.11 | Extract and inline kickstartDS design tokens (branding, semantic, component) into HTML templates        | `packages/mcp-server/src/ui/tokens.ts` (new)            | M      |
-| 4.12 | Implement `renderToStaticMarkup` pipeline using actual kickstartDS React components + `DsaProviders`    | `packages/mcp-server/src/ui/render.ts` (new)            | M      |
-| 4.13 | Add `ui/notifications/tool-input-partial` support for streaming preview while section generates         | `packages/mcp-server/src/ui/section-preview.html`       | M      |
-| 4.14 | Add display mode support (`inline` default, `fullscreen` for page preview) via `appCapabilities`        | `packages/mcp-server/src/ui/section-preview.html`       | S      |
-| 4.15 | Implement `ui/update-model-context` in preview UIs to feed visual feedback back to the model            | `packages/mcp-server/src/ui/section-preview.html`       | S      |
-| 4.16 | Write tests for UI resource registration, app-only tool handlers, and template generation               | `packages/mcp-server/test/ui.test.ts` (new)             | M      |
+| 4.1  | Add `@modelcontextprotocol/ext-apps` dependency and configure server extension                          | `packages/storyblok-mcp/package.json`, `src/index.ts`      | S      |
+| 4.2  | Detect client ext-apps capability via `getUiCapability()` and branch tool registration accordingly      | `packages/storyblok-mcp/src/index.ts`                      | M      |
+| 4.3  | Create section preview HTML template (`section-preview.html`) using kickstartDS CSS and design tokens   | `packages/storyblok-mcp/src/ui/section-preview.html` (new) | L      |
+| 4.4  | Create page preview HTML template (`page-preview.html`) for multi-section stacked view                  | `packages/storyblok-mcp/src/ui/page-preview.html` (new)    | L      |
+| 4.5  | Create plan review HTML template (`plan-review.html`) with section sequence display and approve/edit    | `packages/storyblok-mcp/src/ui/plan-review.html` (new)     | M      |
+| 4.6  | Register `ui://kds/section-preview`, `ui://kds/page-preview`, `ui://kds/plan-review` as UI resources    | `packages/storyblok-mcp/src/ui/resources.ts` (new)         | M      |
+| 4.7  | Add `_meta.ui.resourceUri` to `generate_section`, `generate_content`, `plan_page` tool definitions      | `packages/storyblok-mcp/src/index.ts`                      | S      |
+| 4.8  | Implement app-only tools: `approve_section`, `reject_section`, `modify_section` (visibility: `["app"]`) | `packages/storyblok-mcp/src/ui/app-tools.ts` (new)         | M      |
+| 4.9  | Implement app-only tools: `approve_plan`, `reorder_plan` for plan-review UI                             | `packages/storyblok-mcp/src/ui/app-tools.ts`               | M      |
+| 4.10 | Build host-theme-to-kickstartDS token mapping in preview templates (CSS variable bridge)                | `packages/storyblok-mcp/src/ui/theme-bridge.css` (new)     | M      |
+| 4.11 | Extract and inline kickstartDS design tokens (branding, semantic, component) into HTML templates        | `packages/storyblok-mcp/src/ui/tokens.ts` (new)            | M      |
+| 4.12 | Implement `renderToStaticMarkup` pipeline using actual kickstartDS React components + `DsaProviders`    | `packages/storyblok-mcp/src/ui/render.ts` (new)            | M      |
+| 4.13 | Add `ui/notifications/tool-input-partial` support for streaming preview while section generates         | `packages/storyblok-mcp/src/ui/section-preview.html`       | M      |
+| 4.14 | Add display mode support (`inline` default, `fullscreen` for page preview) via `appCapabilities`        | `packages/storyblok-mcp/src/ui/section-preview.html`       | S      |
+| 4.15 | Implement `ui/update-model-context` in preview UIs to feed visual feedback back to the model            | `packages/storyblok-mcp/src/ui/section-preview.html`       | S      |
+| 4.16 | Write tests for UI resource registration, app-only tool handlers, and template generation               | `packages/storyblok-mcp/test/ui.test.ts` (new)             | M      |
 | 4.17 | End-to-end testing with Claude Desktop, ChatGPT, and VS Code using published ext-apps examples          | —                                                       | L      |
 
 ### Phase 5: Progress Notifications & Polish
 
 | #   | Task                                                                | Files                                  | Effort |
 | --- | ------------------------------------------------------------------- | -------------------------------------- | ------ |
-| 5.1 | Add progress token support to multi-step workflows                  | `packages/mcp-server/src/index.ts`     | M      |
-| 5.2 | Emit progress notifications during `create-page` prompt workflow    | `packages/mcp-server/src/index.ts`     | S      |
-| 5.3 | Add `listChanged` notification for dynamic prompt updates           | `packages/mcp-server/src/index.ts`     | S      |
-| 5.4 | Update n8n node to benefit from structured output where applicable  | `packages/n8n-nodes/...`               | M      |
+| 5.1 | Add progress token support to multi-step workflows                  | `packages/storyblok-mcp/src/index.ts`     | M      |
+| 5.2 | Emit progress notifications during `create-page` prompt workflow    | `packages/storyblok-mcp/src/index.ts`     | S      |
+| 5.3 | Add `listChanged` notification for dynamic prompt updates           | `packages/storyblok-mcp/src/index.ts`     | S      |
+| 5.4 | Update n8n node to benefit from structured output where applicable  | `packages/storyblok-n8n/...`               | M      |
 | 5.5 | Update Prompter API routes to align with new MCP capabilities       | `packages/website/pages/api/prompter/` | M      |
 | 5.6 | End-to-end testing with Claude Desktop and VS Code Copilot          | —                                      | L      |
 | 5.7 | Update all documentation (README, copilot-instructions, skill docs) | Multiple files                         | M      |
@@ -871,7 +871,7 @@ Token extraction happens at **MCP server build time** (not runtime):
 ```bash
 # Build step: extract tokens from the website package
 pnpm --filter mcp-server build:tokens
-# Produces: packages/mcp-server/src/ui/tokens.generated.css
+# Produces: packages/storyblok-mcp/src/ui/tokens.generated.css
 ```
 
 This CSS is then inlined into the HTML templates as a `<style>` block.
@@ -1148,21 +1148,21 @@ No breaking changes. No API version bump required. The server continues to retur
 
 | File                                                 | Phase | Purpose                                                            |
 | ---------------------------------------------------- | ----- | ------------------------------------------------------------------ |
-| `packages/mcp-server/src/prompts.ts`                 | 1     | Prompt definitions and handlers                                    |
-| `packages/mcp-server/src/schemas/output-schemas.ts`  | 2     | Output schema definitions for all tools                            |
-| `packages/mcp-server/src/elicitation.ts`             | 3     | Elicitation helpers and schema builders                            |
-| `packages/mcp-server/src/ui/resources.ts`            | 4     | UI resource registration (`ui://kds/*`)                            |
-| `packages/mcp-server/src/ui/app-tools.ts`            | 4     | App-only tool handlers (approve, reject, modify)                   |
-| `packages/mcp-server/src/ui/section-preview.html`    | 4     | Section preview HTML template                                      |
-| `packages/mcp-server/src/ui/page-preview.html`       | 4     | Full page preview HTML template                                    |
-| `packages/mcp-server/src/ui/plan-review.html`        | 4     | Plan review/approval HTML template                                 |
-| `packages/mcp-server/src/ui/theme-bridge.css`        | 4     | Host CSS variable → kickstartDS token mapping                      |
-| `packages/mcp-server/src/ui/tokens.ts`               | 4     | Design token extraction for preview templates                      |
-| `packages/mcp-server/src/ui/render.ts`               | 4     | `renderToStaticMarkup` pipeline using kickstartDS React components |
-| `packages/mcp-server/test/prompts.test.ts`           | 1     | Prompt tests                                                       |
-| `packages/mcp-server/test/structured-output.test.ts` | 2     | Structured output tests                                            |
-| `packages/mcp-server/test/elicitation.test.ts`       | 3     | Elicitation tests                                                  |
-| `packages/mcp-server/test/ui.test.ts`                | 4     | UI resource and app-only tool tests                                |
+| `packages/storyblok-mcp/src/prompts.ts`                 | 1     | Prompt definitions and handlers                                    |
+| `packages/storyblok-mcp/src/schemas/output-schemas.ts`  | 2     | Output schema definitions for all tools                            |
+| `packages/storyblok-mcp/src/elicitation.ts`             | 3     | Elicitation helpers and schema builders                            |
+| `packages/storyblok-mcp/src/ui/resources.ts`            | 4     | UI resource registration (`ui://kds/*`)                            |
+| `packages/storyblok-mcp/src/ui/app-tools.ts`            | 4     | App-only tool handlers (approve, reject, modify)                   |
+| `packages/storyblok-mcp/src/ui/section-preview.html`    | 4     | Section preview HTML template                                      |
+| `packages/storyblok-mcp/src/ui/page-preview.html`       | 4     | Full page preview HTML template                                    |
+| `packages/storyblok-mcp/src/ui/plan-review.html`        | 4     | Plan review/approval HTML template                                 |
+| `packages/storyblok-mcp/src/ui/theme-bridge.css`        | 4     | Host CSS variable → kickstartDS token mapping                      |
+| `packages/storyblok-mcp/src/ui/tokens.ts`               | 4     | Design token extraction for preview templates                      |
+| `packages/storyblok-mcp/src/ui/render.ts`               | 4     | `renderToStaticMarkup` pipeline using kickstartDS React components |
+| `packages/storyblok-mcp/test/prompts.test.ts`           | 1     | Prompt tests                                                       |
+| `packages/storyblok-mcp/test/structured-output.test.ts` | 2     | Structured output tests                                            |
+| `packages/storyblok-mcp/test/elicitation.test.ts`       | 3     | Elicitation tests                                                  |
+| `packages/storyblok-mcp/test/ui.test.ts`                | 4     | UI resource and app-only tool tests                                |
 
 ### D. Effort Summary
 

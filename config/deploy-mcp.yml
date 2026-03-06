@@ -31,7 +31,7 @@ builder:
   arch: amd64
   # Build context is the repo root so workspace packages are available
   context: .
-  dockerfile: packages/mcp-server/Dockerfile
+  dockerfile: packages/storyblok-mcp/Dockerfile
   # Bust the source-code cache on every deploy so code changes always ship
   args:
     CACHEBUST: <%= Time.now.to_i %>

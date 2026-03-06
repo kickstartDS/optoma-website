@@ -328,24 +328,24 @@ This is a stretch goal for a later phase.
 
 | #   | Task                                                                             | Files                                       | Effort |
 | --- | -------------------------------------------------------------------------------- | ------------------------------------------- | ------ |
-| 2.1 | Implement `generate_theme_css` tool                                              | `packages/mcp-server/src/index.ts`          | M      |
-| 2.2 | Implement `apply_theme` tool                                                     | `packages/mcp-server/src/index.ts`          | M      |
-| 2.3 | Implement `read_theme` tool                                                      | `packages/mcp-server/src/index.ts`          | S      |
-| 2.4 | Implement `extract_and_apply_theme` tool                                         | `packages/mcp-server/src/index.ts`          | L      |
+| 2.1 | Implement `generate_theme_css` tool                                              | `packages/storyblok-mcp/src/index.ts`          | M      |
+| 2.2 | Implement `apply_theme` tool                                                     | `packages/storyblok-mcp/src/index.ts`          | M      |
+| 2.3 | Implement `read_theme` tool                                                      | `packages/storyblok-mcp/src/index.ts`          | S      |
+| 2.4 | Implement `extract_and_apply_theme` tool                                         | `packages/storyblok-mcp/src/index.ts`          | L      |
 | 2.5 | Add CSS extraction logic (port from Design Tokens MCP or use HTTP fetch + parse) | `packages/storyblok-services/src/tokens.ts` | M      |
-| 2.6 | Update MCP server README with new tool documentation                             | `packages/mcp-server/README.md`             | S      |
-| 2.7 | Integration tests for each tool                                                  | `packages/mcp-server/test/`                 | M      |
+| 2.6 | Update MCP server README with new tool documentation                             | `packages/storyblok-mcp/README.md`             | S      |
+| 2.7 | Integration tests for each tool                                                  | `packages/storyblok-mcp/test/`                 | M      |
 
 ### Phase 3: n8n Node Operations
 
 | #   | Task                                                 | Files                                            | Effort |
 | --- | ---------------------------------------------------- | ------------------------------------------------ | ------ |
-| 3.1 | Add "Generate Theme CSS" operation to Theme resource | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | M      |
-| 3.2 | Add "Apply Theme" operation                          | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | M      |
-| 3.3 | Add "Read Theme" operation                           | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | S      |
-| 3.4 | Add "Extract & Apply Theme" operation                | `packages/n8n-nodes/nodes/StoryblokKickstartDs/` | M      |
-| 3.5 | Update n8n node README                               | `packages/n8n-nodes/README.md`                   | S      |
-| 3.6 | Add workflow template for brand migration            | `packages/n8n-nodes/workflows/`                  | S      |
+| 3.1 | Add "Generate Theme CSS" operation to Theme resource | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | M      |
+| 3.2 | Add "Apply Theme" operation                          | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | M      |
+| 3.3 | Add "Read Theme" operation                           | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | S      |
+| 3.4 | Add "Extract & Apply Theme" operation                | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | M      |
+| 3.5 | Update n8n node README                               | `packages/storyblok-n8n/README.md`                   | S      |
+| 3.6 | Add workflow template for brand migration            | `packages/storyblok-n8n/workflows/`                  | S      |
 
 ### Phase 4: Prompter Integration (Stretch)
 
@@ -362,7 +362,7 @@ This is a stretch goal for a later phase.
 | --- | ------------------------------------------------- | -------------------------------------------------- | ------ |
 | 5.1 | Add theming skill doc                             | `docs/skills/apply-theme.md`                       | S      |
 | 5.2 | Update copilot-instructions.md with theming tools | `.github/copilot-instructions.md`                  | S      |
-| 5.3 | Update section-recipes with theme-aware templates | `packages/mcp-server/schemas/section-recipes.json` | S      |
+| 5.3 | Update section-recipes with theme-aware templates | `packages/storyblok-mcp/schemas/section-recipes.json` | S      |
 
 ---
 
