@@ -198,6 +198,45 @@ export function resetOverrides(): OverrideMap {
   return new Map();
 }
 
+/**
+ * Check if a field is protected in safe mode.
+ *
+ * A field is protected when it has no default value (schema or override) AND:
+ * - It is a non-string scalar (boolean, number, integer) — these always need
+ *   an explicit value for safe rendering, OR
+ * - It is a string with enum constraints (missing value = invalid variant), OR
+ * - It is a required string (component expects it to be present)
+ *
+ * Optional strings without enums are safe to hide — they degrade gracefully
+ * to undefined/empty. Objects and arrays are excluded entirely (they never
+ * have defaults in our schemas).
+ */
+export function isFieldSafetyProtected(
+  field: FieldNode,
+  fieldOverride?: FieldOverride
+): boolean {
+  const scalarTypes = new Set(["string", "number", "integer", "boolean"]);
+  if (!scalarTypes.has(field.meta.type)) return false;
+
+  // Has a schema default → safe to hide
+  if (field.meta.defaultValue !== undefined) return false;
+
+  // Has an override default → safe to hide
+  if (fieldOverride?.defaultValue !== undefined) return false;
+
+  // Non-string scalars (boolean, number, integer) are always dangerous
+  if (field.meta.type !== "string") return true;
+
+  // String with enum values — hiding would lose the variant selection
+  if (field.meta.enumValues && field.meta.enumValues.length > 0) return true;
+
+  // Required strings — component expects them
+  if (field.meta.required) return true;
+
+  // Optional strings without enums degrade gracefully → safe to hide
+  return false;
+}
+
 // ─── Serialization helpers ──────────────────────────────────────────────────
 
 /** Convert OverrideMap to a plain object for JSON serialization */

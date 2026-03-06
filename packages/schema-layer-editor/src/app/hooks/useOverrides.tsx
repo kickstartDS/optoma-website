@@ -32,6 +32,7 @@ import {
   componentHasOverrides,
   recordToComponentOverrides,
   hasOverride,
+  isFieldSafetyProtected,
 } from "../lib/override-model.js";
 
 // ─── Diff Status ────────────────────────────────────────────────────────────
@@ -91,6 +92,10 @@ export type OverrideAction =
       component: string;
       path: string;
       hidden: boolean;
+      /** When true, skip hiding scalar fields without defaults */
+      safeMode?: boolean;
+      /** The FieldNode being toggled (needed for safe-mode check) */
+      fieldNode?: FieldNode;
     }
   | { type: "SET_TITLE"; component: string; path: string; title: string }
   | {
@@ -122,6 +127,8 @@ export type OverrideAction =
       type: "BULK_HIDE_ALL";
       component: string;
       fields: FieldNode[];
+      /** When true, skip hiding scalar fields without defaults */
+      safeMode?: boolean;
     }
   | { type: "RESET_COMPONENT"; component: string }
   | {
@@ -137,12 +144,52 @@ export type OverrideAction =
 
 // ─── Reducer ────────────────────────────────────────────────────────────────
 
+/**
+ * Filter a FieldNode tree to exclude safety-protected fields.
+ * Returns a new tree with protected leaf nodes removed.
+ */
+function filterUnprotectedFields(
+  fields: FieldNode[],
+  overrides: OverrideMap
+): FieldNode[] {
+  return fields
+    .map((field) => {
+      // Recurse into children
+      const filteredChildren = filterUnprotectedFields(
+        field.children,
+        overrides
+      );
+
+      // If this field itself is protected, exclude it
+      if (isFieldSafetyProtected(field, overrides.get(field.meta.path))) {
+        // But if it has unprotected children, keep the parent (object/array)
+        // This shouldn't happen for scalars, but be safe
+        return null;
+      }
+
+      return { ...field, children: filteredChildren };
+    })
+    .filter((f): f is FieldNode => f !== null);
+}
+
 function overridesReducer(
   state: ComponentOverrides,
   action: OverrideAction
 ): ComponentOverrides {
   switch (action.type) {
     case "SET_VISIBILITY": {
+      // Safe mode: prevent hiding scalar fields without defaults
+      if (
+        action.safeMode &&
+        action.hidden &&
+        action.fieldNode &&
+        isFieldSafetyProtected(
+          action.fieldNode,
+          getComponentOverrides(state, action.component).get(action.path)
+        )
+      ) {
+        return state; // no-op
+      }
       const compOverrides = getComponentOverrides(state, action.component);
       const existing = compOverrides.get(action.path) || {};
       const updated = setOverride(compOverrides, action.path, {
@@ -256,7 +303,10 @@ function overridesReducer(
 
     case "BULK_HIDE_ALL": {
       const compOverrides = getComponentOverrides(state, action.component);
-      const updated = bulkSetVisibility(compOverrides, action.fields, true);
+      const fieldsToHide = action.safeMode
+        ? filterUnprotectedFields(action.fields, compOverrides)
+        : action.fields;
+      const updated = bulkSetVisibility(compOverrides, fieldsToHide, true);
       return setComponentOverrides(state, action.component, updated);
     }
 
@@ -304,6 +354,10 @@ interface OverridesContextValue {
   staleOverrides: Set<string>;
   /** Set stale overrides discovered by layer loading */
   setStaleOverrides: (stale: Set<string>) => void;
+  /** Safe mode: prevent hiding scalar fields without defaults */
+  safeMode: boolean;
+  /** Toggle safe mode on/off */
+  toggleSafeMode: () => void;
 }
 
 const OverridesContext = createContext<OverridesContextValue | null>(null);
@@ -337,6 +391,7 @@ export function OverridesProvider({ children }: { children: ReactNode }) {
   const [staleOverrides, setStaleOverridesState] = useState<Set<string>>(
     new Set()
   );
+  const [safeMode, setSafeMode] = useState(true);
 
   // Wrap dispatch to capture baseline on LOAD_OVERRIDES
   const wrappedDispatch: Dispatch<OverrideAction> = useCallback(
@@ -360,6 +415,10 @@ export function OverridesProvider({ children }: { children: ReactNode }) {
     setStaleOverridesState(stale);
   }, []);
 
+  const toggleSafeMode = useCallback(() => {
+    setSafeMode((prev) => !prev);
+  }, []);
+
   return (
     <OverridesContext.Provider
       value={{
@@ -371,6 +430,8 @@ export function OverridesProvider({ children }: { children: ReactNode }) {
         toggleExpandAll,
         staleOverrides,
         setStaleOverrides,
+        safeMode,
+        toggleSafeMode,
       }}
     >
       {children}
