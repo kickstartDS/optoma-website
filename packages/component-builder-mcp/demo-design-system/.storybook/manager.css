@@ -1,9 +1,0 @@
-@import "../src/token/tokens.css";
-
-.sidebar-item svg {
-  color: inherit;
-}
-
-#storybook-preview-iframe {
-  background: transparent;
-}
