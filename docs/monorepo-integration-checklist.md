@@ -56,7 +56,7 @@
 - [x] Update `copilot-instructions.md` and package READMEs
 - [x] Remove `prepublishOnly` and `husky:precommit` scripts from design-system (see ADR-010)
 - [x] Run `pnpm install` — verify workspace resolution
-- [ ] Verify topological build order (`design-system` builds before consumers)
+- [x] Verify topological build order (`design-system` builds before consumers)
 
 ### WP-4: Standardize Scripts
 
@@ -68,10 +68,10 @@
 ### WP-13: Design System Build Integration
 
 - [x] Replace all `yarn` → `pnpm run` in design-system scripts (run-s/run-p stay as-is)
-- [ ] Verify `pnpm run build-tokens` works (Style Dictionary pipeline)
-- [ ] Verify `pnpm run schema` works (kickstartDS schema tools)
-- [ ] Verify `pnpm run prepublishOnly` / full build works (Rollup)
-- [ ] Test `pnpm --filter @kickstartds/design-system storybook` launches dev server
+- [x] Verify `pnpm run build-tokens` works (Style Dictionary pipeline)
+- [x] Verify `pnpm run schema` works (kickstartDS schema tools)
+- [x] Add `build` script (replaces removed `prepublishOnly`: tokens → schema → token → branding-tokens → rollup)
+- [x] Test `pnpm --filter @kickstartds/design-system storybook` launches dev server
 
 ### WP-6: Integrate Release Management (Changesets)
 
@@ -104,7 +104,7 @@
 - [x] Remove `.editorconfig`
 - [x] Remove `.circleci/` directory
 - [x] Remove `.husky/` directory
-- [ ] Move patches to root `patches/` and update root `pnpm.patchedDependencies` _(deferred — patch-package format needs conversion)_
+- [x] Move patches to root `patches/` and update root `pnpm.patchedDependencies` (converted from patch-package format; @storybook/csf `gt` patch re-targeted to `storybook@10.2.15` where CSF is now bundled)
 - [ ] Evaluate `__snapshots__/` PNG files (Git LFS or keep as-is)
 
 #### `design-tokens-editor`
@@ -138,7 +138,7 @@
 - [x] Move `packages/design-tokens-editor/patches/*` → root `patches/`
 - [x] Update root `pnpm.patchedDependencies` with `@glidejs/glide@3.7.1`
 - [x] Verify patches apply correctly
-- [ ] Move `packages/design-system/patches/*` → root `patches/` _(deferred — these are patch-package format, need conversion to pnpm format)_
+- [x] Move `packages/design-system/patches/*` → root `patches/` (converted from patch-package format; @storybook/csf `gt` patch re-targeted to `storybook@10.2.15`)
 
 ---
 

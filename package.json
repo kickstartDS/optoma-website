@@ -24,7 +24,10 @@
   "pnpm": {
     "patchedDependencies": {
       "@kickstartds/base@4.2.0": "patches/@kickstartds__base@4.2.0.patch",
-      "@glidejs/glide@3.7.1": "patches/@glidejs__glide@3.7.1.patch"
+      "@glidejs/glide@3.7.1": "patches/@glidejs__glide@3.7.1.patch",
+      "storybook-addon-playroom@5.0.0": "patches/storybook-addon-playroom@5.0.0.patch",
+      "playroom@0.34.2": "patches/playroom@0.34.2.patch",
+      "storybook@10.2.15": "patches/storybook@10.2.15.patch"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

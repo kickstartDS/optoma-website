@@ -51,6 +51,8 @@
     "dist"
   ],
   "scripts": {
+    "build": "rm -rf dist && pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run branding-tokens && rollup -c",
+    "prepack": "pnpm run build",
     "build-storybook": "pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run search && storybook build",
     "build-tokens-ds-agency": "kickstartDS tokens compile",
     "build-tokens-business": "kickstartDS tokens compile --token-dictionary-path src/token-business/dictionary --sd-config-path sd.config-business.cjs",

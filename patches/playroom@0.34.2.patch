@@ -1,7 +1,7 @@
-diff --git a/node_modules/playroom/lib/makeWebpackConfig.js b/node_modules/playroom/lib/makeWebpackConfig.js
-index 0843f0e..242a39c 100644
---- a/node_modules/playroom/lib/makeWebpackConfig.js
-+++ b/node_modules/playroom/lib/makeWebpackConfig.js
+diff --git a/lib/makeWebpackConfig.js b/lib/makeWebpackConfig.js
+index 62615b1c8db5a13a19ff960017aecfc6f0950219..a9602a4819ac43bf75f4510fd475e3d30642b17e 100644
+--- a/lib/makeWebpackConfig.js
++++ b/lib/makeWebpackConfig.js
 @@ -138,7 +138,7 @@ module.exports = async (playroomConfig, options) => {
          },
          {
@@ -15,15 +15,15 @@ index 0843f0e..242a39c 100644
          chunksSortMode: 'none',
          chunks: ['index'],
          filename: 'index.html',
--        favicon: 'images/favicon.png',
-+        // favicon: 'images/favicon.png',
+-        favicon: path.join(__dirname, '../images/favicon.png'),
++        // favicon: path.join(__dirname, '../images/favicon.png'),
          base: playroomConfig.baseUrl,
        }),
        new HtmlWebpackPlugin({
-diff --git a/node_modules/playroom/src/Playroom/Playroom.css.ts b/node_modules/playroom/src/Playroom/Playroom.css.ts
-index 84c166f..357c8fb 100644
---- a/node_modules/playroom/src/Playroom/Playroom.css.ts
-+++ b/node_modules/playroom/src/Playroom/Playroom.css.ts
+diff --git a/src/Playroom/Playroom.css.ts b/src/Playroom/Playroom.css.ts
+index 84c166f0a4dfd14e52461c7d105411923603399a..357c8fb08c0617f8a129acb35dbb4c24a351609f 100644
+--- a/src/Playroom/Playroom.css.ts
++++ b/src/Playroom/Playroom.css.ts
 @@ -15,6 +15,7 @@ globalStyle('html[data-playroom-dark]', {
  
  globalStyle('body', {
