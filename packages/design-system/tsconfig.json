@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "strict": false
+  },
+  "include": ["src/**/*", ".storybook/**/*"],
+  "exclude": ["node_modules"]
+}

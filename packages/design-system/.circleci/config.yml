@@ -1,0 +1,105 @@
+version: 2.1
+
+defaults: &defaults
+  docker:
+    - image: cimg/node:22.12
+  resource_class: large
+
+aliases:
+  - &save-cache-yarn
+    key: yarn-{{ checksum "yarn.lock" }}-{{ checksum ".circleci/config.yml" }}
+    paths:
+      - .yarn-cache
+  - &restore-cache-yarn
+    keys:
+      - yarn-{{ checksum "yarn.lock" }}-{{ checksum ".circleci/config.yml" }}
+      - yarn-{{ checksum "yarn.lock" }}
+  - &save-cache-node
+    key: node-{{ checksum "yarn.lock" }}-{{ checksum ".circleci/config.yml" }}
+    paths:
+      - node_modules
+  - &restore-cache-node
+    keys:
+      - node-{{ checksum "yarn.lock" }}-{{ checksum ".circleci/config.yml" }}
+      - node-{{ checksum "yarn.lock" }}
+      - node-
+
+jobs:
+  install:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - restore_cache: *restore-cache-node
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache: *save-cache-yarn
+      - save_cache: *save-cache-node
+
+  release:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-node
+      - run:
+          name: Create Release
+          command: yarn auto shipit
+
+  update_website:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: Update ds-agency version in About Site
+          command: |
+            curl --request POST \
+              --url https://api.github.com/repos/kickstartDS/dsa-website-about/dispatches \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer ${GH_TOKEN}" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              --data '{"event_type":"update_ds"}' \
+              --location
+      - run:
+          name: Update ds-agency version in Paid Site
+          command: |
+            curl --request POST \
+              --url https://api.github.com/repos/kickstartDS/dsa-website-paid/dispatches \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer ${GH_TOKEN}" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              --data '{"event_type":"update_ds"}' \
+              --location
+
+  chromatic:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-node
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build & Deploy Storybook
+          command: yarn chromatic
+
+workflows:
+  release:
+    jobs:
+      - install
+
+      - chromatic:
+          requires:
+            - install
+
+      - release:
+          context: kickstartDS
+          requires:
+            - install
+
+      - update_website:
+          context: kickstartDS
+          filters:
+            branches:
+              only: main
+          requires:
+            - release
