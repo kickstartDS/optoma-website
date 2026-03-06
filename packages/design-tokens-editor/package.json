@@ -1,0 +1,46 @@
+{
+  "name": "@kickstartds/token-playground",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc && rm -rf dist && vite build",
+    "format": "oxfmt",
+    "preview": "vite preview",
+    "start": "vite"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@jsonforms/core": "^3.7.0",
+    "@jsonforms/material-renderers": "^3.7.0",
+    "@jsonforms/react": "^3.7.0",
+    "@kickstartds/base": "^4.0.2",
+    "@kickstartds/blog": "^4.0.2",
+    "@kickstartds/content": "^4.1.1",
+    "@kickstartds/core": "^4.0.2",
+    "@kickstartds/ds-agency-premium": "1.6.74--canary.45.2772.0",
+    "@kickstartds/form": "^4.0.2",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
+    "@mui/x-date-pickers": "^8.19.0",
+    "classnames": "^2.3.2",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "tinycolor2": "^1.6.0",
+    "traverse": "^0.6.11"
+  },
+  "devDependencies": {
+    "@netlify/blobs": "^10.4.3",
+    "@netlify/functions": "^5.1.1",
+    "@netlify/vite-plugin": "^2.7.16",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@types/tinycolor2": "^1.4.3",
+    "@types/traverse": "^0.6.37",
+    "@vitejs/plugin-react": "^5.1.2",
+    "oxfmt": "^0.27.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.7"
+  }
+}
