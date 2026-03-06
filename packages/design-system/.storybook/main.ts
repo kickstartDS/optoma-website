@@ -16,11 +16,7 @@ const processingConfiguration: Partial<IProcessingOptions> = {
 };
 
 const config: StorybookConfig = {
-  stories: [
-    "../src/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|ts|tsx)",
-    "../docs/**/*.mdx",
-  ],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
 
   // @ts-expect-error
   experimental_manifests: async (existingManifests: Manifests = {}) => {
@@ -55,14 +51,11 @@ const config: StorybookConfig = {
   },
 
   addons: [
-    "@storybook/addon-links", // {
-    //   name: "storybook-design-token",
-    //   options: { designTokenGlob: "src/token/storybook/*" },
-    // },
+    "@storybook/addon-links",
     // "@kickstartds/storybook-addon-html",
     // "storybook-addon-playroom",
     // "@kickstartds/storybook-addon-component-tokens",
-    "@storybook/addon-a11y", // "@kickstartds/storybook-addon-jsonschema",
+    "@storybook/addon-a11y",
     "@storybook/addon-docs",
     "@storybook/addon-mcp",
   ],
