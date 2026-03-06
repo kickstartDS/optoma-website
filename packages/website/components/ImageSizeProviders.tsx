@@ -12,16 +12,16 @@ import { ImageSizeProvider, useImageSize } from "./ImageSizeContext";
 import {
   SectionContext,
   SectionContextDefault,
-} from "@kickstartds/ds-agency-premium/section";
+} from "@kickstartds/design-system/section";
 import {
   LogosContext,
   LogosContextDefault,
-} from "@kickstartds/ds-agency-premium/logos";
+} from "@kickstartds/design-system/logos";
 // TODO why does this import look different? Investigate!
 import {
   ImageStoryContext,
   ImageStoryContextDefault,
-} from "@kickstartds/ds-agency-premium/components/image-story/index.js";
+} from "@kickstartds/design-system/components/image-story/index.js";
 import {
   PostMetaContext,
   PostMetaContextDefault,
@@ -29,7 +29,7 @@ import {
 import {
   BlogTeaserContext,
   BlogTeaserContextDefault,
-} from "@kickstartds/ds-agency-premium/blog-teaser";
+} from "@kickstartds/design-system/blog-teaser";
 import calculated from "@/token/calculated";
 
 const SectionProvider: FC<PropsWithChildren> = (props) => {

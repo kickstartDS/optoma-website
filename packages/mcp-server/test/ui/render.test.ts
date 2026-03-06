@@ -25,60 +25,60 @@ function makeMockComponent(name: string) {
   };
 }
 
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/providers", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/providers", () => ({
   default: ({ children }: any) =>
     React.createElement(React.Fragment, null, children),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/section", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/section", () => ({
   Section: ({ children, ...rest }: any) =>
     React.createElement("section", { "data-component": "section" }, children),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/hero", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/hero", () => ({
   Hero: makeMockComponent("hero"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/cta", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/cta", () => ({
   CtaContextDefault: makeMockComponent("cta"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/faq", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/faq", () => ({
   FaqContextDefault: makeMockComponent("faq"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/features", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/features", () => ({
   FeaturesContextDefault: makeMockComponent("features"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/testimonials", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/testimonials", () => ({
   TestimonialsContextDefault: makeMockComponent("testimonials"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/stats", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/stats", () => ({
   StatsContextDefault: makeMockComponent("stats"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/gallery", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/gallery", () => ({
   Gallery: makeMockComponent("gallery"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/text", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/text", () => ({
   TextContextDefault: makeMockComponent("text"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/image-text", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/image-text", () => ({
   ImageTextContextDefault: makeMockComponent("image-text"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/logos", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/logos", () => ({
   Logos: makeMockComponent("logos"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/divider", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/divider", () => ({
   DividerContextDefault: makeMockComponent("divider"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/contact", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/contact", () => ({
   Contact: makeMockComponent("contact"),
 }));
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/mosaic", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/mosaic", () => ({
   Mosaic: makeMockComponent("mosaic"),
 }));
 jest.unstable_mockModule(
-  "@kickstartds/ds-agency-premium/video-curtain",
+  "@kickstartds/design-system/video-curtain",
   () => ({
     VideoCurtainContextDefault: makeMockComponent("video-curtain"),
   })
 );
-jest.unstable_mockModule("@kickstartds/ds-agency-premium/image-story", () => ({
+jest.unstable_mockModule("@kickstartds/design-system/image-story", () => ({
   ImageStory: makeMockComponent("image-story"),
 }));
 

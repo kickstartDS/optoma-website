@@ -18,7 +18,7 @@ import { resolve, dirname } from "path";
 let PAGE_VALIDATION_RULES: ValidationRules | null = null;
 try {
   const schemaPath = resolve(
-    dirname(require.resolve("@kickstartds/ds-agency-premium/package.json")),
+    dirname(require.resolve("@kickstartds/design-system/package.json")),
     "dist/components/page/page.schema.dereffed.json"
   );
   const pageSchema = JSON.parse(readFileSync(schemaPath, "utf-8"));

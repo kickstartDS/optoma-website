@@ -1,5 +1,5 @@
-import initialTokens from "@kickstartds/ds-agency-premium/tokens/branding-tokens.json";
-import { tokensToCss } from "@kickstartds/ds-agency-premium/tokens/tokensToCss.mjs";
+import initialTokens from "@kickstartds/design-system/tokens/branding-tokens.json";
+import { tokensToCss } from "@kickstartds/design-system/tokens/tokensToCss.mjs";
 import {
   createContext,
   Dispatch,

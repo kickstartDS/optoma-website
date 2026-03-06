@@ -5,7 +5,7 @@
  *
  * Usage:
  *   pnpm --filter schema-layer-editor start \
- *     --schemas ../website/node_modules/@kickstartds/ds-agency-premium/dist/components \
+ *     --schemas ../website/node_modules/@kickstartds/design-system/dist/components \
  *     --namespace visibility \
  *     --layer ../website/cms/visibility \
  *     --output ../website/cms/visibility

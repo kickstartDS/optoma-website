@@ -1,5 +1,5 @@
-import { PageWrapper } from "@kickstartds/ds-agency-premium/page-wrapper";
-import Providers from "@kickstartds/ds-agency-premium/providers";
+import { PageWrapper } from "@kickstartds/design-system/page-wrapper";
+import Providers from "@kickstartds/design-system/providers";
 import React, {
   FunctionComponent,
   lazy,
@@ -11,8 +11,8 @@ import React, {
   useState,
 } from "react";
 import ReactDOM from "react-dom/client";
-import "@kickstartds/ds-agency-premium/global.client.js";
-import "@kickstartds/ds-agency-premium/global.css";
+import "@kickstartds/design-system/global.client.js";
+import "@kickstartds/design-system/global.css";
 
 const styleTag = document.createElement("style");
 styleTag.setAttribute("data-tokens", "");
@@ -56,19 +56,19 @@ window.addEventListener("storage", updateTokens);
 updateTokens();
 
 const pages: Record<string, LazyExoticComponent<FunctionComponent>> = {
-  "color-demo": lazy(() => import("@kickstartds/ds-agency-premium/playground/color-demo")),
-  "font-demo": lazy(() => import("@kickstartds/ds-agency-premium/playground/font-demo")),
-  "spacing-demo": lazy(() => import("@kickstartds/ds-agency-premium/playground/spacing-demo")),
-  "border-demo": lazy(() => import("@kickstartds/ds-agency-premium/playground/border-demo")),
-  "shadow-demo": lazy(() => import("@kickstartds/ds-agency-premium/playground/shadow-demo")),
+  "color-demo": lazy(() => import("@kickstartds/design-system/playground/color-demo")),
+  "font-demo": lazy(() => import("@kickstartds/design-system/playground/font-demo")),
+  "spacing-demo": lazy(() => import("@kickstartds/design-system/playground/spacing-demo")),
+  "border-demo": lazy(() => import("@kickstartds/design-system/playground/border-demo")),
+  "shadow-demo": lazy(() => import("@kickstartds/design-system/playground/shadow-demo")),
   "transition-demo": lazy(
-    () => import("@kickstartds/ds-agency-premium/playground/transition-demo"),
+    () => import("@kickstartds/design-system/playground/transition-demo"),
   ),
-  landingpage: lazy(() => import("@kickstartds/ds-agency-premium/pages/landingpage")),
-  about: lazy(() => import("@kickstartds/ds-agency-premium/pages/about")),
-  jobs: lazy(() => import("@kickstartds/ds-agency-premium/pages/jobs")),
-  "jobs-detail": lazy(() => import("@kickstartds/ds-agency-premium/pages/jobs-detail")),
-  overview: lazy(() => import("@kickstartds/ds-agency-premium/pages/overview")),
+  landingpage: lazy(() => import("@kickstartds/design-system/pages/landingpage")),
+  about: lazy(() => import("@kickstartds/design-system/pages/about")),
+  jobs: lazy(() => import("@kickstartds/design-system/pages/jobs")),
+  "jobs-detail": lazy(() => import("@kickstartds/design-system/pages/jobs-detail")),
+  overview: lazy(() => import("@kickstartds/design-system/pages/overview")),
 };
 
 const Demo = () => {

@@ -1,6 +1,6 @@
 # ruhmesmeile Storyblok Website
 
-A **Next.js 13** website powered by [Storyblok CMS](https://www.storyblok.com/) and the [kickstartDS](https://www.kickstartds.com/) design system (`@kickstartds/ds-agency-premium`). Features ISR (Incremental Static Regeneration), Storyblok Visual Editor integration, AI-powered in-editor content generation, and a three-layer design token architecture.
+A **Next.js 13** website powered by [Storyblok CMS](https://www.storyblok.com/) and the [kickstartDS](https://www.kickstartds.com/) design system (`@kickstartds/design-system`). Features ISR (Incremental Static Regeneration), Storyblok Visual Editor integration, AI-powered in-editor content generation, and a three-layer design token architecture.
 
 ## Quick Start
 
@@ -51,7 +51,7 @@ The website supports **7 content types** with full Visual Editor integration:
 
 ### Design System Components
 
-Over 30 components from `@kickstartds/ds-agency-premium` are registered, including:
+Over 30 components from `@kickstartds/design-system` are registered, including:
 
 `blog-teaser` · `business-card` · `contact` · `content-nav` · `cta` · `divider` · `downloads` · `faq` · `features` · `gallery` · `headline` · `hero` · `html` · `image-story` · `image-text` · `logos` · `mosaic` · `section` · `slider` · `split-even` · `split-weighted` · `stats` · `teaser-card` · `testimonials` · `text` · `timeline` · `video-curtain`
 

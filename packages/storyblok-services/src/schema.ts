@@ -248,7 +248,7 @@ export interface PreparedSchema {
  * that were previously embedded in the PrompterComponent.
  *
  * @param pageSchema - The fully dereferenced page JSON Schema from
- *   `@kickstartds/ds-agency-premium/page/page.schema.dereffed.json`.
+ *   `@kickstartds/design-system/page/page.schema.dereffed.json`.
  * @param options - Optional configuration.
  * @returns The prepared schema envelope + component schema map.
  */

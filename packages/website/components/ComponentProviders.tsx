@@ -27,26 +27,26 @@ import {
 } from "@kickstartds/content/lib/storytelling";
 import { StorytellingProps } from "@kickstartds/content/lib/storytelling/typing";
 
-import { BlogTeaserContext } from "@kickstartds/ds-agency-premium/blog-teaser";
-import { BlogAsideContext } from "@kickstartds/ds-agency-premium/blog-aside";
-import { BlogAuthorContext } from "@kickstartds/ds-agency-premium/blog-author";
-import { BlogHeadContext } from "@kickstartds/ds-agency-premium/blog-head";
-import { CtaContext } from "@kickstartds/ds-agency-premium/cta";
-import { FeatureContext } from "@kickstartds/ds-agency-premium/feature";
-import { StatContext } from "@kickstartds/ds-agency-premium/stat";
+import { BlogTeaserContext } from "@kickstartds/design-system/blog-teaser";
+import { BlogAsideContext } from "@kickstartds/design-system/blog-aside";
+import { BlogAuthorContext } from "@kickstartds/design-system/blog-author";
+import { BlogHeadContext } from "@kickstartds/design-system/blog-head";
+import { CtaContext } from "@kickstartds/design-system/cta";
+import { FeatureContext } from "@kickstartds/design-system/feature";
+import { StatContext } from "@kickstartds/design-system/stat";
 import {
   SplitEvenContext,
   SplitEvenContextDefault,
-} from "@kickstartds/ds-agency-premium/split-even";
+} from "@kickstartds/design-system/split-even";
 import {
   SplitWeightedContext,
   SplitWeightedContextDefault,
-} from "@kickstartds/ds-agency-premium/split-weighted";
-import { TestimonialContext } from "@kickstartds/ds-agency-premium/testimonial";
+} from "@kickstartds/design-system/split-weighted";
+import { TestimonialContext } from "@kickstartds/design-system/testimonial";
 import {
   HeroContextDefault,
   HeroContext,
-} from "@kickstartds/ds-agency-premium/hero";
+} from "@kickstartds/design-system/hero";
 
 import { StoryblokSubComponent } from "./StoryblokSubComponent";
 import { TeaserProvider } from "./TeaserProvider";

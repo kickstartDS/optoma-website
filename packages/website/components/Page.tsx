@@ -5,7 +5,7 @@ import {
   SbBlokData,
 } from "@storyblok/react";
 import { ImagePriorityProvider } from "./ImagePriorityContext";
-import { Page as DsaPage } from "@kickstartds/ds-agency-premium/components/page/index.js";
+import { Page as DsaPage } from "@kickstartds/design-system/components/page/index.js";
 
 // import { render } from "storyblok-rich-text-react-renderer";
 // import { RichtextStoryblok } from "@/types/components-schema";

@@ -74,3 +74,8 @@ packages/website/public/pagefind
 packages/storyblok-services/dist/
 packages/mcp-server/dist/
 packages/n8n-nodes/dist/
+packages/component-builder-mcp/dist/
+packages/design-tokens-mcp/dist/
+packages/design-tokens-editor/dist/
+packages/design-system/dist/
+packages/design-system/storybook-static/

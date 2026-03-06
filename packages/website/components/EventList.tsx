@@ -1,12 +1,12 @@
 import { ComponentProps } from "react";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
-import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
-import { EventList as DsaEventList } from "@kickstartds/ds-agency-premium/components/event-list/index.js";
-import { SplitWeightedContextDefault as SplitWeighted } from "@kickstartds/ds-agency-premium/components/split-weighted/index.js";
+import { Section } from "@kickstartds/design-system/components/section/index.js";
+import { EventList as DsaEventList } from "@kickstartds/design-system/components/event-list/index.js";
+import { SplitWeightedContextDefault as SplitWeighted } from "@kickstartds/design-system/components/split-weighted/index.js";
 import { RichText } from "@kickstartds/base/lib/rich-text";
-import { Pagination } from "@kickstartds/ds-agency-premium/components/pagination/index.js";
-import { EventFilter } from "@kickstartds/ds-agency-premium/components/event-filter/index.js";
-import { EventListTeaser } from "@kickstartds/ds-agency-premium/components/event-list-teaser/index.js";
+import { Pagination } from "@kickstartds/design-system/components/pagination/index.js";
+import { EventFilter } from "@kickstartds/design-system/components/event-filter/index.js";
+import { EventListTeaser } from "@kickstartds/design-system/components/event-list-teaser/index.js";
 import { unflatten } from "@/helpers/unflatten";
 
 type PageProps = {

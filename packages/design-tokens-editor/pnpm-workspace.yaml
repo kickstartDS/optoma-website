@@ -1,2 +1,0 @@
-patchedDependencies:
-  '@glidejs/glide@3.7.1': patches/@glidejs__glide@3.7.1.patch

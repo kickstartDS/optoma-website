@@ -38,7 +38,7 @@ import {
 } from "./ui/capability.js";
 import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 // Lazy-loaded to avoid ESM directory import errors from kickstartDS at startup.
-// The render module imports @kickstartds/ds-agency-premium components which
+// The render module imports @kickstartds/design-system components which
 // internally use CJS-style directory imports (e.g. `@kickstartds/base/lib/button`)
 // that are not supported in strict ESM resolution. By lazy-loading, the server
 // starts successfully and render failures are handled gracefully at call sites.

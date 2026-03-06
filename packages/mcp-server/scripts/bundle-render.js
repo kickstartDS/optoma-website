@@ -2,7 +2,7 @@
 /**
  * Bundle `src/ui/render.tsx` into a single ESM file with esbuild.
  *
- * The kickstartDS component packages (`@kickstartds/ds-agency-premium`,
+ * The kickstartDS component packages (`@kickstartds/design-system`,
  * `@kickstartds/core`, etc.) use CJS-style directory imports internally
  * (e.g. `@kickstartds/core/lib/react`). Node.js ESM forbids directory
  * imports at runtime, causing `ERR_UNSUPPORTED_DIR_IMPORT`.

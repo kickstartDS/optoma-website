@@ -4,13 +4,13 @@ import {
   StoryblokComponent,
   storyblokEditable,
 } from "@storyblok/react";
-import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
-import { BlogAside } from "@kickstartds/ds-agency-premium/components/blog-aside/index.js";
-import { Text } from "@kickstartds/ds-agency-premium/components/text/index.js";
-import { BlogHead } from "@kickstartds/ds-agency-premium/components/blog-head/index.js";
-import { Cta } from "@kickstartds/ds-agency-premium/components/cta/index.js";
-import { BlogPost as DsaBlogPost } from "@kickstartds/ds-agency-premium/components/blog-post/index.js";
-import { SplitWeightedContextDefault as SplitWeighted } from "@kickstartds/ds-agency-premium/components/split-weighted/index.js";
+import { Section } from "@kickstartds/design-system/components/section/index.js";
+import { BlogAside } from "@kickstartds/design-system/components/blog-aside/index.js";
+import { Text } from "@kickstartds/design-system/components/text/index.js";
+import { BlogHead } from "@kickstartds/design-system/components/blog-head/index.js";
+import { Cta } from "@kickstartds/design-system/components/cta/index.js";
+import { BlogPost as DsaBlogPost } from "@kickstartds/design-system/components/blog-post/index.js";
+import { SplitWeightedContextDefault as SplitWeighted } from "@kickstartds/design-system/components/split-weighted/index.js";
 import { unflatten } from "@/helpers/unflatten";
 
 type PageProps = {

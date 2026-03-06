@@ -1,2 +1,2 @@
-declare module "@kickstartds/ds-agency-premium/tokens/tokensToCss.mjs";
-declare module "@kickstartds/ds-agency-premium/tokens/branding-tokens.schema.validate.mjs";
+declare module "@kickstartds/design-system/tokens/tokensToCss.mjs";
+declare module "@kickstartds/design-system/tokens/branding-tokens.schema.validate.mjs";

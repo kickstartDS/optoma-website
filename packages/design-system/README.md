@@ -1,7 +1,7 @@
 # kickstartDS Premium Agency Starter
 
-[![npm version](https://img.shields.io/npm/v/@kickstartds/ds-agency-premium.svg)](https://www.npmjs.com/package/@kickstartds/ds-agency-premium)
-[![license](https://img.shields.io/npm/l/@kickstartds/ds-agency-premium.svg)](https://github.com/kickstartDS/ds-agency-premium/blob/main/LICENSE-MIT)
+[![npm version](https://img.shields.io/npm/v/@kickstartds/design-system.svg)](https://www.npmjs.com/package/@kickstartds/design-system)
+[![license](https://img.shields.io/npm/l/@kickstartds/design-system.svg)](https://github.com/kickstartDS/ds-agency-premium/blob/main/LICENSE-MIT)
 
 The **kickstartDS Premium Agency Starter** is a production-ready Design System and component library built on top of [kickstartDS](https://www.kickstartds.com/). It provides **80+ content components**, a multi-theme token architecture, CMS page templates, full-text search, and rich Storybook integration — all tailored for digital agencies building marketing websites and landing pages.
 
@@ -34,7 +34,7 @@ This premium starter extends the open-source [kickstartDS Content module](https:
 ### As a dependency
 
 ```bash
-yarn add @kickstartds/ds-agency-premium
+yarn add @kickstartds/design-system
 ```
 
 **Peer dependencies** — You'll also need to install:

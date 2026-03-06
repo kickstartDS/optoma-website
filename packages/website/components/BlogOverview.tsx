@@ -12,15 +12,15 @@ import {
   StoryblokComponent,
   storyblokEditable,
 } from "@storyblok/react";
-import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
+import { Section } from "@kickstartds/design-system/components/section/index.js";
 import {
   BlogTeaser,
   BlogTeaserContext,
-} from "@kickstartds/ds-agency-premium/components/blog-teaser/index.js";
-import { Cta } from "@kickstartds/ds-agency-premium/components/cta/index.js";
-import { BlogPost } from "@kickstartds/ds-agency-premium/components/blog-post/index.js";
-import { BlogOverview as DsaBlogOverview } from "@kickstartds/ds-agency-premium/components/blog-overview/index.js";
-import { Divider } from "@kickstartds/ds-agency-premium/components/divider/index.js";
+} from "@kickstartds/design-system/components/blog-teaser/index.js";
+import { Cta } from "@kickstartds/design-system/components/cta/index.js";
+import { BlogPost } from "@kickstartds/design-system/components/blog-post/index.js";
+import { BlogOverview as DsaBlogOverview } from "@kickstartds/design-system/components/blog-overview/index.js";
+import { Divider } from "@kickstartds/design-system/components/divider/index.js";
 import { unflatten } from "@/helpers/unflatten";
 import { useLanguage } from "./LanguageContext";
 

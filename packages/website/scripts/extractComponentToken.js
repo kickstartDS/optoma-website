@@ -4,11 +4,11 @@ const glob = require("fast-glob");
 const { extract } = require("custom-property-extract");
 
 const componentCssFiles = glob
-  .sync("node_modules/@kickstartds/ds-agency-premium/dist/components/**/*.css")
+  .sync("node_modules/@kickstartds/design-system/dist/components/**/*.css")
   .filter((file) => !file.includes("page-wrapper"));
 
 componentCssFiles.push(
-  "node_modules/@kickstartds/ds-agency-premium/dist/global.css"
+  "node_modules/@kickstartds/design-system/dist/global.css"
 );
 componentCssFiles.push("token/tokens.css");
 

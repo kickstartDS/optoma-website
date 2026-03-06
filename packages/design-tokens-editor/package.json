@@ -1,13 +1,29 @@
 {
-  "name": "@kickstartds/token-playground",
+  "name": "@kickstartds/design-tokens-editor",
   "version": "1.0.0",
+  "description": "Browser-based Design Token WYSIWYG editor with live preview",
   "private": true,
+  "license": "(MIT OR Apache-2.0)",
+  "author": {
+    "name": "kickstartDS",
+    "email": "info@kickstartds.com"
+  },
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kickstartDS/storyblok-starter-premium.git",
+    "directory": "packages/design-tokens-editor"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "build": "tsc && rm -rf dist && vite build",
+    "dev": "vite",
     "format": "oxfmt",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -19,7 +35,7 @@
     "@kickstartds/blog": "^4.0.2",
     "@kickstartds/content": "^4.1.1",
     "@kickstartds/core": "^4.0.2",
-    "@kickstartds/ds-agency-premium": "1.6.74--canary.45.2772.0",
+    "@kickstartds/design-system": "workspace:*",
     "@kickstartds/form": "^4.0.2",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",

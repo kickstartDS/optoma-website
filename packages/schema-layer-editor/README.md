@@ -10,7 +10,7 @@ pnpm install
 
 # Start the editor against your Design System schemas
 pnpm --filter @kickstartds/schema-layer-editor dev -- \
-  --schemas ../website/node_modules/@kickstartds/ds-agency-premium/dist/components \
+  --schemas ../website/node_modules/@kickstartds/design-system/dist/components \
   --layer ../website/cms/visibility \
   --namespace visibility
 
@@ -33,19 +33,19 @@ pnpm --filter @kickstartds/schema-layer-editor dev -- \
 ```bash
 # Edit the visibility layer (most common)
 pnpm --filter @kickstartds/schema-layer-editor dev -- \
-  --schemas ../website/node_modules/@kickstartds/ds-agency-premium/dist/components \
+  --schemas ../website/node_modules/@kickstartds/design-system/dist/components \
   --layer ../website/cms/visibility \
   --namespace visibility
 
 # Create a new language layer from scratch
 pnpm --filter @kickstartds/schema-layer-editor dev -- \
-  --schemas ../website/node_modules/@kickstartds/ds-agency-premium/dist/components \
+  --schemas ../website/node_modules/@kickstartds/design-system/dist/components \
   --namespace language \
   --output ../website/cms/language
 
 # Use a custom base URL
 pnpm --filter @kickstartds/schema-layer-editor dev -- \
-  --schemas ../website/node_modules/@kickstartds/ds-agency-premium/dist/components \
+  --schemas ../website/node_modules/@kickstartds/design-system/dist/components \
   --namespace editorial \
   --base-url "http://editorial.myproject.com"
 ```

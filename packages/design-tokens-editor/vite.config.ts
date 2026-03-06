@@ -21,7 +21,7 @@ export default defineConfig({
       },
     },
   },
-  publicDir: "node_modules/@kickstartds/ds-agency-premium/dist/static",
+  publicDir: "node_modules/@kickstartds/design-system/dist/static",
   server: {
     port: 5173,
   },

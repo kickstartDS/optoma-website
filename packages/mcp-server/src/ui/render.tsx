@@ -171,23 +171,23 @@ function prepareForRender(data: Record<string, any>): Record<string, any> {
 
 // ── kickstartDS component imports ──────────────────────────────────
 
-import DsaProviders from "@kickstartds/ds-agency-premium/providers";
-import { Section } from "@kickstartds/ds-agency-premium/section";
-import { Hero } from "@kickstartds/ds-agency-premium/hero";
-import { CtaContextDefault } from "@kickstartds/ds-agency-premium/cta";
-import { FaqContextDefault } from "@kickstartds/ds-agency-premium/faq";
-import { FeaturesContextDefault } from "@kickstartds/ds-agency-premium/features";
-import { TestimonialsContextDefault } from "@kickstartds/ds-agency-premium/testimonials";
-import { StatsContextDefault } from "@kickstartds/ds-agency-premium/stats";
-import { Gallery } from "@kickstartds/ds-agency-premium/gallery";
-import { TextContextDefault } from "@kickstartds/ds-agency-premium/text";
-import { ImageTextContextDefault } from "@kickstartds/ds-agency-premium/image-text";
-import { Logos } from "@kickstartds/ds-agency-premium/logos";
-import { DividerContextDefault } from "@kickstartds/ds-agency-premium/divider";
-import { Contact } from "@kickstartds/ds-agency-premium/contact";
-import { Mosaic } from "@kickstartds/ds-agency-premium/mosaic";
-import { VideoCurtainContextDefault } from "@kickstartds/ds-agency-premium/video-curtain";
-import { ImageStory } from "@kickstartds/ds-agency-premium/image-story";
+import DsaProviders from "@kickstartds/design-system/providers";
+import { Section } from "@kickstartds/design-system/section";
+import { Hero } from "@kickstartds/design-system/hero";
+import { CtaContextDefault } from "@kickstartds/design-system/cta";
+import { FaqContextDefault } from "@kickstartds/design-system/faq";
+import { FeaturesContextDefault } from "@kickstartds/design-system/features";
+import { TestimonialsContextDefault } from "@kickstartds/design-system/testimonials";
+import { StatsContextDefault } from "@kickstartds/design-system/stats";
+import { Gallery } from "@kickstartds/design-system/gallery";
+import { TextContextDefault } from "@kickstartds/design-system/text";
+import { ImageTextContextDefault } from "@kickstartds/design-system/image-text";
+import { Logos } from "@kickstartds/design-system/logos";
+import { DividerContextDefault } from "@kickstartds/design-system/divider";
+import { Contact } from "@kickstartds/design-system/contact";
+import { Mosaic } from "@kickstartds/design-system/mosaic";
+import { VideoCurtainContextDefault } from "@kickstartds/design-system/video-curtain";
+import { ImageStory } from "@kickstartds/design-system/image-story";
 
 // ── Component registry ─────────────────────────────────────────────
 

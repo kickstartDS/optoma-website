@@ -1,9 +1,9 @@
 import { ComponentProps } from "react";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
-import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
-import { Search as DsaSearch } from "@kickstartds/ds-agency-premium/components/search/index.js";
-import { Headline } from "@kickstartds/ds-agency-premium/components/headline/index.js";
-import { SearchForm } from "@kickstartds/ds-agency-premium/components/search-form/index.js";
+import { Section } from "@kickstartds/design-system/components/section/index.js";
+import { Search as DsaSearch } from "@kickstartds/design-system/components/search/index.js";
+import { Headline } from "@kickstartds/design-system/components/headline/index.js";
+import { SearchForm } from "@kickstartds/design-system/components/search-form/index.js";
 import { unflatten } from "@/helpers/unflatten";
 
 type PageProps = {

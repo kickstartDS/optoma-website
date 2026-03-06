@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyblok MCP server, a shared services library, and an n8n community node — all powered by the **kickstartDS** design system (`@kickstartds/ds-agency-premium`).
+This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyblok MCP server, a shared services library, and an n8n community node — all powered by the **kickstartDS** design system (`@kickstartds/design-system`).
 
 ### Monorepo Structure
 

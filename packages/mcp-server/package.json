@@ -27,7 +27,7 @@
     "@kickstartds/blog": "^4.1.0",
     "@kickstartds/content": "^4.1.1",
     "@kickstartds/core": "^4.1.0",
-    "@kickstartds/ds-agency-premium": "^2.0.2",
+    "@kickstartds/design-system": "workspace:*",
     "@kickstartds/form": "^4.1.0",
     "@kickstartds/storyblok-services": "workspace:*",
     "@modelcontextprotocol/ext-apps": "^1.0.0",

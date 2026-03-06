@@ -1,4 +1,4 @@
-import { validate } from "@kickstartds/ds-agency-premium/tokens/branding-tokens.schema.validate.mjs";
+import { validate } from "@kickstartds/design-system/tokens/branding-tokens.schema.validate.mjs";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";

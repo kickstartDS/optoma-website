@@ -27,8 +27,8 @@ const glideResolvePlugin = {
 const importPath = (filePath) => `import "./${filePath}";`;
 
 const componentFiles = fg.sync([
-  "node_modules/@kickstartds/ds-agency-premium/dist/global.client.js",
-  "node_modules/@kickstartds/ds-agency-premium/dist/components/**/*.client.js",
+  "node_modules/@kickstartds/design-system/dist/global.client.js",
+  "node_modules/@kickstartds/design-system/dist/components/**/*.client.js",
   "node_modules/@kickstartds/content/lib/slider/lazySlider.js",
   "components/**/*.client.js",
 ]);

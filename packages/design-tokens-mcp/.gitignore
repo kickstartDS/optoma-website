@@ -9,5 +9,8 @@ build/
 *.swo
 *~
 
+# Token data — synced from @kickstartds/design-system at build time
+tokens/
+
 # Kamal secrets (do not commit!)
 .kamal/secrets

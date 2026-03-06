@@ -5,35 +5,35 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-import type {BlogTeaserProps} from "@kickstartds/ds-agency-premium/blog-teaser";
-import type {BusinessCardProps} from "@kickstartds/ds-agency-premium/business-card";
-import type {ContactProps} from "@kickstartds/ds-agency-premium/contact";
-import type {ContentNavProps} from "@kickstartds/ds-agency-premium/content-nav";
-import type {CtaProps} from "@kickstartds/ds-agency-premium/cta";
-import type {DividerProps} from "@kickstartds/ds-agency-premium/divider";
-import type {DownloadsProps} from "@kickstartds/ds-agency-premium/downloads";
-import type {EventLatestTeaserProps} from "@kickstartds/ds-agency-premium/event-latest-teaser";
-import type {EventListTeaserProps} from "@kickstartds/ds-agency-premium/event-list-teaser";
-import type {FaqProps} from "@kickstartds/ds-agency-premium/faq";
-import type {FeaturesProps} from "@kickstartds/ds-agency-premium/features";
-import type {GalleryProps} from "@kickstartds/ds-agency-premium/gallery";
-import type {HeroProps} from "@kickstartds/ds-agency-premium/hero";
-import type {HtmlProps} from "@kickstartds/ds-agency-premium/html";
-import type {ImageStoryProps} from "@kickstartds/ds-agency-premium/image-story";
-import type {ImageTextProps} from "@kickstartds/ds-agency-premium/image-text";
-import type {LogosProps} from "@kickstartds/ds-agency-premium/logos";
-import type {MosaicProps} from "@kickstartds/ds-agency-premium/mosaic";
-import type {SliderProps} from "@kickstartds/ds-agency-premium/slider";
-import type {SplitEvenProps} from "@kickstartds/ds-agency-premium/split-even";
-import type {SplitWeightedProps} from "@kickstartds/ds-agency-premium/split-weighted";
-import type {StatsProps} from "@kickstartds/ds-agency-premium/stats";
-import type {TeaserCardProps} from "@kickstartds/ds-agency-premium/teaser-card";
-import type {TestimonialsProps} from "@kickstartds/ds-agency-premium/testimonials";
-import type {TextProps} from "@kickstartds/ds-agency-premium/text";
-import type {VideoCurtainProps} from "@kickstartds/ds-agency-premium/video-curtain";
+import type {BlogTeaserProps} from "@kickstartds/design-system/blog-teaser";
+import type {BusinessCardProps} from "@kickstartds/design-system/business-card";
+import type {ContactProps} from "@kickstartds/design-system/contact";
+import type {ContentNavProps} from "@kickstartds/design-system/content-nav";
+import type {CtaProps} from "@kickstartds/design-system/cta";
+import type {DividerProps} from "@kickstartds/design-system/divider";
+import type {DownloadsProps} from "@kickstartds/design-system/downloads";
+import type {EventLatestTeaserProps} from "@kickstartds/design-system/event-latest-teaser";
+import type {EventListTeaserProps} from "@kickstartds/design-system/event-list-teaser";
+import type {FaqProps} from "@kickstartds/design-system/faq";
+import type {FeaturesProps} from "@kickstartds/design-system/features";
+import type {GalleryProps} from "@kickstartds/design-system/gallery";
+import type {HeroProps} from "@kickstartds/design-system/hero";
+import type {HtmlProps} from "@kickstartds/design-system/html";
+import type {ImageStoryProps} from "@kickstartds/design-system/image-story";
+import type {ImageTextProps} from "@kickstartds/design-system/image-text";
+import type {LogosProps} from "@kickstartds/design-system/logos";
+import type {MosaicProps} from "@kickstartds/design-system/mosaic";
+import type {SliderProps} from "@kickstartds/design-system/slider";
+import type {SplitEvenProps} from "@kickstartds/design-system/split-even";
+import type {SplitWeightedProps} from "@kickstartds/design-system/split-weighted";
+import type {StatsProps} from "@kickstartds/design-system/stats";
+import type {TeaserCardProps} from "@kickstartds/design-system/teaser-card";
+import type {TestimonialsProps} from "@kickstartds/design-system/testimonials";
+import type {TextProps} from "@kickstartds/design-system/text";
+import type {VideoCurtainProps} from "@kickstartds/design-system/video-curtain";
 import type {InfoTableProps} from "../info-table/InfoTableProps";
 import type {PrompterProps} from "../prompter/PrompterProps";
-import type {ButtonProps} from "@kickstartds/ds-agency-premium/button";
+import type {ButtonProps} from "@kickstartds/design-system/button";
 
 /**
  * Width of section to use

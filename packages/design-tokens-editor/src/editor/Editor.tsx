@@ -1,7 +1,7 @@
 import { createAjv } from "@jsonforms/core";
 import { materialCells, materialRenderers } from "@jsonforms/material-renderers";
 import { JsonForms } from "@jsonforms/react";
-import tokenSchema from "@kickstartds/ds-agency-premium/tokens/branding-tokens.schema.dereffed.json";
+import tokenSchema from "@kickstartds/design-system/tokens/branding-tokens.schema.dereffed.json";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import * as categorizationLayout from "../controls/categorizationLayout";
 import * as colorRenderer from "../controls/colorRenderer";
