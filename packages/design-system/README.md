@@ -1,11 +1,13 @@
-# kickstartDS Premium Agency Starter
+# kickstartDS Design System
 
 [![npm version](https://img.shields.io/npm/v/@kickstartds/design-system.svg)](https://www.npmjs.com/package/@kickstartds/design-system)
-[![license](https://img.shields.io/npm/l/@kickstartds/design-system.svg)](https://github.com/kickstartDS/ds-agency-premium/blob/main/LICENSE-MIT)
+[![license](https://img.shields.io/npm/l/@kickstartds/design-system.svg)](https://github.com/kickstartDS/storyblok-starter-premium/blob/main/LICENSE-MIT)
 
-The **kickstartDS Premium Agency Starter** is a production-ready Design System and component library built on top of [kickstartDS](https://www.kickstartds.com/). It provides **80+ content components**, a multi-theme token architecture, CMS page templates, full-text search, and rich Storybook integration — all tailored for digital agencies building marketing websites and landing pages.
+The **kickstartDS Design System** is a production-ready component library built on top of [kickstartDS](https://www.kickstartds.com/). It provides **74+ content components**, a multi-theme token architecture, CMS page templates, full-text search, and rich Storybook integration — all tailored for digital agencies building marketing websites and landing pages.
 
-This premium starter extends the open-source [kickstartDS Content module](https://www.kickstartds.com/content-module/) with more visually rich, agency-focused components and a complete project scaffold including bundling, release automation, and prototyping tools.
+This design system extends the open-source [kickstartDS Content module](https://www.kickstartds.com/content-module/) with more visually rich, agency-focused components and a complete project scaffold including bundling, release automation, and prototyping tools.
+
+Part of the [kickstartDS Storyblok Starter](../../README.md) monorepo.
 
 ## Features
 
@@ -13,13 +15,13 @@ This premium starter extends the open-source [kickstartDS Content module](https:
 - **Multi-Theme Support:** 5 pre-built themes (DS Agency, Business, Google, Telekom, NGO) with runtime switching via a single `data-ks-theme` attribute.
 - **Design Token Architecture:** A layered token system with Branding Tokens, a Style Dictionary pipeline, and per-theme SCSS/CSS output.
 - **CMS Page Templates:** Ready-to-use page-level schemas and components for headless CMS integration (Page, Blog Overview, Blog Post, Event Detail, Event List, Search, Settings).
-- **Storybook 8 Integration:** Fully configured with addons for accessibility, design tokens, HTML output, JSON Schema, Playroom, component tokens, and Chromatic visual testing.
+- **Storybook 10 Integration:** Fully configured with addons for accessibility, design tokens, HTML output, JSON Schema, Playroom, component tokens, and Chromatic visual testing.
 - **Playroom Integration:** Interactive prototyping environment with live component previews.
 - **Full-Text Search:** Pagefind-powered search index generated from all Storybook stories.
 - **Cookie Consent:** GDPR-compliant cookie consent with optional [c15t](https://c15t.com/) integration.
 - **Bedrock Layouts:** [Bedrock Layout Primitives](https://bedrock-layout.dev/) integrated with the Design System's spacing scale.
 - **Bundling:** Rollup-based production build outputting ES modules, CSS, schemas, and static assets — usable with and without React.
-- **Release Automation:** Semantic release handling via [auto](https://intuit.github.io/auto/).
+- **Release Automation:** Versioning and publishing via [Changesets](https://github.com/changesets/changesets) (monorepo-integrated).
 - **Page Archetypes:** Pre-composed page examples (Landing, About, Overview, Showcase, Jobs, Job Detail) demonstrating real-world usage.
 - **Token Playground:** Interactive Storybook demos for visualizing color, typography, spacing, shadow, border, and transition tokens.
 - **Token Picker**: Interactive picker to choose Design Tokens
@@ -28,19 +30,25 @@ This premium starter extends the open-source [kickstartDS Content module](https:
 
 ### Prerequisites
 
-- **Node.js** — We recommend managing versions with [nvm](https://github.com/nvm-sh/nvm).
-- **Yarn** — Used as the package manager.
+- **Node.js 24+** — We recommend managing versions with [nvm](https://github.com/nvm-sh/nvm).
+- **pnpm 10.30.3** — Managed via Corepack from the monorepo root.
 
 ### As a dependency
 
 ```bash
-yarn add @kickstartds/design-system
+pnpm add @kickstartds/design-system
 ```
 
 **Peer dependencies** — You'll also need to install:
 
 ```bash
 yarn add @kickstartds/base @kickstartds/blog @kickstartds/content @kickstartds/core @kickstartds/form react react-dom
+```
+
+Or with pnpm:
+
+```bash
+pnpm add @kickstartds/base @kickstartds/blog @kickstartds/content @kickstartds/core @kickstartds/form react react-dom
 ```
 
 Optional peer dependencies:
@@ -52,7 +60,7 @@ Optional peer dependencies:
 ### From template
 
 1. Create a new repository based on this template.
-2. Clone and install dependencies: `yarn install`.
+2. Clone and install dependencies: `pnpm install`.
 3. Update `package.json` with your project details.
 4. Customize your branding (see [Applying your Design / Brand](#applying-your-design--brand)).
 
@@ -60,35 +68,35 @@ Optional peer dependencies:
 
 ```bash
 # Start Storybook with hot reload (watches schemas, tokens, and code)
-yarn start
+pnpm run start
 
 # Start Playroom prototyping environment
-yarn playroom
+pnpm run playroom
 
 # Build Storybook for deployment
-yarn build-storybook
+pnpm run build-storybook
 
-# Build the library for publishing
-yarn prepublishOnly
+# Build the library
+pnpm run build
 ```
 
 ### Key Scripts
 
-| Script                 | Description                                                                |
+| Script | Description |
 | ---------------------- | -------------------------------------------------------------------------- |
-| `yarn start`           | Start Storybook dev server (port 6006) with file watchers                  |
-| `yarn storybook`       | Start Storybook without watchers                                           |
-| `yarn playroom`        | Start Playroom with watchers                                               |
-| `yarn build-storybook` | Build static Storybook site                                                |
-| `yarn build-tokens`    | Compile all theme tokens via Style Dictionary                              |
-| `yarn init-tokens`     | Initialize tokens from branding token JSON                                 |
-| `yarn schema`          | Generate dereferenced schemas, TypeScript types, layer types, and defaults |
-| `yarn token`           | Extract CSS custom properties from SCSS token files                        |
-| `yarn branding-tokens` | Build branding token CSS from JSON source files                            |
-| `yarn search`          | Generate Pagefind search index from Storybook stories                      |
-| `yarn presets`         | Generate component presets (JSX snippets) from stories                     |
-| `yarn test`            | Run visual regression tests against Storybook                              |
-| `yarn chromatic`       | Run Chromatic visual testing                                               |
+| `pnpm run start` | Start Storybook dev server (port 6006) with file watchers |
+| `pnpm run storybook` | Start Storybook without watchers |
+| `pnpm run playroom` | Start Playroom with watchers |
+| `pnpm run build-storybook` | Build static Storybook site |
+| `pnpm run build-tokens` | Compile all theme tokens via Style Dictionary |
+| `pnpm run init-tokens` | Initialize tokens from branding token JSON |
+| `pnpm run schema` | Generate dereferenced schemas, TypeScript types, layer types, and defaults |
+| `pnpm run token` | Extract CSS custom properties from SCSS token files |
+| `pnpm run branding-tokens` | Build branding token CSS from JSON source files |
+| `pnpm run search` | Generate Pagefind search index from Storybook stories |
+| `pnpm run presets` | Generate component presets (JSX snippets) from stories |
+| `pnpm run test` | Run visual regression tests against Storybook |
+| `pnpm run chromatic` | Run Chromatic visual testing |
 
 ## Components
 
@@ -262,11 +270,11 @@ To apply your branding and corporate design to kickstartDS, follow these steps:
 
 1. **Edit Branding Tokens** — Update `src/token/branding-token.json` with your brand's primary colors, fonts, and base values. Multiple pre-built branding presets are also available (blizzard, burgundy, coffee, ember, granit, mint, neon, water).
 
-2. **Initialize tokens** — Run `yarn init-tokens` to generate the full Design Token set from your branding values.
+2. **Initialize tokens** — Run `pnpm run init-tokens` to generate the full Design Token set from your branding values.
 
 3. **Fine-tune** — Adjust the resulting token set in `src/token/dictionary/` to closely fit your corporate identity (colors, spacing, typography, shadows, borders, transitions, background/text/border colors, and scaling).
 
-4. **Build** — Run `yarn build-tokens` to compile all token variants and themes.
+4. **Build** — Run `pnpm run build-tokens` to compile all token variants and themes.
 
 For a more in-depth overview of the token architecture, see:
 
@@ -288,7 +296,7 @@ To add your own component, follow the guide ["Create a component"](https://www.k
 
 1. **Create your component file** — A `.tsx` file in `src/components/my-component/`. Follow the structure of existing components (functional React component with kickstartDS patterns).
 
-2. **Create your JSON Schema** — A `.schema.json` file in the same directory defining the [component API](https://www.kickstartds.com/docs/foundations/components/component-api/). TypeScript props are auto-generated from this schema via `yarn schema`.
+2. **Create your JSON Schema** — A `.schema.json` file in the same directory defining the [component API](https://www.kickstartds.com/docs/foundations/components/component-api/). TypeScript props are auto-generated from this schema via `pnpm run schema`.
 
 3. **Create Storybook stories** — A `.stories.tsx` file with example stories for your component.
 

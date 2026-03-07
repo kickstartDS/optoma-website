@@ -2,6 +2,8 @@
 
 A production-ready Model Context Protocol (MCP) server for managing CSS Custom Properties (design tokens). This server enables AI assistants and other MCP clients to read, query, search, and update design tokens from CSS/SCSS files — including both global branding tokens and component-level tokens.
 
+Part of the [kickstartDS Storyblok Starter](../../README.md) monorepo.
+
 ## Features
 
 - 📖 **Multi-file Support** - Reads tokens from multiple CSS and SCSS files
@@ -53,8 +55,11 @@ Component tokens control the visual styling of individual UI components. They ar
 
 ## Installation
 
+From the monorepo root:
+
 ```bash
-npm install
+pnpm install
+pnpm --filter design-tokens-mcp build
 ```
 
 ## Usage
@@ -62,7 +67,7 @@ npm install
 ### Starting the Server (stdio — local)
 
 ```bash
-npm start
+pnpm --filter design-tokens-mcp start
 ```
 
 This uses stdio transport, suitable for local MCP clients like Claude Desktop.
@@ -70,13 +75,13 @@ This uses stdio transport, suitable for local MCP clients like Claude Desktop.
 ### Starting the Server (HTTP — remote / cloud)
 
 ```bash
-npm run start:http
+pnpm --filter design-tokens-mcp start:http
 ```
 
 Or directly:
 
 ```bash
-MCP_TRANSPORT=http PORT=3000 node index.js
+MCP_TRANSPORT=http MCP_PORT=8080 node dist/index.js
 ```
 
 This starts an HTTP server with the MCP Streamable HTTP transport, suitable for cloud deployments behind a reverse proxy.
@@ -95,7 +100,7 @@ For **local** use (stdio):
   "mcpServers": {
     "design-tokens": {
       "command": "node",
-      "args": ["/path/to/design-tokens-mcp/index.js"]
+      "args": ["/path/to/design-tokens-mcp/dist/index.js"]
     }
   }
 }
@@ -114,7 +119,24 @@ For **remote** use (Streamable HTTP):
 }
 ```
 
-## Available Tools (16 total)
+## Available Resources (4)
+
+| Resource | Description |
+| --- | --- |
+| `tokens://overview` | Summary stats (total tokens, files, categories) |
+| `tokens://files` | Token file catalog with descriptions |
+| `tokens://branding` | Current branding token values |
+| `tokens://components` | Component token catalog (50 files) |
+
+## Available Prompts (3)
+
+| Prompt | Description |
+| --- | --- |
+| `audit-tokens` | Token quality audit workflow |
+| `update-branding` | Guided branding token modification |
+| `explore-component-tokens` | Explore tokens for a specific component |
+
+## Available Tools (28 total)
 
 ### Core Tools
 
@@ -447,7 +469,7 @@ All errors return consistent JSON:
 
 ## Requirements
 
-- Node.js 16+ (ES modules support)
+- Node.js 24+
 - @modelcontextprotocol/sdk ^1.25.3
 
 ## Environment Variables
@@ -455,9 +477,9 @@ All errors return consistent JSON:
 | Variable        | Description                         | Default      |
 | --------------- | ----------------------------------- | ------------ |
 | `MCP_TRANSPORT` | Transport mode: `stdio` or `http`   | `stdio`      |
-| `PORT`          | HTTP server port (when `http` mode) | `3000`       |
+| `MCP_PORT`      | HTTP server port (when `http` mode) | `8080`       |
 | `NODE_ENV`      | Environment mode                    | `production` |
 
 ## License
 
-ISC
+(MIT OR Apache-2.0)

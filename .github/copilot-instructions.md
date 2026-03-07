@@ -2,31 +2,41 @@
 
 ## Project Overview
 
-This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyblok MCP server, a shared services library, and an n8n community node — all powered by the **kickstartDS** design system (`@kickstartds/design-system`).
+This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a design system with 74+ React components, three MCP servers, a shared services library, an n8n community node, and two editor UIs — all powered by the **kickstartDS** design system (`@kickstartds/design-system`).
 
 ### Monorepo Structure
 
 ```
 packages/
-  website/          — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
-  storyblok-services/ — Shared library (schema, validation, transforms)
-  storyblok-mcp/       — Storyblok MCP server (Model Context Protocol)
-  storyblok-n8n/        — n8n community node for Storyblok workflows
+  design-system/          — Core Design System (74+ React components, tokens, Storybook, Playroom)
+  website/                — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
+  storyblok-services/     — Shared library (schema, validation, transforms)
+  storyblok-mcp/          — Storyblok MCP server (content generation, CMS tools)
+  storyblok-n8n/          — n8n community node for Storyblok workflows
+  component-builder-mcp/  — MCP server (component-building instructions & templates)
+  design-tokens-mcp/      — MCP server (design token querying, analysis, governance)
+  design-tokens-editor/   — Browser-based Design Token WYSIWYG editor (Vite SPA, Netlify)
+  schema-layer-editor/    — Schema Layer Editor (Vite SPA)
 ```
 
-**Package manager:** pnpm 9.15.0 (declared in root `packageManager` field)
+**Package manager:** pnpm 10.30.3 (declared in root `packageManager` field)
 **Versioning:** Changesets (`@changesets/cli`) for independent per-package publishing
 
 ### Key Commands (run from monorepo root)
 
 ```bash
-pnpm install                 # Install all workspaces
-pnpm -r run build            # Build all packages (topological order)
-pnpm --filter website dev    # Start website dev server
-pnpm --filter storyblok-mcp dev # Start MCP server in dev mode
-pnpm changeset               # Create a new changeset
-pnpm version-packages        # Bump versions from changesets
-pnpm publish-packages        # Publish to npm
+pnpm install                              # Install all workspaces
+pnpm -r run build                         # Build all packages (topological order)
+pnpm --filter website dev                 # Start website dev server
+pnpm --filter storyblok-mcp dev           # Start MCP server in dev mode
+pnpm --filter @kickstartds/design-system storybook  # Start Storybook dev server
+pnpm --filter @kickstartds/design-system build      # Build design system (tokens → schema → rollup)
+pnpm --filter design-tokens-editor dev    # Start token editor dev server (port 5173)
+pnpm --filter component-builder-mcp dev   # Start component builder MCP in watch mode
+pnpm --filter design-tokens-mcp dev       # Start design tokens MCP in watch mode
+pnpm changeset                            # Create a new changeset
+pnpm version-packages                     # Bump versions from changesets
+pnpm publish-packages                     # Publish to npm
 ```
 
 ## Architecture
@@ -263,7 +273,7 @@ The MCP server exposes **6 guided workflow prompts** via `prompts/list` and `pro
 | `create-page`      | `intent`                       | `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `generate_seo` → `create_page_with_content`                                       |
 | `migrate-from-url` | `url`                          | `scrape_url` → `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `create_page_with_content`                                         |
 | `create-blog-post` | `topic`                        | `plan_page(contentType: 'blog-post')` → `generate_section` (×N) → `generate_root_field` (head/aside/cta) → `generate_seo` → `create_page_with_content` |
-| `content-audit`    | —                              | `content_audit` (images, content, SEO, freshness, composition) → `analyze_content_patterns` → structured report with health score                       |
+| `content-audit`    | —                              | `content_audit` (images, content, SEO, freshness, composition) → `analyze_content_patterns` → structured report with health score                      |
 | `extend-page`      | `storyId`                      | `get_story` → `generate_section` (×N) → `import_content_at_position`                                                                                   |
 | `translate-page`   | `sourceSlug`, `targetLanguage` | `get_story` → `generate_section` (×N, same componentTypes) → `generate_seo` → `create_page_with_content`                                               |
 
@@ -332,6 +342,15 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-mcp/src/ui/](packages/storyblok-mcp/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
 - [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
 - [packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
+- [packages/design-system/rollup.config.mjs](packages/design-system/rollup.config.mjs) - Design system Rollup build config (component bundling, token extraction)
+- [packages/design-system/.storybook/main.ts](packages/design-system/.storybook/main.ts) - Storybook configuration (addons, framework, stories)
+- [packages/design-system/sd.config.cjs](packages/design-system/sd.config.cjs) - Style Dictionary config (default theme token compilation)
+- [packages/component-builder-mcp/src/index.ts](packages/component-builder-mcp/src/index.ts) - Component builder MCP server entry point
+- [packages/component-builder-mcp/src/handlers.ts](packages/component-builder-mcp/src/handlers.ts) - Template generators for component scaffolding
+- [packages/design-tokens-mcp/src/index.ts](packages/design-tokens-mcp/src/index.ts) - Design tokens MCP server entry point
+- [packages/design-tokens-mcp/src/handlers.ts](packages/design-tokens-mcp/src/handlers.ts) - Token query/update dispatch handlers
+- [packages/design-tokens-mcp/src/parser.ts](packages/design-tokens-mcp/src/parser.ts) - CSS custom property parsing and analysis
+- [packages/design-tokens-editor/src/App.tsx](packages/design-tokens-editor/src/App.tsx) - Token editor main app component
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
 - [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
 - [packages/website/pages/api/prompter/\_helpers.ts](packages/website/pages/api/prompter/_helpers.ts) - Shared helpers for Prompter API routes
@@ -352,6 +371,130 @@ The project includes an n8n community node package ([packages/storyblok-n8n/](pa
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 
 Nine workflow templates are included in `packages/storyblok-n8n/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
+
+## Design System
+
+The core design system ([packages/design-system/](packages/design-system/)) provides **74+ React components**, design tokens, JSON Schemas, Storybook documentation, and Playroom prototyping. It publishes as `@kickstartds/design-system` and is consumed by `website`, `storyblok-mcp`, and `design-tokens-editor` via `workspace:*`.
+
+### Build Pipeline
+
+The design system build runs in sequence: tokens → schema → token extraction → branding tokens → rollup.
+
+```bash
+pnpm --filter @kickstartds/design-system build
+```
+
+1. **`build-tokens`** — Style Dictionary compiles 5 theme variations (DS Agency, Business, NGO, Google, Telekom) from `src/token*/dictionary/` JSON sources to CSS/SCSS/JS outputs
+2. **`schema`** — 4 parallel tasks: dereference JSON Schemas, generate TypeScript prop types, layer types, create component defaults
+3. **`token`** — Extracts CSS custom properties from compiled SCSS token files
+4. **`branding-tokens`** — Builds branding token JSON outputs
+5. **Rollup** — Bundles 74 components to ES modules (`dist/components/{name}/index.js`), CSS, JSON Schemas, token exports, icon sprite, and static assets
+
+### Component Architecture
+
+Each component follows a strict structure:
+
+```
+src/components/{name}/
+  {Name}Component.tsx      — Pure React component (forwardRef, Context-overridable)
+  {Name}Component.scss     — BEM-scoped styles using design tokens
+  {Name}Component.client.ts — Client-side behavior (vanilla JS, no React state)
+  {name}.schema.json       — JSON Schema (source of truth for props)
+```
+
+### Multi-Theme Support
+
+5 pre-built theme variations compiled via Style Dictionary configs (`sd.config*.cjs`):
+
+- DS Agency (default), Business, NGO, Google, Telekom
+
+### Storybook & Playroom
+
+- **Storybook** (v10.2.x): Full component documentation with a11y audits, design token display, MCP addon
+- **Playroom** (port 9000): Interactive component prototyping with responsive previews (425/768/1440px)
+
+## Design Tokens Editor
+
+The design tokens editor ([packages/design-tokens-editor/](packages/design-tokens-editor/)) is a **browser-based visual token editor** (Vite SPA) for non-technical editors to modify design tokens with live preview.
+
+- **Tech stack**: React 19, Vite, MUI v7, JSON Forms (schema-driven UI), tinycolor2
+- **Deployment**: Netlify (Functions + Blobs for serverless persistence) — stays on Netlify due to deep integration
+- **Private**: `private: true` — not published to npm
+- **Dual entry points**: `index.html` (editor) + `preview.html` (preview-only)
+- **Design system integration**: Imports `@kickstartds/design-system` (workspace:\*) for live component rendering with modified tokens
+
+```bash
+pnpm --filter design-tokens-editor dev   # Dev server on port 5173
+```
+
+## Component Builder MCP
+
+The component builder MCP server ([packages/component-builder-mcp/](packages/component-builder-mcp/)) provides **component-building instructions and templates** to AI assistants. It is a read-only documentation server — no write operations.
+
+### Tools (7, all read-only)
+
+| Tool                           | Purpose                                                     |
+| ------------------------------ | ----------------------------------------------------------- |
+| `get-ui-building-instructions` | Comprehensive component development guidelines (call first) |
+| `get-component-structure`      | File structure templates for new components                 |
+| `get-json-schema-template`     | JSON Schema boilerplate for component props                 |
+| `get-react-component-template` | React component boilerplate (forwardRef + Context)          |
+| `get-client-behavior-template` | Vanilla JS client-side behavior templates                   |
+| `get-scss-template`            | SCSS/BEM styling templates with token layers                |
+| `get-storybook-template`       | Storybook story template                                    |
+
+### Resources (3)
+
+- `design-system://instructions` — UI building instructions
+- `design-system://token-architecture` — Token layer architecture docs
+- `design-system://components` — Component catalog listing
+
+### Transport
+
+- **stdio** (default): `npm start`
+- **HTTP** (streamable): `npm run start:http`
+
+## Design Tokens MCP
+
+The design tokens MCP server ([packages/design-tokens-mcp/](packages/design-tokens-mcp/)) enables AI assistants to **query, search, analyze, and update design tokens** across 12 global + 50 component token files.
+
+### Tools (28)
+
+**Query/Search**: `get_token`, `list_tokens`, `search_tokens`, `get_tokens_by_type`, `list_files`, `get_token_stats`
+**Color**: `get_branding_color_palette`, color-specific analysis tools
+**Typography/Spacing**: `get_typography_tokens`, `get_spacing_tokens`
+**Component tokens**: Query tokens for any of 50+ individual components
+**Write**: `update_branding_token` — Modify token values
+**Analysis**: `audit_tokens` — Quality checks (naming, refs, governance)
+**Theme generation**: `theme_from_image` (vision-based), `theme_from_css` (CSS extraction)
+
+### Resources (4)
+
+- `tokens://overview` — Summary stats (total tokens, files, categories)
+- `tokens://files` — Token file catalog with descriptions
+- `tokens://branding` — Current branding token values
+- `tokens://components` — Component token catalog (50 files)
+
+### Prompts (3 guided workflows)
+
+| Prompt                     | Purpose                                 |
+| -------------------------- | --------------------------------------- |
+| `audit-tokens`             | Token quality audit workflow            |
+| `update-branding`          | Guided branding token modification      |
+| `explore-component-tokens` | Explore tokens for a specific component |
+
+### Transport
+
+- **stdio** (default): `npm start`
+- **HTTP** (streamable): `npm run start:http` (port 8080)
+
+### Token Sync
+
+Tokens are synced from the design system at build time:
+
+```bash
+pnpm --filter design-tokens-mcp run sync-tokens  # Part of `build` script
+```
 
 ## Common Patterns
 

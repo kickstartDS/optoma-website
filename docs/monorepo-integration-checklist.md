@@ -146,12 +146,12 @@
 
 ### WP-10: Update `copilot-instructions.md`
 
-- [ ] Add all four new packages to Monorepo Structure section
-- [ ] Document design-system build pipeline
-- [ ] Document design-tokens-editor architecture
-- [ ] Document both new MCP servers
-- [ ] Update Important Files section
-- [ ] Update Key Commands section
+- [x] Add all four new packages to Monorepo Structure section
+- [x] Document design-system build pipeline
+- [x] Document design-tokens-editor architecture
+- [x] Document both new MCP servers (component-builder-mcp, design-tokens-mcp)
+- [x] Update Important Files section (added design-system, MCP servers, token editor files)
+- [x] Update Key Commands section (added dev commands for all new packages)
 
 ### WP-7: Consolidate Deployment Configurations
 

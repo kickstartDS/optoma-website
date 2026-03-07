@@ -2,6 +2,8 @@
 
 An MCP (Model Context Protocol) server that provides instructions and templates for building UI components following the kickstartDS Design System patterns.
 
+Part of the [kickstartDS Storyblok Starter](../../README.md) monorepo.
+
 ## Features
 
 This MCP server exposes tools to help LLMs understand and generate code for:
@@ -15,8 +17,11 @@ This MCP server exposes tools to help LLMs understand and generate code for:
 
 ## Installation
 
+From the monorepo root:
+
 ```bash
-npm install
+pnpm install
+pnpm --filter component-builder-mcp build
 ```
 
 ## Usage
@@ -30,7 +35,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "design-system-component-builder": {
       "command": "node",
-      "args": ["/path/to/component-implementation-mcp/src/index.js"]
+      "args": ["/path/to/component-builder-mcp/dist/index.js"]
     }
   }
 }
@@ -45,13 +50,13 @@ Add to your VS Code settings:
   "mcp.servers": {
     "design-system-component-builder": {
       "command": "node",
-      "args": ["${workspaceFolder}/src/index.js"]
+      "args": ["${workspaceFolder}/packages/component-builder-mcp/dist/index.js"]
     }
   }
 }
 ```
 
-## Available Tools
+## Available Tools (7)
 
 ### `get-ui-building-instructions`
 
@@ -81,17 +86,13 @@ Get SCSS templates with BEM naming and Design Token layers.
 
 Get Storybook story templates with schema integration.
 
-### `get-defaults-template`
+## Available Resources (3)
 
-Get a defaults file template for component default props.
-
-### `get-token-architecture`
-
-Get documentation on the three-layer Design Token architecture.
-
-### `list-existing-components`
-
-List all existing components in the Design System with their file structures.
+| Resource | Description |
+| --- | --- |
+| `design-system://instructions` | UI building instructions |
+| `design-system://token-architecture` | Token layer architecture docs |
+| `design-system://components` | Component catalog listing |
 
 ## Design System Patterns
 
@@ -118,7 +119,7 @@ src/components/{component-name}/
 Component APIs are defined in JSON Schema, then types are generated:
 
 1. Create `{component-name}.schema.json`
-2. Run `yarn schema` to generate TypeScript types
+2. Run `pnpm run schema` to generate TypeScript types
 3. Implement the component using generated types
 
 ### Pure React Components
@@ -147,4 +148,4 @@ Component Tokens (--dsa-*)
 
 ## License
 
-MIT
+(MIT OR Apache-2.0)
