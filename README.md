@@ -140,7 +140,7 @@ Key capabilities:
 - **Web scraping** — fetch pages as clean Markdown for content migration
 - **Multi-content-type support** — 5 content types with per-type schema validation
 
-Deploy with Kamal: `kamal deploy -d mcp`
+Deploy with Kamal: `kamal deploy -d storyblok-mcp`
 
 See [packages/storyblok-mcp/README.md](packages/storyblok-mcp/README.md) for setup and deployment instructions.
 
@@ -250,20 +250,20 @@ Prompt → Schema Preparation → OpenAI Structured Output → Post-Processing �
 ### Website (Kamal)
 
 ```bash
-kamal deploy              # Deploy to production
-kamal setup               # First-time server setup
+kamal deploy -d website   # Deploy to production
+kamal setup -d website    # First-time server setup
 ```
 
-Config: [config/deploy.yml](config/deploy.yml)
+Config: [config/deploy-website.yml](config/deploy-website.yml)
 
 ### Storyblok MCP Server (Kamal)
 
 ```bash
-kamal deploy -d mcp       # Deploy MCP server
-kamal setup -d mcp        # First-time setup
+kamal deploy -d storyblok-mcp       # Deploy MCP server
+kamal setup -d storyblok-mcp        # First-time setup
 ```
 
-Config: [config/deploy-mcp.yml](config/deploy-mcp.yml)
+Config: [config/deploy-storyblok-mcp.yml](config/deploy-storyblok-mcp.yml)
 
 ### Design Tokens MCP (Kamal)
 
@@ -289,6 +289,14 @@ kamal deploy -d schema-layer-editor
 
 Config: [config/deploy-schema-layer-editor.yml](config/deploy-schema-layer-editor.yml)
 
+### Design System / Storybook (Kamal)
+
+```bash
+kamal deploy -d design-system
+```
+
+Config: [config/deploy-design-system.yml](config/deploy-design-system.yml)
+
 ### Design Tokens Editor (Netlify)
 
 Deployed on Netlify — see `packages/design-tokens-editor/netlify.toml` for build config.
@@ -296,10 +304,10 @@ Deployed on Netlify — see `packages/design-tokens-editor/netlify.toml` for bui
 ### Analytics (Kamal)
 
 ```bash
-kamal deploy -d analytics
+kamal deploy -d umami-analytics
 ```
 
-Config: [config/deploy-analytics.yml](config/deploy-analytics.yml)
+Config: [config/deploy-umami-analytics.yml](config/deploy-umami-analytics.yml)
 
 Endpoint: `https://mcp.your-domain.com/mcp`
 

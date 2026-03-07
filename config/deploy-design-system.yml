@@ -1,5 +1,5 @@
 # Name of your application. Used to uniquely configure containers.
-service: ruhmesmeile-storybook
+service: ruhmesmeile-design-system
 
 # Name of the container image.
 image: <%= ENV["DOCKER_STORYBOOK_IMAGE_NAME"] %>

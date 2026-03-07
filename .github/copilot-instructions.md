@@ -307,11 +307,11 @@ When connected to clients supporting the **MCP Apps extension** (`@modelcontextp
 
 ### Cloud Deployment
 
-The MCP server has its own Kamal config at [config/deploy-mcp.yml](config/deploy-mcp.yml) and deploys to the same server as the main site under a separate subdomain.
+The MCP server has its own Kamal config at [config/deploy-storyblok-mcp.yml](config/deploy-storyblok-mcp.yml) and deploys to the same server as the main site under a separate subdomain.
 
 ```bash
-kamal deploy -d mcp    # Deploy MCP server
-kamal setup -d mcp     # First-time setup
+kamal deploy -d storyblok-mcp    # Deploy MCP server
+kamal setup -d storyblok-mcp     # First-time setup
 ```
 
 Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOSTING_SERVER_IP`, `STORYBLOK_API_TOKEN`, `STORYBLOK_OAUTH_TOKEN`, `STORYBLOK_SPACE_ID`, `OPENAI_API_KEY`.
@@ -322,8 +322,8 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/website/cms/presets.123456.json](packages/website/cms/presets.123456.json) - Component presets
 - [packages/website/helpers/storyblok.ts](packages/website/helpers/storyblok.ts) - Storyblok API utilities and story transformations
 - [packages/website/scripts/prepareProject.js](packages/website/scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
-- [config/deploy-mcp.yml](config/deploy-mcp.yml) - Kamal deployment config for the MCP server
-- [config/deploy.yml](config/deploy.yml) - Kamal deployment config for the main Next.js site
+- [config/deploy-storyblok-mcp.yml](config/deploy-storyblok-mcp.yml) - Kamal deployment config for the MCP server
+- [config/deploy-website.yml](config/deploy-website.yml) - Kamal deployment config for the main Next.js site
 - [packages/storyblok-services/src/schema.ts](packages/storyblok-services/src/schema.ts) - Schema preparation for OpenAI structured output (15 transformation passes)
 - [packages/storyblok-services/src/transform.ts](packages/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
 - [packages/storyblok-services/src/pipeline.ts](packages/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
