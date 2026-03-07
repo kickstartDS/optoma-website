@@ -105,7 +105,7 @@
 - [x] Remove `.circleci/` directory
 - [x] Remove `.husky/` directory
 - [x] Move patches to root `patches/` and update root `pnpm.patchedDependencies` (converted from patch-package format; @storybook/csf `gt` patch re-targeted to `storybook@10.2.15` where CSF is now bundled)
-- [ ] Evaluate `__snapshots__/` PNG files (Git LFS or keep as-is)
+- [x] Evaluate `__snapshots__/` PNG files → migrated to Git LFS (snapshots, static assets, generated JSON); CI updated with `lfs: true`; `scripts/purge-history.sh` prepared for pre-merge history cleanup
 
 #### `design-tokens-editor`
 
