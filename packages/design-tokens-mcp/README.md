@@ -121,19 +121,19 @@ For **remote** use (Streamable HTTP):
 
 ## Available Resources (4)
 
-| Resource | Description |
-| --- | --- |
-| `tokens://overview` | Summary stats (total tokens, files, categories) |
-| `tokens://files` | Token file catalog with descriptions |
-| `tokens://branding` | Current branding token values |
-| `tokens://components` | Component token catalog (50 files) |
+| Resource              | Description                                     |
+| --------------------- | ----------------------------------------------- |
+| `tokens://overview`   | Summary stats (total tokens, files, categories) |
+| `tokens://files`      | Token file catalog with descriptions            |
+| `tokens://branding`   | Current branding token values                   |
+| `tokens://components` | Component token catalog (50 files)              |
 
 ## Available Prompts (3)
 
-| Prompt | Description |
-| --- | --- |
-| `audit-tokens` | Token quality audit workflow |
-| `update-branding` | Guided branding token modification |
+| Prompt                     | Description                             |
+| -------------------------- | --------------------------------------- |
+| `audit-tokens`             | Token quality audit workflow            |
+| `update-branding`          | Guided branding token modification      |
 | `explore-component-tokens` | Explore tokens for a specific component |
 
 ## Available Tools (28 total)
@@ -363,14 +363,17 @@ Returns:
 The design token system follows a layered architecture:
 
 1. **Branding Tokens** (`branding-token.css`)
+
    - Core values: primary colors, font families, base sizes
    - These are the tokens to modify for theming
 
 2. **Derived Tokens** (SCSS files)
+
    - Computed from branding tokens using `var()` references
    - Include scales, states, and responsive variants
 
 3. **Semantic Tokens**
+
    - Purpose-specific tokens (background, text, border colors)
    - Interactive states (hover, active, selected, disabled)
    - Inverted variants for dark mode

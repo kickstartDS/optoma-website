@@ -82,21 +82,21 @@ pnpm run build
 
 ### Key Scripts
 
-| Script | Description |
-| ---------------------- | -------------------------------------------------------------------------- |
-| `pnpm run start` | Start Storybook dev server (port 6006) with file watchers |
-| `pnpm run storybook` | Start Storybook without watchers |
-| `pnpm run playroom` | Start Playroom with watchers |
-| `pnpm run build-storybook` | Build static Storybook site |
-| `pnpm run build-tokens` | Compile all theme tokens via Style Dictionary |
-| `pnpm run init-tokens` | Initialize tokens from branding token JSON |
-| `pnpm run schema` | Generate dereferenced schemas, TypeScript types, layer types, and defaults |
-| `pnpm run token` | Extract CSS custom properties from SCSS token files |
-| `pnpm run branding-tokens` | Build branding token CSS from JSON source files |
-| `pnpm run search` | Generate Pagefind search index from Storybook stories |
-| `pnpm run presets` | Generate component presets (JSX snippets) from stories |
-| `pnpm run test` | Run visual regression tests against Storybook |
-| `pnpm run chromatic` | Run Chromatic visual testing |
+| Script                     | Description                                                                |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `pnpm run start`           | Start Storybook dev server (port 6006) with file watchers                  |
+| `pnpm run storybook`       | Start Storybook without watchers                                           |
+| `pnpm run playroom`        | Start Playroom with watchers                                               |
+| `pnpm run build-storybook` | Build static Storybook site                                                |
+| `pnpm run build-tokens`    | Compile all theme tokens via Style Dictionary                              |
+| `pnpm run init-tokens`     | Initialize tokens from branding token JSON                                 |
+| `pnpm run schema`          | Generate dereferenced schemas, TypeScript types, layer types, and defaults |
+| `pnpm run token`           | Extract CSS custom properties from SCSS token files                        |
+| `pnpm run branding-tokens` | Build branding token CSS from JSON source files                            |
+| `pnpm run search`          | Generate Pagefind search index from Storybook stories                      |
+| `pnpm run presets`         | Generate component presets (JSX snippets) from stories                     |
+| `pnpm run test`            | Run visual regression tests against Storybook                              |
+| `pnpm run chromatic`       | Run Chromatic visual testing                                               |
 
 ## Components
 

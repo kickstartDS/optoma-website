@@ -50,7 +50,9 @@ Add to your VS Code settings:
   "mcp.servers": {
     "design-system-component-builder": {
       "command": "node",
-      "args": ["${workspaceFolder}/packages/component-builder-mcp/dist/index.js"]
+      "args": [
+        "${workspaceFolder}/packages/component-builder-mcp/dist/index.js"
+      ]
     }
   }
 }
@@ -88,11 +90,11 @@ Get Storybook story templates with schema integration.
 
 ## Available Resources (3)
 
-| Resource | Description |
-| --- | --- |
-| `design-system://instructions` | UI building instructions |
+| Resource                             | Description                   |
+| ------------------------------------ | ----------------------------- |
+| `design-system://instructions`       | UI building instructions      |
 | `design-system://token-architecture` | Token layer architecture docs |
-| `design-system://components` | Component catalog listing |
+| `design-system://components`         | Component catalog listing     |
 
 ## Design System Patterns
 

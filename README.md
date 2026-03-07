@@ -17,17 +17,17 @@ packages/
   schema-layer-editor/    — Schema Layer Editor (Vite SPA)
 ```
 
-| Package | npm | Description |
-|---------|-----|-------------|
-| [design-system](packages/design-system/) | `@kickstartds/design-system` | 74+ React components, 5 themes, design tokens, Storybook, Playroom |
-| [website](packages/website/) | `@kickstartds/storyblok-starter-premium` | Next.js 13 site with Storyblok CMS, ISR, Visual Editor, AI Prompter |
-| [storyblok-services](packages/storyblok-services/) | `@kickstartds/storyblok-services` | Shared library for schema preparation, validation, transforms, pattern analysis |
-| [storyblok-mcp](packages/storyblok-mcp/) | `@kickstartds/storyblok-mcp-server` | MCP server exposing 30+ CMS tools to AI assistants |
-| [storyblok-n8n](packages/storyblok-n8n/) | `n8n-nodes-storyblok-kickstartds` | n8n community node with 22 operations for automated content pipelines |
-| [component-builder-mcp](packages/component-builder-mcp/) | `@kickstartds/component-builder-mcp` | MCP server with 7 read-only tools for component development guidance |
-| [design-tokens-mcp](packages/design-tokens-mcp/) | `@kickstartds/design-tokens-mcp` | MCP server with 28 tools for token querying, analysis, and governance |
-| [design-tokens-editor](packages/design-tokens-editor/) | *(private)* | Browser-based visual token editor with live preview (Vite + Netlify) |
-| [schema-layer-editor](packages/schema-layer-editor/) | `@kickstartds/schema-layer-editor` | Visual editor for JSON Schema layers (Vite SPA) |
+| Package                                                  | npm                                      | Description                                                                     |
+| -------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------- |
+| [design-system](packages/design-system/)                 | `@kickstartds/design-system`             | 74+ React components, 5 themes, design tokens, Storybook, Playroom              |
+| [website](packages/website/)                             | `@kickstartds/storyblok-starter-premium` | Next.js 13 site with Storyblok CMS, ISR, Visual Editor, AI Prompter             |
+| [storyblok-services](packages/storyblok-services/)       | `@kickstartds/storyblok-services`        | Shared library for schema preparation, validation, transforms, pattern analysis |
+| [storyblok-mcp](packages/storyblok-mcp/)                 | `@kickstartds/storyblok-mcp-server`      | MCP server exposing 30+ CMS tools to AI assistants                              |
+| [storyblok-n8n](packages/storyblok-n8n/)                 | `n8n-nodes-storyblok-kickstartds`        | n8n community node with 22 operations for automated content pipelines           |
+| [component-builder-mcp](packages/component-builder-mcp/) | `@kickstartds/component-builder-mcp`     | MCP server with 7 read-only tools for component development guidance            |
+| [design-tokens-mcp](packages/design-tokens-mcp/)         | `@kickstartds/design-tokens-mcp`         | MCP server with 28 tools for token querying, analysis, and governance           |
+| [design-tokens-editor](packages/design-tokens-editor/)   | _(private)_                              | Browser-based visual token editor with live preview (Vite + Netlify)            |
+| [schema-layer-editor](packages/schema-layer-editor/)     | `@kickstartds/schema-layer-editor`       | Visual editor for JSON Schema layers (Vite SPA)                                 |
 
 **Package manager:** pnpm 10.30.3 · **Versioning:** [Changesets](https://github.com/changesets/changesets) for independent per-package publishing
 
