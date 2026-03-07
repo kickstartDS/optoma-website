@@ -164,7 +164,7 @@
 - [x] Move `db/` → `packages/umami-analytics/`, create `config/deploy-analytics.yml`
 - [x] Consolidate `.kamal/secrets` (analytics secrets added to root, removed per-package copies)
 - [x] Remove redundant `packages/storyblok-mcp/.kamal/secrets`
-- [ ] Add Chromatic/Storybook deployment to monorepo CI
+- [x] Add Chromatic/Storybook deployment to monorepo CI
 
 ---
 
