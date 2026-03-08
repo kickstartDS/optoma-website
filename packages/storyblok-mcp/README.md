@@ -17,6 +17,10 @@ A Model Context Protocol (MCP) server for integrating Storyblok CMS with AI assi
 | `ensure_path`     | Ensure a folder path exists (like `mkdir -p`), creating missing intermediate folders. Returns the folder ID                                 |
 | `replace_section` | Replace a single section by zero-based index — avoids fetching/resubmitting the entire content tree via `update_story`                      |
 | `update_seo`      | Set or update SEO metadata fields (title, description, keywords, image, cardImage) — auto-creates the SEO component if missing              |
+| `list_themes`     | List all available design token themes stored as `token-theme` stories under `settings/themes/`                                             |
+| `get_theme`       | Get a single theme by slug or UUID, including branding tokens and compiled CSS                                                              |
+| `apply_theme`     | Apply a design token theme to a page or settings story by setting its `theme` UUID reference field                                          |
+| `remove_theme`    | Remove the theme from a story, resetting it to default branding                                                                             |
 
 ### AI Content Generation
 
@@ -969,13 +973,14 @@ When using this MCP server with LLM clients that have limited context windows (e
 
 For event-driven and scheduled content automation without an LLM intermediary, see the companion **n8n community node package**: [`n8n-nodes-storyblok-kickstartds`](../storyblok-n8n/).
 
-It provides **22 operations across 3 resources** — matching the full MCP tool surface as native n8n nodes:
+It provides **26 operations across 4 resources** — matching the full MCP tool surface as native n8n nodes:
 
 | Resource       | Operations | Covers MCP tools                                                                                                                           |
 | -------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **AI Content** | 7          | `generate_content`, `import_content`, `generate_section`, `plan_page`, `analyze_content_patterns`, `generate_root_field`, `generate_seo`   |
 | **Story**      | 8          | `list_stories`, `get_story`, `create_page_with_content`, `update_story`, `delete_story`, `replace_section`, `update_seo`, `search_content` |
 | **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path`                               |
+| **Theme**      | 4          | `list_themes`, `get_theme`, `apply_theme`, `remove_theme`                                                                                  |
 
 Both packages consume the same shared service library (`@kickstartds/storyblok-services`), so validation, schema preparation, and content transformation behave identically. Nine ready-to-import workflow templates are included.
 
@@ -1059,7 +1064,7 @@ curl -s -X POST https://YOUR_DOMAIN/mcp \
   }'
 ```
 
-You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `replace_section`, `update_seo`, etc.
+You should see tools like `list_stories`, `get_story`, `create_story`, `search_content`, `scrape_url`, `list_components`, `get_component`, `generate_content`, `list_icons`, `analyze_content_patterns`, `list_recipes`, `plan_page`, `generate_section`, `generate_root_field`, `generate_seo`, `replace_section`, `update_seo`, `list_themes`, `get_theme`, `apply_theme`, `remove_theme`, etc.
 
 ### 4. Call a tool
 

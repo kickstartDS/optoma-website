@@ -676,6 +676,56 @@ export const schemas = {
       .optional()
       .describe("Months after which content is considered stale (default: 6)"),
   }),
+
+  listThemes: z.object({}),
+
+  getTheme: z.object({
+    slugOrUuid: z
+      .string()
+      .describe("The slug (e.g. 'dark-mode') or UUID of the theme to fetch"),
+  }),
+
+  applyTheme: z.object({
+    storyId: z
+      .string()
+      .describe(
+        "The numeric ID (or string representation) of the page or settings story to apply the theme to"
+      ),
+    themeUuid: z
+      .string()
+      .optional()
+      .describe(
+        "UUID of the token-theme to apply. Omit or pass empty string to clear the theme."
+      ),
+    themeSlug: z
+      .string()
+      .optional()
+      .describe(
+        "Slug of the token-theme to apply (resolved to UUID server-side). Alternative to themeUuid."
+      ),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Publish the story immediately after applying the theme (default: false)"
+      ),
+  }),
+
+  removeTheme: z.object({
+    storyId: z
+      .string()
+      .describe(
+        "The numeric ID (or string representation) of the story to remove the theme from"
+      ),
+    publish: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe(
+        "Publish the story immediately after removing the theme (default: false)"
+      ),
+  }),
 };
 
 export type GenerateContentInput = z.infer<typeof schemas.generateContent>;
@@ -708,3 +758,7 @@ export type GenerateSeoInput = z.infer<typeof schemas.generateSeo>;
 export type ReplaceSectionInput = z.infer<typeof schemas.replaceSection>;
 export type UpdateSeoInput = z.infer<typeof schemas.updateSeo>;
 export type ContentAuditInput = z.infer<typeof schemas.contentAudit>;
+export type ListThemesInput = z.infer<typeof schemas.listThemes>;
+export type GetThemeInput = z.infer<typeof schemas.getTheme>;
+export type ApplyThemeInput = z.infer<typeof schemas.applyTheme>;
+export type RemoveThemeInput = z.infer<typeof schemas.removeTheme>;

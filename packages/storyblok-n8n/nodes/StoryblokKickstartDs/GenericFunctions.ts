@@ -52,6 +52,12 @@ import {
   getRootFieldSchema,
   // Field-level guidance
   assembleFieldGuidance,
+  // Theme management
+  listThemes,
+  getTheme,
+  applyTheme,
+  removeTheme,
+  previewThemeCSS,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
@@ -75,6 +81,9 @@ import {
   type GenerateRootFieldResult,
   type GenerateSeoOptions,
   type GenerateSeoResult,
+  type ThemeSummary,
+  type ThemeDetail,
+  type ApplyThemeResult,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
 import * as path from "path";
@@ -121,6 +130,12 @@ export {
   // Convenience updates
   replaceSection,
   updateSeo,
+  // Theme management
+  listThemes,
+  getTheme,
+  applyTheme,
+  removeTheme,
+  previewThemeCSS,
   // Validation & quality
   checkCompositionalQuality,
   // Prompt constants
@@ -143,6 +158,9 @@ export {
   type GenerateRootFieldResult,
   type GenerateSeoOptions,
   type GenerateSeoResult,
+  type ThemeSummary,
+  type ThemeDetail,
+  type ApplyThemeResult,
 };
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";

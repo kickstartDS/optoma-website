@@ -55,6 +55,12 @@ import {
   assembleFieldGuidance,
   planPageContent,
   generateSectionContent,
+  // Theme management
+  listThemes as sharedListThemes,
+  getTheme as sharedGetTheme,
+  applyTheme as sharedApplyTheme,
+  removeTheme as sharedRemoveTheme,
+  previewThemeCSS as sharedPreviewThemeCSS,
   type PrepareSchemaOptions,
   type ValidationRules,
   type ValidationWarning,
@@ -68,6 +74,9 @@ import {
   type PlanPageResult,
   type GenerateSectionOptions,
   type GenerateSectionResult,
+  type ThemeSummary,
+  type ThemeDetail,
+  type ApplyThemeResult,
 } from "@kickstartds/storyblok-services";
 
 // Load all content type schemas via the registry
@@ -117,6 +126,9 @@ export type {
   ValidationWarning,
   ContentTypeEntry,
   RootFieldMeta,
+  ThemeSummary,
+  ThemeDetail,
+  ApplyThemeResult,
 };
 export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
 export { stripEmptyAssetFields };
@@ -691,6 +703,58 @@ export class StoryblokService {
       this.contentClient,
       this.spaceId,
       folderPath
+    );
+  }
+
+  // ── Theme management ──────────────────────────────────────────────
+
+  /**
+   * List all token-theme stories.
+   * Delegates to shared `listThemes()`.
+   */
+  async listThemes(): Promise<ThemeSummary[]> {
+    return sharedListThemes(this.contentClient);
+  }
+
+  /**
+   * Get a single theme by slug or UUID.
+   * Delegates to shared `getTheme()`.
+   */
+  async getTheme(slugOrUuid: string): Promise<ThemeDetail | null> {
+    return sharedGetTheme(this.contentClient, slugOrUuid);
+  }
+
+  /**
+   * Apply a theme to a page or settings story.
+   * Delegates to shared `applyTheme()`.
+   */
+  async applyTheme(
+    storyId: string,
+    themeUuid: string | null,
+    publish: boolean = false
+  ): Promise<ApplyThemeResult> {
+    return sharedApplyTheme(
+      this.managementClient,
+      this.spaceId,
+      storyId,
+      themeUuid,
+      publish
+    );
+  }
+
+  /**
+   * Remove the theme from a story (reset to default branding).
+   * Delegates to shared `removeTheme()`.
+   */
+  async removeTheme(
+    storyId: string,
+    publish: boolean = false
+  ): Promise<ApplyThemeResult> {
+    return sharedRemoveTheme(
+      this.managementClient,
+      this.spaceId,
+      storyId,
+      publish
     );
   }
 }

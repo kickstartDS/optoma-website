@@ -1,10 +1,13 @@
 # PRD: Design Token Theming Tools for Storyblok
 
-**Status:** 📋 Draft
+**Status:** ✅ Implemented (token-theme content type architecture)
 **Date:** 2026-02-25
 **Author:** Generated from codebase analysis
+**Updated:** 2026-07-13 — Aligned with implemented `token-theme` content type architecture
 
 ---
+
+> **Implementation Note:** The original PRD proposed storing raw CSS in a `token` field on `page`/`settings` stories. The actual implementation uses a **`token-theme` content type** stored under `settings/themes/` in Storyblok, with a `theme` UUID reference field on `page` and `settings`. Themes are managed via a dedicated **Design Tokens Editor** (Vite SPA + Express backend) that stores branding token JSON + compiled CSS in Storyblok. The MCP server and n8n node provide `list_themes`/`get_theme`/`apply_theme`/`remove_theme` tools to browse and apply themes programmatically. See `packages/design-tokens-editor/` for the editor implementation and `packages/storyblok-services/src/themes.ts` for shared theme CRUD functions.
 
 ## 1. Background & Problem Statement
 
@@ -328,18 +331,18 @@ This is a stretch goal for a later phase.
 
 | #   | Task                                                                             | Files                                       | Effort |
 | --- | -------------------------------------------------------------------------------- | ------------------------------------------- | ------ |
-| 2.1 | Implement `generate_theme_css` tool                                              | `packages/storyblok-mcp/src/index.ts`          | M      |
-| 2.2 | Implement `apply_theme` tool                                                     | `packages/storyblok-mcp/src/index.ts`          | M      |
-| 2.3 | Implement `read_theme` tool                                                      | `packages/storyblok-mcp/src/index.ts`          | S      |
-| 2.4 | Implement `extract_and_apply_theme` tool                                         | `packages/storyblok-mcp/src/index.ts`          | L      |
+| 2.1 | Implement `generate_theme_css` tool                                              | `packages/storyblok-mcp/src/index.ts`       | M      |
+| 2.2 | Implement `apply_theme` tool                                                     | `packages/storyblok-mcp/src/index.ts`       | M      |
+| 2.3 | Implement `read_theme` tool                                                      | `packages/storyblok-mcp/src/index.ts`       | S      |
+| 2.4 | Implement `extract_and_apply_theme` tool                                         | `packages/storyblok-mcp/src/index.ts`       | L      |
 | 2.5 | Add CSS extraction logic (port from Design Tokens MCP or use HTTP fetch + parse) | `packages/storyblok-services/src/tokens.ts` | M      |
-| 2.6 | Update MCP server README with new tool documentation                             | `packages/storyblok-mcp/README.md`             | S      |
-| 2.7 | Integration tests for each tool                                                  | `packages/storyblok-mcp/test/`                 | M      |
+| 2.6 | Update MCP server README with new tool documentation                             | `packages/storyblok-mcp/README.md`          | S      |
+| 2.7 | Integration tests for each tool                                                  | `packages/storyblok-mcp/test/`              | M      |
 
 ### Phase 3: n8n Node Operations
 
-| #   | Task                                                 | Files                                            | Effort |
-| --- | ---------------------------------------------------- | ------------------------------------------------ | ------ |
+| #   | Task                                                 | Files                                                | Effort |
+| --- | ---------------------------------------------------- | ---------------------------------------------------- | ------ |
 | 3.1 | Add "Generate Theme CSS" operation to Theme resource | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | M      |
 | 3.2 | Add "Apply Theme" operation                          | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | M      |
 | 3.3 | Add "Read Theme" operation                           | `packages/storyblok-n8n/nodes/StoryblokKickstartDs/` | S      |
@@ -358,10 +361,10 @@ This is a stretch goal for a later phase.
 
 ### Phase 5: Documentation & copilot-instructions
 
-| #   | Task                                              | Files                                              | Effort |
-| --- | ------------------------------------------------- | -------------------------------------------------- | ------ |
-| 5.1 | Add theming skill doc                             | `docs/skills/apply-theme.md`                       | S      |
-| 5.2 | Update copilot-instructions.md with theming tools | `.github/copilot-instructions.md`                  | S      |
+| #   | Task                                              | Files                                                 | Effort |
+| --- | ------------------------------------------------- | ----------------------------------------------------- | ------ |
+| 5.1 | Add theming skill doc                             | `docs/skills/apply-theme.md`                          | S      |
+| 5.2 | Update copilot-instructions.md with theming tools | `.github/copilot-instructions.md`                     | S      |
 | 5.3 | Update section-recipes with theme-aware templates | `packages/storyblok-mcp/schemas/section-recipes.json` | S      |
 
 ---

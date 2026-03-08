@@ -227,3 +227,13 @@ export type {
   FindingSeverity,
   RunAuditOptions,
 } from "./audit.js";
+
+// ─── Theme management ──────────────────────────────────────────────
+export {
+  listThemes,
+  getTheme,
+  applyTheme,
+  removeTheme,
+  previewThemeCSS,
+} from "./themes.js";
+export type { ThemeSummary, ThemeDetail, ApplyThemeResult } from "./themes.js";

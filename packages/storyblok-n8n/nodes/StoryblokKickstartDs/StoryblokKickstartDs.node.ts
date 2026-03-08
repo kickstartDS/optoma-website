@@ -12,6 +12,7 @@ import { generateContentFields } from "./descriptions/GenerateContentDescription
 import { importContentFields } from "./descriptions/ImportContentDescription";
 import { storyOperations, storyFields } from "./descriptions/StoryDescription";
 import { spaceOperations, spaceFields } from "./descriptions/SpaceDescription";
+import { themeOperations, themeFields } from "./descriptions/ThemeDescription";
 import {
   getStoryblokManagementClient,
   getOpenAiClient,
@@ -35,6 +36,11 @@ import {
   // Convenience update shared functions
   replaceSection,
   updateSeo,
+  // Theme management shared functions
+  listThemes,
+  getTheme,
+  applyTheme,
+  removeTheme,
   // Validation & quality
   checkCompositionalQuality,
   // Space introspection shared functions
@@ -121,6 +127,12 @@ export class StoryblokKickstartDs implements INodeType {
             value: "space",
             description:
               "Space-level utilities — scrape URLs, introspect components/assets/recipes/icons, manage folder paths",
+          },
+          {
+            name: "Theme",
+            value: "theme",
+            description:
+              "Manage design token themes — list, get, apply to pages/settings, remove",
           },
         ],
         default: "aiContent",
@@ -571,6 +583,10 @@ export class StoryblokKickstartDs implements INodeType {
       // ── Space resource ────────────────────────────────────────
       spaceOperations,
       ...spaceFields,
+
+      // ── Theme resource ────────────────────────────────────────
+      themeOperations,
+      ...themeFields,
     ],
   };
 
@@ -650,6 +666,22 @@ export class StoryblokKickstartDs implements INodeType {
             throw new NodeOperationError(
               this.getNode(),
               `Unknown Space operation: ${operation}`,
+              { itemIndex: i }
+            );
+          }
+        } else if (resource === "theme") {
+          if (operation === "list") {
+            result = await executeListThemes.call(this, i);
+          } else if (operation === "get") {
+            result = await executeGetTheme.call(this, i);
+          } else if (operation === "apply") {
+            result = await executeApplyTheme.call(this, i);
+          } else if (operation === "remove") {
+            result = await executeRemoveTheme.call(this, i);
+          } else {
+            throw new NodeOperationError(
+              this.getNode(),
+              `Unknown Theme operation: ${operation}`,
               { itemIndex: i }
             );
           }
@@ -2554,6 +2586,173 @@ async function executeEnsurePath(
     const message = error instanceof Error ? error.message : String(error);
     throw new NodeApiError(this.getNode(), { message } as any, {
       message: `Failed to ensure path "${folderPath}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+// ─── Theme execution ──────────────────────────────────────────────────
+
+async function executeListThemes(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+
+  try {
+    const themes = await listThemes(contentClient);
+
+    return {
+      themes,
+      total: themes.length,
+      _meta: {
+        operation: "listThemes",
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to list themes: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeGetTheme(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+
+  const slugOrUuid = this.getNodeParameter(
+    "themeSlugOrUuid",
+    itemIndex
+  ) as string;
+
+  try {
+    const theme = await getTheme(contentClient, slugOrUuid);
+
+    if (!theme) {
+      throw new Error(`Theme not found: ${slugOrUuid}`);
+    }
+
+    return {
+      ...theme,
+      _meta: {
+        operation: "getTheme",
+        slugOrUuid,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to get theme "${slugOrUuid}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeApplyTheme(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const managementClient = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const storyId = this.getNodeParameter("applyStoryId", itemIndex) as string;
+  const themeUuid = this.getNodeParameter(
+    "applyThemeUuid",
+    itemIndex
+  ) as string;
+  const publish = this.getNodeParameter("applyPublish", itemIndex) as boolean;
+
+  try {
+    const result = await applyTheme(
+      managementClient,
+      spaceId,
+      storyId,
+      themeUuid,
+      publish
+    );
+
+    return {
+      ...result,
+      _meta: {
+        operation: "applyTheme",
+        storyId,
+        themeUuid,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to apply theme to story ${storyId}: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeRemoveTheme(
+  this: IExecuteFunctions,
+  itemIndex: number
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex
+  )) as unknown as StoryblokCredentials;
+
+  const managementClient = getStoryblokManagementClient(storyblokCredentials);
+  const spaceId = storyblokCredentials.spaceId;
+
+  const storyId = this.getNodeParameter("removeStoryId", itemIndex) as string;
+  const publish = this.getNodeParameter("removePublish", itemIndex) as boolean;
+
+  try {
+    const result = await removeTheme(
+      managementClient,
+      spaceId,
+      storyId,
+      publish
+    );
+
+    return {
+      ...result,
+      _meta: {
+        operation: "removeTheme",
+        storyId,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to remove theme from story ${storyId}: ${message}`,
       itemIndex,
     });
   }

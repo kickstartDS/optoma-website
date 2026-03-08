@@ -187,6 +187,26 @@ export const PROMPT_DEFINITIONS: PromptDefinition[] = [
       },
     ],
   },
+  {
+    name: "theme-management",
+    description:
+      "Browse available design token themes and apply one to a page or the global " +
+      "settings. Lists themes, lets you preview one, then applies it.",
+    arguments: [
+      {
+        name: "storyId",
+        description:
+          "The story ID of the page or settings story to apply the theme to (use list_stories to find it)",
+        required: false,
+      },
+      {
+        name: "themeSlug",
+        description:
+          "Slug of the theme to apply (e.g., 'dark-mode'). If omitted, you'll be shown available themes first.",
+        required: false,
+      },
+    ],
+  },
 ];
 
 // ── Prompt message generators ──────────────────────────────────────
@@ -212,6 +232,8 @@ export function getPromptMessages(
       return getExtendPageMessages(args);
     case "translate-page":
       return getTranslatePageMessages(args);
+    case "theme-management":
+      return getThemeManagementMessages(args);
     default:
       throw new Error(`Unknown prompt: ${promptName}`);
   }
@@ -478,6 +500,70 @@ function getTranslatePageMessages(
       content: {
         type: "text",
         text: `I'll translate the page '${sourceSlug}' to ${targetLanguage}. Let me first fetch the source content to understand its structure, then translate each section while preserving the layout.`,
+      },
+    },
+  ];
+}
+
+function getThemeManagementMessages(
+  args: Record<string, string>
+): PromptMessage[] {
+  const storyId = args.storyId || "";
+  const themeSlug = args.themeSlug || "";
+
+  const hasStory = !!storyId;
+  const hasTheme = !!themeSlug;
+
+  return [
+    {
+      role: "user",
+      content: {
+        type: "text",
+        text: [
+          hasTheme && hasStory
+            ? `Apply the theme '${themeSlug}' to story ${storyId}.`
+            : hasTheme
+            ? `Show me what the '${themeSlug}' theme contains and help me apply it.`
+            : "Help me browse and apply a design token theme.",
+          "",
+          "Follow this workflow:",
+          "1. Call `list_themes` to see all available themes",
+          ...(hasTheme
+            ? [`2. Call \`get_theme\` with slug '${themeSlug}' to preview it`]
+            : [
+                "2. Show me the available themes and ask which one I'd like to apply",
+                "3. Call `get_theme` on the chosen theme to preview its tokens and CSS",
+              ]),
+          ...(hasStory
+            ? [
+                `${
+                  hasTheme ? "3" : "4"
+                }. Call \`apply_theme\` with storyId '${storyId}' and the theme UUID`,
+              ]
+            : [
+                `${
+                  hasTheme ? "3" : "4"
+                }. Ask me which story to apply the theme to (use \`list_stories\` if I need help finding it)`,
+                `${
+                  hasTheme ? "4" : "5"
+                }. Call \`apply_theme\` with the chosen story ID and theme UUID`,
+              ]),
+          "",
+          "Tips:",
+          "- Use `list_stories` with `contentType: 'page'` to find pages, or look for the settings story",
+          "- To apply a theme globally, apply it to the `settings` story",
+          "- To apply per-page, apply it to that specific page story",
+          "- Use `remove_theme` to reset a story to the default branding",
+        ].join("\n"),
+      },
+    },
+    {
+      role: "assistant",
+      content: {
+        type: "text",
+        text: hasTheme
+          ? `I'll help you apply the '${themeSlug}' theme. Let me first fetch the available themes to confirm it exists, then show you its details.`
+          : "I'll help you browse and apply a design token theme. Let me start by listing all available themes in the space.",
       },
     },
   ];

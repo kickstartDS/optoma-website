@@ -2,13 +2,14 @@
 
 n8n community node package for **Storyblok CMS** with **kickstartDS Design System** — AI-powered content generation, story management, and space introspection.
 
-This package provides **22 operations** across **3 resources** as a single n8n node:
+This package provides **26 operations** across **4 resources** as a single n8n node:
 
 | Resource       | Operations | Description                                                             |
 | -------------- | ---------- | ----------------------------------------------------------------------- |
 | **AI Content** | 7          | Generate, import, plan, analyze, and generate root fields & SEO with AI |
 | **Story**      | 8          | Full CRUD + search + replace section + update SEO                       |
 | **Space**      | 7          | Scrape URLs, introspect components/assets/recipes/icons                 |
+| **Theme**      | 4          | List, get, apply, and remove design token themes                        |
 
 Together they enable fully automated content pipelines: analyze → plan → generate → create → publish.
 
@@ -466,6 +467,45 @@ Create a folder hierarchy idempotently (like `mkdir -p`). Returns the folder ID 
 | Parameter       | Type   | Required | Description                                        |
 | --------------- | ------ | -------- | -------------------------------------------------- |
 | **Folder Path** | String | ✅       | Forward-slash path (e.g. `en/services/consulting`) |
+
+---
+
+### Resource: Theme
+
+Manage design token themes stored as `token-theme` stories in Storyblok under `settings/themes/`.
+
+#### List Themes
+
+List all available design token themes.
+
+No parameters required — returns all `token-theme` stories with their name, slug, UUID, and full slug.
+
+#### Get Theme
+
+Get the full details of a theme including branding tokens and compiled CSS.
+
+| Parameter              | Type   | Required | Description                                |
+| ---------------------- | ------ | -------- | ------------------------------------------ |
+| **Theme Slug or UUID** | String | ✅       | Slug (e.g. `dark-mode`) or UUID of a theme |
+
+#### Apply Theme
+
+Apply a design token theme to a page or settings story by setting its `theme` UUID reference field.
+
+| Parameter      | Type    | Required | Description                                           |
+| -------------- | ------- | -------- | ----------------------------------------------------- |
+| **Story ID**   | String  | ✅       | Numeric ID of the target story                        |
+| **Theme UUID** | String  | ✅       | UUID of the theme to apply                            |
+| **Publish**    | Boolean | —        | Whether to publish the story after applying the theme |
+
+#### Remove Theme
+
+Remove the theme from a story, resetting it to default branding.
+
+| Parameter    | Type    | Required | Description                                      |
+| ------------ | ------- | -------- | ------------------------------------------------ |
+| **Story ID** | String  | ✅       | Numeric ID of the story to remove the theme from |
+| **Publish**  | Boolean | —        | Whether to publish the story after removal       |
 
 ---
 

@@ -120,7 +120,7 @@
 
 Extract reusable theme CRUD logic from the Express backend into `storyblok-services` so both MCP and n8n can share it:
 
-- [ ] Create `packages/storyblok-services/src/themes.ts` with shared helpers:
+- [x] Create `packages/storyblok-services/src/themes.ts` with shared helpers:
   - `listThemes(client, spaceId)` — list `token-theme` stories under `settings/themes/`
   - `getTheme(client, spaceId, slugOrUid)` — fetch a single theme story by slug or UUID
   - `applyTheme(client, spaceId, storyUid, themeUid, scope)` — set `theme` field on a page or settings story (`scope: "page" | "settings"`)
@@ -131,25 +131,25 @@ Extract reusable theme CRUD logic from the Express backend into `storyblok-servi
 
 Register new tools in `packages/storyblok-mcp/src/register-tools.ts` following the existing `registerTool()` + Zod schema + `TOOL_DESCRIPTIONS` pattern:
 
-- [ ] `list_themes` — list available `token-theme` stories (name, slug, primary color preview). Lightweight, read-only, no output schema needed. Useful for LLMs to discover available themes before applying one.
-- [ ] `get_theme` — fetch full theme config (branding tokens JSON + compiled CSS) for a specific theme. Supports lookup by slug or UUID.
-- [ ] `apply_theme` — set `theme` field (UUID) on a page or settings story. Accepts `storyUid` + `themeUid` + `scope: "page" | "settings"`. Could also accept `themeSlug` for convenience (resolved server-side). Add output schema with `success`, `storyId`, `previousTheme`, `newTheme`.
-- [ ] `remove_theme` — clear the `theme` field on a page or settings story (reset to default branding). Thin wrapper around `apply_theme(themeUid: null)`.
-- [ ] Add Zod schemas to `src/config.ts` for all 4 tools
-- [ ] Add output schemas to `src/output-schemas.ts` for write tools (`apply_theme`, `remove_theme`)
-- [ ] Add `theme-management` prompt to `src/prompts.ts` — guided workflow: `list_themes` → pick theme → `apply_theme` (per-page or global)
+- [x] `list_themes` — list available `token-theme` stories (name, slug, primary color preview). Lightweight, read-only, no output schema needed. Useful for LLMs to discover available themes before applying one.
+- [x] `get_theme` — fetch full theme config (branding tokens JSON + compiled CSS) for a specific theme. Supports lookup by slug or UUID.
+- [x] `apply_theme` — set `theme` field (UUID) on a page or settings story. Accepts `storyUid` + `themeUid` + `scope: "page" | "settings"`. Could also accept `themeSlug` for convenience (resolved server-side). Add output schema with `success`, `storyId`, `previousTheme`, `newTheme`.
+- [x] `remove_theme` — clear the `theme` field on a page or settings story (reset to default branding). Thin wrapper around `apply_theme(themeUid: null)`.
+- [x] Add Zod schemas to `src/config.ts` for all 4 tools
+- [x] Add output schemas to `src/output-schemas.ts` for write tools (`apply_theme`, `remove_theme`)
+- [x] Add `theme-management` prompt to `src/prompts.ts` — guided workflow: `list_themes` → pick theme → `apply_theme` (per-page or global)
 
 ### MI-3: n8n Node — Theme Operations
 
 Add a `Theme` resource to the n8n node alongside existing `AI Content`, `Story`, and `Space` resources:
 
-- [ ] Create `packages/storyblok-n8n/nodes/StoryblokKickstartDs/descriptions/ThemeDescription.ts`
-- [ ] Add operations: `list`, `get`, `applyToPage`, `applyToSettings`, `remove`
-- [ ] Wire operations to shared helpers from `storyblok-services/src/themes.ts`
+- [x] Create `packages/storyblok-n8n/nodes/StoryblokKickstartDs/descriptions/ThemeDescription.ts`
+- [x] Add operations: `list`, `get`, `apply`, `remove`
+- [x] Wire operations to shared helpers from `storyblok-services/src/themes.ts`
 - [ ] Add workflow template: "Apply theme to all pages matching a slug pattern"
 
 ### MI-4: Documentation & PRD Alignment
 
-- [ ] Update `docs/design-token-theming-prd.md` — align with `token-theme` content type architecture and theme field plugin
-- [ ] Add theme tools to MCP server README / tool catalog
-- [ ] Add theme operations to n8n node README
+- [x] Update `docs/design-token-theming-prd.md` — align with `token-theme` content type architecture and theme field plugin
+- [x] Add theme tools to MCP server README / tool catalog
+- [x] Add theme operations to n8n node README

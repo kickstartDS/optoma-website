@@ -582,6 +582,41 @@ Composition findings are prefixed with \`composition-\` (e.g. \`composition-spar
 Use this tool for periodic content quality reviews or before major site updates.`,
 };
 
+// -- Theme tool descriptions (appended after the main TOOL_DESCRIPTIONS object)
+TOOL_DESCRIPTIONS.list_themes = `List all available design token themes.
+
+Returns a list of all \`token-theme\` stories stored under \`settings/themes/\`,
+including each theme's name, slug, and UUID.
+
+Use this to discover available themes before applying one to a page or
+the global settings.`;
+
+TOOL_DESCRIPTIONS.get_theme = `Get the full configuration for a specific design token theme.
+
+Returns the theme's branding tokens (JSON) and compiled CSS custom properties.
+Supports lookup by slug (e.g. "dark-mode") or UUID.
+
+Use this to inspect what a theme contains — colors, fonts, spacing — before
+deciding whether to apply it.`;
+
+TOOL_DESCRIPTIONS.apply_theme = `Apply a design token theme to a page or settings story.
+
+Sets the \`theme\` field (UUID) on the target story. The website runtime
+resolves this UUID to CSS custom properties at page load, overriding
+the default branding tokens.
+
+Provide either \`themeUuid\` or \`themeSlug\` (resolved to UUID server-side).
+If neither is provided, the theme is cleared (equivalent to \`remove_theme\`).
+
+Returns the previous and new theme UUIDs for confirmation.`;
+
+TOOL_DESCRIPTIONS.remove_theme = `Remove the design token theme from a page or settings story.
+
+Clears the \`theme\` field, resetting the story to use the default branding
+tokens defined in the global settings.
+
+This is equivalent to calling \`apply_theme\` with no theme UUID.`;
+
 // ── Component usage hints ──────────────────────────────────────────
 
 const COMPONENT_USAGE_HINTS: Record<
@@ -2169,6 +2204,114 @@ async function handleEnsurePath(
 
 // ── Registration ───────────────────────────────────────────────────
 
+// ── Theme handlers ─────────────────────────────────────────────────
+
+async function handleListThemes(
+  _args: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<Record<string, any>> {
+  const { deps } = ctx;
+  const themes = await deps.storyblokService.listThemes();
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify({ themes, count: themes.length }, null, 2),
+      },
+    ],
+  };
+}
+
+async function handleGetTheme(
+  args: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<Record<string, any>> {
+  const { deps } = ctx;
+  const validated = schemas.getTheme.parse(args);
+  const theme = await deps.storyblokService.getTheme(validated.slugOrUuid);
+  if (!theme) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              error: `Theme "${validated.slugOrUuid}" not found`,
+              hint: "Use list_themes to see available themes.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+      isError: true,
+    };
+  }
+  return {
+    content: [{ type: "text", text: JSON.stringify(theme, null, 2) }],
+  };
+}
+
+async function handleApplyTheme(
+  args: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<Record<string, any>> {
+  const { deps } = ctx;
+  const validated = schemas.applyTheme.parse(args);
+
+  // Resolve slug to UUID if needed
+  let themeUuid = validated.themeUuid || null;
+  if (!themeUuid && validated.themeSlug) {
+    const theme = await deps.storyblokService.getTheme(validated.themeSlug);
+    if (!theme) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                error: `Theme with slug "${validated.themeSlug}" not found`,
+                hint: "Use list_themes to see available themes.",
+              },
+              null,
+              2
+            ),
+          },
+        ],
+        isError: true,
+      };
+    }
+    themeUuid = theme.uuid;
+  }
+
+  const result = await deps.storyblokService.applyTheme(
+    validated.storyId,
+    themeUuid,
+    validated.publish
+  );
+
+  return {
+    content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+  };
+}
+
+async function handleRemoveTheme(
+  args: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<Record<string, any>> {
+  const { deps } = ctx;
+  const validated = schemas.removeTheme.parse(args);
+  const result = await deps.storyblokService.removeTheme(
+    validated.storyId,
+    validated.publish
+  );
+  return {
+    content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+  };
+}
+
+// ── Registration ───────────────────────────────────────────────────
+
 /**
  * Helper to register a single tool using the high-level McpServer API.
  *
@@ -2492,5 +2635,37 @@ export function registerTools(
     "ensure_path",
     schemas.ensurePath.shape,
     (args, extra) => handleEnsurePath(args, ctx(extra))
+  );
+
+  // ── list_themes ──────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "list_themes",
+    schemas.listThemes.shape,
+    (args, extra) => handleListThemes(args, ctx(extra))
+  );
+
+  // ── get_theme ────────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "get_theme",
+    schemas.getTheme.shape,
+    (args, extra) => handleGetTheme(args, ctx(extra))
+  );
+
+  // ── apply_theme ──────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "apply_theme",
+    schemas.applyTheme.shape,
+    (args, extra) => handleApplyTheme(args, ctx(extra))
+  );
+
+  // ── remove_theme ─────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "remove_theme",
+    schemas.removeTheme.shape,
+    (args, extra) => handleRemoveTheme(args, ctx(extra))
   );
 }

@@ -340,7 +340,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-mcp/src/elicitation.ts](packages/storyblok-mcp/src/elicitation.ts) - tryElicit() helper + 5 pre-built elicitation form schemas
 - [packages/storyblok-mcp/src/progress.ts](packages/storyblok-mcp/src/progress.ts) - ProgressReporter class for step-by-step progress notifications
 - [packages/storyblok-mcp/src/ui/](packages/storyblok-mcp/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
-- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
+- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (26 operations across 4 resources)
 - [packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [packages/design-system/rollup.config.mjs](packages/design-system/rollup.config.mjs) - Design system Rollup build config (component bundling, token extraction)
 - [packages/design-system/.storybook/main.ts](packages/design-system/.storybook/main.ts) - Storybook configuration (addons, framework, stories)
@@ -361,13 +361,14 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([packages/storyblok-n8n/](packages/storyblok-n8n/)) that provides **22 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/storyblok-n8n/](packages/storyblok-n8n/)) that provides **26 operations across 4 resources** for automating Storyblok content workflows without an LLM intermediary:
 
 | Resource       | Operations | Description                                                                                  |
 | -------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | **AI Content** | 7          | generate, import, generateSection, planPage, analyzePatterns, generateRootField, generateSeo |
 | **Story**      | 8          | list, get, createPage, update, delete, replaceSection, updateSeo, search                     |
 | **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath      |
+| **Theme**      | 4          | list, get, apply, remove                                                                     |
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 

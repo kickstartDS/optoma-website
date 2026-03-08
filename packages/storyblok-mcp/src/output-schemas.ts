@@ -255,6 +255,24 @@ export const writeResultOutputSchema = z
   })
   .passthrough();
 
+// ── Theme management result schema ─────────────────────────────────
+
+/** Output schema for apply_theme and remove_theme */
+export const applyThemeOutputSchema = z
+  .object({
+    success: z.boolean().describe("Whether the theme operation succeeded"),
+    storyId: z.number().describe("The affected story's numeric ID"),
+    previousTheme: z
+      .string()
+      .nullable()
+      .describe("Previous theme UUID (null if none was set)"),
+    newTheme: z
+      .string()
+      .nullable()
+      .describe("New theme UUID (null when removing)"),
+  })
+  .passthrough();
+
 // ── Content audit result schema ────────────────────────────────────
 
 /** Output schema for content_audit */
@@ -317,6 +335,10 @@ export const OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
   update_story: writeResultOutputSchema,
   replace_section: writeResultOutputSchema,
   update_seo: writeResultOutputSchema,
+
+  // Theme management
+  apply_theme: applyThemeOutputSchema,
+  remove_theme: applyThemeOutputSchema,
 
   // NOTE: list_stories, get_story, list_components are excluded because
   // their handlers return raw Storyblok API shapes (arrays or passthrough
