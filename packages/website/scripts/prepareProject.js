@@ -1,4 +1,5 @@
 const fs = require("node:fs");
+const path = require("node:path");
 const PromiseThrottle = require("promise-throttle");
 const FormData = require("form-data");
 const { traverse } = require("object-traversal");
@@ -523,16 +524,43 @@ const prepare = async () => {
       globalReferenceUuid
     );
 
-    // Write preset configuration to disk
+    // Write output in v4 format (bare arrays) directly to the push path
+    const spaceId = process.env.NEXT_STORYBLOK_SPACE_ID;
+    const outputDir = path.join("cms", "merged", "components", spaceId);
+    fs.mkdirSync(outputDir, { recursive: true });
+
+    const componentsList = generatedComponents.components;
+
+    // Build groups.json from component_group_name/uuid references
+    const groupMap = new Map();
+    for (const comp of componentsList) {
+      if (comp.component_group_uuid && comp.component_group_name) {
+        groupMap.set(comp.component_group_uuid, {
+          name: comp.component_group_name,
+          id: 0,
+          uuid: comp.component_group_uuid,
+          parent_id: null,
+          parent_uuid: null,
+        });
+      }
+    }
+
+    // Write components as bare array (v4 format)
     fs.writeFileSync(
-      "cms/presets.123456.json",
-      JSON.stringify({ presets: [...Object.values(presets)] }, null, 2)
+      path.join(outputDir, "components.json"),
+      JSON.stringify(componentsList, null, 2)
     );
 
-    // Write updated component configuration to disk
+    // Write groups as bare array (v4 format)
     fs.writeFileSync(
-      "cms/components.123456.json",
-      JSON.stringify(generatedComponents, null, 2)
+      path.join(outputDir, "groups.json"),
+      JSON.stringify([...groupMap.values()], null, 2)
+    );
+
+    // Write presets as bare array (v4 format)
+    fs.writeFileSync(
+      path.join(outputDir, "presets.json"),
+      JSON.stringify([...Object.values(presets)], null, 2)
     );
   } catch (error) {
     console.error(
