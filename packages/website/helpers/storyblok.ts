@@ -357,6 +357,39 @@ export async function fetchPageProps(
     fetchStory(slug, true, previewStoryblokApi),
     fetchStories({ content_type: "settings" }, false, previewStoryblokApi),
   ]);
+
+  // Resolve theme references to CSS strings
+  const settings = settingsData.stories[0]?.content;
+  const pageContent = pageData.story?.content;
+
+  // Resolve the global theme from settings
+  if (settings?.theme) {
+    try {
+      const themeStory = await fetchStory(
+        `settings/themes/${settings.theme}`,
+        false,
+        previewStoryblokApi
+      );
+      settings.themeCss = themeStory.data.story?.content?.css || "";
+    } catch {
+      // Theme story not found — ignore
+    }
+  }
+
+  // Resolve page-level theme override
+  if (pageContent?.theme) {
+    try {
+      const themeStory = await fetchStory(
+        `settings/themes/${pageContent.theme}`,
+        false,
+        previewStoryblokApi
+      );
+      pageContent.themeCss = themeStory.data.story?.content?.css || "";
+    } catch {
+      // Theme story not found — ignore
+    }
+  }
+
   return { pageData, settingsData };
 }
 

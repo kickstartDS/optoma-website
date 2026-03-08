@@ -25,8 +25,10 @@
     "patchedDependencies": {
       "@kickstartds/base@4.2.0": "patches/@kickstartds__base@4.2.0.patch",
       "@glidejs/glide@3.7.1": "patches/@glidejs__glide@3.7.1.patch",
+      "@kickstartds/jsonschema-utils@3.8.1": "patches/@kickstartds__jsonschema-utils@3.8.1.patch",
       "storybook@10.2.15": "patches/storybook@10.2.15.patch",
-      "storybook-addon-playroom": "patches/storybook-addon-playroom.patch"
+      "storybook-addon-playroom": "patches/storybook-addon-playroom.patch",
+      "@kickstartds/jsonschema2storyblok": "patches/@kickstartds__jsonschema2storyblok.patch"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

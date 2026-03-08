@@ -58,6 +58,12 @@
         }
       }
     },
+    "theme": {
+      "type": "string",
+      "format": "theme",
+      "title": "Theme",
+      "description": "Select a token theme for this page — overrides the global theme setting"
+    },
     "token": {
       "type": "string",
       "title": "Local CSS custom property overrides",

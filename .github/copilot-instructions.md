@@ -15,7 +15,7 @@ packages/
   storyblok-n8n/          — n8n community node for Storyblok workflows
   component-builder-mcp/  — MCP server (component-building instructions & templates)
   design-tokens-mcp/      — MCP server (design token querying, analysis, governance)
-  design-tokens-editor/   — Browser-based Design Token WYSIWYG editor (Vite SPA, Netlify)
+  design-tokens-editor/   — Browser-based Design Token WYSIWYG editor (Vite SPA + Express, Kamal/Docker)
   schema-layer-editor/    — Schema Layer Editor (Vite SPA)
 ```
 
@@ -351,6 +351,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/design-tokens-mcp/src/handlers.ts](packages/design-tokens-mcp/src/handlers.ts) - Token query/update dispatch handlers
 - [packages/design-tokens-mcp/src/parser.ts](packages/design-tokens-mcp/src/parser.ts) - CSS custom property parsing and analysis
 - [packages/design-tokens-editor/src/App.tsx](packages/design-tokens-editor/src/App.tsx) - Token editor main app component
+- [packages/design-tokens-editor/src/server/index.ts](packages/design-tokens-editor/src/server/index.ts) - Token editor Express backend (Storyblok Management API CRUD)
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
 - [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
 - [packages/website/pages/api/prompter/\_helpers.ts](packages/website/pages/api/prompter/_helpers.ts) - Shared helpers for Prompter API routes
@@ -415,16 +416,17 @@ src/components/{name}/
 
 ## Design Tokens Editor
 
-The design tokens editor ([packages/design-tokens-editor/](packages/design-tokens-editor/)) is a **browser-based visual token editor** (Vite SPA) for non-technical editors to modify design tokens with live preview.
+The design tokens editor ([packages/design-tokens-editor/](packages/design-tokens-editor/)) is a **browser-based visual token editor** (Vite SPA + Express backend) for non-technical editors to modify design tokens with live preview. Token themes are stored as `token-theme` content type stories in Storyblok under `settings/themes/`.
 
-- **Tech stack**: React 19, Vite, MUI v7, JSON Forms (schema-driven UI), tinycolor2
-- **Deployment**: Netlify (Functions + Blobs for serverless persistence) — stays on Netlify due to deep integration
+- **Tech stack**: React 19, Vite, MUI v7, JSON Forms (schema-driven UI), tinycolor2, Express backend
+- **Deployment**: Kamal/Docker (Express serves Vite SPA + API routes) — config at [config/deploy-design-tokens-editor.yml](config/deploy-design-tokens-editor.yml)
+- **Backend**: Express server manages `token-theme` stories via Storyblok Management API (CRUD at `/api/tokens/*`), auto-computes CSS from branding tokens on save
 - **Private**: `private: true` — not published to npm
 - **Dual entry points**: `index.html` (editor) + `preview.html` (preview-only)
 - **Design system integration**: Imports `@kickstartds/design-system` (workspace:\*) for live component rendering with modified tokens
 
 ```bash
-pnpm --filter design-tokens-editor dev   # Dev server on port 5173
+pnpm --filter design-tokens-editor dev   # Dev server on port 5173 (Vite proxies /api to Express)
 ```
 
 ## Component Builder MCP

@@ -160,7 +160,7 @@
 - [x] Align `design-tokens-mcp/Dockerfile` production stage (non-root user, ENTRYPOINT, healthcheck)
 - [x] Create `component-builder-mcp/Dockerfile` + `config/deploy-component-builder-mcp.yml`
 - [x] Create `schema-layer-editor/Dockerfile` + `config/deploy-schema-layer-editor.yml`
-- [x] Decide on design-tokens-editor deployment → keep on Netlify (deep Netlify Functions/Blobs dependency)
+- [x] ~~Decide on design-tokens-editor deployment → keep on Netlify (deep Netlify Functions/Blobs dependency)~~ Migrated to Storyblok + Kamal/Docker — Netlify deps removed, Express backend added, `token-theme` content type stores themes in Storyblok
 - [x] Move `db/` → `packages/umami-analytics/`, create `config/deploy-analytics.yml`
 - [x] Consolidate `.kamal/secrets` (analytics secrets added to root, removed per-package copies)
 - [x] Remove redundant `packages/storyblok-mcp/.kamal/secrets`

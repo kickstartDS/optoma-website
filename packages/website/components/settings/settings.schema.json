@@ -20,6 +20,12 @@
       "title": "Icon Sprite",
       "description": "Content of the icon sprite for this project"
     },
+    "theme": {
+      "type": "string",
+      "format": "theme",
+      "title": "Theme",
+      "description": "Select a token theme to apply globally — overrides default branding tokens"
+    },
     "token": {
       "type": "string",
       "title": "CSS custom property overrides",

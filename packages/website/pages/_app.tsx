@@ -67,7 +67,14 @@ export default function App({
   const headerProps = settings?.header ? unflatten(settings?.header) : {};
   const footerProps = settings?.footer ? unflatten(settings?.footer) : {};
   const storyProps = story?.content ? unflatten(story?.content) : {};
-  const token = storyProps?.token || settings?.token || "";
+
+  // Theme CSS: page-level theme overrides global theme
+  const themeCss = storyProps?.themeCss || settings?.themeCss || "";
+  // Manual token overrides layer on top of the selected theme
+  const tokenOverrides = storyProps?.token || settings?.token || "";
+  // Combined token string: theme CSS + manual overrides
+  const token = [themeCss, tokenOverrides].filter(Boolean).join("\n");
+
   const router = useRouter();
 
   const invertHeader = storyProps?.header?.inverted
