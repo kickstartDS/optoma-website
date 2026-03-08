@@ -135,10 +135,11 @@ Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
 ### CMS Sync Commands
 
 ```bash
-pnpm --filter website push-components        # Push cms/components.123456.json to Storyblok
-pnpm --filter website pull-content-schema    # Pull schema from Storyblok → types/
-pnpm --filter website create-storyblok-config # Regenerate CMS config from JSON schemas
-pnpm --filter website generate-content-types  # Pull + generate TypeScript types
+pnpm --filter website update-storyblok-config  # Full workflow: generate → rename → pull → merge → push
+pnpm --filter website push-components          # Push merged config from cms/merged/ to Storyblok
+pnpm --filter website pull-content-schema      # Pull schema from Storyblok → types/
+pnpm --filter website create-storyblok-config  # Regenerate CMS config from JSON schemas
+pnpm --filter website generate-content-types   # Pull + generate TypeScript types
 ```
 
 ### Build Pipeline
@@ -318,8 +319,9 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## Important Files
 
-- [packages/website/cms/components.123456.json](packages/website/cms/components.123456.json) - Storyblok component definitions
-- [packages/website/cms/presets.123456.json](packages/website/cms/presets.123456.json) - Component presets
+- [packages/website/cms/components.123456.json](packages/website/cms/components.123456.json) - Generated Storyblok component definitions (source, renamed to `.generated.json` during merge workflow)
+- [packages/website/cms/presets.123456.json](packages/website/cms/presets.123456.json) - Generated component presets (source, renamed to `.generated.json` during merge workflow)
+- [packages/website/scripts/mergeStoryblokConfig.ts](packages/website/scripts/mergeStoryblokConfig.ts) - Merge script: combines generated config with live config, preserving manual fields
 - [packages/website/helpers/storyblok.ts](packages/website/helpers/storyblok.ts) - Storyblok API utilities and story transformations
 - [packages/website/scripts/prepareProject.js](packages/website/scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
 - [config/deploy-storyblok-mcp.yml](config/deploy-storyblok-mcp.yml) - Kamal deployment config for the MCP server
@@ -514,10 +516,8 @@ Steps:
 2. Add to `components` map in [packages/website/components/index.tsx](packages/website/components/index.tsx)
 3. Update `packages/website/components/section/section.schema.json` to include new component in the `anyOf` clause of the `components` field
 4. Update `packages/website/package.json` to also include the new component schema in the `create-storyblok-config` script
-5. Run `pnpm --filter website create-storyblok-config` to update CMS schema
-6. Inside `packages/website/cms/components.123456.json` remove everything except the new component definition
-7. Run `pnpm --filter website push-components` to sync with Storyblok
-8. Run `pnpm --filter website generate-content-types` to update TypeScript types
+5. Run `pnpm --filter website update-storyblok-config` to generate, merge, and push the updated CMS schema
+6. Run `pnpm --filter website generate-content-types` to update TypeScript types
 
 Important:
 

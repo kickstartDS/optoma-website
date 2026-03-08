@@ -135,7 +135,8 @@ The `build` script runs the following steps in order:
 ## CMS Sync Commands
 
 ```bash
-pnpm --filter website push-components          # Push cms/components.123456.json to Storyblok
+pnpm --filter website update-storyblok-config  # Full workflow: generate → rename → pull → merge → push
+pnpm --filter website push-components          # Push merged config from cms/merged/ to Storyblok
 pnpm --filter website pull-content-schema      # Pull schema from Storyblok → types/
 pnpm --filter website create-storyblok-config  # Regenerate CMS config from JSON schemas
 pnpm --filter website generate-content-types   # Pull + generate TypeScript types
