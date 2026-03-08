@@ -567,38 +567,48 @@ For each component present in the generated config:
 2. If no live match exists → use generated component as-is (new component).
 3. If live match exists → start from **live component** as base, then apply generated deltas:
 
-| Property                                                 | Merge rule                                                                                       |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Schema fields present in both**                        | Replace with generated version (this is the point — apply schema layer changes)                  |
-| **Schema fields only in live**                           | **Preserve** (these are manually-added fields like `cta.inverted`, `hero.mobileTextBelow`, etc.) |
-| **Schema fields only in generated**                      | **Add** (new fields from schema layers, e.g. visibility-related changes)                         |
-| `component_group_uuid`                                   | Keep live value                                                                                  |
-| `component_group_name`                                   | Keep live value (or delete — CLI strips it anyway)                                               |
-| `component_group_whitelist` on blok fields               | Keep live values (never use generated UUIDs)                                                     |
-| Tab UUIDs (`tab-*` field keys)                           | Keep live tab UUIDs; map generated tab content to live tab positions                             |
-| `id`, `created_at`                                       | Keep live values (CLI strips `id` anyway, but useful for the diff report)                        |
-| `is_root`, `is_nestable`                                 | Use generated (structural, should match schema)                                                  |
-| Metadata (`description`, `image`, `preview_field`, etc.) | Keep live values                                                                                 |
-| `component_whitelist` on blok fields                     | Smart merge: start with live, add any new entries from generated                                 |
+| Property                                                 | Merge rule                                                                                  |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Schema fields present in both**                        | Replace with generated version (this is the point — apply schema layer changes)             |
+| **Schema fields only in live — manually added**          | **Preserve** (fields not in any schema layer, e.g. `cta.inverted`, `hero.mobileTextBelow`)  |
+| **Schema fields only in live — visibility-hidden**       | **Drop** (fields with `x-cms-hidden: true` in the visibility overlay; defaults handle them) |
+| **Schema fields only in generated**                      | **Add** (new fields from schema layers, e.g. visibility-related changes)                    |
+| `component_group_uuid`                                   | Keep live value                                                                             |
+| `component_group_name`                                   | Keep live value (or delete — CLI strips it anyway)                                          |
+| `component_group_whitelist` on blok fields               | Keep live values (never use generated UUIDs)                                                |
+| Tab UUIDs (`tab-*` field keys)                           | Keep live tab UUIDs; map generated tab content to live tab positions                        |
+| `id`, `created_at`                                       | Keep live values (CLI strips `id` anyway, but useful for the diff report)                   |
+| `is_root`, `is_nestable`                                 | Use generated (structural, should match schema)                                             |
+| Metadata (`description`, `image`, `preview_field`, etc.) | Keep live values                                                                            |
+| `component_whitelist` on blok fields                     | **Additive-only**: start with live, add any new entries from generated (see ADR)            |
+
+#### Visibility-aware field classification
+
+Fields present in live but absent from the generated config fall into two categories:
+
+1. **Manually-added fields** (e.g. `cta.inverted`, `hero.mobileTextBelow`) — not in any schema layer → **preserve**.
+2. **Visibility-hidden fields** (e.g. `hero.colorNeutral`, `hero.height`) — marked `x-cms-hidden: true` in the visibility overlay → **drop**. The `create-defaults` script produces defaults for all fields (including hidden ones), so components remain fully functional.
+
+The merge script consumes the visibility overlay files directly (e.g. `cms/visibility/*.schema.json`) as a third input. For each component, it loads the overlay and builds a set of hidden field names. A live-only field in that set is dropped; otherwise it's preserved.
+
+**Default:** If a field has no visibility annotation, it is treated as **not hidden** (preserved if live-only).
+
+**Layer name:** The visibility overlay directory name is configurable — it could be any layer name, not necessarily `visibility`.
 
 #### Tab UUID mapping
 
-This is the trickiest part. Tabs in Storyblok are schema fields with keys like `tab-649fe063-...`. The generated config creates new UUIDs for these, but live has existing ones.
+Tabs in Storyblok are schema fields with keys like `tab-649fe063-...`. The generated config creates new UUIDs for these, but live has existing ones.
 
-Strategy:
+Strategy: **position matching** (match tabs by ordinal position in the schema).
 
 1. Extract ordered list of tabs from both generated and live schemas.
-2. Match tabs by **label** (`display_name`).
+2. Match tabs by **position** (1st generated tab → 1st live tab, etc.).
 3. Replace generated tab UUIDs with live tab UUIDs.
-4. For new tabs that don't exist in live — use generated UUIDs (they'll be created fresh).
+4. For new tabs that don't exist in live (generated has more tabs) — use generated UUIDs (they'll be created fresh).
 
 #### Preset handling
 
-For the section/prompter ID collision bug (Appendix B):
-
-1. After merge, assign **unique** placeholder IDs to all components (ensure no collisions).
-2. Re-map preset `component_id` references to match the deduped IDs.
-3. Alternatively: write a separate presets file that **excludes** section-layout presets from prompter (filter by component name + preset name).
+Presets are merged normally — the section/prompter ID collision (Appendix B) will be fixed upstream and is not a concern after the next `create-storyblok-config` run. No special workaround is built for this.
 
 #### Output
 
@@ -626,12 +636,13 @@ node scripts/mergeStoryblokConfig.ts --source api
 
 #### Inputs
 
-| Input             | Source                                                              | Flag                                        |
-| ----------------- | ------------------------------------------------------------------- | ------------------------------------------- |
-| Generated config  | `cms/components.123456.json`                                        | `--generated` (default)                     |
-| Live config       | `types/components-schema.json` (pulled) or Storyblok Management API | `--source file` (default) or `--source api` |
-| Generated presets | `cms/presets.123456.json`                                           | `--generated-presets`                       |
-| Live presets      | `types/components-presets.json`                                     | `--live-presets`                            |
+| Input              | Source                                                              | Flag                                        |
+| ------------------ | ------------------------------------------------------------------- | ------------------------------------------- |
+| Generated config   | `cms/components.generated.json`                                     | `--generated` (default)                     |
+| Live config        | `types/components-schema.json` (pulled) or Storyblok Management API | `--source file` (default) or `--source api` |
+| Generated presets  | `cms/presets.generated.json`                                        | `--generated-presets`                       |
+| Live presets       | `types/components-presets.json`                                     | `--live-presets`                            |
+| Visibility overlay | `cms/visibility/` (or configurable layer directory)                 | `--visibility-path` (default: auto-detect)  |
 
 ### Phase 2: CLI v4 Config File
 
@@ -679,8 +690,11 @@ cd packages/website && pnpm add -D storyblok@^4.15.2
 // Single component push
 "push-component": "dotenvx run -f .env.local -- storyblok components push --path cms/merged/ --filter",
 
-// Full workflow (generate → merge → push)
-"update-storyblok-config": "npm run create-storyblok-config && npm run merge-storyblok-config && npm run push-components",
+// Full workflow (generate → rename → merge → push)
+"update-storyblok-config": "npm run create-storyblok-config && npm run rename-generated-config && npm run merge-storyblok-config && npm run push-components",
+
+// Rename step (generated file uses placeholder space ID)
+"rename-generated-config": "mv cms/components.123456.json cms/components.generated.json && mv cms/presets.123456.json cms/presets.generated.json",
 
 // Merge step
 "merge-storyblok-config": "npx tsx scripts/mergeStoryblokConfig.ts",
@@ -759,58 +773,67 @@ Once the merge workflow is validated, wire up the visibility layer (from [docs/s
    ```
 
 3. The merge script handles visibility fields naturally:
-   - New `x-cms-hidden`-derived field configs from the generated file are **added** (they're "generated-only" fields)
-   - Existing live fields are **preserved**
+   - Fields marked `x-cms-hidden: true` in the visibility overlay are **dropped** from the generated config — they won't appear in the merged output
+   - The `create-defaults` script ensures hidden fields still get default values at runtime, so components remain fully functional
+   - Manually-added live fields (not in any schema layer) are **preserved**
    - No manual intervention needed
 
-### Phase 5: Fix Preset Collision
+### ~~Phase 5: Fix Preset Collision~~ (dropped)
 
-Address the section/prompter preset bug (Appendix B):
-
-**Option A (in merge script):** During preset merging, filter by component name. If a preset name matches a well-known section layout preset (`DynamicLayout`, `TileLayout`, etc.), only assign it to `section`, not `prompter`.
-
-**Option B (upstream fix):** Fix `create-storyblok-config` generator to assign unique IDs. This requires a change in the `kickstartDS cms storyblok` CLI command — possibly out of scope for this repo.
-
-**Option C (skip presets):** Don't push presets at all. Live presets are already correct. The merge script can produce a merged presets file but mark it as optional, and the push script can omit it.
-
-**Recommended:** Option A (pragmatic, keeps everything self-contained) combined with Option C as fallback (if presets don't need updating, don't touch them).
+The section/prompter ID collision (Appendix B) will be **fixed upstream** in the `kickstartDS cms storyblok` generator. After the next `create-storyblok-config` run, the collision will no longer exist. No workaround is built in this repo.
 
 ### Files to Create / Modify
 
 | File                                               | Action                | Purpose                                                  |
 | -------------------------------------------------- | --------------------- | -------------------------------------------------------- |
-| `packages/website/scripts/mergeStoryblokConfig.ts` | **Create**            | Core merge script                                        |
+| `packages/website/scripts/mergeStoryblokConfig.ts` | **Create**            | Core merge script (with visibility overlay input)        |
 | `packages/website/storyblok.config.ts`             | **Create**            | CLI v4 config file                                       |
 | `packages/website/package.json`                    | **Modify**            | Bump storyblok, add new scripts, update existing scripts |
 | `.gitignore`                                       | **Modify**            | Add `.storyblok/` directory, maybe `cms/merged/`         |
 | `packages/website/cms/merged/`                     | **Created by script** | Output directory for merged config                       |
+| `docs/adr-whitelist-merge-policy.md`               | **Create**            | ADR documenting additive-only whitelist merge policy     |
 
 ### Dependencies & Sequencing
 
 ```
-Phase 1 (merge script) + Phase 2 (CLI v4 config)
-  ↓ both needed before pushing
-Phase 3 (workflow)
-  ↓ depends on Phase 1 + 2
-Phase 4 (visibility layer)
-  ↓ depends on Phase 3 (workflow must be validated first)
-Phase 5 (preset fix)
-  ↓ can happen anytime after Phase 1
+Phase 2 (CLI v4 upgrade) — prerequisite for everything
+  ↓
+Phase 1 (merge script) — depends on v4 being available
+  ↓
+Phase 3 (workflow) — depends on Phase 1 + 2
+  ↓
+Phase 4 (visibility layer) — depends on Phase 3 (workflow must be validated first)
 ```
 
-### Open Questions
+Phase 5 (preset collision fix) is **dropped** — fixed upstream.
 
-1. **Does `storyblok components push` accept a monolithic JSON?** Or does it require the v4 directory structure with separate files? Determines merge script output format.
+### Resolved Questions
 
-2. **Auth compatibility:** Does v4 still support `.netrc`? Or must we switch to `storyblok login --token`?
+1. **Does `storyblok components push` accept a monolithic JSON?** — **Test as we go.** Will verify during Phase 2 (CLI v4 upgrade).
 
-3. **`dotenvx` + config file:** The config file runs in Node and uses `process.env`. But `dotenvx` loads env vars via the npm script wrapper. We need to confirm env vars are available when the config file is loaded by the CLI. If not, we may need to add a dotenv import in the config file.
+2. **Auth compatibility:** Does v4 still support `.netrc`? — **Test as we go.** Will verify during Phase 2.
 
-4. **Upstream ID fix:** Should we fix the section/prompter ID collision in the `kickstartDS cms storyblok` generator? This is in a separate package (`@kickstartds/kickstartds`) — possibly out of scope.
+3. **`dotenvx` + config file:** Are env vars available when the config file is loaded? — **Test as we go.** Will verify during Phase 2.
 
-5. **Tab UUID matching:** Should we match tabs by position or by label? Position is simpler but fragile if tabs are reordered. Label-based matching requires `display_name` to be stable.
+4. **Upstream ID fix:** Section/prompter ID collision. — **Fixed out of stream.** Not our responsibility; will be resolved in the upstream `kickstartDS cms storyblok` generator.
 
-6. **`create-storyblok-config` output format:** Currently outputs `components.123456.json` with `123456` as a literal placeholder. Should the merge script expect this exact filename, or should we make it configurable?
+5. **Tab UUID matching:** Position or label? — **Position matching.** Simpler implementation; start here and revisit if tabs are reordered in practice.
+
+6. **`create-storyblok-config` output format:** — **Configurable**, default to `components.generated.json`. Implemented as a simple rename step after `create-storyblok-config` runs (no upstream change).
+
+### Additional Resolved Questions (from follow-up review)
+
+7. **Visibility-hidden fields vs manually-added fields:** How to distinguish live-only fields that were visibility-dropped from those manually added? — **Use `x-cms-hidden` directly** from the visibility overlay files. Default to "not hidden" if annotation is absent. The merge script consumes visibility overlay files as a third input.
+
+8. **Visibility layer name:** Is "visibility" a fixed directory name? — **No, configurable.** Could be any layer name.
+
+9. **`component_whitelist` merge policy:** Should entries ever be removed? — **No, additive-only.** Live entries are always preserved; generated entries are added. This policy should be documented in an ADR.
+
+10. **Preset collision workaround:** Build a workaround or skip? — **Neither.** Merge presets normally; the collision is fixed upstream.
+
+11. **CLI v4 upgrade:** Prerequisite or optional? — **Prerequisite.** Must be done before Phase 1 (merge script).
+
+12. **Output filename:** Upstream change or rename step? — **Simple rename step** (`mv components.123456.json components.generated.json`) after `create-storyblok-config` runs. No upstream change.
 
 ---
 
@@ -819,16 +842,17 @@ Phase 5 (preset fix)
 ### Commands
 
 ```bash
-# Full workflow: generate → merge → push
+# Full workflow: generate → rename → merge → push
 pnpm --filter website update-storyblok-config
 
 # Individual steps:
 pnpm --filter website create-storyblok-config       # 1. Generate from schemas
-pnpm --filter website pull-content-schema            # 2. Pull live state
-pnpm --filter website merge-storyblok-config         # 3. Merge generated → live
-pnpm --filter website push-components-dry-run        # 4. Preview changes
-pnpm --filter website push-components                # 5. Push for real
-pnpm --filter website generate-content-types         # 6. Regenerate TypeScript types
+pnpm --filter website rename-generated-config        # 2. Rename to components.generated.json
+pnpm --filter website pull-content-schema            # 3. Pull live state
+pnpm --filter website merge-storyblok-config         # 4. Merge generated → live
+pnpm --filter website push-components-dry-run        # 5. Preview changes
+pnpm --filter website push-components                # 6. Push for real
+pnpm --filter website generate-content-types         # 7. Regenerate TypeScript types
 
 # Single-component variant:
 pnpm --filter website merge-storyblok-config -- --component section
@@ -837,13 +861,13 @@ pnpm --filter website push-component -- "section"
 
 ### File Locations
 
-| File                                            | Purpose                                                |
-| ----------------------------------------------- | ------------------------------------------------------ |
-| `packages/website/cms/components.123456.json`   | Generated component config (from schema layers)        |
-| `packages/website/types/components-schema.json` | Live config pulled from Storyblok                      |
-| `packages/website/cms/presets.123456.json`      | Generated presets (105 in live)                        |
-| `packages/website/cms/merged/`                  | Merged output — safe to push (created by merge script) |
-| `packages/website/cms/merge-report.json`        | Diff report from last merge                            |
-| `packages/website/cms/language/`                | Language layer schemas                                 |
-| `packages/website/cms/visibility/`              | Visibility layer schemas (not yet active)              |
-| `packages/website/storyblok.config.ts`          | CLI v4 config file                                     |
+| File                                             | Purpose                                                            |
+| ------------------------------------------------ | ------------------------------------------------------------------ |
+| `packages/website/cms/components.generated.json` | Generated component config (renamed from `components.123456.json`) |
+| `packages/website/types/components-schema.json`  | Live config pulled from Storyblok                                  |
+| `packages/website/cms/presets.generated.json`    | Generated presets (renamed from `presets.123456.json`)             |
+| `packages/website/cms/merged/`                   | Merged output — safe to push (created by merge script)             |
+| `packages/website/cms/merge-report.json`         | Diff report from last merge                                        |
+| `packages/website/cms/language/`                 | Language layer schemas                                             |
+| `packages/website/cms/visibility/`               | Visibility layer schemas (not yet active)                          |
+| `packages/website/storyblok.config.ts`           | CLI v4 config file                                                 |
