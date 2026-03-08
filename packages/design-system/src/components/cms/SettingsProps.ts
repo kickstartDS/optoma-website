@@ -14,7 +14,7 @@ import type {SeoProps} from "../seo/SeoProps";
  */
 export type IconSprite = string;
 /**
- * CSS custom property overrides to be included in the global styles
+ * CSS custom property overrides to be included in the global styles — layers on top of the selected theme
  */
 export type CSSCustomPropertyOverrides = string;
 /**

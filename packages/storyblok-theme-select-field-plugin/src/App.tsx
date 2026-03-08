@@ -15,8 +15,8 @@ export function App() {
   return (
     <ThemeSelect
       value={plugin.data.content as string | undefined}
-      token={plugin.data.token}
-      spaceId={plugin.data.spaceId}
+      token={plugin.data.token ?? ""}
+      spaceId={plugin.data.spaceId ?? null}
       onChange={(slug) => plugin.actions.setContent(slug ?? "")}
     />
   );

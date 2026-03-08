@@ -9,6 +9,8 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "jsx": "react-jsx",
+    "types": [],
+    "skipLibCheck": true,
     "outDir": "dist",
     "target": "ES2020",
     "esModuleInterop": true,

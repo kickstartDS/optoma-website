@@ -136,6 +136,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.7.0(vite@7.3.1(@types/node@20.4.5)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      ajv:
+        specifier: ^8.12.0
+        version: 8.18.0
       c15t:
         specifier: ^1.5.0
         version: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
@@ -408,28 +411,28 @@ importers:
     dependencies:
       '@kickstartds/base':
         specifier: ^4.1.0
-        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/blog':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/content':
         specifier: ^4.1.1
-        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/core':
         specifier: ^4.1.0
-        version: 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
+        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
       '@kickstartds/design-system':
         specifier: workspace:*
-        version: file:packages/design-system(d841e5996f87397f858a6ca059a6f642)
+        version: file:packages/design-system(f5eb3cb76b3928e30298194fd33127ac)
       '@kickstartds/form':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/storyblok-services':
         specifier: workspace:*
         version: file:packages/storyblok-services(@noble/hashes@1.8.0)(ws@8.19.0)(zod@3.25.76)
       '@modelcontextprotocol/ext-apps':
         specifier: ^1.0.0
-        version: 1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(zod@3.25.76)
+        version: 1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(zod@3.25.76)
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.27.1(zod@3.25.76)
@@ -443,11 +446,11 @@ importers:
         specifier: ^6.18.0
         version: 6.25.0(ws@8.19.0)(zod@3.25.76)
       react:
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: ^19.2.1
+        version: 19.2.1
       react-dom:
-        specifier: 18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^19.2.1
+        version: 19.2.1(react@19.2.1)
       storyblok-js-client:
         specifier: ^7.2.3
         version: 7.2.3
@@ -468,11 +471,11 @@ importers:
         specifier: ^20.0.0
         version: 20.4.5
       '@types/react':
-        specifier: ^18.2.0
-        version: 18.2.17
+        specifier: ^19.2.7
+        version: 19.2.14
       '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.2.7
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
       '@types/turndown':
         specifier: ^5.0.6
         version: 5.0.6
@@ -604,28 +607,28 @@ importers:
         version: 1.52.0
       '@kickstartds/base':
         specifier: ^4.1.0
-        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/blog':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/content':
         specifier: ^4.1.1
-        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/core':
         specifier: ^4.1.0
-        version: 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
+        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
       '@kickstartds/design-system':
         specifier: workspace:*
-        version: file:packages/design-system(623bb45ddbaf427997ef382f762876dd)
+        version: file:packages/design-system(2512abd9f82435a5d9cd57aa1b444a28)
       '@kickstartds/form':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       '@kickstartds/storyblok-services':
         specifier: workspace:*
         version: file:packages/storyblok-services(ws@8.19.0)(zod@4.3.6)
       '@storyblok/react':
         specifier: ^3.0.9
-        version: 3.0.15(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 3.0.15(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@unpic/pixels':
         specifier: ^1.2.2
         version: 1.3.0
@@ -634,13 +637,13 @@ importers:
         version: 0.1.2
       '@unpic/react':
         specifier: ^0.1.14
-        version: 0.1.15(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 0.1.15(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       blurhash:
         specifier: ^2.0.5
         version: 2.0.5
       c15t:
         specifier: ^1.5.0
-        version: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@18.2.17)(crossws@0.3.5)(react@18.2.0)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@18.2.0))(ws@8.19.0)
+        version: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
       cors:
         specifier: ^2.8.5
         version: 2.8.6
@@ -655,7 +658,7 @@ importers:
         version: 5.3.2
       next-sitemap:
         specifier: ^4.2.3
-        version: 4.2.3(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3))
+        version: 4.2.3(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3))
       openai:
         specifier: ^6.18.0
         version: 6.25.0(ws@8.19.0)(zod@4.3.6)
@@ -663,17 +666,17 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       react:
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: ^19.2.1
+        version: 19.2.1
       react-dom:
-        specifier: 18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^19.2.1
+        version: 19.2.1(react@19.2.1)
       react-schemaorg:
         specifier: ^2.0.0
-        version: 2.0.1(react@18.2.0)(schema-dts@1.1.5)(typescript@5.1.6)
+        version: 2.0.1(react@19.2.1)(schema-dts@1.1.5)(typescript@5.1.6)
       react-transition-group:
         specifier: ^4.4.5
-        version: 4.4.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.4.5(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       schema-dts:
         specifier: ^1.1.5
         version: 1.1.5
@@ -685,7 +688,7 @@ importers:
         version: 6.11.0
       storyblok-rich-text-react-renderer:
         specifier: ^2.9.0
-        version: 2.9.2(react@18.2.0)
+        version: 2.9.2(react@19.2.1)
       turndown:
         specifier: ^7.2.2
         version: 7.2.2
@@ -704,13 +707,13 @@ importers:
         version: 1.0.5
       '@kickstartds/jsonschema-utils':
         specifier: ^3.8.1
-        version: 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
+        version: 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
       '@kickstartds/jsonschema2storyblok':
         specifier: ^1.6.9
-        version: 1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(519e4a62ad60c718f6988c7925059674)
+        version: 1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(fd9f4f0a4635d33879a55ad3a947b972)
       '@kickstartds/jsonschema2types':
         specifier: ^1.2.7
-        version: 1.2.7(519e4a62ad60c718f6988c7925059674)
+        version: 1.2.7(fd9f4f0a4635d33879a55ad3a947b972)
       '@kickstartds/style-dictionary':
         specifier: ^4.0.2
         version: 4.0.4(style-dictionary@3.9.2)
@@ -730,14 +733,14 @@ importers:
         specifier: 20.4.5
         version: 20.4.5
       '@types/react':
-        specifier: 18.2.17
-        version: 18.2.17
+        specifier: ^19.2.7
+        version: 19.2.14
       '@types/react-dom':
-        specifier: 18.2.7
-        version: 18.2.7
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
       '@types/react-transition-group':
         specifier: ^4.4.12
-        version: 4.4.12(@types/react@18.2.17)
+        version: 4.4.12(@types/react@19.2.14)
       '@types/turndown':
         specifier: ^5.0.6
         version: 5.0.6
@@ -779,13 +782,13 @@ importers:
         version: 5.0.1
       kickstartds:
         specifier: 3.5.0--canary.62.324.0
-        version: 3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2stackbit@1.7.8(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2staticcms@2.9.39(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2storyblok@1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2types@1.2.7(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2uniform@1.4.26(519e4a62ad60c718f6988c7925059674))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0)
+        version: 3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2stackbit@1.7.8(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2staticcms@2.9.39(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2storyblok@1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2types@1.2.7(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2uniform@1.4.26(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0)
       local-ssl-proxy:
         specifier: ^2.0.5
         version: 2.0.5
       next:
         specifier: 13.5.6
-        version: 13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)
+        version: 13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -13974,25 +13977,12 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/appboundary@3.2.16(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/center': 3.2.15(react@18.2.0)
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/center@3.2.15(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/center@3.2.15(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/column-drop@3.4.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
@@ -14001,12 +13991,6 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/column-drop@3.4.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/columns@3.3.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
@@ -14014,24 +13998,12 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/columns@3.3.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/cover@3.5.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/cover@3.5.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/css@2.14.1': {}
 
@@ -14041,23 +14013,12 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/frame@3.2.14(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/grid@4.4.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/grid@4.4.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/inline-cluster@3.4.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
@@ -14066,24 +14027,12 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/inline-cluster@3.4.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/inline@4.4.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/inline@4.4.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/masonry-grid@4.3.6(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
@@ -14094,26 +14043,12 @@ snapshots:
       '@bedrock-layout/use-resize-observer': 2.0.18(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/masonry-grid@4.3.6(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/grid': 4.4.4(react@18.2.0)
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      '@bedrock-layout/use-resize-observer': 2.0.18(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/padbox@3.2.14(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/padbox@3.2.14(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/primitives@3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
@@ -14141,32 +14076,6 @@ snapshots:
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
-  '@bedrock-layout/primitives@3.0.47(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/appboundary': 3.2.16(react@18.2.0)
-      '@bedrock-layout/center': 3.2.15(react@18.2.0)
-      '@bedrock-layout/column-drop': 3.4.4(react@18.2.0)
-      '@bedrock-layout/columns': 3.3.4(react@18.2.0)
-      '@bedrock-layout/cover': 3.5.4(react@18.2.0)
-      '@bedrock-layout/frame': 3.2.14(react@18.2.0)
-      '@bedrock-layout/grid': 4.4.4(react@18.2.0)
-      '@bedrock-layout/inline': 4.4.4(react@18.2.0)
-      '@bedrock-layout/inline-cluster': 3.4.4(react@18.2.0)
-      '@bedrock-layout/masonry-grid': 4.3.6(react@18.2.0)
-      '@bedrock-layout/padbox': 3.2.14(react@18.2.0)
-      '@bedrock-layout/reel': 2.2.4(react@18.2.0)
-      '@bedrock-layout/register-resize-callback': 2.0.15
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/split': 3.2.4(react@18.2.0)
-      '@bedrock-layout/stack': 3.3.4(react@18.2.0)
-      '@bedrock-layout/use-container-query': 2.0.18(react@18.2.0)
-      '@bedrock-layout/use-forwarded-ref': 2.0.17(react@18.2.0)
-      '@bedrock-layout/use-resize-observer': 2.0.18(react@18.2.0)
-      '@bedrock-layout/use-stateful-ref': 2.0.17(react@18.2.0)
-      react: 18.2.0
-    transitivePeerDependencies:
-      - '@bedrock-layout/css'
-
   '@bedrock-layout/reel@2.2.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
@@ -14174,17 +14083,7 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/reel@2.2.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/register-resize-callback@2.0.15': {}
-
-  '@bedrock-layout/spacing-constants@3.3.10(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
 
   '@bedrock-layout/spacing-constants@3.3.10(react@19.2.1)':
     dependencies:
@@ -14197,12 +14096,6 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/split@3.2.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/stack@3.3.4(@bedrock-layout/css@2.14.1)(react@19.2.1)':
     dependencies:
       '@bedrock-layout/css': 2.14.1
@@ -14210,25 +14103,9 @@ snapshots:
       '@bedrock-layout/type-utils': 0.1.14(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/stack@3.3.4(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@bedrock-layout/type-utils': 0.1.14(react@18.2.0)
-      react: 18.2.0
-
-  '@bedrock-layout/type-utils@0.1.14(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
-
   '@bedrock-layout/type-utils@0.1.14(react@19.2.1)':
     dependencies:
       react: 19.2.1
-
-  '@bedrock-layout/use-container-query@2.0.18(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/use-forwarded-ref': 2.0.17(react@18.2.0)
-      '@bedrock-layout/use-resize-observer': 2.0.18(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/use-container-query@2.0.18(react@19.2.1)':
     dependencies:
@@ -14236,31 +14113,16 @@ snapshots:
       '@bedrock-layout/use-resize-observer': 2.0.18(react@19.2.1)
       react: 19.2.1
 
-  '@bedrock-layout/use-forwarded-ref@2.0.17(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/use-stateful-ref': 2.0.17(react@18.2.0)
-      react: 18.2.0
-
   '@bedrock-layout/use-forwarded-ref@2.0.17(react@19.2.1)':
     dependencies:
       '@bedrock-layout/use-stateful-ref': 2.0.17(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/use-resize-observer@2.0.18(react@18.2.0)':
-    dependencies:
-      '@bedrock-layout/register-resize-callback': 2.0.15
-      '@bedrock-layout/use-stateful-ref': 2.0.17(react@18.2.0)
-      react: 18.2.0
 
   '@bedrock-layout/use-resize-observer@2.0.18(react@19.2.1)':
     dependencies:
       '@bedrock-layout/register-resize-callback': 2.0.15
       '@bedrock-layout/use-stateful-ref': 2.0.17(react@19.2.1)
       react: 19.2.1
-
-  '@bedrock-layout/use-stateful-ref@2.0.17(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
 
   '@bedrock-layout/use-stateful-ref@2.0.17(react@19.2.1)':
     dependencies:
@@ -14781,10 +14643,6 @@ snapshots:
       - supports-color
 
   '@emotion/unitless@0.10.0': {}
-
-  '@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
 
   '@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@19.2.1)':
     dependencies:
@@ -15957,14 +15815,14 @@ snapshots:
       '@jsonjoy.com/codegen': 17.67.0(tslib@2.8.1)
       tslib: 2.8.1
 
-  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)':
+  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
       classnames: 2.5.1
-      markdown-to-jsx: 7.7.17(react@18.2.0)
+      markdown-to-jsx: 7.7.17(react@19.2.1)
       photoswipe: 5.4.4
-      react: 18.2.0
+      react: 19.2.1
 
   '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1)':
     dependencies:
@@ -15984,14 +15842,14 @@ snapshots:
       photoswipe: 5.4.4
       react: 19.2.1
 
-  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)':
+  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
       classnames: 2.5.1
       date-fns: 2.30.0
-      react: 18.2.0
+      react: 19.2.1
 
   '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1)':
     dependencies:
@@ -16018,15 +15876,15 @@ snapshots:
       js-yaml: 4.1.1
       to-json-schema: 0.2.5
 
-  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)':
+  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@glidejs/glide': 3.7.1(patch_hash=5789e9e3d626fd9184f499fc7f258f95caae73d9ff519acd6028eee56a31bd97)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
       classnames: 2.5.1
       countup.js: 2.9.0
-      react: 18.2.0
+      react: 19.2.1
 
   '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1)':
     dependencies:
@@ -16048,7 +15906,7 @@ snapshots:
       countup.js: 2.9.0
       react: 19.2.1
 
-  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))':
+  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))':
     dependencies:
       '@babel/runtime': 7.28.6
       '@storybook/types': 7.6.24
@@ -16062,9 +15920,9 @@ snapshots:
       json-schema: 0.4.0
       lazysizes: 5.3.2
       pubsub-js: 1.9.5
-      react: 18.2.0
+      react: 19.2.1
       sass: 1.97.3
-      storybook-design-token: 3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)
+      storybook-design-token: 3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)
 
   '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35))':
     dependencies:
@@ -16102,6 +15960,26 @@ snapshots:
       sass: 1.97.3
       storybook-design-token: 5.0.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.27.3))
 
+  '@kickstartds/design-system@file:packages/design-system(2512abd9f82435a5d9cd57aa1b444a28)':
+    dependencies:
+      '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
+      '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      classnames: 2.5.1
+      markdown-to-jsx: 7.7.17(react@19.2.1)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+      tinycolor2: 1.6.0
+      traverse: 0.6.11
+    optionalDependencies:
+      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
+    transitivePeerDependencies:
+      - '@bedrock-layout/css'
+
   '@kickstartds/design-system@file:packages/design-system(416a266df8604c7c9eba6cf4276a65c4)':
     dependencies:
       '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
@@ -16122,53 +16000,33 @@ snapshots:
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
-  '@kickstartds/design-system@file:packages/design-system(623bb45ddbaf427997ef382f762876dd)':
+  '@kickstartds/design-system@file:packages/design-system(f5eb3cb76b3928e30298194fd33127ac)':
     dependencies:
-      '@bedrock-layout/primitives': 3.0.47(react@18.2.0)
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
+      '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
+      '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       classnames: 2.5.1
-      markdown-to-jsx: 7.7.17(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      markdown-to-jsx: 7.7.17(react@19.2.1)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
       tinycolor2: 1.6.0
       traverse: 0.6.11
     optionalDependencies:
-      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@18.2.17)(crossws@0.3.5)(react@18.2.0)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@18.2.0))(ws@8.19.0)
+      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
-  '@kickstartds/design-system@file:packages/design-system(d841e5996f87397f858a6ca059a6f642)':
-    dependencies:
-      '@bedrock-layout/primitives': 3.0.47(react@18.2.0)
-      '@bedrock-layout/spacing-constants': 3.3.10(react@18.2.0)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      classnames: 2.5.1
-      markdown-to-jsx: 7.7.17(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      tinycolor2: 1.6.0
-      traverse: 0.6.11
-    optionalDependencies:
-      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@18.2.17)(crossws@0.3.5)(react@18.2.0)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@18.2.0))(ws@8.19.0)
-    transitivePeerDependencies:
-      - '@bedrock-layout/css'
-
-  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)':
+  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
       classnames: 2.5.1
-      react: 18.2.0
+      react: 19.2.1
 
   '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(fcbaad98503d675021f708b03133ff35)))(react@19.2.1)':
     dependencies:
@@ -16202,23 +16060,6 @@ snapshots:
       mkdirp: 1.0.4
       prettier: 2.8.8
 
-  '@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)':
-    dependencies:
-      '@bcherny/json-schema-ref-parser': 10.0.5-fork
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/cambria': 1.0.5
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(react@18.2.0)
-      ajv: 8.18.0
-      change-case: 5.4.4
-      directed-graph-typed: 1.52.9
-      fast-glob: 3.3.3
-      import-meta-resolve: 3.0.0
-      json-schema-traverse: 1.0.0
-      jsonpointer: 5.0.1
-
   '@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(bc74d439195f3e62ebf4f1b4fd64f55f)':
     dependencies:
       '@bcherny/json-schema-ref-parser': 10.0.5-fork
@@ -16236,18 +16077,22 @@ snapshots:
       json-schema-traverse: 1.0.0
       jsonpointer: 5.0.1
 
-  '@kickstartds/jsonschema2stackbit@1.7.8(519e4a62ad60c718f6988c7925059674)':
+  '@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
+      '@bcherny/json-schema-ref-parser': 10.0.5-fork
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/cambria': 1.0.5
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(react@19.2.1)
       ajv: 8.18.0
-      object-traversal: 1.0.1
-      pluralize-esm: 9.0.5
-    transitivePeerDependencies:
-      - '@kickstartds/base'
-      - '@kickstartds/blog'
-      - '@kickstartds/content'
-      - '@kickstartds/core'
-      - '@kickstartds/form'
+      change-case: 5.4.4
+      directed-graph-typed: 1.52.9
+      fast-glob: 3.3.3
+      import-meta-resolve: 3.0.0
+      json-schema-traverse: 1.0.0
+      jsonpointer: 5.0.1
 
   '@kickstartds/jsonschema2stackbit@1.7.8(bc74d439195f3e62ebf4f1b4fd64f55f)':
     dependencies:
@@ -16262,12 +16107,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2staticcms@2.9.39(519e4a62ad60c718f6988c7925059674)':
+  '@kickstartds/jsonschema2stackbit@1.7.8(fd9f4f0a4635d33879a55ad3a947b972)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
+      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
       ajv: 8.18.0
       object-traversal: 1.0.1
-      pluralize: 8.0.0
+      pluralize-esm: 9.0.5
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16288,12 +16133,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2storyblok@1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(519e4a62ad60c718f6988c7925059674)':
+  '@kickstartds/jsonschema2staticcms@2.9.39(fd9f4f0a4635d33879a55ad3a947b972)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
+      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
       ajv: 8.18.0
       object-traversal: 1.0.1
-      uuid: 9.0.1
+      pluralize: 8.0.0
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16314,12 +16159,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2types@1.2.7(519e4a62ad60c718f6988c7925059674)':
+  '@kickstartds/jsonschema2storyblok@1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(fd9f4f0a4635d33879a55ad3a947b972)':
     dependencies:
-      '@kickstartds/json-schema-to-typescript': 13.1.20
-      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
+      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
       ajv: 8.18.0
       object-traversal: 1.0.1
+      uuid: 9.0.1
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16340,11 +16185,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2uniform@1.4.26(519e4a62ad60c718f6988c7925059674)':
+  '@kickstartds/jsonschema2types@1.2.7(fd9f4f0a4635d33879a55ad3a947b972)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
+      '@kickstartds/json-schema-to-typescript': 13.1.20
+      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
       ajv: 8.18.0
-      change-case: 5.4.4
+      object-traversal: 1.0.1
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16355,6 +16201,18 @@ snapshots:
   '@kickstartds/jsonschema2uniform@1.4.26(bc74d439195f3e62ebf4f1b4fd64f55f)':
     dependencies:
       '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(bc74d439195f3e62ebf4f1b4fd64f55f)
+      ajv: 8.18.0
+      change-case: 5.4.4
+    transitivePeerDependencies:
+      - '@kickstartds/base'
+      - '@kickstartds/blog'
+      - '@kickstartds/content'
+      - '@kickstartds/core'
+      - '@kickstartds/form'
+
+  '@kickstartds/jsonschema2uniform@1.4.26(fd9f4f0a4635d33879a55ad3a947b972)':
+    dependencies:
+      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
       ajv: 8.18.0
       change-case: 5.4.4
     transitivePeerDependencies:
@@ -16494,7 +16352,7 @@ snapshots:
 
   '@mixmark-io/domino@2.2.0': {}
 
-  '@modelcontextprotocol/ext-apps@1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(zod@3.25.76)':
+  '@modelcontextprotocol/ext-apps@1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(zod@3.25.76)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.27.1(zod@3.25.76)
       zod: 3.25.76
@@ -16516,8 +16374,8 @@ snapshots:
       '@rollup/rollup-linux-x64-gnu': 4.59.0
       '@rollup/rollup-win32-arm64-msvc': 4.59.0
       '@rollup/rollup-win32-x64-msvc': 4.59.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
 
   '@modelcontextprotocol/sdk@1.27.1(zod@3.25.76)':
     dependencies:
@@ -17742,11 +17600,11 @@ snapshots:
     dependencies:
       '@storyblok/region-helper': 1.3.1
 
-  '@storyblok/react@3.0.15(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@storyblok/react@3.0.15(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@storyblok/js': 3.5.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
 
   '@storyblok/region-helper@1.3.1': {}
 
@@ -17829,15 +17687,6 @@ snapshots:
       - '@tmcp/auth'
       - typescript
 
-  '@storybook/blocks@8.6.14(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      '@storybook/icons': 1.6.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      storybook: 10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      ts-dedent: 2.2.0
-    optionalDependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
   '@storybook/blocks@8.6.14(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
     dependencies:
       '@storybook/icons': 1.6.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -17875,10 +17724,6 @@ snapshots:
     dependencies:
       '@storybook/global': 5.0.0
 
-  '@storybook/components@8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      storybook: 10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-
   '@storybook/components@8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
     dependencies:
       storybook: 10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -17899,29 +17744,15 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/icons@1.6.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
   '@storybook/icons@1.6.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
 
-  '@storybook/icons@2.0.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
   '@storybook/icons@2.0.1(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
-
-  '@storybook/manager-api@8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      storybook: 10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   '@storybook/manager-api@8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
     dependencies:
@@ -17936,10 +17767,6 @@ snapshots:
     transitivePeerDependencies:
       - '@tmcp/auth'
       - typescript
-
-  '@storybook/preview-api@8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      storybook: 10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   '@storybook/preview-api@8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
     dependencies:
@@ -18019,15 +17846,6 @@ snapshots:
       - node-notifier
       - supports-color
       - ts-node
-
-  '@storybook/theming@7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@emotion/use-insertion-effect-with-fallbacks': 1.2.0(react@18.2.0)
-      '@storybook/client-logger': 7.6.23
-      '@storybook/global': 5.0.0
-      memoizerific: 1.11.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
 
   '@storybook/theming@7.6.23(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
@@ -18576,10 +18394,6 @@ snapshots:
     dependencies:
       '@types/react': 19.2.14
 
-  '@types/react-transition-group@4.4.12(@types/react@18.2.17)':
-    dependencies:
-      '@types/react': 18.2.17
-
   '@types/react-transition-group@4.4.12(@types/react@19.2.14)':
     dependencies:
       '@types/react': 19.2.14
@@ -18716,13 +18530,13 @@ snapshots:
     dependencies:
       blurhash: 2.0.5
 
-  '@unpic/react@0.1.15(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@unpic/react@0.1.15(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@unpic/core': 0.1.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
     optionalDependencies:
-      next: 13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)
+      next: 13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3)
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     optional: true
@@ -19718,13 +19532,13 @@ snapshots:
       pkg-types: 2.3.0
       rc9: 2.1.2
 
-  c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@18.2.17)(crossws@0.3.5)(react@18.2.0)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@18.2.0))(ws@8.19.0):
+  c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0):
     dependencies:
       '@c15t/backend': 1.8.0(@electric-sql/pglite@0.3.15)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(crossws@0.3.5)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(ws@8.19.0)
       '@c15t/translations': 1.8.0
       '@orpc/client': 1.8.1(@opentelemetry/api@1.9.0)
       '@orpc/server': 1.8.1(@opentelemetry/api@1.9.0)(crossws@0.3.5)(ws@8.19.0)
-      zustand: 5.0.11(@types/react@18.2.17)(react@18.2.0)(use-sync-external-store@1.6.0(react@18.2.0))
+      zustand: 5.0.11(@types/react@19.2.14)(react@19.2.1)(use-sync-external-store@1.6.0(react@19.2.1))
     transitivePeerDependencies:
       - '@aws-sdk/client-rds-data'
       - '@cloudflare/workers-types'
@@ -19765,55 +19579,6 @@ snapshots:
       - typeorm
       - use-sync-external-store
       - ws
-
-  c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@18.2.17)(crossws@0.3.5)(react@18.2.0)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@18.2.0))(ws@8.19.0):
-    dependencies:
-      '@c15t/backend': 1.8.0(@electric-sql/pglite@0.3.15)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(crossws@0.3.5)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(ws@8.19.0)
-      '@c15t/translations': 1.8.0
-      '@orpc/client': 1.8.1(@opentelemetry/api@1.9.0)
-      '@orpc/server': 1.8.1(@opentelemetry/api@1.9.0)(crossws@0.3.5)(ws@8.19.0)
-      zustand: 5.0.11(@types/react@18.2.17)(react@18.2.0)(use-sync-external-store@1.6.0(react@18.2.0))
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@electric-sql/pglite'
-      - '@libsql/client'
-      - '@libsql/client-wasm'
-      - '@neondatabase/serverless'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@opentelemetry/instrumentation'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/pg'
-      - '@types/react'
-      - '@types/sql.js'
-      - '@upstash/redis'
-      - '@vercel/postgres'
-      - '@xata.io/client'
-      - better-sqlite3
-      - bun-types
-      - convex
-      - crossws
-      - expo-sqlite
-      - gel
-      - immer
-      - knex
-      - mongodb
-      - mysql2
-      - pg
-      - postgres
-      - prisma
-      - react
-      - sql.js
-      - sqlite3
-      - supports-color
-      - typeorm
-      - use-sync-external-store
-      - ws
-    optional: true
 
   c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0):
     dependencies:
@@ -24112,19 +23877,19 @@ snapshots:
       - debug
       - supports-color
 
-  kickstartds@3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee)))(@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2stackbit@1.7.8(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2staticcms@2.9.39(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2storyblok@1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2types@1.2.7(519e4a62ad60c718f6988c7925059674))(@kickstartds/jsonschema2uniform@1.4.26(519e4a62ad60c718f6988c7925059674))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0):
+  kickstartds@3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee)))(@kickstartds/jsonschema-utils@3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2stackbit@1.7.8(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2staticcms@2.9.39(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2storyblok@1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2types@1.2.7(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/jsonschema2uniform@1.4.26(fd9f4f0a4635d33879a55ad3a947b972))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0):
     dependencies:
       '@apidevtools/json-schema-ref-parser': 9.1.2
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
       '@influxdata/influxdb-client': 1.35.0
       '@influxdata/influxdb-client-apis': 1.35.0(@influxdata/influxdb-client@1.35.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@18.2.0)(storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee))
-      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(519e4a62ad60c718f6988c7925059674)
-      '@kickstartds/jsonschema2stackbit': 1.7.8(519e4a62ad60c718f6988c7925059674)
-      '@kickstartds/jsonschema2staticcms': 2.9.39(519e4a62ad60c718f6988c7925059674)
-      '@kickstartds/jsonschema2storyblok': 1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(519e4a62ad60c718f6988c7925059674)
-      '@kickstartds/jsonschema2types': 1.2.7(519e4a62ad60c718f6988c7925059674)
-      '@kickstartds/jsonschema2uniform': 1.4.26(519e4a62ad60c718f6988c7925059674)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee))
+      '@kickstartds/jsonschema-utils': 3.8.1(patch_hash=638b83bea58ee1bb669a691bb94660d382c45a6d30132ce24a89da5ecf1906c5)(fd9f4f0a4635d33879a55ad3a947b972)
+      '@kickstartds/jsonschema2stackbit': 1.7.8(fd9f4f0a4635d33879a55ad3a947b972)
+      '@kickstartds/jsonschema2staticcms': 2.9.39(fd9f4f0a4635d33879a55ad3a947b972)
+      '@kickstartds/jsonschema2storyblok': 1.6.9(patch_hash=7e70a48b74a7ba6cc039802af15fabfc4e309c94ade6834478dd0d323ffaabf9)(fd9f4f0a4635d33879a55ad3a947b972)
+      '@kickstartds/jsonschema2types': 1.2.7(fd9f4f0a4635d33879a55ad3a947b972)
+      '@kickstartds/jsonschema2uniform': 1.4.26(fd9f4f0a4635d33879a55ad3a947b972)
       '@kickstartds/style-dictionary': 4.0.4(style-dictionary@3.9.2)
       ajv: 8.18.0
       byline: 5.0.0
@@ -24473,10 +24238,6 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  markdown-to-jsx@7.7.17(react@18.2.0):
-    optionalDependencies:
-      react: 18.2.0
-
   markdown-to-jsx@7.7.17(react@19.2.1):
     optionalDependencies:
       react: 19.2.1
@@ -24765,26 +24526,26 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.59.0
 
-  next-sitemap@4.2.3(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)):
+  next-sitemap@4.2.3(next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3)):
     dependencies:
       '@corex/deepmerge': 4.0.43
       '@next/env': 13.5.11
       fast-glob: 3.3.3
       minimist: 1.2.8
-      next: 13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3)
+      next: 13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3)
 
   next-tick@1.1.0: {}
 
-  next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.97.3):
+  next@13.5.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.97.3):
     dependencies:
       '@next/env': 13.5.6
       '@swc/helpers': 0.5.2
       busboy: 1.6.0
       caniuse-lite: 1.0.30001774
       postcss: 8.4.31
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      styled-jsx: 5.1.1(@babel/core@7.29.0)(babel-plugin-macros@3.1.0)(react@18.2.0)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+      styled-jsx: 5.1.1(@babel/core@7.29.0)(babel-plugin-macros@3.1.0)(react@19.2.1)
       watchpack: 2.4.0
     optionalDependencies:
       '@next/swc-darwin-arm64': 13.5.6
@@ -25983,28 +25744,15 @@ snapshots:
 
   react-refresh@0.18.0: {}
 
-  react-schemaorg@2.0.1(react@18.2.0)(schema-dts@1.1.5)(typescript@5.1.6):
+  react-schemaorg@2.0.1(react@19.2.1)(schema-dts@1.1.5)(typescript@5.1.6):
     dependencies:
-      react: 18.2.0
+      react: 19.2.1
       schema-dts: 1.1.5
       typescript: 5.1.6
-
-  react-storage-hooks@4.0.1(react@18.2.0):
-    dependencies:
-      react: 18.2.0
 
   react-storage-hooks@4.0.1(react@19.2.1):
     dependencies:
       react: 19.2.1
-
-  react-transition-group@4.4.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.28.6
-      dom-helpers: 5.2.1
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
 
   react-transition-group@4.4.5(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
     dependencies:
@@ -26015,22 +25763,11 @@ snapshots:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
 
-  react-use-clipboard@1.0.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      copy-to-clipboard: 3.3.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
   react-use-clipboard@1.0.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
     dependencies:
       copy-to-clipboard: 3.3.3
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
-
-  react-virtual@2.10.4(react@18.2.0):
-    dependencies:
-      '@reach/observe-rect': 1.2.0
-      react: 18.2.0
 
   react-virtual@2.10.4(react@19.2.1):
     dependencies:
@@ -26906,9 +26643,9 @@ snapshots:
 
   storyblok-js-client@7.2.4: {}
 
-  storyblok-rich-text-react-renderer@2.9.2(react@18.2.0):
+  storyblok-rich-text-react-renderer@2.9.2(react@19.2.1):
     dependencies:
-      react: 18.2.0
+      react: 19.2.1
 
   storyblok@4.16.0(@tiptap/pm@3.20.1)(@tiptap/suggestion@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@types/node@20.4.5)(emojibase@17.0.0)(happy-dom@13.10.1):
     dependencies:
@@ -26960,14 +26697,14 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  storybook-design-token@3.0.0-beta.3(7129c66401d62dd7bbae41d858fd7cee):
+  storybook-design-token@3.0.0-beta.3(b9616aff83d20f26c3313b0d560930ee):
     dependencies:
-      '@storybook/blocks': 8.6.14(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
-      '@storybook/components': 8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
+      '@storybook/blocks': 8.6.14(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/components': 8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/core-events': 7.6.24
-      '@storybook/manager-api': 8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
-      '@storybook/preview-api': 8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
-      '@storybook/theming': 7.6.23(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/manager-api': 8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/preview-api': 8.6.14(storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/theming': 7.6.23(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@storybook/types': 7.6.24
       glob: 9.3.5
       jsdom: 21.1.2
@@ -26976,13 +26713,13 @@ snapshots:
       postcss-scss: 4.0.9(postcss@8.5.6)
       prettier: 2.8.8
       raw-loader: 4.0.2(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.19.12))
-      react-storage-hooks: 4.0.1(react@18.2.0)
-      react-use-clipboard: 1.0.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-virtual: 2.10.4(react@18.2.0)
+      react-storage-hooks: 4.0.1(react@19.2.1)
+      react-use-clipboard: 1.0.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react-virtual: 2.10.4(react@19.2.1)
       vite: 4.5.14(@types/node@20.4.5)(sass@1.97.3)(terser@5.46.0)
     optionalDependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -27056,29 +26793,6 @@ snapshots:
       - supports-color
       - utf-8-validate
       - webpack
-
-  storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      '@storybook/global': 5.0.0
-      '@storybook/icons': 2.0.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@testing-library/jest-dom': 6.9.1
-      '@testing-library/user-event': 14.6.1(@testing-library/dom@9.3.4)
-      '@vitest/expect': 3.2.4
-      '@vitest/spy': 3.2.4
-      esbuild: 0.19.12
-      open: 10.2.0
-      recast: 0.23.11
-      semver: 7.7.4
-      use-sync-external-store: 1.6.0(react@18.2.0)
-      ws: 8.19.0
-    optionalDependencies:
-      prettier: 3.8.1
-    transitivePeerDependencies:
-      - '@testing-library/dom'
-      - bufferutil
-      - react
-      - react-dom
-      - utf-8-validate
 
   storybook@10.2.15(patch_hash=5a0a449a10733bb8b9b1e5a440854fffa31c95d428067fcad74043989fc0f701)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
     dependencies:
@@ -27277,10 +26991,10 @@ snapshots:
     dependencies:
       webpack: 5.105.3(@swc/core@1.15.18)(esbuild@0.27.3)
 
-  styled-jsx@5.1.1(@babel/core@7.29.0)(babel-plugin-macros@3.1.0)(react@18.2.0):
+  styled-jsx@5.1.1(@babel/core@7.29.0)(babel-plugin-macros@3.1.0)(react@19.2.1):
     dependencies:
       client-only: 0.0.1
-      react: 18.2.0
+      react: 19.2.1
     optionalDependencies:
       '@babel/core': 7.29.0
       babel-plugin-macros: 3.1.0
@@ -28092,10 +27806,6 @@ snapshots:
     dependencies:
       react: 19.2.1
 
-  use-sync-external-store@1.6.0(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-
   use-sync-external-store@1.6.0(react@19.2.1):
     dependencies:
       react: 19.2.1
@@ -28859,12 +28569,6 @@ snapshots:
   zod@3.25.76: {}
 
   zod@4.3.6: {}
-
-  zustand@5.0.11(@types/react@18.2.17)(react@18.2.0)(use-sync-external-store@1.6.0(react@18.2.0)):
-    optionalDependencies:
-      '@types/react': 18.2.17
-      react: 18.2.0
-      use-sync-external-store: 1.6.0(react@18.2.0)
 
   zustand@5.0.11(@types/react@19.2.14)(react@19.2.1)(use-sync-external-store@1.6.0(react@19.2.1)):
     optionalDependencies:

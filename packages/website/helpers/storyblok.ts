@@ -157,7 +157,7 @@ export function storyProcessing(
 
   function mapBlokEntries({ parent, key, value }: TraversalCallbackContext) {
     if (parent && parent.component && key && Array.isArray(value)) {
-      const componentSchema = componentsSchema.components.find((component) => {
+      const componentSchema = componentsSchema.find((component) => {
         return component.name === parent.component;
       });
 
@@ -196,7 +196,7 @@ export function storyProcessing(
       typeof value === "string" &&
       value !== ""
     ) {
-      const componentSchema = componentsSchema.components.find(
+      const componentSchema = componentsSchema.find(
         (component) => component.name === parent.component
       );
       if (

@@ -51,7 +51,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run branding-tokens && rollup -c",
+    "build": "rm -rf dist && pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run branding-tokens && rollup -c && tsc --emitDeclarationOnly --noCheck -p tsconfig.build.json && node scripts/generateDtsBarrels.mjs",
     "prepack": "pnpm run build",
     "build-storybook": "pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run search && storybook build",
     "build-tokens-ds-agency": "kickstartDS tokens compile",
@@ -126,6 +126,7 @@
     "deepmerge": "^4.3.1",
     "fast-glob": "^3.3.1",
     "fs-extra": "^11.1.1",
+    "ajv": "^8.12.0",
     "happy-dom": "^13.3.1",
     "jest-image-snapshot": "^6.4.0",
     "kickstartds": "3.5.0--canary.62.324.0",

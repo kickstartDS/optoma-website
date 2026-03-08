@@ -34,7 +34,7 @@ export type ToggleInverted1 = boolean;
  */
 export type Logo1 = string;
 /**
- * CSS custom property overrides to be included in the global styles
+ * CSS custom property overrides to be included in the global styles — layers on top of the selected theme
  */
 export type LocalCSSCustomPropertyOverrides = string;
 /**

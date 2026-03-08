@@ -14,6 +14,7 @@ export const HeadlineProvider: FC<PropsWithChildren> = (props) => {
       ? slugify(props.text, { lower: true })
       : undefined;
     return (
+      // @ts-expect-error `content` is in the spread but TS can't see it through `any`
       <PrevHeadline {...props} level={nextLevel} id={headlineSlug} ref={ref} />
     );
   });
