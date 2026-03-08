@@ -46,6 +46,11 @@ next-env.d.ts
 # storyblok
 packages/website/types/components.*.json
 packages/website/tmp/*
+.storyblok/
+packages/website/cms/merged/
+packages/website/cms/components.generated.json
+packages/website/cms/presets.generated.json
+packages/website/cms/merge-report.json
 
 # kickstartDS
 *.dereffed.json
