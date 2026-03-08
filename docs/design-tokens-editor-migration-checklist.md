@@ -125,7 +125,21 @@ Extract reusable theme CRUD logic from the Express backend into `storyblok-servi
   - `getTheme(client, spaceId, slugOrUid)` — fetch a single theme story by slug or UUID
   - `applyTheme(client, spaceId, storyUid, themeUid, scope)` — set `theme` field on a page or settings story (`scope: "page" | "settings"`)
   - `previewThemeCSS(client, spaceId, themeUid)` — resolve theme UUID → return compiled CSS (for preview use)
-- [ ] Refactor `packages/design-tokens-editor/src/server/routes.ts` to use shared helpers (optional, keeps editor backend thin)
+- [ ] Refactor `packages/design-tokens-editor/src/server/storyblok.ts` to use shared helpers from `storyblok-services/src/themes.ts` (optional — reduces code duplication but requires careful delta handling)
+
+  **Why:** The editor's `storyblok.ts` (280 lines) duplicates `listThemes`, `getTheme`, `createTheme`, `updateTheme`, `deleteTheme` using raw `fetch()` against the Management API, while the shared `themes.ts` uses `storyblok-js-client`. Both do the same thing but in different ways.
+
+  **What to change:**
+
+  1. Add `@kickstartds/storyblok-services` as a dependency of `design-tokens-editor` (currently only has the design-system workspace dep)
+  2. In `storyblok.ts`, replace `listThemes()` and `getTheme()` with imports from `@kickstartds/storyblok-services` — instantiate a CDN client from the existing `StoryblokConfig` (oauthToken + spaceId)
+  3. Keep `createTheme()`, `updateTheme()`, and `deleteTheme()` in the editor — these are editor-specific (they write `tokens` JSON + `css` fields, auto-publish, ensure the `settings/themes/` folder) and have no shared equivalent
+  4. Update `routes.ts` imports — the route handlers themselves don't change, only the underlying functions get thinner
+  5. Remove the duplicated `StoryblokStory`, `StoryblokListResponse`, `StoryblokSingleResponse` interfaces that overlap with the shared types
+
+  **Risk:** Low. The editor's `listThemes` returns `string[]` (slugs only) while the shared version returns `ThemeSummary[]` (richer). The `GET /api/tokens/` route handler would need to map `ThemeSummary[] → string[]` to keep the frontend contract unchanged. Similarly, `getTheme` in the editor returns `string | null` (raw tokens JSON) while the shared version returns `ThemeDetail | null` — the route handler would extract `.tokens` from the result.
+
+  **Alternative:** Leave as-is. The editor backend is a standalone Express app with its own deployment, and the duplication is small (~120 lines of fetch calls). Refactoring adds a build-time dependency that could complicate the editor's Docker build.
 
 ### MI-2: Storyblok MCP Server — Theme Tools
 
@@ -146,7 +160,31 @@ Add a `Theme` resource to the n8n node alongside existing `AI Content`, `Story`,
 - [x] Create `packages/storyblok-n8n/nodes/StoryblokKickstartDs/descriptions/ThemeDescription.ts`
 - [x] Add operations: `list`, `get`, `apply`, `remove`
 - [x] Wire operations to shared helpers from `storyblok-services/src/themes.ts`
-- [ ] Add workflow template: "Apply theme to all pages matching a slug pattern"
+- [x] Add workflow template `template-10-bulk-theme-apply.json`: "Apply theme to all pages matching a slug pattern"
+
+  **Purpose:** Demonstrate a common theming automation: apply a single theme to all pages under a slug prefix (e.g. all pages under `en/services/` get the "corporate" theme), or to all pages in the space.
+
+  **Workflow structure** (follows existing template patterns like `template-7-seo-fix-pipeline.json`):
+
+  1. **Manual Trigger** — starts the workflow
+  2. **Set Variables** — configure `themeSlug` (e.g. `"corporate"`), `slugPrefix` (e.g. `"en/services/"` or `""` for all), and `publish` (boolean)
+  3. **Theme → List** — call `list` to verify the theme exists, extract its UUID
+  4. **IF** — check theme was found, abort if not
+  5. **Story → List** — call `list` with `startsWith` set to the slug prefix, `excludeContent: true`, `perPage: 100`
+  6. **Split In Batches** — process pages in batches to stay within Storyblok rate limits
+  7. **Theme → Apply** — call `apply` with each story's ID + the theme UUID
+  8. **Wait** — 200ms pause between batches for rate limiting
+  9. **Aggregate** — collect results (success count, failures)
+
+  **Parameters to expose:**
+  | Variable | Type | Default | Description |
+  | ------------ | ------- | ----------- | ------------------------------------------------ |
+  | `themeSlug` | String | `""` | Slug of the theme to apply |
+  | `slugPrefix` | String | `""` | Only apply to pages whose slug starts with this |
+  | `publish` | Boolean | `false` | Whether to publish pages after applying the theme |
+
+  **File location:** `packages/storyblok-n8n/workflows/template-10-bulk-theme-apply.json`
+  **README update:** Add entry to the workflow templates table in `packages/storyblok-n8n/README.md`
 
 ### MI-4: Documentation & PRD Alignment
 

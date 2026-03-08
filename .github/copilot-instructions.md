@@ -372,7 +372,7 @@ The project includes an n8n community node package ([packages/storyblok-n8n/](pa
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 
-Nine workflow templates are included in `packages/storyblok-n8n/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
+Ten workflow templates are included in `packages/storyblok-n8n/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, broken asset detection, and bulk theme application.
 
 ## Design System
 

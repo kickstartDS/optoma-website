@@ -563,7 +563,7 @@ The following kickstartDS component schemas are built in for the **Preset** sche
 
 ## Example Workflows
 
-Nine ready-to-import workflow templates are included in the `workflows/` directory:
+Ten ready-to-import workflow templates are included in the `workflows/` directory:
 
 ### Template 1: Manual → Generate Hero → Import
 
@@ -600,6 +600,10 @@ Full guided generation pipeline: Analyze Patterns → Plan Page → Generate Sec
 ### Template 9: Broken Asset Detection
 
 Lists all assets and stories, cross-references to find unused or broken asset references.
+
+### Template 10: Bulk Theme Apply
+
+Apply a design token theme to all pages matching a slug prefix. Resolves theme by slug, lists matching pages, applies in rate-limited batches, and summarizes results.
 
 ## Error Handling
 

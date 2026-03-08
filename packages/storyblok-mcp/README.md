@@ -982,7 +982,7 @@ It provides **26 operations across 4 resources** — matching the full MCP tool 
 | **Space**      | 7          | `scrape_url`, `list_components`, `get_component`, `list_assets`, `list_recipes`, `list_icons`, `ensure_path`                               |
 | **Theme**      | 4          | `list_themes`, `get_theme`, `apply_theme`, `remove_theme`                                                                                  |
 
-Both packages consume the same shared service library (`@kickstartds/storyblok-services`), so validation, schema preparation, and content transformation behave identically. Nine ready-to-import workflow templates are included.
+Both packages consume the same shared service library (`@kickstartds/storyblok-services`), so validation, schema preparation, and content transformation behave identically. Ten ready-to-import workflow templates are included.
 
 ## License
 
