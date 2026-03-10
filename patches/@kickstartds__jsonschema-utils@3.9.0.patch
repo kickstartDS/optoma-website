@@ -1,8 +1,8 @@
 diff --git a/lib/helpers.js b/lib/helpers.js
-index 0000000000000000000000000000000000000000..0000000000000000000000000000000000000000 100644
+index cb67330..e07d6b8 100644
 --- a/lib/helpers.js
 +++ b/lib/helpers.js
-@@ -36,7 +36,9 @@ export function getSchemaRegistry({ support2019 = false } = {}) {
+@@ -39,7 +39,9 @@ export function getSchemaRegistry({ support2019 = false } = {}) {
          'uuid',
          'date-time',
          'icon',

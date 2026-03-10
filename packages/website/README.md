@@ -168,12 +168,33 @@ A `netlify.toml` configuration is included. Set the required environment variabl
 
 ## Creating Branded Component Previews
 
-1. Clone the Design System locally: [ds-agency-premium](https://github.com/kickstartDS/ds-agency-premium)
-2. Copy your `token/` directory into the DS project: `cp -r YOUR_WEBSITE/token src/token`
-3. Build Storybook: `yarn build-storybook`
-4. Generate previews: `yarn create-component-previews`
-5. Copy screenshots: `cp -r static/img/screenshots YOUR_WEBSITE/public/img/`
-6. Update in Storyblok: `pnpm --filter website update-previews`
+The design system (now inlined in `packages/design-system/`) includes a screenshot pipeline that captures visual snapshots from Storybook stories. These are uploaded to Storyblok during `init` to serve as component previews in the Visual Editor.
+
+### How it works
+
+```
+build-storybook → test-storybook (captures __snapshots__/*.png)
+               → create-component-previews (copies to static/img/screenshots/)
+               → build (Rollup copies static/ → dist/static/)
+               → presets (generates snippets.json referencing img/screenshots/{story.id}.png)
+```
+
+### Regenerate after adding or renaming stories
+
+```bash
+cd packages/design-system
+pnpm run build-storybook
+pnpm run create-component-previews
+pnpm -r run build
+```
+
+Commit the updated files in `__snapshots__/` and `static/img/screenshots/` (tracked via Git LFS).
+
+### Update previews in Storyblok
+
+```bash
+pnpm --filter @kickstartds/storyblok-starter-premium run update-previews
+```
 
 ## Content Schema & Migrations
 

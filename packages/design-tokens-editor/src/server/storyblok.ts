@@ -46,70 +46,88 @@ function headers(config: StoryblokConfig): Record<string, string> {
 }
 
 /**
- * Ensure the settings/themes/ folder exists, creating it if necessary.
- * Returns the folder's story ID.
+ * Find a story/folder by its full slug via the Management API.
+ * Returns the story object or null if not found.
  */
-async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
-  const url = `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories?starts_with=settings/themes&is_folder=true`;
-  const res = await fetch(url, { headers: headers(config) });
-
-  if (!res.ok) {
-    throw new Error(`Failed to check themes folder: ${res.status}`);
-  }
-
-  const data = (await res.json()) as StoryblokListResponse;
-  const themesFolder = data.stories.find(
-    (s) => s.slug === "themes" || s.full_slug === "settings/themes"
-  );
-
-  if (themesFolder) {
-    return themesFolder.id;
-  }
-
-  // Find settings folder first
-  const settingsRes = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories?slug=settings&is_folder=true`,
+async function findByFullSlug(
+  config: StoryblokConfig,
+  fullSlug: string
+): Promise<StoryblokStory | null> {
+  const res = await fetch(
+    `${STORYBLOK_API_BASE}/spaces/${
+      config.spaceId
+    }/stories?by_slugs=${encodeURIComponent(fullSlug)}&per_page=1`,
     { headers: headers(config) }
   );
+  if (!res.ok) return null;
+  const data = (await res.json()) as StoryblokListResponse;
+  return data.stories[0] ?? null;
+}
 
-  if (!settingsRes.ok) {
-    throw new Error(`Failed to check settings folder: ${settingsRes.status}`);
+/**
+ * Create a folder story in Storyblok.
+ * Returns the created story's ID.
+ */
+async function createFolder(
+  config: StoryblokConfig,
+  name: string,
+  slug: string,
+  parentId?: number
+): Promise<number> {
+  const story: Record<string, unknown> = {
+    name,
+    slug,
+    is_folder: true,
+    content: { component: "page", _uid: crypto.randomUUID() },
+  };
+  if (parentId !== undefined) {
+    story.parent_id = parentId;
   }
 
-  const settingsData = (await settingsRes.json()) as StoryblokListResponse;
-  const settingsFolder = settingsData.stories.find(
-    (s) => s.slug === "settings"
-  );
-
-  if (!settingsFolder) {
-    throw new Error(
-      "Settings folder not found in Storyblok. Please create it first."
-    );
-  }
-
-  // Create themes folder under settings
-  const createRes = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories`,
+  const res = await fetch(
+    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories/`,
     {
       method: "POST",
       headers: headers(config),
-      body: JSON.stringify({
-        story: {
-          name: "Themes",
-          slug: "themes",
-          parent_id: settingsFolder.id,
-          is_folder: true,
-        },
-      }),
+      body: JSON.stringify({ story }),
     }
   );
 
-  if (!createRes.ok) {
-    throw new Error(`Failed to create themes folder: ${createRes.status}`);
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(
+      `Failed to create folder "${slug}": ${res.status} — ${body}`
+    );
   }
 
-  const created = (await createRes.json()) as StoryblokSingleResponse;
+  const created = (await res.json()) as StoryblokSingleResponse;
   return created.story.id;
+}
+
+/**
+ * Ensure the settings/themes/ folder path exists (like mkdir -p).
+ * Creates missing folders along the way. Returns the themes folder ID.
+ */
+async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
+  const segments = [
+    { slug: "settings", name: "Settings", fullSlug: "settings" },
+    { slug: "themes", name: "Themes", fullSlug: "settings/themes" },
+  ];
+
+  let parentId: number | undefined;
+
+  for (const seg of segments) {
+    const existing = await findByFullSlug(config, seg.fullSlug);
+    if (existing) {
+      parentId = existing.id;
+      continue;
+    }
+
+    // Folder doesn't exist — create it
+    parentId = await createFolder(config, seg.name, seg.slug, parentId);
+  }
+
+  return parentId!;
 }
 
 /** List all token theme names. */

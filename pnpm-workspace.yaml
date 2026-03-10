@@ -9,3 +9,7 @@ saveWorkspaceProtocol: rolling
 
 # Required for pnpm deploy (pnpm 10 breaking change)
 injectWorkspacePackages: true
+
+overrides:
+  "@kickstartds/jsonschema-utils": "^3.9.0"
+  "@kickstartds/jsonschema2storyblok": "^1.7.0"

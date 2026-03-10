@@ -41,15 +41,16 @@ Die Verbindung zwischen KI und CMS haben wir über das **Model Context Protocol 
 
 ## Der Storyblok MCP Server: Dein CMS bekommt einen Co-Piloten
 
-Unser [Storyblok MCP Server](https://github.com/kickstartDS/storyblok-starter-premium/tree/main/packages/storyblok-mcp) ist ein Open-Source-Server, der dein Storyblok CMS mit KI-Assistenten verbindet. Er bietet über 25 spezialisierte Tools, die sich in fünf Kategorien gliedern:
+Unser [Storyblok MCP Server](https://github.com/kickstartDS/storyblok-starter-premium/tree/main/packages/storyblok-mcp) ist ein Open-Source-Server, der dein Storyblok CMS mit KI-Assistenten verbindet. Er bietet 30 spezialisierte Tools, die sich in sechs Kategorien gliedern:
 
-| Kategorie                  | Was es tut                                          | Beispiel-Tools                                                |
-| -------------------------- | --------------------------------------------------- | ------------------------------------------------------------- |
-| **Content Management**     | Seiten lesen, erstellen, aktualisieren, löschen     | `list_stories`, `create_page_with_content`, `replace_section` |
-| **KI-Content-Generierung** | Inhalte strukturiert generieren und importieren     | `generate_content`, `generate_section`, `generate_seo`        |
-| **Analyse & Planung**      | Bestehende Muster erkennen, Seitenstrukturen planen | `analyze_content_patterns`, `plan_page`, `list_recipes`       |
-| **Web Scraping**           | Externe Inhalte extrahieren und aufbereiten         | `scrape_url`                                                  |
-| **Introspection**          | Komponenten, Assets und Icons auflisten             | `list_components`, `get_component`, `list_icons`              |
+| Kategorie                  | Was es tut                                      | Beispiel-Tools                                                |
+| -------------------------- | ----------------------------------------------- | ------------------------------------------------------------- |
+| **Content Management**     | Seiten lesen, erstellen, aktualisieren, löschen | `list_stories`, `create_page_with_content`, `replace_section` |
+| **KI-Content-Generierung** | Inhalte strukturiert generieren und importieren | `generate_section`, `generate_root_field`, `generate_seo`     |
+| **Analyse & Planung**      | Bestehende Muster erkennen, Qualität prüfen     | `analyze_content_patterns`, `plan_page`, `content_audit`      |
+| **Web Scraping**           | Externe Inhalte extrahieren und aufbereiten     | `scrape_url`                                                  |
+| **Introspection**          | Komponenten, Assets und Icons auflisten         | `list_components`, `get_component`, `list_icons`              |
+| **Theming**                | Design-Token-Themes verwalten und anwenden      | `list_themes`, `get_theme`, `apply_theme`                     |
 
 Aber die wirkliche Innovation steckt nicht in der Anzahl der Tools – sondern darin, **wie** sie die KI anleiten.
 
@@ -182,7 +183,7 @@ Diese Warnungen sind das digitale Äquivalent eines erfahrenen Art Directors, de
 ```
 ┌─────────────────────────────────────────────────────┐
 │  KI-Assistenten (Claude, GPT-4, Custom Agents)      │
-│  + n8n Workflows (22 native Operations)             │
+│  + n8n Workflows (26 native Operations)             │
 ├─────────────────────────────────────────────────────┤
 │  MCP Server / Shared Services Library               │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │
@@ -280,8 +281,8 @@ Die KI ersetzt den Redakteur nicht. Sie macht ihn schneller, konsistenter und gi
 Der gesamte Stack ist Open Source:
 
 - **[kickstartDS](https://www.kickstartds.com)** – Das Design-System-Starterkit
-- **[Storyblok MCP Server](https://github.com/kickstartDS/storyblok-starter-premium)** – Der MCP Server mit 25+ Tools
-- **[n8n Community Node](https://www.npmjs.com/package/n8n-nodes-storyblok-kickstartds)** – 22 native n8n-Operations
+- **[Storyblok MCP Server](https://github.com/kickstartDS/storyblok-starter-premium)** – Der MCP Server mit 30 Tools
+- **[n8n Community Node](https://www.npmjs.com/package/n8n-nodes-storyblok-kickstartds)** – 26 native n8n-Operations
 - **[Shared Services Library](https://www.npmjs.com/package/@kickstartds/storyblok-services)** – Schema, Validierung, Transformation
 
 Du brauchst: ein Storyblok-Konto, einen OpenAI-API-Key und ein Design System auf Basis von kickstartDS. Den Rest macht der Accelerator.

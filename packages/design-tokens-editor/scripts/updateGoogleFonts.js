@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import process from "node:process";
-import "dotenv/config";
+import "@dotenvx/dotenvx/config";
 
 const key = process.env.GOOGLE_FONTS_API_KEY;
 

@@ -17,6 +17,8 @@ pnpm install
 
 ## 2. Configure Environment Variables
 
+grep -A2 -B2 "create-component-previews" package.json && echo "===" && grep -A2 -B2 '"test"' package.json | head -20
+
 ### Local Development
 
 #### `packages/website/.env.local`
@@ -86,7 +88,7 @@ pnpm -r run build
 This seeds the empty space with components, presets, demo content, and asset uploads:
 
 ```bash
-pnpm --filter website init
+pnpm --filter @kickstartds/storyblok-starter-premium run init
 ```
 
 What this does:
@@ -100,19 +102,53 @@ What this does:
 ## 6. Start Development
 
 ```bash
-pnpm --filter website dev
+pnpm --filter @kickstartds/storyblok-starter-premium dev
 ```
 
 The dev server starts with an SSL proxy on `https://localhost:3010`.
 
 Set the Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`.
 
-## 7. Updating Components After Schema Changes
+## 7. Regenerating Component Screenshots
+
+Preset screenshots are visual snapshots of each Storybook story, uploaded to Storyblok during `init` to serve as component previews in the Visual Editor. They must be regenerated whenever you add, rename, or remove Storybook stories.
+
+### How the pipeline works
+
+```
+build-storybook → test-storybook (captures __snapshots__/*.png via @storybook/test-runner)
+               → create-component-previews (copies __snapshots__/ → static/img/screenshots/)
+               → build (Rollup copies static/ → dist/static/)
+               → presets (generates snippets.json referencing img/screenshots/{story.id}.png)
+```
+
+> **Important:** The `presets` step in the build generates a screenshot path for _every_ story, but the actual `.png` files only exist if `create-component-previews` has been run after those stories were added. New or renamed stories will have missing screenshots until the pipeline is re-run.
+
+### Prerequisites
+
+The screenshot pipeline uses `@storybook/test-runner` which runs Playwright under the hood. On first run (or after updating Playwright), you need to install browser binaries:
+
+```bash
+pnpm exec playwright install
+```
+
+### Regenerate screenshots
+
+```bash
+cd packages/design-system
+pnpm run build-storybook     # Build static Storybook
+pnpm run create-component-previews  # Run test-runner → copy snapshots → static/img/screenshots/
+pnpm -r run build            # Rebuild to include new screenshots in dist/
+```
+
+After regenerating, commit the updated files in `__snapshots__/` and `static/img/screenshots/` (both tracked via Git LFS).
+
+## 8. Updating Components After Schema Changes
 
 After modifying JSON Schema layers, use the merge workflow to safely push changes:
 
 ```bash
-pnpm --filter website update-storyblok-config
+pnpm --filter @kickstartds/storyblok-starter-premium run update-storyblok-config
 ```
 
 This runs: `create-storyblok-config` → `rename-generated-config` → `pull-content-schema` → `merge-storyblok-config` → `push-components`
@@ -181,5 +217,5 @@ For testing locally with a fresh Storyblok space, you only need:
    - `NEXT_STORYBLOK_OAUTH_TOKEN`
    - `NEXT_STORYBLOK_SPACE_ID`
 2. Run `storyblok login` (CLI auth)
-3. Run `pnpm -r run build && pnpm --filter website init`
-4. Run `pnpm --filter website dev`
+3. Run `pnpm -r run build && pnpm --filter @kickstartds/storyblok-starter-premium run init`
+4. Run `pnpm --filter @kickstartds/storyblok-starter-premium dev`

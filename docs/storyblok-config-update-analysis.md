@@ -40,43 +40,25 @@ If you push the full generated file, these fields would be **overwritten/removed
 
 **This is the biggest risk.** Any existing content that uses these fields would still have the data stored on the story, but the field definition would vanish from the component schema — making it invisible in the Visual Editor and potentially orphaned.
 
-### 1c. Component Group UUID mismatch
+### 1c. ~~Component Group UUID mismatch~~ (RESOLVED)
 
-The generated file uses **locally-generated UUIDs** for component groups (`Components`, `FirstComponents`, `Global`), but the live system assigns its **own UUIDs** at creation time. The generated file references:
+> **Resolved 2026-03-09:** The upstream kickstartDS CLI was fixed to use `component_whitelist` (explicit component names) instead of `component_group_whitelist` (group UUIDs) on blok fields. This eliminates the UUID mismatch problem entirely.
+>
+> **Root cause:** The CLI created a unique group per property name (`componentGroups[name] ||= uuidv4()`) and stamped every component with `component_group_uuid`. The same component got created 5 times with different group UUIDs, and dedup kept whichever group processed it first. The fix switches blok-field restrictions to `component_whitelist` with explicit component names, so group UUIDs are no longer used for access control.
+>
+> **After fix:** All 20+ real components are in a single "Components" group (for Storyblok UI organization only). Each blok slot directly declares which components it accepts via `component_whitelist`. No more `component_group_whitelist` in the generated config.
 
-| Group             | Generated UUID                         | Live UUID                                                |
-| ----------------- | -------------------------------------- | -------------------------------------------------------- |
-| `Components`      | `ab810e22-a464-4876-9f50-9a126b0cbb16` | `b2d71812-e4b5-4525-9832-549eb8322725`                   |
-| `FirstComponents` | `d6dc36ea-6625-4103-8784-af891d6b18bb` | _(doesn't exist in live — consolidated into Components)_ |
-| `Global`          | `4ccc7daa-eeb1-4f0b-9f51-99e9707e10e4` | `92914027-98be-4347-a164-f55476b59eee`                   |
+### 1d. ~~Component group assignments diverged~~ (RESOLVED)
 
-This affects `component_group_whitelist` on blok fields (`section.components`, `slider.components`, `split-even.firstComponents`, etc.). **Pushing stale UUIDs would break which components are allowed inside composition slots.**
-
-#### Affected `component_group_whitelist` fields
-
-| Component.Field                  | Generated                | Live                                |
-| -------------------------------- | ------------------------ | ----------------------------------- |
-| `global.global`                  | `[ab810e22…]`            | `[b2d71812…]`                       |
-| `section.components`             | `[ab810e22…, 4ccc7daa…]` | `[b2d71812…, 92914027…]`            |
-| `slider.components`              | `[ab810e22…]`            | `[b2d71812…, 92914027…]`            |
-| `split-even.firstComponents`     | `[d6dc36ea…]`            | `[b2d71812…, 92914027…]`            |
-| `split-even.secondComponents`    | `[2d07c612…]`            | `[2d07c612…, b2d71812…, 92914027…]` |
-| `split-weighted.asideComponents` | `[029a2a48…]`            | `[029a2a48…, b2d71812…, 92914027…]` |
-| `split-weighted.mainComponents`  | `[0ba8037d…]`            | `[0ba8037d…, b2d71812…, 92914027…]` |
-
-### 1d. Component group assignments diverged
-
-The generated file assigns 14 components to `FirstComponents`, but in live these are all under `Components` (likely the groups were consolidated manually). Pushing would re-split them.
-
-Affected components: `blog-teaser`, `business-card`, `content-nav`, `divider`, `downloads`, `event-latest-teaser`, `event-list-teaser`, `faq`, `html`, `image-story`, `mosaic`, `prompter`, `slider`, `video-curtain`.
+> **Resolved 2026-03-09:** With the upstream fix, all components are now assigned to a single "Components" group. The old `FirstComponents`, `SecondComponents`, `MainComponents`, `AsideComponents` groups no longer exist in the generated output.
 
 ### 1e. Live metadata not in generated file
 
 Live components carry extra keys that the generator never produces: `description`, `image`, `preview_field`, `preview_tmpl`, `all_presets`, `preset_id`, `internal_tags_list`, `internal_tag_ids`, `content_type_asset_preview`, `metadata`. The CLI ignores most of these (they're read-only server-side), but `all_presets` (105 presets in live, 0 in generated) is noteworthy — presets are managed separately via the presets file.
 
-### 1f. The `prompter` whitelist difference
+### 1f. ~~The `prompter` whitelist difference~~ (RESOLVED)
 
-The live `page.section` allows `['section', 'prompter']` while generated only has `['section']`. Pushing would remove the ability to place the Prompter inside pages in the Visual Editor.
+> **Resolved 2026-03-09:** The generated `section.components.component_whitelist` now includes `prompter` (as well as `info-table`, `timeline`, and all other section-level components). The merge script's additive-only `component_whitelist` rule still applies as a safety net — live-only entries are never removed.
 
 ---
 
@@ -84,7 +66,7 @@ The live `page.section` allows `['section', 'prompter']` while generated only ha
 
 1. **Full-file push is destructive for manually-added fields.** The CLI replaces the _entire_ schema of every component in the file. There's no merge — it's a full overwrite per component.
 
-2. **Component group UUIDs are server-assigned.** You can't predict them. The generated file's UUIDs are placeholders that become stale after first init. A push with wrong UUIDs silently breaks blok-field restrictions.
+2. ~~**Component group UUIDs are server-assigned.**~~ _(Resolved: upstream now uses `component_whitelist` with explicit names instead of group UUIDs. Group UUIDs are only used for Storyblok UI organization, not access control.)_
 
 3. **Tab UUIDs are also positional.** Fields like `tab-649fe063-2a01-4d6c-835a-4c2a90b56803` create field grouping in the UI. If these change, field ordering in the editor shifts.
 
@@ -138,7 +120,7 @@ CLI v4 already covers single-component targeting (`components push <name>`) and 
    a. Look up live component by name
    b. Merge:
       - Keep live-only fields (manual additions)
-      - Keep live component_group_uuid / component_group_whitelist values
+      - Keep live component_group_uuid values (UI organization only; component_group_whitelist no longer used)
       - Apply new/changed field configs from the generated version
       - Apply visibility changes (x-cms-hidden → field group/tab changes)
       - Preserve tabs with their live UUIDs
@@ -193,20 +175,7 @@ Builds a tree from `component_groups` (supports parent/child nesting) and create
 
 **d) Handle internal tags** — Processes `internal_tags_list`: creates tags that don't exist yet, maps existing ones by name → builds `internal_tag_ids`.
 
-**e) Remap `component_group_whitelist` UUIDs** — For every schema field that has a `component_group_whitelist`, it tries to map each UUID via `getGroupByUuid()`:
-
-```js
-schema[field].component_group_whitelist = schema[
-  field
-].component_group_whitelist.map(
-  (uuid) =>
-    getGroupByUuid(listOfGroups, uuid)
-      ? getGroupByUuid(listOfGroups, uuid).uuid
-      : uuid // ← falls back to the UUID as-is if not found!
-);
-```
-
-**Critical insight:** `getGroupByUuid` searches by `source_uuid` — a property that only exists on groups the CLI just created and that maps the _old_ UUID to the _new_ one. If the group already existed (creation was skipped with a warning), the mapping is absent, and the **stale UUID from the file passes through unchanged**. This is the root cause of the UUID mismatch problem identified in §1c.
+**e) Remap `component_group_whitelist` UUIDs** — _(Historical note: this step is no longer relevant after the upstream fix. The generated config now uses `component_whitelist` with explicit component names instead of `component_group_whitelist` with group UUIDs. The CLI still performs this remapping for backwards compatibility, but it's a no-op when no `component_group_whitelist` fields exist.)_
 
 **f) Match against live components** — Calls `api.getComponents()` to get all existing components, then does a name-based match:
 
@@ -575,7 +544,7 @@ For each component present in the generated config:
 | **Schema fields only in generated**                      | **Add** (new fields from schema layers, e.g. visibility-related changes)                    |
 | `component_group_uuid`                                   | Keep live value                                                                             |
 | `component_group_name`                                   | Keep live value (or delete — CLI strips it anyway)                                          |
-| `component_group_whitelist` on blok fields               | Keep live values (never use generated UUIDs)                                                |
+| `component_group_whitelist` on blok fields               | Keep live values (no longer generated upstream; only present in legacy live configs)        |
 | Tab UUIDs (`tab-*` field keys)                           | Keep live tab UUIDs; map generated tab content to live tab positions                        |
 | `id`, `created_at`                                       | Keep live values (CLI strips `id` anyway, but useful for the diff report)                   |
 | `is_root`, `is_nestable`                                 | Use generated (structural, should match schema)                                             |

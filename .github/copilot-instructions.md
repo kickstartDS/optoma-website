@@ -393,6 +393,26 @@ pnpm --filter @kickstartds/design-system build
 3. **`token`** — Extracts CSS custom properties from compiled SCSS token files
 4. **`branding-tokens`** — Builds branding token JSON outputs
 5. **Rollup** — Bundles 74 components to ES modules (`dist/components/{name}/index.js`), CSS, JSON Schemas, token exports, icon sprite, and static assets
+6. **`presets`** — Vitest runs `generatePresets.test.ts` to produce `snippets.json` (one entry per Storybook story with `id`, `group`, `name`, `code`, `args`, `screenshot`), then copies it to `dist/components/presets.json`
+
+### Screenshot Pipeline
+
+Preset screenshots are visual snapshots captured from a built Storybook via `@storybook/test-runner`. They live in `__snapshots__/` (source) and `static/img/screenshots/` (committed via Git LFS), and are copied to `dist/static/` by Rollup.
+
+```
+build-storybook → test-storybook (captures __snapshots__/*.png)
+               → create-component-previews (copies to static/img/screenshots/)
+               → build (Rollup copies static/ → dist/static/)
+```
+
+The `presets` step generates a screenshot path (`img/screenshots/{story.id}.png`) for **every** story, but the actual `.png` files only exist if `create-component-previews` has been run after those stories were added. After adding or renaming stories, run:
+
+```bash
+pnpm --filter @kickstartds/design-system build-storybook
+pnpm --filter @kickstartds/design-system create-component-previews
+```
+
+Then commit the updated `__snapshots__/` and `static/img/screenshots/` files.
 
 ### Component Architecture
 

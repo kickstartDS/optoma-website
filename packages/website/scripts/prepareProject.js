@@ -61,6 +61,11 @@ const upload = (signed_request, file) => {
 };
 
 const signedUpload = async (fileName, assetFolderId) => {
+  const fullPath = `./node_modules/@kickstartds/design-system/dist/static/${fileName}`;
+  if (!fs.existsSync(fullPath)) {
+    console.log("skipping (not found): ", fileName);
+    return { url: "" };
+  }
   console.log("uploading: ", fileName);
   return new Promise(async (resolve) => {
     const fullPath = `./node_modules/@kickstartds/design-system/dist/static/${fileName}`;
@@ -484,10 +489,10 @@ const prepare = async () => {
           id: 0,
           pos: 0,
           type: "bloks",
-          restrict_type: "groups",
+          restrict_type: "",
           restrict_components: true,
-          component_group_whitelist: [
-            section.schema.components.component_group_whitelist[0],
+          component_whitelist: [
+            ...section.schema.components.component_whitelist,
           ],
         },
       },
@@ -520,9 +525,7 @@ const prepare = async () => {
       component_group_name: "Global",
     });
 
-    section.schema.components.component_group_whitelist.push(
-      globalReferenceUuid
-    );
+    section.schema.components.component_whitelist.push("global_reference");
 
     // Write output in v4 format (bare arrays) directly to the push path
     const spaceId = process.env.NEXT_STORYBLOK_SPACE_ID;

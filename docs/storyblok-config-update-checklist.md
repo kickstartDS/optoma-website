@@ -71,7 +71,7 @@
 
   - [x] `component_group_uuid` → keep live value (via live base spread)
   - [x] `component_group_name` → keep live value (via live base spread)
-  - [x] `component_group_whitelist` → keep live values (never use generated UUIDs)
+  - [x] `component_group_whitelist` → keep live values (no longer generated upstream; only present in legacy live configs)
   - [x] `component_whitelist` → additive-only merge (live + new from generated)
   - [x] `id`, `created_at` → keep live values (via live base spread)
   - [x] `is_root`, `is_nestable` → use generated values
@@ -102,7 +102,7 @@
 - [x] **1h. Test merge script**
   - [x] Run against current generated + live configs (77 generated → 76 live → 8 new, 69 merged)
   - [x] Verify manually-added fields are preserved (`buttons.icon`, `split-even.stretchContent`, `event-filter.datePicker_*`)
-  - [ ] ~~Verify visibility-hidden fields are dropped~~ (deferred to Phase 4 — visibility layer not yet wired into generate)
+  - [x] Verify visibility-hidden fields are dropped (tested in Phase 4 — 44 fields across 16 components correctly removed)
   - [x] Verify tab UUIDs are mapped from live (position-based mapping working)
   - [x] Verify component group UUIDs come from live (live base spread)
   - [x] Verify component_whitelist is additive-only (no changes in current test)
@@ -110,33 +110,36 @@
 
 ---
 
-## Phase 3: Safe Push Workflow
+## Phase 3: Safe Push Workflow ✅
 
-- [ ] **3a. End-to-end test**
+- [x] **3a. End-to-end test**
 
-  - [ ] Run `create-storyblok-config` → `rename-generated-config` → `pull-content-schema` → `merge-storyblok-config`
-  - [ ] Review `merge-report.json`
-  - [ ] Run `push-components-dry-run` and verify output
-  - [ ] Push for real (once confident)
-  - [ ] Regenerate TypeScript types
+  - [x] Run `create-storyblok-config` → `rename-generated-config` → `pull-content-schema` → `merge-storyblok-config`
+  - [x] Review `merge-report.json` (77 merged, 0 new, 0 preserved/dropped — clean merge on fresh space)
+  - [x] Run `push-components-dry-run` and verify output (reviewed merge report)
+  - [x] Push for real (80 updated: 77 components + 2 groups + 1 preset, 0 failed)
+  - [x] Regenerate TypeScript types (`generate-content-types` — types/components-schema.d.ts updated)
 
-- [ ] **3b. Single-component test**
-  - [ ] Test `merge-storyblok-config -- --component section`
-  - [ ] Test `push-component -- "section"`
+- [x] **3b. Single-component test**
+  - [x] Test `merge-storyblok-config -- --component section` (1 component, 25 fields replaced, 2 tabs mapped)
+  - [x] Test `push-component -- "section"` (1 updated, 0 failed)
 
 ---
 
-## Phase 4: Activate Visibility Layer (deferred)
+## Phase 4: Activate Visibility Layer ✅
 
-- [ ] **4a. Update `create-storyblok-config` to include visibility layer**
+- [x] **4a. Update `create-storyblok-config` to include visibility layer**
 
-  - [ ] Add `cms/visibility` to `--schema-paths`
-  - [ ] Add `visibility` to `--layer-order`
+  - [x] Add `cms/visibility` to `--schema-paths`
+  - [x] Add `visibility` to `--layer-order` (new order: `visibility language cms schema`)
 
-- [ ] **4b. Run full workflow with visibility**
-  - [ ] Verify hidden fields are dropped from generated config
-  - [ ] Verify merge handles visibility-dropped fields correctly
-  - [ ] Push and verify Storyblok editor experience
+- [x] **4b. Run full workflow with visibility**
+  - [x] Verify hidden fields are dropped from generated config (0 leaks across 22 components with hidden fields)
+  - [x] Verify merge handles visibility-dropped fields correctly (44 hidden fields across 16 components removed from merged output; live hero went from 20→14 fields)
+  - [x] Push successfully (80 updated, 0 failed)
+  - [x] Post-push pull confirms hidden fields are removed from live Storyblok space
+  - [x] TypeScript types regenerated
+  - [x] Verify Storyblok editor experience (confirmed — hidden fields no longer appear in Visual Editor)
 
 ---
 
