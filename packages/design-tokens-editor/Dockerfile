@@ -25,6 +25,10 @@ COPY packages/design-tokens-editor/ ./packages/design-tokens-editor/
 # Build design system first (tokens needed for tokensToCss)
 RUN cd packages/design-system && pnpm run build
 
+# Re-inject workspace packages so the built dist/ is visible in node_modules
+# (injectWorkspacePackages creates a snapshot at install time, which predates the build)
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
 # Build frontend (vite → dist/app/) and server (tsc → dist/server/)
 RUN cd packages/design-tokens-editor && pnpm run build
 
