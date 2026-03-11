@@ -23,3 +23,4 @@ npm-debug.log*
 # Auto-generated build artifacts
 src/ui/tokens.generated.ts
 src/ui/components-css.generated.ts
+schemas/*.schema.dereffed.json
