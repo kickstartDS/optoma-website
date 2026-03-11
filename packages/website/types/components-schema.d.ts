@@ -12,14 +12,14 @@ export interface BlogAsideStoryblok {
 
 export interface AssetStoryblok {
   _uid?: string;
-  id: number;
-  alt?: string;
+  id: number | null;
+  alt: string | null;
   name: string;
-  focus?: string;
-  source?: string;
-  title?: string;
+  focus: string | null;
+  source: string | null;
+  title: string | null;
   filename: string;
-  copyright?: string;
+  copyright: string | null;
   fieldtype?: string;
   meta_data?: null | {};
   is_external_url?: boolean;
@@ -30,7 +30,7 @@ export interface BlogAuthorStoryblok {
   byline?: string;
   image_src?: AssetStoryblok;
   image_alt?: string;
-  image_fullWidth?: boolean;
+  image_fullWidth: boolean;
   image_aspectRatio?: "" | "wide" | "square" | "vertical";
   links?: LinksStoryblok[];
   _uid: string;
@@ -112,7 +112,7 @@ export interface BlogTeaserStoryblok {
 }
 
 export interface BusinessCardStoryblok {
-  centered?: boolean;
+  centered: boolean;
   image_src?: MultilinkStoryblok;
   image_alt?: string;
   logo_src?: MultilinkStoryblok;
@@ -147,6 +147,12 @@ export interface CategoryCheckboxesStoryblok {
   component: "categoryCheckboxes";
 }
 
+export interface ComponentTypesStoryblok {
+  entry?: string;
+  _uid: string;
+  component: "componentTypes";
+}
+
 export interface ContactStoryblok {
   label?: string;
   icon?: string;
@@ -169,20 +175,21 @@ export interface CtaStoryblok {
   headline?: string;
   sub?: string;
   text?: string;
-  highlightText?: boolean;
-  colorNeutral?: boolean;
+  highlightText: boolean;
+  colorNeutral: boolean;
+  inverted: boolean;
   buttons?: ButtonsStoryblok[];
   backgroundColor?: string;
   backgroundImage?: AssetStoryblok;
   image_src?: AssetStoryblok;
-  image_padding?: boolean;
+  image_padding: boolean;
   image_alt?: string;
   image_align?: "" | "center" | "top" | "bottom";
-  order_mobileImageLast?: boolean;
-  order_desktopImageLast?: boolean;
+  order_mobileImageLast: boolean;
+  order_desktopImageLast: boolean;
   textAlign?: "" | "left" | "center";
   align?: "" | "center" | "top" | "bottom";
-  padding?: boolean;
+  padding: boolean;
   _uid: string;
   component: "cta";
 }
@@ -192,7 +199,7 @@ export interface DatesStoryblok {
   time?: string;
   label?: string;
   url?: MultilinkStoryblok;
-  newTab?: boolean;
+  newTab: boolean;
   ariaLabel?: string;
   _uid: string;
   component: "dates";
@@ -238,12 +245,12 @@ export interface EventDetailStoryblok {
 
 export interface EventFilterStoryblok {
   datePicker_title?: string;
-  "datePicker_tab-e923cddf-868d-4fed-8d94-49d708720368"?: unknown;
-  "datePicker_tab-b4351e65-3f99-40aa-a145-a4eb0ef35146"?: unknown;
-  datePicker_toggle?: boolean;
+  "datePicker_tab-4d25ed9c-b100-404a-b7df-d9140557f8ad"?: unknown;
+  "datePicker_tab-47e8f094-9c31-4b0d-ac27-4097ad2cb926"?: unknown;
+  datePicker_toggle: boolean;
   categories_title?: string;
   categories_categoryCheckboxes?: CategoryCheckboxesStoryblok[];
-  categories_toggle?: boolean;
+  categories_toggle: boolean;
   applyButton_label?: string;
   applyButton_onClick?: string;
   resetButton_label?: string;
@@ -310,7 +317,7 @@ export interface FeatureStoryblok {
 export interface FeaturesStoryblok {
   layout?: "" | "largeTiles" | "smallTiles" | "list";
   style?: "" | "intext" | "stack" | "centered" | "besideLarge" | "besideSmall";
-  ctas_toggle?: boolean;
+  ctas_toggle: boolean;
   ctas_style?: "" | "button" | "link" | "intext";
   feature?: FeatureStoryblok[];
   _uid: string;
@@ -325,7 +332,7 @@ export interface FooterStoryblok {
   logo_width?: string;
   logo_height?: string;
   byline?: string;
-  inverted?: boolean;
+  inverted: boolean;
   navItems?: NavItemsStoryblok[];
   _uid: string;
   component: "footer";
@@ -335,26 +342,43 @@ export interface GalleryStoryblok {
   images?: ImagesStoryblok[];
   layout?: "" | "stack" | "smallTiles" | "largeTiles";
   aspectRatio?: "" | "unset" | "square" | "wide" | "landscape";
-  lightbox?: boolean;
+  lightbox: boolean;
   _uid: string;
   component: "gallery";
 }
 
 export interface GlobalStoryblok {
   global?: (
+    | BlogTeaserStoryblok
+    | BusinessCardStoryblok
+    | ContactStoryblok
+    | ContentNavStoryblok
     | CtaStoryblok
+    | DividerStoryblok
+    | DownloadsStoryblok
+    | EventLatestTeaserStoryblok
+    | EventListTeaserStoryblok
+    | FaqStoryblok
     | FeaturesStoryblok
     | GalleryStoryblok
+    | HeadlineStoryblok
     | HeroStoryblok
+    | HtmlStoryblok
+    | ImageStoryStoryblok
     | ImageTextStoryblok
-    | InfoTableStoryblok
     | LogosStoryblok
+    | MosaicStoryblok
+    | SliderStoryblok
     | SplitEvenStoryblok
     | SplitWeightedStoryblok
     | StatsStoryblok
     | TeaserCardStoryblok
     | TestimonialsStoryblok
     | TextStoryblok
+    | VideoCurtainStoryblok
+    | InfoTableStoryblok
+    | PrompterStoryblok
+    | TimelineStoryblok
   )[];
   _uid: string;
   component: "global";
@@ -374,10 +398,10 @@ export interface HeaderStoryblok {
   logo_homepageHref?: MultilinkStoryblok;
   logo_width?: string;
   logo_height?: string;
-  flyoutInverted?: boolean;
-  dropdownInverted?: boolean;
-  floating?: boolean;
-  inverted?: boolean;
+  flyoutInverted: boolean;
+  dropdownInverted: boolean;
+  floating: boolean;
+  inverted: boolean;
   navItems?: NavItemsStoryblok[];
   _uid: string;
   component: "header";
@@ -386,7 +410,7 @@ export interface HeaderStoryblok {
 export interface HeadlineStoryblok {
   text?: string;
   sub?: string;
-  switchOrder?: boolean;
+  switchOrder: boolean;
   align?: "" | "left" | "center" | "right";
   level?: "" | "h1" | "h2" | "h3" | "h4" | "p";
   style?: "" | "h1" | "h2" | "h3" | "h4" | "p";
@@ -401,14 +425,15 @@ export interface HeroStoryblok {
   headline?: string;
   sub?: string;
   text?: string;
-  highlightText?: boolean;
-  colorNeutral?: boolean;
+  highlightText: boolean;
+  colorNeutral: boolean;
   height?: "" | "small" | "default" | "fullImage" | "fullScreen";
-  textbox?: boolean;
-  invertText?: boolean;
+  textbox: boolean;
+  mobileTextBelow: boolean;
+  invertText: boolean;
   buttons?: ButtonsStoryblok[];
-  skipButton?: boolean;
-  overlay?: boolean;
+  skipButton: boolean;
+  overlay: boolean;
   image_srcMobile?: AssetStoryblok;
   image_srcTablet?: AssetStoryblok;
   image_srcDesktop?: AssetStoryblok;
@@ -422,12 +447,12 @@ export interface HeroStoryblok {
 
 export interface HtmlStoryblok {
   html?: string;
-  consent?: boolean;
+  consent: boolean;
   consentText?: string;
   consentButtonLabel?: string;
   consentBackgroundImage?: AssetStoryblok;
   consentAspectRatio?: "" | "VALUE_16_9" | "VALUE_16_10" | "VALUE_4_3" | "VALUE_1_1";
-  inverted?: boolean;
+  inverted: boolean;
   className?: string;
   component: "html";
   _uid: string;
@@ -443,11 +468,11 @@ export interface ImagesStoryblok {
 
 export interface ImageStoryStoryblok {
   headline?: string;
-  largeHeadline?: boolean;
+  largeHeadline: boolean;
   sub?: string;
   text?: string;
   layout?: "" | "textLeft" | "imageLeft";
-  padding?: boolean;
+  padding: boolean;
   buttons?: ButtonsStoryblok[];
   image_src?: AssetStoryblok;
   image_aspectRatio?: "" | "unset" | "square" | "wide" | "landscape";
@@ -460,7 +485,7 @@ export interface ImageStoryStoryblok {
 
 export interface ImageTextStoryblok {
   text?: string;
-  highlightText?: boolean;
+  highlightText: boolean;
   image_src?: AssetStoryblok;
   image_alt?: string;
   layout?: "" | "above" | "below" | "beside_right" | "beside_left";
@@ -494,7 +519,7 @@ export interface InfoTableStoryblok {
 export interface ItemsStoryblok {
   url?: MultilinkStoryblok;
   label?: string;
-  active?: boolean;
+  active: boolean;
   _uid: string;
   component: "items";
 }
@@ -502,7 +527,7 @@ export interface ItemsStoryblok {
 export interface LinksStoryblok {
   label?: string;
   url?: MultilinkStoryblok;
-  newTab?: boolean;
+  newTab: boolean;
   ariaLabel?: string;
   _uid: string;
   component: "links";
@@ -530,7 +555,7 @@ export interface LogosStoryblok {
   logo?: LogoStoryblok[];
   align?: "" | "left" | "center";
   logosPerRow?: string;
-  cta_toggle?: boolean;
+  cta_toggle: boolean;
   cta_text?: string;
   cta_link?: MultilinkStoryblok;
   cta_label?: string;
@@ -549,7 +574,7 @@ export interface MatchesStoryblok {
 
 export interface MosaicStoryblok {
   layout?: "" | "alternate" | "textLeft" | "textRight";
-  largeHeadlines?: boolean;
+  largeHeadlines: boolean;
   tile?: TileStoryblok[];
   _uid: string;
   component: "mosaic";
@@ -558,7 +583,7 @@ export interface MosaicStoryblok {
 export interface NavItemsStoryblok {
   url?: MultilinkStoryblok;
   label?: string;
-  active?: boolean;
+  active: boolean;
   items?: ItemsStoryblok[];
   _uid: string;
   component: "navItems";
@@ -566,13 +591,33 @@ export interface NavItemsStoryblok {
 
 export interface PageStoryblok {
   section?: SectionStoryblok[];
-  header_floating?: boolean;
-  header_inverted?: boolean;
-  footer_inverted?: boolean;
+  header_floating: boolean;
+  header_inverted: boolean;
+  header_logo?: AssetStoryblok;
+  footer_inverted: boolean;
+  footer_logo?: AssetStoryblok;
+  token?: string;
+  hidePageBreadcrumbs: boolean;
   seo?: SeoStoryblok[];
   _uid: string;
   component: "page";
   uuid?: string;
+}
+
+export interface PrompterStoryblok {
+  mode?: "" | "section" | "page";
+  componentTypes?: ComponentTypesStoryblok[];
+  sections?: string;
+  includeStory: boolean;
+  useIdea: boolean;
+  relatedStories?: RelatedStoriesStoryblok[];
+  userPrompt?: string;
+  systemPrompt?: string;
+  contentType?: "" | "page" | "blog_post" | "blog_overview";
+  startsWith?: string;
+  uploadAssets: boolean;
+  _uid: string;
+  component: "prompter";
 }
 
 export interface QuestionsStoryblok {
@@ -580,6 +625,12 @@ export interface QuestionsStoryblok {
   answer?: string;
   _uid: string;
   component: "questions";
+}
+
+export interface RelatedStoriesStoryblok {
+  entry?: string;
+  _uid: string;
+  component: "relatedStories";
 }
 
 export interface SearchStoryblok {
@@ -615,7 +666,7 @@ export interface SearchResultsStoryblok {
   previewImage?: string;
   initialMatch?: string;
   matches?: MatchesStoryblok[];
-  showLink?: boolean;
+  showLink: boolean;
   _uid: string;
   component: "searchResults";
 }
@@ -626,40 +677,58 @@ export interface SectionStoryblok {
   backgroundColor?: "" | "default" | "accent" | "bold";
   transition?: "" | "none" | "to_default" | "to_accent" | "to_bold" | "to_inverted";
   backgroundImage?: AssetStoryblok;
-  spotlight?: boolean;
+  spotlight: boolean;
   spaceBefore?: "" | "default" | "small" | "none";
   spaceAfter?: "" | "default" | "small" | "none";
-  inverted?: boolean;
-  headerSpacing?: boolean;
+  inverted: boolean;
+  headerSpacing: boolean;
   headline_text?: string;
-  headline_large?: boolean;
+  headline_large: boolean;
   headline_width?: "" | "unset" | "narrow" | "default" | "wide";
   headline_textAlign?: "" | "left" | "center" | "right";
   headline_align?: "" | "left" | "center" | "right";
   headline_sub?: string;
-  headline_switchOrder?: boolean;
+  headline_switchOrder: boolean;
   content_width?: "" | "unset" | "narrow" | "default" | "wide";
   content_align?: "" | "left" | "center" | "right";
   content_gutter?: "" | "large" | "default" | "small" | "none";
   content_mode?: "" | "default" | "tile" | "list" | "slider";
   content_tileWidth?: "" | "smallest" | "default" | "medium" | "large" | "largest" | "full";
   components?: (
+    | BlogTeaserStoryblok
+    | BusinessCardStoryblok
+    | ContactStoryblok
+    | ContentNavStoryblok
     | CtaStoryblok
+    | DividerStoryblok
+    | DownloadsStoryblok
+    | EventLatestTeaserStoryblok
+    | EventListTeaserStoryblok
+    | FaqStoryblok
     | FeaturesStoryblok
     | GalleryStoryblok
+    | HeadlineStoryblok
     | HeroStoryblok
+    | HtmlStoryblok
+    | ImageStoryStoryblok
     | ImageTextStoryblok
-    | InfoTableStoryblok
     | LogosStoryblok
+    | MosaicStoryblok
+    | SliderStoryblok
     | SplitEvenStoryblok
     | SplitWeightedStoryblok
     | StatsStoryblok
     | TeaserCardStoryblok
     | TestimonialsStoryblok
     | TextStoryblok
+    | VideoCurtainStoryblok
+    | InfoTableStoryblok
+    | PrompterStoryblok
+    | TimelineStoryblok
     | GlobalReferenceStoryblok
   )[];
   buttons?: ButtonsStoryblok[];
+  aiDraft: boolean;
   _uid: string;
   component: "section";
 }
@@ -680,17 +749,18 @@ export interface SettingsStoryblok {
   seo?: SeoStoryblok[];
   iconSprite?: string;
   token?: string;
+  hideBreadcrumbs: boolean;
   _uid: string;
   component: "settings";
 }
 
 export interface SliderStoryblok {
-  autoplay?: boolean;
-  nav?: boolean;
-  teaseNeighbours?: boolean;
-  equalHeight?: boolean;
+  autoplay: boolean;
+  nav: boolean;
+  teaseNeighbours: boolean;
+  equalHeight: boolean;
   gap?: string;
-  arrows?: boolean;
+  arrows: boolean;
   variant?: "" | "slider" | "carousel";
   className?: string;
   components?: (
@@ -699,10 +769,7 @@ export interface SliderStoryblok {
     | GalleryStoryblok
     | HeroStoryblok
     | ImageTextStoryblok
-    | InfoTableStoryblok
     | LogosStoryblok
-    | SplitEvenStoryblok
-    | SplitWeightedStoryblok
     | StatsStoryblok
     | TeaserCardStoryblok
     | TestimonialsStoryblok
@@ -722,26 +789,70 @@ export interface SocialSharingStoryblok {
 export interface SplitEvenStoryblok {
   contentMinWidth?: "" | "narrow" | "medium" | "wide";
   contentGutter?: "" | "small" | "default" | "large" | "none";
-  mobileReverse?: boolean;
+  mobileReverse: boolean;
   verticalAlign?: "" | "top" | "center" | "bottom" | "sticky";
   verticalGutter?: "" | "large" | "default" | "small" | "none";
   horizontalGutter?: "" | "large" | "default" | "small" | "none";
+  firstLayout_layout?: "" | "smallTiles" | "largeTiles" | "list";
+  firstLayout_gutter?: "" | "none" | "small" | "default" | "large";
+  firstLayout_stretchVertically: boolean;
+  secondLayout_layout?: "" | "smallTiles" | "largeTiles" | "list";
+  secondLayout_stretchVertically: boolean;
+  secondLayout_gutter?: "" | "none" | "small" | "default" | "large";
   firstComponents?: (
     | BlogTeaserStoryblok
     | BusinessCardStoryblok
+    | Tab3E667Fa3306841A0869DCb8B09EadaecStoryblok
+    | ContactStoryblok
     | ContentNavStoryblok
+    | CtaStoryblok
     | DividerStoryblok
     | DownloadsStoryblok
     | EventLatestTeaserStoryblok
     | EventListTeaserStoryblok
     | FaqStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeadlineStoryblok
+    | HeroStoryblok
     | HtmlStoryblok
     | ImageStoryStoryblok
+    | ImageTextStoryblok
+    | LogosStoryblok
     | MosaicStoryblok
     | SliderStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
     | VideoCurtainStoryblok
   )[];
-  secondComponents?: never[];
+  secondComponents?: (
+    | BlogTeaserStoryblok
+    | BusinessCardStoryblok
+    | ContactStoryblok
+    | ContentNavStoryblok
+    | CtaStoryblok
+    | DividerStoryblok
+    | DownloadsStoryblok
+    | EventLatestTeaserStoryblok
+    | EventListTeaserStoryblok
+    | FaqStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeroStoryblok
+    | HtmlStoryblok
+    | ImageStoryStoryblok
+    | ImageTextStoryblok
+    | LogosStoryblok
+    | MosaicStoryblok
+    | SliderStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
+    | VideoCurtainStoryblok
+  )[];
   _uid: string;
   component: "split-even";
 }
@@ -752,12 +863,68 @@ export interface SplitWeightedStoryblok {
   verticalAlign?: "" | "top" | "center" | "bottom" | "sticky";
   mainLayout_gutter?: "" | "large" | "default" | "small" | "none";
   mainLayout_minWidth?: "" | "narrow" | "default" | "wide";
+  mainLayout_stretchVertically: boolean;
+  mainLayout_layout?: "" | "smallTiles" | "largeTiles" | "list";
   asideLayout_gutter?: "" | "large" | "default" | "small" | "none";
   asideLayout_minWidth?: "" | "narrow" | "default" | "wide";
+  asideLayout_stretchVertically: boolean;
+  asideLayout_layout?: "" | "smallTiles" | "largeTiles" | "list";
   order_mobile?: "" | "mainFirst" | "asideFirst";
   order_desktop?: "" | "mainFirst" | "asideFirst";
-  mainComponents?: never[];
-  asideComponents?: never[];
+  mainComponents?: (
+    | BlogTeaserStoryblok
+    | BusinessCardStoryblok
+    | ContactStoryblok
+    | ContentNavStoryblok
+    | CtaStoryblok
+    | DividerStoryblok
+    | DownloadsStoryblok
+    | EventLatestTeaserStoryblok
+    | EventListTeaserStoryblok
+    | FaqStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeroStoryblok
+    | HtmlStoryblok
+    | ImageStoryStoryblok
+    | ImageTextStoryblok
+    | LogosStoryblok
+    | MosaicStoryblok
+    | SliderStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
+    | VideoCurtainStoryblok
+  )[];
+  asideComponents?: (
+    | BlogTeaserStoryblok
+    | BusinessCardStoryblok
+    | TabD44F2B2754A248E4Bf6F97E1Aafe7570Storyblok
+    | ContactStoryblok
+    | ContentNavStoryblok
+    | CtaStoryblok
+    | DividerStoryblok
+    | DownloadsStoryblok
+    | EventLatestTeaserStoryblok
+    | EventListTeaserStoryblok
+    | FaqStoryblok
+    | FeaturesStoryblok
+    | GalleryStoryblok
+    | HeadlineStoryblok
+    | HeroStoryblok
+    | HtmlStoryblok
+    | ImageStoryStoryblok
+    | ImageTextStoryblok
+    | LogosStoryblok
+    | MosaicStoryblok
+    | SliderStoryblok
+    | StatsStoryblok
+    | TeaserCardStoryblok
+    | TestimonialsStoryblok
+    | TextStoryblok
+    | VideoCurtainStoryblok
+  )[];
   _uid: string;
   component: "split-weighted";
 }
@@ -771,9 +938,76 @@ export interface StatStoryblok {
 }
 
 export interface StatsStoryblok {
+  align?: "" | "left" | "center";
   stat?: StatStoryblok[];
   _uid: string;
   component: "stats";
+}
+
+export interface Tab2Ba8B3E51D90411E9110C976E680983FStoryblok {
+  button_label?: string;
+  button_url?: MultilinkStoryblok;
+  button_variant?: "" | "primary" | "secondary" | "tertiary";
+  button_size?: "" | "small" | "medium" | "large";
+  button_disabled: boolean;
+  button_type?: "" | "button" | "submit" | "reset";
+  _uid: string;
+  component: "tab-2ba8b3e5-1d90-411e-9110-c976e680983f";
+}
+
+export interface Tab3E667Fa3306841A0869DCb8B09EadaecStoryblok {
+  button_label?: string;
+  button_url?: MultilinkStoryblok;
+  button_variant?: "" | "primary" | "secondary" | "tertiary";
+  button_size?: "" | "small" | "medium" | "large";
+  button_disabled: boolean;
+  button_type?: "" | "button" | "submit" | "reset";
+  _uid: string;
+  component: "tab-3e667fa3-3068-41a0-869d-cb8b09eadaec";
+}
+
+export interface Tab62E98D1F7D8147B0B8EaD0F9F992Fa93Storyblok {
+  button_label?: string;
+  button_url?: MultilinkStoryblok;
+  button_variant?: "" | "primary" | "secondary" | "tertiary";
+  button_size?: "" | "small" | "medium" | "large";
+  button_disabled: boolean;
+  button_type?: "" | "button" | "submit" | "reset";
+  _uid: string;
+  component: "tab-62e98d1f-7d81-47b0-b8ea-d0f9f992fa93";
+}
+
+export interface TabD44F2B2754A248E4Bf6F97E1Aafe7570Storyblok {
+  button_label?: string;
+  button_url?: MultilinkStoryblok;
+  button_variant?: "" | "primary" | "secondary" | "tertiary";
+  button_size?: "" | "small" | "medium" | "large";
+  button_disabled: boolean;
+  button_type?: "" | "button" | "submit" | "reset";
+  _uid: string;
+  component: "tab-d44f2b27-54a2-48e4-bf6f-97e1aafe7570";
+}
+
+export interface TabDd9Fb6134B494262Bebe665E6333Fcd1Storyblok {
+  button_label?: string;
+  button_url?: MultilinkStoryblok;
+  button_variant?: "" | "primary" | "secondary" | "tertiary";
+  button_size?: "" | "small" | "medium" | "large";
+  button_disabled: boolean;
+  button_type?: "" | "button" | "submit" | "reset";
+  _uid: string;
+  component: "tab-dd9fb613-4b49-4262-bebe-665e6333fcd1";
+}
+
+export interface TabFad75E0F1C794F01B0D6A3C93A0Dc934Storyblok {
+  button_label?: string;
+  button_url?: MultilinkStoryblok;
+  button_variant?: "" | "primary" | "secondary" | "tertiary";
+  button_size?: "" | "small" | "medium" | "large";
+  button_disabled: boolean;
+  button_type?: "" | "button" | "submit" | "reset";
+  _uid: string;
+  component: "tab-fad75e0f-1c79-4f01-b0d6-a3c93a0dc934";
 }
 
 export interface TagsStoryblok {
@@ -786,13 +1020,14 @@ export interface TeaserCardStoryblok {
   headline?: string;
   text?: string;
   label?: string;
-  layout?: "" | "stack" | "row";
-  centered?: boolean;
+  layout?: "" | "stack" | "row" | "compact";
+  centered: boolean;
   url?: MultilinkStoryblok;
   button_label?: string;
-  button_chevron?: boolean;
-  button_hidden?: boolean;
+  button_chevron: boolean;
+  button_hidden: boolean;
   image?: AssetStoryblok;
+  imageAlt?: string;
   imageRatio?: "" | "wide" | "landscape" | "square" | "unset";
   _uid: string;
   component: "teaser-card";
@@ -821,7 +1056,7 @@ export interface TextStoryblok {
   text?: string;
   layout?: "" | "singleColumn" | "multiColumn";
   align?: "" | "left" | "center";
-  highlightText?: boolean;
+  highlightText: boolean;
   _uid: string;
   component: "text";
 }
@@ -832,7 +1067,7 @@ export interface TileStoryblok {
   text?: string;
   image_src?: AssetStoryblok;
   image_alt?: string;
-  button_toggle?: boolean;
+  button_toggle: boolean;
   button_label?: string;
   button_url?: MultilinkStoryblok;
   backgroundColor?: string;
@@ -842,14 +1077,38 @@ export interface TileStoryblok {
   component: "tile";
 }
 
+export interface TimelineStoryblok {
+  timelineItems?: TimelineItemsStoryblok[];
+  _uid: string;
+  component: "timeline";
+}
+
+export interface TimelineItemsStoryblok {
+  year?: string;
+  textLeft?: string;
+  textRight?: string;
+  image_src?: AssetStoryblok;
+  image_alt?: string;
+  _uid: string;
+  component: "timelineItems";
+}
+
+export interface TokenThemeStoryblok {
+  name: string;
+  tokens?: string;
+  css?: string;
+  _uid: string;
+  component: "token-theme";
+}
+
 export interface VideoCurtainStoryblok {
   headline?: string;
   sub?: string;
   text?: string;
-  highlightText?: boolean;
-  colorNeutral?: boolean;
+  highlightText: boolean;
+  colorNeutral: boolean;
   buttons?: ButtonsStoryblok[];
-  overlay?: boolean;
+  overlay: boolean;
   video_srcMobile?: AssetStoryblok;
   video_srcTablet?: AssetStoryblok;
   video_srcDesktop?: AssetStoryblok;

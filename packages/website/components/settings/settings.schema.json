@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://cms.mydesignsystem.com/settings.schema.json",
+  "title": "Settings",
+  "description": "Abstracts global settings made for a website into JSON Schema",
+  "type": "object",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "format": "theme",
+          "title": "Theme",
+          "description": "Select a token theme to apply globally — overrides default branding tokens"
+        }
+      }
+    },
+    { "$ref": "http://schema.mydesignsystem.com/settings.schema.json" }
+  ],
+  "additionalProperties": false
+}

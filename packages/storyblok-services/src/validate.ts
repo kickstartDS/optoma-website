@@ -1087,16 +1087,7 @@ export function checkCompositionalQuality(
       });
     }
 
-    // 8. Inappropriate content_mode — non-default mode with only 1 component
-    const contentMode = section.content_mode || section.contentMode;
-    if (contentMode && contentMode !== "default" && components.length <= 1) {
-      warnings.push({
-        level: "info",
-        message: `Section uses content_mode "${contentMode}" but contains only ${components.length} component. This mode is designed for multi-item layouts.`,
-        path: `${sectionField}[${i}].content_mode`,
-        suggestion: `Use content_mode "default" for single-component sections.`,
-      });
-    }
+    // 8. (Removed — list mode with single component is valid)
 
     // 9. First section spacing — first section should use spaceBefore "none"
     if (i === 0) {

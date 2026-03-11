@@ -83,10 +83,10 @@ These workflows process `story.content` directly from the `list_stories` respons
 
 | Workflow / Template           | What It Reads from `content`                                                                                 | Source                                                                                                           |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| **SEO Fix Pipeline**          | `content.seo`, `content.section[*].component`, hero headline                                                 | [template-7-seo-fix-pipeline.json](../packages/n8n-nodes/workflows/template-7-seo-fix-pipeline.json)             |
-| **Weekly Content Audit**      | `content.section` — checks for missing CTAs, duplicate heroes, sparse pages                                  | [template-4-weekly-content-audit.json](../packages/n8n-nodes/workflows/template-4-weekly-content-audit.json)     |
-| **Broken Asset Detection**    | `extractUrls(story.content)` — deep tree walk for all Storyblok CDN URLs                                     | [template-9-broken-asset-detection.json](../packages/n8n-nodes/workflows/template-9-broken-asset-detection.json) |
-| **Website Content Ops audit** | `walkContent(content, …)` — checks every field for missing alt-texts, empty images, text length, CTA buttons | [website-content-operations.json](../packages/n8n-nodes/workflows/website-content-operations.json)               |
+| **SEO Fix Pipeline**          | `content.seo`, `content.section[*].component`, hero headline                                                 | [template-7-seo-fix-pipeline.json](../packages/storyblok-n8n/workflows/template-7-seo-fix-pipeline.json)             |
+| **Weekly Content Audit**      | `content.section` — checks for missing CTAs, duplicate heroes, sparse pages                                  | [template-4-weekly-content-audit.json](../packages/storyblok-n8n/workflows/template-4-weekly-content-audit.json)     |
+| **Broken Asset Detection**    | `extractUrls(story.content)` — deep tree walk for all Storyblok CDN URLs                                     | [template-9-broken-asset-detection.json](../packages/storyblok-n8n/workflows/template-9-broken-asset-detection.json) |
+| **Website Content Ops audit** | `walkContent(content, …)` — checks every field for missing alt-texts, empty images, text length, CTA buttons | [website-content-operations.json](../packages/storyblok-n8n/workflows/website-content-operations.json)               |
 
 **Note:** Templates 4 and 7 could be **refactored** to use `list_stories` (summary) → loop → `get_story`, matching the pattern already recommended in the skill docs. Templates 9 and the ops audit genuinely benefit from bulk content access in n8n Code nodes.
 
@@ -220,7 +220,7 @@ Only non-empty, non-null fields are retained. This applies to all tool responses
 
 **Goal:** Make `list_stories` default to metadata-only in the MCP layer.
 
-**Location:** `packages/mcp-server/src/index.ts`
+**Location:** `packages/storyblok-mcp/src/index.ts`
 
 **Steps:**
 
@@ -261,7 +261,7 @@ Only non-empty, non-null fields are retained. This applies to all tool responses
 
 **Goal:** Give the n8n story list operation the same `excludeContent` toggle.
 
-**Location:** `packages/n8n-nodes/nodes/StoryblokKickstartDs/descriptions/StoryDescription.ts` + `StoryblokKickstartDs.node.ts`
+**Location:** `packages/storyblok-n8n/nodes/StoryblokKickstartDs/descriptions/StoryDescription.ts` + `StoryblokKickstartDs.node.ts`
 
 **Steps:**
 
@@ -384,8 +384,8 @@ Templates 4, 7, and 9 need `excludeContent: false` added to their `list` node pa
 | Phase | Description                                | Files Changed                                                     | Effort |
 | ----- | ------------------------------------------ | ----------------------------------------------------------------- | ------ |
 | 1     | `excludeContent` in shared `listStories()` | `storyblok-services/src/stories.ts`, `types.ts`                   | Small  |
-| 2     | MCP tool parameter + handler               | `mcp-server/src/index.ts`                                         | Small  |
-| 3     | n8n node parameter + handler               | `n8n-nodes/…/StoryDescription.ts`, `StoryblokKickstartDs.node.ts` | Small  |
+| 2     | MCP tool parameter + handler               | `storyblok-mcp/src/index.ts`                                         | Small  |
+| 3     | n8n node parameter + handler               | `storyblok-n8n/…/StoryDescription.ts`, `StoryblokKickstartDs.node.ts` | Small  |
 | 4     | Asset stripping utility                    | `storyblok-services/src/stories.ts` (or new `strip.ts`)           | Medium |
 | 5     | Documentation updates                      | README, copilot-instructions, skill docs, content-ops doc         | Small  |
 

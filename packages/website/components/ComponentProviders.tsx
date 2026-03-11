@@ -27,26 +27,26 @@ import {
 } from "@kickstartds/content/lib/storytelling";
 import { StorytellingProps } from "@kickstartds/content/lib/storytelling/typing";
 
-import { BlogTeaserContext } from "@kickstartds/ds-agency-premium/blog-teaser";
-import { BlogAsideContext } from "@kickstartds/ds-agency-premium/blog-aside";
-import { BlogAuthorContext } from "@kickstartds/ds-agency-premium/blog-author";
-import { BlogHeadContext } from "@kickstartds/ds-agency-premium/blog-head";
-import { CtaContext } from "@kickstartds/ds-agency-premium/cta";
-import { FeatureContext } from "@kickstartds/ds-agency-premium/feature";
-import { StatContext } from "@kickstartds/ds-agency-premium/stat";
+import { BlogTeaserContext } from "@kickstartds/design-system/blog-teaser";
+import { BlogAsideContext } from "@kickstartds/design-system/blog-aside";
+import { BlogAuthorContext } from "@kickstartds/design-system/blog-author";
+import { BlogHeadContext } from "@kickstartds/design-system/blog-head";
+import { CtaContext } from "@kickstartds/design-system/cta";
+import { FeatureContext } from "@kickstartds/design-system/feature";
+import { StatContext } from "@kickstartds/design-system/stat";
 import {
   SplitEvenContext,
   SplitEvenContextDefault,
-} from "@kickstartds/ds-agency-premium/split-even";
+} from "@kickstartds/design-system/split-even";
 import {
   SplitWeightedContext,
   SplitWeightedContextDefault,
-} from "@kickstartds/ds-agency-premium/split-weighted";
-import { TestimonialContext } from "@kickstartds/ds-agency-premium/testimonial";
+} from "@kickstartds/design-system/split-weighted";
+import { TestimonialContext } from "@kickstartds/design-system/testimonial";
 import {
   HeroContextDefault,
   HeroContext,
-} from "@kickstartds/ds-agency-premium/hero";
+} from "@kickstartds/design-system/hero";
 
 import { StoryblokSubComponent } from "./StoryblokSubComponent";
 import { TeaserProvider } from "./TeaserProvider";
@@ -145,8 +145,7 @@ const Picture = forwardRef<
           ? blurhashToCssGradientString(blurHashes[fileUrl])
           : undefined
       }
-      // @ts-expect-error `null` is not documented
-      objectFit={null}
+      objectFit={undefined}
     />
   );
 });
@@ -217,12 +216,10 @@ const SplitEven = forwardRef<
     <SplitEvenContextDefault
       {...rest}
       firstComponents={
-        firstComponents &&
-        // @ts-expect-error
+        Array.isArray(firstComponents) &&
         firstComponents.length > 0 && (
           <>
-            {/* @ts-expect-error */}
-            {firstComponents.map((component) => (
+            {firstComponents.map((component: any) => (
               <StoryblokComponent
                 key={component._uid}
                 blok={unflatten(component)}
@@ -232,12 +229,10 @@ const SplitEven = forwardRef<
         )
       }
       secondComponents={
-        secondComponents &&
-        // @ts-expect-error
+        Array.isArray(secondComponents) &&
         secondComponents.length > 0 && (
           <>
-            {/* @ts-expect-error */}
-            {secondComponents.map((component) => (
+            {secondComponents.map((component: any) => (
               <StoryblokComponent
                 key={component._uid}
                 blok={unflatten(component)}
@@ -266,12 +261,11 @@ const SplitWeighted = forwardRef<
     <SplitWeightedContextDefault
       {...rest}
       main={
-        mainComponents &&
+        Array.isArray(mainComponents) &&
         mainComponents.length > 0 && (
           <>
-            {mainComponents.map((component) => (
+            {mainComponents.map((component: any) => (
               <StoryblokComponent
-                // @ts-expect-error
                 key={component._uid}
                 blok={unflatten(component)}
               ></StoryblokComponent>
@@ -280,12 +274,11 @@ const SplitWeighted = forwardRef<
         )
       }
       aside={
-        asideComponents &&
+        Array.isArray(asideComponents) &&
         asideComponents.length > 0 && (
           <>
-            {asideComponents.map((component) => (
+            {asideComponents.map((component: any) => (
               <StoryblokComponent
-                // @ts-expect-error
                 key={component._uid}
                 blok={unflatten(component)}
               ></StoryblokComponent>
@@ -328,30 +321,22 @@ const ComponentProviders = (props: PropsWithChildren) => (
             <HeroProvider>
               <LinkProvider>
                 <TeaserProvider>
-                  {/* @ts-expect-error */}
                   <CtaContext.Provider value={StoryblokSubComponent}>
-                    {/* @ts-expect-error */}
                     <FeatureContext.Provider value={StoryblokSubComponent}>
-                      {/* @ts-expect-error */}
                       <StatContext.Provider value={StoryblokSubComponent}>
                         <TestimonialContext.Provider
-                          // @ts-expect-error
                           value={StoryblokSubComponent}
                         >
                           <BlogHeadContext.Provider
-                            // @ts-expect-error
                             value={StoryblokSubComponent}
                           >
                             <BlogAsideContext.Provider
-                              // @ts-expect-error
                               value={StoryblokSubComponent}
                             >
                               <BlogTeaserContext.Provider
-                                // @ts-expect-error
                                 value={StoryblokSubComponent}
                               >
                                 <BlogAuthorContext.Provider
-                                  // @ts-expect-error
                                   value={StoryblokSubComponent}
                                 >
                                   {props.children}

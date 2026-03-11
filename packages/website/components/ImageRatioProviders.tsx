@@ -1,7 +1,7 @@
 import {
   GalleryContext,
   GalleryContextDefault,
-} from "@kickstartds/ds-agency-premium/components/gallery/index.js";
+} from "@kickstartds/design-system/components/gallery/index.js";
 import {
   ComponentProps,
   FC,
@@ -15,15 +15,15 @@ import { ImageRatioProvider } from "./ImageRatioContext";
 import {
   ImageStoryContext,
   ImageStoryContextDefault,
-} from "@kickstartds/ds-agency-premium/components/image-story/index.js";
+} from "@kickstartds/design-system/components/image-story/index.js";
 import {
   ContactContext,
   ContactContextDefault,
-} from "@kickstartds/ds-agency-premium/components/contact/index.js";
+} from "@kickstartds/design-system/components/contact/index.js";
 import {
   TeaserCardContext,
   TeaserCardContextDefault,
-} from "@kickstartds/ds-agency-premium/components/teaser-card/index.js";
+} from "@kickstartds/design-system/components/teaser-card/index.js";
 import {
   PostMetaContext,
   PostMetaContextDefault,

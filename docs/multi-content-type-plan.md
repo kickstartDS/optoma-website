@@ -28,8 +28,8 @@ Today, only `page` gets full support: AI planning (`plan_page`), section-by-sect
 
 The coupling is concentrated in **three layers** (the shared validation/pipeline layer is already generic):
 
-1. **Schema loading** — A single `PAGE_SCHEMA` and `PAGE_VALIDATION_RULES` loaded at startup in `mcp-server/src/services.ts` (lines 38–48) and duplicated in `n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/GenericFunctions.ts`.
-2. **Tool implementations** — 10+ hotspots where `"page"`, `"section"`, and `component: "page"` are hardcoded in `mcp-server/src/services.ts` and `mcp-server/src/index.ts`.
+1. **Schema loading** — A single `PAGE_SCHEMA` and `PAGE_VALIDATION_RULES` loaded at startup in `storyblok-mcp/src/services.ts` (lines 38–48) and duplicated in `n8n-nodes-storyblok-kickstartds/nodes/StoryblokKickstartDs/GenericFunctions.ts`.
+2. **Tool implementations** — 10+ hotspots where `"page"`, `"section"`, and `component: "page"` are hardcoded in `storyblok-mcp/src/services.ts` and `storyblok-mcp/src/index.ts`.
 3. **Schema prep** — `prepareSchemaForOpenAi()` in `shared/storyblok-services/src/schema.ts` assumes a page-shaped schema (`header`/`footer` deletion, `section.items.properties.components.items.anyOf` path).
 
 ---
@@ -158,7 +158,7 @@ The explicit allowlist prevents loading 60+ component schemas that aren't root c
 
 ### 1.4 Backward compatibility
 
-In `mcp-server/src/services.ts`, replace:
+In `storyblok-mcp/src/services.ts`, replace:
 
 ```ts
 // Before:
@@ -577,7 +577,7 @@ Change to dynamic naming: `name: "${contentType}_response"` (e.g. `"blog_post_re
 
 ### 6.2 MCP tool import helpers — remove `section` hardcoding
 
-In `mcp-server/src/services.ts`, several methods wrap/unwrap under the `section` key:
+In `storyblok-mcp/src/services.ts`, several methods wrap/unwrap under the `section` key:
 
 ```ts
 // Before:
@@ -599,7 +599,7 @@ Same pattern applies to:
 
 ### 6.3 Zod schema relaxation
 
-The Zod validation schemas in `mcp-server/src/config.ts` hardcode `section` in several places:
+The Zod validation schemas in `storyblok-mcp/src/config.ts` hardcode `section` in several places:
 
 ```ts
 // Before:
@@ -642,7 +642,7 @@ The n8n nodes have the same hardcoding pattern as the MCP server:
 
 ### 8.1 Content-type-specific recipes
 
-`mcp-server/schemas/section-recipes.json` currently only has recipes for section-based pages. Extend with:
+`storyblok-mcp/schemas/section-recipes.json` currently only has recipes for section-based pages. Extend with:
 
 - **Blog-post recipes**: "Technical tutorial" (long-form content + code sections), "Thought leadership" (head + cta + 3 sections), "Case study" (head + stats section + testimonials section + cta)
 - **Event-detail recipes**: "Workshop" (1 location, detailed schedule, downloads), "Conference talk" (multiple locations, speaker gallery), "Webinar" (single online location, recording download)
@@ -751,7 +751,7 @@ Recommended approach: **Phase 1 → 2 → 5 → 3 → 4 → 6 → 7 → 8**, shi
 
 1. **Auto-discovery vs allowlist for root content types**: Should the registry auto-detect root content types by scanning for `is_root: true` in the CMS config, or use an explicit allowlist? Auto-discovery is more future-proof but may load schemas for content types the project doesn't actually use.
 
-2. **Schema copy location**: Currently `page.schema.dereffed.json` is copied into `mcp-server/schemas/`. Should other content type schemas also be copied there (build step), or loaded directly from `node_modules`? Copying ensures stability across deploys but adds a sync step.
+2. **Schema copy location**: Currently `page.schema.dereffed.json` is copied into `storyblok-mcp/schemas/`. Should other content type schemas also be copied there (build step), or loaded directly from `node_modules`? Copying ensures stability across deploys but adds a sync step.
 
 3. **`plan_page` naming**: Rename to `plan_content` to reflect broader scope, or keep `plan_page` for backward compatibility? The tool is referenced in `copilot-instructions.md` and the `plan-page-structure.md` skill doc.
 

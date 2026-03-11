@@ -62,7 +62,10 @@ export default async function handler(
       patterns: patterns || null,
     });
 
-    return res.status(200).json(result);
+    return res.status(200).json({
+      ...result,
+      reviewStatus: "pending",
+    });
   } catch (err) {
     return handleError(res, err);
   }

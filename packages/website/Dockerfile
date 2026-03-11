@@ -1,15 +1,17 @@
-FROM node:18-alpine AS base
+FROM node:24-alpine AS base
 
 # Disabling Telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN apk add --no-cache libc6-compat curl
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
 
 FROM base AS deps
 WORKDIR /app
 
 # Copy workspace config files first for layer caching
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
+# Copy pnpm patches so they are applied during install
+COPY patches/ ./patches/
 # Copy package.json files for all required workspace packages
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
 COPY packages/website/package.json ./packages/website/

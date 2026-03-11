@@ -57,14 +57,28 @@ export default async function handler(
       recipes,
     } = body;
 
+    const registry = getRegistry();
+
     if (!componentType) {
-      return res.status(400).json({ error: "componentType is required" });
+      // List available component types for a helpful error
+      const entry = registry.has(contentType)
+        ? registry.get(contentType)
+        : registry.page;
+      const allowed: string[] = [];
+      Array.from(entry.rules.containerSlots).forEach(([, types]) => {
+        (types as Set<string>).forEach((t: string) => {
+          if (!allowed.includes(t)) allowed.push(t);
+        });
+      });
+      return res.status(400).json({
+        error: "componentType is required",
+        availableTypes: allowed,
+      });
     }
     if (!prompt) {
       return res.status(400).json({ error: "prompt is required" });
     }
 
-    const registry = getRegistry();
     const entry = registry.has(contentType)
       ? registry.get(contentType)
       : registry.page;

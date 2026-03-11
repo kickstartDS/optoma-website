@@ -5,6 +5,9 @@ export default {
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
+    // Stub out jsdom — its transitive dep @exodus/bytes is ESM-only and
+    // breaks Jest's CJS require chain. No tests exercise scraping.
+    "^jsdom$": "<rootDir>/test/__mocks__/jsdom.ts",
   },
   transform: {
     "^.+\\.ts$": [

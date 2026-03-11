@@ -1,64 +1,64 @@
 import { FC, HTMLAttributes, forwardRef, useEffect } from "react";
 
-import { Section } from "@kickstartds/ds-agency-premium/section";
-import { SplitEven } from "@kickstartds/ds-agency-premium/split-even";
-import { SplitWeighted } from "@kickstartds/ds-agency-premium/split-weighted";
+import { Section } from "@kickstartds/design-system/section";
+import { SplitEven } from "@kickstartds/design-system/split-even";
+import { SplitWeighted } from "@kickstartds/design-system/split-weighted";
 
 import {
   BlogTeaser,
   BlogTeaserContext,
   BlogTeaserContextDefault,
-} from "@kickstartds/ds-agency-premium/blog-teaser";
-import { BusinessCard } from "@kickstartds/ds-agency-premium/business-card";
-import { Contact } from "@kickstartds/ds-agency-premium/contact";
-import { ContentNav } from "@kickstartds/ds-agency-premium/content-nav";
+} from "@kickstartds/design-system/blog-teaser";
+import { BusinessCard } from "@kickstartds/design-system/business-card";
+import { Contact } from "@kickstartds/design-system/contact";
+import { ContentNav } from "@kickstartds/design-system/content-nav";
 import {
   Cta,
   CtaContext,
   CtaContextDefault,
-} from "@kickstartds/ds-agency-premium/cta";
-import { Divider } from "@kickstartds/ds-agency-premium/divider";
-import { Downloads } from "@kickstartds/ds-agency-premium/downloads";
-import { Faq } from "@kickstartds/ds-agency-premium/faq";
-import { Features } from "@kickstartds/ds-agency-premium/features";
-import { Gallery } from "@kickstartds/ds-agency-premium/gallery";
-import { Headline } from "@kickstartds/ds-agency-premium/headline";
-import { Hero } from "@kickstartds/ds-agency-premium/hero";
-import { ImageStory } from "@kickstartds/ds-agency-premium/image-story";
-import { ImageText } from "@kickstartds/ds-agency-premium/image-text";
-import { Logos } from "@kickstartds/ds-agency-premium/logos";
-import { Mosaic } from "@kickstartds/ds-agency-premium/mosaic";
-import { Slider } from "@kickstartds/ds-agency-premium/slider";
-import { Stats } from "@kickstartds/ds-agency-premium/stats";
-import { TeaserCard } from "@kickstartds/ds-agency-premium/teaser-card";
-import { Testimonials } from "@kickstartds/ds-agency-premium/testimonials";
-import { Text } from "@kickstartds/ds-agency-premium/text";
-import { VideoCurtain } from "@kickstartds/ds-agency-premium/video-curtain";
+} from "@kickstartds/design-system/cta";
+import { Divider } from "@kickstartds/design-system/divider";
+import { Downloads } from "@kickstartds/design-system/downloads";
+import { Faq } from "@kickstartds/design-system/faq";
+import { Features } from "@kickstartds/design-system/features";
+import { Gallery } from "@kickstartds/design-system/gallery";
+import { Headline } from "@kickstartds/design-system/headline";
+import { Hero } from "@kickstartds/design-system/hero";
+import { ImageStory } from "@kickstartds/design-system/image-story";
+import { ImageText } from "@kickstartds/design-system/image-text";
+import { Logos } from "@kickstartds/design-system/logos";
+import { Mosaic } from "@kickstartds/design-system/mosaic";
+import { Slider } from "@kickstartds/design-system/slider";
+import { Stats } from "@kickstartds/design-system/stats";
+import { TeaserCard } from "@kickstartds/design-system/teaser-card";
+import { Testimonials } from "@kickstartds/design-system/testimonials";
+import { Text } from "@kickstartds/design-system/text";
+import { VideoCurtain } from "@kickstartds/design-system/video-curtain";
 
 import {
   FeatureContext,
   FeatureContextDefault,
-} from "@kickstartds/ds-agency-premium/feature";
+} from "@kickstartds/design-system/feature";
 import {
   StatContext,
   StatContextDefault,
-} from "@kickstartds/ds-agency-premium/stat";
+} from "@kickstartds/design-system/stat";
 import {
   TestimonialContext,
   TestimonialContextDefault,
-} from "@kickstartds/ds-agency-premium/testimonial";
+} from "@kickstartds/design-system/testimonial";
 import {
   BlogHeadContext,
   BlogHeadContextDefault,
-} from "@kickstartds/ds-agency-premium/blog-head";
+} from "@kickstartds/design-system/blog-head";
 import {
   BlogAsideContext,
   BlogAsideContextDefault,
-} from "@kickstartds/ds-agency-premium/blog-aside";
+} from "@kickstartds/design-system/blog-aside";
 import {
   BlogAuthorContext,
   BlogAuthorContextDefault,
-} from "@kickstartds/ds-agency-premium/blog-author";
+} from "@kickstartds/design-system/blog-author";
 
 import { InfoTable } from "../info-table/InfoTableComponent";
 

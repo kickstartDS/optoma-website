@@ -1,19 +1,45 @@
 {
   "name": "@kickstartds/storyblok-starter-premium-monorepo",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "build": "pnpm -r run build",
     "dev:web": "pnpm --filter website dev",
-    "dev:mcp": "pnpm --filter mcp-server dev",
+    "dev:mcp": "pnpm --filter storyblok-mcp dev",
+    "dev:design-system": "pnpm --filter @kickstartds/design-system storybook",
+    "dev:tokens-editor": "pnpm --filter @kickstartds/design-tokens-editor dev",
+    "dev:component-mcp": "pnpm --filter @kickstartds/component-builder-mcp dev",
+    "dev:tokens-mcp": "pnpm --filter @kickstartds/design-tokens-mcp dev",
     "typecheck": "pnpm -r run typecheck",
     "lint": "pnpm -r run lint",
     "test": "pnpm -r run test",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "publish-packages": "changeset publish"
+    "publish-packages": "changeset publish",
+    "layer-editor": "bash -c 'ROOT=$PWD && LAYER=${0:-visibility} && pnpm --filter schema-layer-editor dev --schemas $ROOT/packages/website/node_modules/@kickstartds/design-system/dist/components --schemas-extra $ROOT/packages/website/components --namespace $LAYER --layer $ROOT/packages/website/cms/$LAYER'"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@kickstartds/base@4.2.0": "patches/@kickstartds__base@4.2.0.patch",
+      "@glidejs/glide@3.7.1": "patches/@glidejs__glide@3.7.1.patch",
+      "@kickstartds/jsonschema-utils@3.9.0": "patches/@kickstartds__jsonschema-utils@3.9.0.patch",
+      "storybook@10.2.15": "patches/storybook@10.2.15.patch",
+      "storybook-addon-playroom": "patches/storybook-addon-playroom.patch",
+      "@kickstartds/jsonschema2storyblok": "patches/@kickstartds__jsonschema2storyblok.patch"
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@swc/core",
+      "esbuild",
+      "fsevents",
+      "protobufjs",
+      "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@modelcontextprotocol/ext-apps"
+    ]
   }
 }

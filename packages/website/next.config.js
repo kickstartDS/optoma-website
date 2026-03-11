@@ -25,7 +25,7 @@ const nextConfig = {
     "@kickstartds/content",
     "@kickstartds/core",
     "@kickstartds/form",
-    "@kickstartds/ds-agency-premium",
+    "@kickstartds/design-system",
   ],
   output: "standalone",
   // Point to monorepo root so Next.js can trace dependencies hoisted by pnpm

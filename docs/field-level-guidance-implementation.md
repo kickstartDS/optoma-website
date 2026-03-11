@@ -92,7 +92,7 @@
 - [x] **8.7** Verify shared services package compiles cleanly (`npx tsc --noEmit`)
 - [x] **8.8** Verify shared services package builds cleanly (`pnpm run build`)
 
-## Phase 9 — MCP Server Integration (`mcp-server/src/index.ts`, `mcp-server/src/services.ts`)
+## Phase 9 — MCP Server Integration (`storyblok-mcp/src/index.ts`, `storyblok-mcp/src/services.ts`)
 
 - [x] **9.1** Import `assembleFieldGuidance` and `SectionRecipes` type from `@kickstartds/storyblok-services`
 - [x] **9.2** Load `section-recipes.json` into a typed `SectionRecipes` object (already partially loaded — ensure `compositionHints` are included)
@@ -102,7 +102,7 @@
 - [x] **9.6** Verify compositional quality warnings returned by `create_page_with_content` and `import_content` now include the new field-level warnings from Phase 7
 - [x] **9.7** Verify MCP server compiles cleanly (`npx tsc --noEmit`)
 
-## Phase 10 — n8n Node Integration (`n8n-nodes/`)
+## Phase 10 — n8n Node Integration (`storyblok-n8n/`)
 
 - [x] **10.1** Import `assembleFieldGuidance` and `SectionRecipes` from `GenericFunctions.ts` (re-export from shared services)
 - [x] **10.2** Load `section-recipes.json` in `GenericFunctions.ts` (or re-use existing load if present)
@@ -115,7 +115,7 @@
 
 - [x] **11.1** Update `.github/copilot-instructions.md` — add section about field-level guidance: mention `assembleFieldGuidance()`, composition hints, field profiles, and the interaction between them
 - [x] **11.2** Update `docs/skills/plan-page-structure.md` — note that `generate_section` now auto-injects field-level guidance
-- [x] **11.3** Update `packages/mcp-server/README.md` — document the field guidance system in the guided generation section
+- [x] **11.3** Update `packages/storyblok-mcp/README.md` — document the field guidance system in the guided generation section
 - [x] **11.4** Update `packages/storyblok-services/README.md` — document `guidance.ts` module, `discoverStylisticFields()`, and the extended `analyzeContentPatterns()` API
 - [x] **11.5** Update `field-level-guidance-plan.md` status to ✅ IMPLEMENTED
 

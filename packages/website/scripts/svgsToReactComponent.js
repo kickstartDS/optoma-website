@@ -3,7 +3,7 @@ const toJsx = require("@mapbox/hast-util-to-jsx");
 
 module.exports = ({ dictionary }) => {
   let result =
-    "const icons: Record<string, (className?: string) => JSX.Element> = {\n";
+    'import React from "react";\n\nconst icons: Record<string, (className?: string) => React.JSX.Element> = {\n';
 
   for (const icon of Object.values(dictionary.tokens.icons)) {
     const tree = parse(icon.value);

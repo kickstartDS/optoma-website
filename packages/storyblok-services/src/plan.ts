@@ -21,6 +21,15 @@ import { generateStructuredContent } from "./openai.js";
 import type { ContentTypeEntry, RootFieldMeta } from "./registry.js";
 import type { ContentPatternAnalysis, SubComponentStats } from "./patterns.js";
 
+// ─── Constants ────────────────────────────────────────────────────────
+
+/**
+ * Component types excluded from AI page planning.
+ * These container components don't work well with automated generation
+ * because they require manual layout decisions that AI cannot reliably make.
+ */
+const PLANNING_EXCLUDED_COMPONENTS = new Set(["split-even", "split-weighted"]);
+
 // ─── Types ────────────────────────────────────────────────────────────
 
 /** Options for planning a page structure. */
@@ -169,9 +178,9 @@ export async function planPageContent(
           path.startsWith(`${primaryArrayField}.`)
         )?.[1]
       : undefined;
-    componentNames = sectionSlot
-      ? [...sectionSlot]
-      : [...rules.allKnownComponents];
+    componentNames = (
+      sectionSlot ? [...sectionSlot] : [...rules.allKnownComponents]
+    ).filter((c) => !PLANNING_EXCLUDED_COMPONENTS.has(c));
   } else {
     // Tier 2 (flat): list root fields as planning targets
     isFlat = true;

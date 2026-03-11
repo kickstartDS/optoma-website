@@ -265,7 +265,7 @@ Read-only structural analysis across all published stories. No OpenAI required.
 
 **n8n composability:** Feed recipes into Code nodes to enrich generation prompts. Anti-patterns can drive validation in audit workflows.
 
-**Shared services used:** Loads from `mcp-server/schemas/section-recipes.json` — needs to be bundled with the n8n node or loaded from shared services.
+**Shared services used:** Loads from `storyblok-mcp/schemas/section-recipes.json` — needs to be bundled with the n8n node or loaded from shared services.
 
 ---
 

@@ -27,8 +27,12 @@ class KsDocument extends Document<any> {
   render() {
     const { pageProps } = this.props;
 
-    const appliedToken =
+    // Combine theme CSS and manual token overrides for font detection
+    const themeCss =
+      pageProps?.story?.content.themeCss || pageProps?.settings?.themeCss || "";
+    const tokenOverrides =
       pageProps?.story?.content.token || pageProps?.settings?.token || "";
+    const appliedToken = [themeCss, tokenOverrides].filter(Boolean).join("\n");
 
     let displayFontFamilyUrl;
     let copyFontFamilyUrl;

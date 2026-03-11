@@ -1,0 +1,24 @@
+import react from "@vitejs/plugin-react";
+import { resolve } from "node:path";
+import { defineConfig } from "vite";
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: "dist/app",
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        preview: resolve(__dirname, "preview.html"),
+      },
+    },
+  },
+  publicDir: "node_modules/@kickstartds/design-system/dist/static",
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": "http://localhost:4200",
+    },
+  },
+});

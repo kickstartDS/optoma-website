@@ -2,7 +2,7 @@
 
 ## Wann verwenden
 
-Wenn eine neue Seite mit 3 oder mehr Sektionen erstellt werden soll. Erzeugt deutlich bessere Ergebnisse als `generate_content` mit `sectionCount`, weil jede Sektion individuell aufmerksamkeit bekommt.
+Wenn eine neue Seite mit 3 oder mehr Sektionen erstellt werden soll. Dies ist der **empfohlene Standard-Workflow** für interaktive Chat-Interfaces (Claude Desktop, ChatGPT, etc.), da jede Sektion einzeln reviewt werden kann. Erzeugt deutlich bessere Ergebnisse als `generate_content` mit `sectionCount`, weil jede Sektion individuelle Aufmerksamkeit bekommt.
 
 ## Voraussetzungen
 
@@ -100,28 +100,29 @@ Alle generierten Sektionen in einem Array zusammenführen.
 
 ## Häufige Fehler
 
-| Fehler                                               | Warum problematisch                                     | Vermeidung                                           |
-| ---------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------- |
-| `sectionCount` bei 5+ Sektionen nutzen               | Schema zu groß, OpenAI trifft schlechte Komponentenwahl | Sektion für Sektion generieren                       |
-| Bestehende Muster nicht geprüft                      | Neuer Content passt nicht zum Rest der Website          | Immer `analyze_content_patterns` oder Rezepte zuerst |
-| Alle Sektionen mit gleichem Prompt                   | Jede Sektion braucht spezifische Anweisungen            | Individuelle Prompts pro Sektion                     |
-| `list_icons` übersprungen                            | Ungültige Icon-Bezeichner im generierten Content        | Immer vor Icon-Nutzung aufrufen                      |
-| `uploadAssets: true` vergessen                       | Bilder bleiben als externe URLs                         | Immer setzen                                         |
-| Zwei Hero-Sektionen auf einer Seite                  | Verwirrt die visuelle Hierarchie                        | Maximal eine Hero/Video-Curtain pro Seite            |
-| Gleiche Komponente in aufeinanderfolgenden Sektionen | Visuelle Monotonie                                      | Layout zwischen Sektionen variieren                  |
-| Root-Felder bei blog-post vergessen                  | head/aside/cta/seo fehlen im fertigen Artikel           | `plan_page` gibt `rootFieldMeta` zurück — befolgen   |
-| `generate_seo` übersprungen                          | Fehlende SEO-Metadaten (Titel, Beschreibung, OG-Image)  | Immer als letzten Schritt vor Seitenerstellung       |
+| Fehler                                               | Warum problematisch                                     | Vermeidung                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| `sectionCount` bei 5+ Sektionen nutzen               | Schema zu groß, OpenAI trifft schlechte Komponentenwahl | `generate_section` pro Sektion — bessere Qualität UND Review |
+| Bestehende Muster nicht geprüft                      | Neuer Content passt nicht zum Rest der Website          | Immer `analyze_content_patterns` oder Rezepte zuerst         |
+| Alle Sektionen mit gleichem Prompt                   | Jede Sektion braucht spezifische Anweisungen            | Individuelle Prompts pro Sektion                             |
+| `list_icons` übersprungen                            | Ungültige Icon-Bezeichner im generierten Content        | Immer vor Icon-Nutzung aufrufen                              |
+| `uploadAssets: true` vergessen                       | Bilder bleiben als externe URLs                         | Immer setzen                                                 |
+| Zwei Hero-Sektionen auf einer Seite                  | Verwirrt die visuelle Hierarchie                        | Maximal eine Hero/Video-Curtain pro Seite                    |
+| Gleiche Komponente in aufeinanderfolgenden Sektionen | Visuelle Monotonie                                      | Layout zwischen Sektionen variieren                          |
+| Root-Felder bei blog-post vergessen                  | head/aside/cta/seo fehlen im fertigen Artikel           | `plan_page` gibt `rootFieldMeta` zurück — befolgen           |
+| `generate_seo` übersprungen                          | Fehlende SEO-Metadaten (Titel, Beschreibung, OG-Image)  | Immer als letzten Schritt vor Seitenerstellung               |
 
 ## Vergleich: Sektion-für-Sektion vs. sectionCount
 
-| Aspekt                    | Sektion-für-Sektion                        | `sectionCount`                          |
-| ------------------------- | ------------------------------------------ | --------------------------------------- |
-| Komponentenwahl           | LLM wählt bewusst basierend auf Kontext    | OpenAI wählt aus riesigem Schema        |
-| Sub-Element-Anzahl        | Kontrolliert pro Sektion                   | Oft zu viele oder zu wenige             |
-| Konsistenz mit Website    | Kann an bestehende Muster angepasst werden | Keine Awareness für bestehenden Content |
-| Qualität bei 5+ Sektionen | Gleichbleibend hoch                        | Nimmt deutlich ab                       |
-| Aufwand                   | Mehr Tool-Calls                            | Ein einziger Call                       |
-| Empfehlung                | ✅ Für Produktion                          | ⚠️ Nur für schnelle Prototypen          |
+| Aspekt                    | Sektion-für-Sektion (`generate_section`)               | `generate_content` mit `sectionCount`   |
+| ------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| Komponentenwahl           | LLM wählt bewusst basierend auf Kontext                | OpenAI wählt aus riesigem Schema        |
+| Feedback & Kontrolle      | Jede Sektion einzeln reviewbar (Approve/Modify/Reject) | Alles auf einmal, kein Zwischenfeedback |
+| Sub-Element-Anzahl        | Kontrolliert pro Sektion                               | Oft zu viele oder zu wenige             |
+| Konsistenz mit Website    | Kann an bestehende Muster angepasst werden             | Keine Awareness für bestehenden Content |
+| Qualität bei 5+ Sektionen | Gleichbleibend hoch                                    | Nimmt deutlich ab                       |
+| Aufwand                   | Mehr Tool-Calls                                        | Ein einziger Call                       |
+| Empfehlung                | ✅ Für Chat-Interfaces (Claude, ChatGPT)               | ⚠️ Nur für n8n-Automatisierung          |
 
 ## Multi-Content-Type Support
 
@@ -217,7 +218,6 @@ plan_page(intent: "Workshop-Event", contentType: "event-detail")
 
 generate_root_field(fieldName: "title", prompt: "Workshop zu KI-Tools", contentType: "event-detail")
 generate_root_field(fieldName: "categories", prompt: "Kategorien: KI, Workshop, Fortbildung", contentType: "event-detail")
-→ Oder alternativ: generate_content(contentType: "event-detail", prompt: "Workshop zu KI-Tools")
 
 create_page_with_content(contentType: "event-detail", sections: [], rootFields: { title: "...", description: "...", categories: [...] })
 ```

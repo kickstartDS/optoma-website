@@ -97,7 +97,7 @@ Fokus: Awareness schaffen, Pain Points der manuellen Content-Arbeit zeigen.
 
 > **Hook:** „Ich beschreibe eine Seite in einem Satz. 90 Sekunden später ist sie live im CMS. Kein Template. Kein Copy-Paste. Nur KI + Design System."
 >
-> **Video-Inhalt:** Claude Desktop öffnen → Prompt eingeben („Erstelle eine Landing Page für unser neues Produkt X mit Hero, Features und FAQ") → `generate_content` läuft → Seite erscheint in Storyblok Visual Editor → kurzer Klick durch die fertige Seite.
+> **Video-Inhalt:** Claude Desktop öffnen → Prompt eingeben („Erstelle eine Landing Page für unser neues Produkt X mit Hero, Features und FAQ") → `plan_page` plant die Seitenstruktur → `generate_section` generiert jede Sektion einzeln mit Vorschau und Approve/Modify/Reject → Seite erscheint in Storyblok Visual Editor → kurzer Klick durch die fertige Seite.
 >
 > **CTA:** „Das ist kein Prototyp – das ist Produktion. Link zum Setup in den Kommentaren."
 

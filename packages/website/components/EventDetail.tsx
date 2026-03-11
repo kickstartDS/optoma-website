@@ -1,13 +1,13 @@
 import { ComponentProps } from "react";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
-import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
-import { EventHeader } from "@kickstartds/ds-agency-premium/components/event-header/index.js";
-import { EventLocation } from "@kickstartds/ds-agency-premium/components/event-location/index.js";
-import { EventDetail as DsaEventDetail } from "@kickstartds/ds-agency-premium/components/event-detail/index.js";
-import { Headline } from "@kickstartds/ds-agency-premium/components/headline/index.js";
-import { Gallery } from "@kickstartds/ds-agency-premium/components/gallery/index.js";
+import { Section } from "@kickstartds/design-system/components/section/index.js";
+import { EventHeader } from "@kickstartds/design-system/components/event-header/index.js";
+import { EventLocation } from "@kickstartds/design-system/components/event-location/index.js";
+import { EventDetail as DsaEventDetail } from "@kickstartds/design-system/components/event-detail/index.js";
+import { Headline } from "@kickstartds/design-system/components/headline/index.js";
+import { Gallery } from "@kickstartds/design-system/components/gallery/index.js";
 import { RichText } from "@kickstartds/base/lib/rich-text";
-import { Downloads } from "@kickstartds/ds-agency-premium/components/downloads/index.js";
+import { Downloads } from "@kickstartds/design-system/components/downloads/index.js";
 
 type PageProps = {
   blok: ComponentProps<typeof DsaEventDetail> & SbBlokData;

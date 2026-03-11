@@ -7,5 +7,9 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@kickstartds/storyblok-starter-premium"]
+  "ignore": [
+    "@kickstartds/storyblok-starter-premium",
+    "@kickstartds/design-tokens-editor",
+    "@kickstartds/schema-layer-editor"
+  ]
 }

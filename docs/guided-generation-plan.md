@@ -265,7 +265,7 @@ The LLM then iterates over this plan, calling `generate_content(componentType=X)
 
 A curated JSON file of proven component combinations, exposed as an MCP resource. This provides **universal** guidance (not space-specific), complementing the space-specific patterns from Proposal 1.
 
-#### File: `mcp-server/schemas/section-recipes.json`
+#### File: `storyblok-mcp/schemas/section-recipes.json`
 
 ```json
 {
@@ -599,7 +599,7 @@ This is the highest-effort proposal but produces the most seamless experience â€
 **Proposals: 2a, 3, 4, 5**
 
 - Add `docs/skills/plan-page-structure.md` skill file
-- Add `mcp-server/schemas/section-recipes.json` and register as MCP resource
+- Add `storyblok-mcp/schemas/section-recipes.json` and register as MCP resource
 - Add `typicalUsage` hints to `list_components` annotations
 - Update existing skill files to prefer section-by-section generation
 

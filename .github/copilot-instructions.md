@@ -2,31 +2,41 @@
 
 ## Project Overview
 
-This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a Storyblok MCP server, a shared services library, and an n8n community node — all powered by the **kickstartDS** design system (`@kickstartds/ds-agency-premium`).
+This is a **pnpm workspaces monorepo** containing a Next.js 13 website, a design system with 74+ React components, three MCP servers, a shared services library, an n8n community node, and two editor UIs — all powered by the **kickstartDS** design system (`@kickstartds/design-system`).
 
 ### Monorepo Structure
 
 ```
 packages/
-  website/          — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
-  storyblok-services/ — Shared library (schema, validation, transforms)
-  mcp-server/       — Storyblok MCP server (Model Context Protocol)
-  n8n-nodes/        — n8n community node for Storyblok workflows
+  design-system/          — Core Design System (74+ React components, tokens, Storybook, Playroom)
+  website/                — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
+  storyblok-services/     — Shared library (schema, validation, transforms)
+  storyblok-mcp/          — Storyblok MCP server (content generation, CMS tools)
+  storyblok-n8n/          — n8n community node for Storyblok workflows
+  component-builder-mcp/  — MCP server (component-building instructions & templates)
+  design-tokens-mcp/      — MCP server (design token querying, analysis, governance)
+  design-tokens-editor/   — Browser-based Design Token WYSIWYG editor (Vite SPA + Express, Kamal/Docker)
+  schema-layer-editor/    — Schema Layer Editor (Vite SPA)
 ```
 
-**Package manager:** pnpm 9.15.0 (declared in root `packageManager` field)
+**Package manager:** pnpm 10.30.3 (declared in root `packageManager` field)
 **Versioning:** Changesets (`@changesets/cli`) for independent per-package publishing
 
 ### Key Commands (run from monorepo root)
 
 ```bash
-pnpm install                 # Install all workspaces
-pnpm -r run build            # Build all packages (topological order)
-pnpm --filter website dev    # Start website dev server
-pnpm --filter mcp-server dev # Start MCP server in dev mode
-pnpm changeset               # Create a new changeset
-pnpm version-packages        # Bump versions from changesets
-pnpm publish-packages        # Publish to npm
+pnpm install                              # Install all workspaces
+pnpm -r run build                         # Build all packages (topological order)
+pnpm --filter website dev                 # Start website dev server
+pnpm --filter storyblok-mcp dev           # Start MCP server in dev mode
+pnpm --filter @kickstartds/design-system storybook  # Start Storybook dev server
+pnpm --filter @kickstartds/design-system build      # Build design system (tokens → schema → rollup)
+pnpm --filter design-tokens-editor dev    # Start token editor dev server (port 5173)
+pnpm --filter component-builder-mcp dev   # Start component builder MCP in watch mode
+pnpm --filter design-tokens-mcp dev       # Start design tokens MCP in watch mode
+pnpm changeset                            # Create a new changeset
+pnpm version-packages                     # Bump versions from changesets
+pnpm publish-packages                     # Publish to npm
 ```
 
 ## Architecture
@@ -125,10 +135,11 @@ Set Storyblok Visual Editor preview URL to `https://localhost:3010/api/preview/`
 ### CMS Sync Commands
 
 ```bash
-pnpm --filter website push-components        # Push cms/components.123456.json to Storyblok
-pnpm --filter website pull-content-schema    # Pull schema from Storyblok → types/
-pnpm --filter website create-storyblok-config # Regenerate CMS config from JSON schemas
-pnpm --filter website generate-content-types  # Pull + generate TypeScript types
+pnpm --filter website update-storyblok-config  # Full workflow: generate → rename → pull → merge → push
+pnpm --filter website push-components          # Push merged config from cms/merged/ to Storyblok
+pnpm --filter website pull-content-schema      # Pull schema from Storyblok → types/
+pnpm --filter website create-storyblok-config  # Regenerate CMS config from JSON schemas
+pnpm --filter website generate-content-types   # Pull + generate TypeScript types
 ```
 
 ### Build Pipeline
@@ -195,9 +206,13 @@ Visual Editor → usePrompter hook → /api/prompter/* routes → storyblok-serv
 
 ## MCP Server
 
-The project includes a Storyblok MCP server ([packages/mcp-server/](packages/mcp-server/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
+The project includes a Storyblok MCP server ([packages/storyblok-mcp/](packages/storyblok-mcp/)) that exposes CMS tools to AI assistants via the Model Context Protocol.
 
-The MCP server supports **auto-schema derivation**: the `generate_content` tool can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
+The MCP server supports **auto-schema derivation**: the `generate_content` and `generate_section` tools can automatically derive OpenAI-compatible schemas from the kickstartDS Design System schema (via `componentType` or `sectionCount` parameters), and import tools automatically run `processForStoryblok()` to convert Design System props into Storyblok's flat format.
+
+Current main MCP spec: https://modelcontextprotocol.io/specification/2025-11-25
+Current main MCP Schema Reference: https://modelcontextprotocol.io/specification/2025-11-25/schema
+Current MCP Apps: Interactive User Interfaces for MCP spec: https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx
 
 ### Multi-Content-Type Support
 
@@ -206,9 +221,10 @@ The MCP server supports **5 root content types** via a schema registry:
 - **Tier 1 (section-based):** `page`, `blog-post`, `blog-overview` — these have a root array of polymorphic sections
 - **Tier 2 (flat):** `event-detail`, `event-list` — these use root-level scalar/array/object fields without sections
 
-All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `packages/mcp-server/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
+All generation, import, and validation tools accept a `contentType` parameter (default: `"page"`). The schema registry automatically loads dereferenced schemas from `packages/storyblok-mcp/schemas/` and builds content-type-specific validation rules. Key tools with `contentType` support:
 
-- `generate_content(contentType: "blog-post", componentType: "hero")` — uses blog-post schema
+- `generate_section(componentType: "hero", contentType: "blog-post")` — generates a single section using blog-post schema (preferred for interactive use)
+- `generate_content(contentType: "blog-post", componentType: "hero")` — bulk generation using blog-post schema (for automation only)
 - `plan_page(intent: "...", contentType: "event-detail")` — returns a field population plan for flat types
 - `import_content_at_position(contentType: "blog-post", targetField: "section")` — specifies target array
 - `create_page_with_content(contentType: "event-detail", sections: [], rootFields: { title: "...", categories: [...] })` — the `rootFields` parameter sets root-level fields for flat content types
@@ -249,6 +265,40 @@ The MCP server provides two **convenience tools** for targeted, low-token-cost u
 
 Both tools support `publish`, `uploadAssets`, and `assetFolderName` parameters.
 
+### MCP Prompts
+
+The MCP server exposes **6 guided workflow prompts** via `prompts/list` and `prompts/get`. Each prompt returns a user+assistant message pair that instructs the LLM through a multi-step workflow using the available tools:
+
+| Prompt             | Required Args                  | Workflow                                                                                                                                               |
+| ------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `create-page`      | `intent`                       | `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `generate_seo` → `create_page_with_content`                                       |
+| `migrate-from-url` | `url`                          | `scrape_url` → `analyze_content_patterns` → `plan_page` → `generate_section` (×N) → `create_page_with_content`                                         |
+| `create-blog-post` | `topic`                        | `plan_page(contentType: 'blog-post')` → `generate_section` (×N) → `generate_root_field` (head/aside/cta) → `generate_seo` → `create_page_with_content` |
+| `content-audit`    | —                              | `content_audit` (images, content, SEO, freshness, composition) → `analyze_content_patterns` → structured report with health score                      |
+| `extend-page`      | `storyId`                      | `get_story` → `generate_section` (×N) → `import_content_at_position`                                                                                   |
+| `translate-page`   | `sourceSlug`, `targetLanguage` | `get_story` → `generate_section` (×N, same componentTypes) → `generate_seo` → `create_page_with_content`                                               |
+
+Prompts are discoverable by any MCP client that supports the `prompts` capability. They appear as slash commands or in prompt picker UIs.
+
+### Structured Output & Elicitation
+
+The MCP server declares `outputSchema` on write and generation tools so clients can parse results programmatically. Write tools return structured results with `success`, `storyId`, `storySlug`, `warnings` (compositional quality), and resource link annotations.
+
+The server also supports **elicitation** — interactive form-based prompts during tool execution:
+
+- `generate_section`: Elicits a component type picker when `componentType` is omitted
+- `plan_page`: Elicits plan review (approve/modify/cancel) after plan generation
+- `create_page_with_content`: Elicits publish confirmation after page creation
+- `delete_story`: Elicits delete confirmation before permanent deletion
+
+All elicitation uses graceful degradation via `tryElicit()` — clients that don't support elicitation get sensible defaults or error messages with available options.
+
+### Progress Notifications & UI Previews
+
+Multi-step tools (`generate_section`, `create_page_with_content`) emit progress notifications with step counts. The server declares `listChanged: true` on all three capabilities (tools, resources, prompts).
+
+When connected to clients supporting the **MCP Apps extension** (`@modelcontextprotocol/ext-apps`), the server provides interactive HTML previews via `ui://` resources (section preview, page preview, plan review) with approve/reject/modify action bars, rendered with actual kickstartDS React components.
+
 ### Transport Modes
 
 - **stdio** (default): For local usage with Claude Desktop — `npm start`
@@ -258,23 +308,24 @@ Both tools support `publish`, `uploadAssets`, and `assetFolderName` parameters.
 
 ### Cloud Deployment
 
-The MCP server has its own Kamal config at [config/deploy-mcp.yml](config/deploy-mcp.yml) and deploys to the same server as the main site under a separate subdomain.
+The MCP server has its own Kamal config at [config/deploy-storyblok-mcp.yml](config/deploy-storyblok-mcp.yml) and deploys to the same server as the main site under a separate subdomain.
 
 ```bash
-kamal deploy -d mcp    # Deploy MCP server
-kamal setup -d mcp     # First-time setup
+kamal deploy -d storyblok-mcp    # Deploy MCP server
+kamal setup -d storyblok-mcp     # First-time setup
 ```
 
 Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOSTING_SERVER_IP`, `STORYBLOK_API_TOKEN`, `STORYBLOK_OAUTH_TOKEN`, `STORYBLOK_SPACE_ID`, `OPENAI_API_KEY`.
 
 ## Important Files
 
-- [packages/website/cms/components.123456.json](packages/website/cms/components.123456.json) - Storyblok component definitions
-- [packages/website/cms/presets.123456.json](packages/website/cms/presets.123456.json) - Component presets
+- [packages/website/cms/components.123456.json](packages/website/cms/components.123456.json) - Generated Storyblok component definitions (source, renamed to `.generated.json` during merge workflow)
+- [packages/website/cms/presets.123456.json](packages/website/cms/presets.123456.json) - Generated component presets (source, renamed to `.generated.json` during merge workflow)
+- [packages/website/scripts/mergeStoryblokConfig.ts](packages/website/scripts/mergeStoryblokConfig.ts) - Merge script: combines generated config with live config, preserving manual fields
 - [packages/website/helpers/storyblok.ts](packages/website/helpers/storyblok.ts) - Storyblok API utilities and story transformations
 - [packages/website/scripts/prepareProject.js](packages/website/scripts/prepareProject.js) - Project initialization script (should never be run by Copilot)
-- [config/deploy-mcp.yml](config/deploy-mcp.yml) - Kamal deployment config for the MCP server
-- [config/deploy.yml](config/deploy.yml) - Kamal deployment config for the main Next.js site
+- [config/deploy-storyblok-mcp.yml](config/deploy-storyblok-mcp.yml) - Kamal deployment config for the MCP server
+- [config/deploy-website.yml](config/deploy-website.yml) - Kamal deployment config for the main Next.js site
 - [packages/storyblok-services/src/schema.ts](packages/storyblok-services/src/schema.ts) - Schema preparation for OpenAI structured output (15 transformation passes)
 - [packages/storyblok-services/src/transform.ts](packages/storyblok-services/src/transform.ts) - Content transformation (OpenAI ↔ Design System ↔ Storyblok)
 - [packages/storyblok-services/src/pipeline.ts](packages/storyblok-services/src/pipeline.ts) - End-to-end content generation pipeline
@@ -285,9 +336,24 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-services/src/guidance.ts](packages/storyblok-services/src/guidance.ts) - Field-level compositional guidance (field discovery, distribution tracking, pruning, prompt assembly)
 - [packages/storyblok-services/src/plan.ts](packages/storyblok-services/src/plan.ts) - Page planning (`planPageContent()`) — AI-assisted section sequence via OpenAI, extracted from MCP server
 - [packages/storyblok-services/src/generate-section.ts](packages/storyblok-services/src/generate-section.ts) - Single-section generation (`generateSectionContent()`) with site-aware context injection, extracted from MCP server
-- [packages/mcp-server/schemas/section-recipes.json](packages/mcp-server/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
-- [packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (22 operations across 3 resources)
-- [packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/n8n-nodes/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
+- [packages/storyblok-mcp/schemas/section-recipes.json](packages/storyblok-mcp/schemas/section-recipes.json) - Curated section recipes, page templates, and anti-patterns
+- [packages/storyblok-mcp/src/prompts.ts](packages/storyblok-mcp/src/prompts.ts) - 6 MCP prompt definitions + message generator
+- [packages/storyblok-mcp/src/output-schemas.ts](packages/storyblok-mcp/src/output-schemas.ts) - Output schemas for 15 tools + annotation helpers
+- [packages/storyblok-mcp/src/elicitation.ts](packages/storyblok-mcp/src/elicitation.ts) - tryElicit() helper + 5 pre-built elicitation form schemas
+- [packages/storyblok-mcp/src/progress.ts](packages/storyblok-mcp/src/progress.ts) - ProgressReporter class for step-by-step progress notifications
+- [packages/storyblok-mcp/src/ui/](packages/storyblok-mcp/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
+- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (26 operations across 4 resources)
+- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
+- [packages/design-system/rollup.config.mjs](packages/design-system/rollup.config.mjs) - Design system Rollup build config (component bundling, token extraction)
+- [packages/design-system/.storybook/main.ts](packages/design-system/.storybook/main.ts) - Storybook configuration (addons, framework, stories)
+- [packages/design-system/sd.config.cjs](packages/design-system/sd.config.cjs) - Style Dictionary config (default theme token compilation)
+- [packages/component-builder-mcp/src/index.ts](packages/component-builder-mcp/src/index.ts) - Component builder MCP server entry point
+- [packages/component-builder-mcp/src/handlers.ts](packages/component-builder-mcp/src/handlers.ts) - Template generators for component scaffolding
+- [packages/design-tokens-mcp/src/index.ts](packages/design-tokens-mcp/src/index.ts) - Design tokens MCP server entry point
+- [packages/design-tokens-mcp/src/handlers.ts](packages/design-tokens-mcp/src/handlers.ts) - Token query/update dispatch handlers
+- [packages/design-tokens-mcp/src/parser.ts](packages/design-tokens-mcp/src/parser.ts) - CSS custom property parsing and analysis
+- [packages/design-tokens-editor/src/App.tsx](packages/design-tokens-editor/src/App.tsx) - Token editor main app component
+- [packages/design-tokens-editor/src/server/index.ts](packages/design-tokens-editor/src/server/index.ts) - Token editor Express backend (Storyblok Management API CRUD)
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
 - [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
 - [packages/website/pages/api/prompter/\_helpers.ts](packages/website/pages/api/prompter/_helpers.ts) - Shared helpers for Prompter API routes
@@ -297,17 +363,163 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([packages/n8n-nodes/](packages/n8n-nodes/)) that provides **22 operations across 3 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/storyblok-n8n/](packages/storyblok-n8n/)) that provides **26 operations across 4 resources** for automating Storyblok content workflows without an LLM intermediary:
 
 | Resource       | Operations | Description                                                                                  |
 | -------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | **AI Content** | 7          | generate, import, generateSection, planPage, analyzePatterns, generateRootField, generateSeo |
 | **Story**      | 8          | list, get, createPage, update, delete, replaceSection, updateSeo, search                     |
 | **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath      |
+| **Theme**      | 4          | list, get, apply, remove                                                                     |
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 
-Nine workflow templates are included in `packages/n8n-nodes/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, and broken asset detection.
+Ten workflow templates are included in `packages/storyblok-n8n/workflows/` covering content audit, blog autopilot, content migration, SEO fixes, section-by-section generation, broken asset detection, and bulk theme application.
+
+## Design System
+
+The core design system ([packages/design-system/](packages/design-system/)) provides **74+ React components**, design tokens, JSON Schemas, Storybook documentation, and Playroom prototyping. It publishes as `@kickstartds/design-system` and is consumed by `website`, `storyblok-mcp`, and `design-tokens-editor` via `workspace:*`.
+
+### Build Pipeline
+
+The design system build runs in sequence: tokens → schema → token extraction → branding tokens → rollup.
+
+```bash
+pnpm --filter @kickstartds/design-system build
+```
+
+1. **`build-tokens`** — Style Dictionary compiles 5 theme variations (DS Agency, Business, NGO, Google, Telekom) from `src/token*/dictionary/` JSON sources to CSS/SCSS/JS outputs
+2. **`schema`** — 4 parallel tasks: dereference JSON Schemas, generate TypeScript prop types, layer types, create component defaults
+3. **`token`** — Extracts CSS custom properties from compiled SCSS token files
+4. **`branding-tokens`** — Builds branding token JSON outputs
+5. **Rollup** — Bundles 74 components to ES modules (`dist/components/{name}/index.js`), CSS, JSON Schemas, token exports, icon sprite, and static assets
+6. **`presets`** — Vitest runs `generatePresets.test.ts` to produce `snippets.json` (one entry per Storybook story with `id`, `group`, `name`, `code`, `args`, `screenshot`), then copies it to `dist/components/presets.json`
+
+### Screenshot Pipeline
+
+Preset screenshots are visual snapshots captured from a built Storybook via `@storybook/test-runner`. They live in `__snapshots__/` (source) and `static/img/screenshots/` (committed via Git LFS), and are copied to `dist/static/` by Rollup.
+
+```
+build-storybook → test-storybook (captures __snapshots__/*.png)
+               → create-component-previews (copies to static/img/screenshots/)
+               → build (Rollup copies static/ → dist/static/)
+```
+
+The `presets` step generates a screenshot path (`img/screenshots/{story.id}.png`) for **every** story, but the actual `.png` files only exist if `create-component-previews` has been run after those stories were added. After adding or renaming stories, run:
+
+```bash
+pnpm --filter @kickstartds/design-system build-storybook
+pnpm --filter @kickstartds/design-system create-component-previews
+```
+
+Then commit the updated `__snapshots__/` and `static/img/screenshots/` files.
+
+### Component Architecture
+
+Each component follows a strict structure:
+
+```
+src/components/{name}/
+  {Name}Component.tsx      — Pure React component (forwardRef, Context-overridable)
+  {Name}Component.scss     — BEM-scoped styles using design tokens
+  {Name}Component.client.ts — Client-side behavior (vanilla JS, no React state)
+  {name}.schema.json       — JSON Schema (source of truth for props)
+```
+
+### Multi-Theme Support
+
+5 pre-built theme variations compiled via Style Dictionary configs (`sd.config*.cjs`):
+
+- DS Agency (default), Business, NGO, Google, Telekom
+
+### Storybook & Playroom
+
+- **Storybook** (v10.2.x): Full component documentation with a11y audits, design token display, MCP addon
+- **Playroom** (port 9000): Interactive component prototyping with responsive previews (425/768/1440px)
+
+## Design Tokens Editor
+
+The design tokens editor ([packages/design-tokens-editor/](packages/design-tokens-editor/)) is a **browser-based visual token editor** (Vite SPA + Express backend) for non-technical editors to modify design tokens with live preview. Token themes are stored as `token-theme` content type stories in Storyblok under `settings/themes/`.
+
+- **Tech stack**: React 19, Vite, MUI v7, JSON Forms (schema-driven UI), tinycolor2, Express backend
+- **Deployment**: Kamal/Docker (Express serves Vite SPA + API routes) — config at [config/deploy-design-tokens-editor.yml](config/deploy-design-tokens-editor.yml)
+- **Backend**: Express server manages `token-theme` stories via Storyblok Management API (CRUD at `/api/tokens/*`), auto-computes CSS from branding tokens on save
+- **Private**: `private: true` — not published to npm
+- **Dual entry points**: `index.html` (editor) + `preview.html` (preview-only)
+- **Design system integration**: Imports `@kickstartds/design-system` (workspace:\*) for live component rendering with modified tokens
+
+```bash
+pnpm --filter design-tokens-editor dev   # Dev server on port 5173 (Vite proxies /api to Express)
+```
+
+## Component Builder MCP
+
+The component builder MCP server ([packages/component-builder-mcp/](packages/component-builder-mcp/)) provides **component-building instructions and templates** to AI assistants. It is a read-only documentation server — no write operations.
+
+### Tools (7, all read-only)
+
+| Tool                           | Purpose                                                     |
+| ------------------------------ | ----------------------------------------------------------- |
+| `get-ui-building-instructions` | Comprehensive component development guidelines (call first) |
+| `get-component-structure`      | File structure templates for new components                 |
+| `get-json-schema-template`     | JSON Schema boilerplate for component props                 |
+| `get-react-component-template` | React component boilerplate (forwardRef + Context)          |
+| `get-client-behavior-template` | Vanilla JS client-side behavior templates                   |
+| `get-scss-template`            | SCSS/BEM styling templates with token layers                |
+| `get-storybook-template`       | Storybook story template                                    |
+
+### Resources (3)
+
+- `design-system://instructions` — UI building instructions
+- `design-system://token-architecture` — Token layer architecture docs
+- `design-system://components` — Component catalog listing
+
+### Transport
+
+- **stdio** (default): `npm start`
+- **HTTP** (streamable): `npm run start:http`
+
+## Design Tokens MCP
+
+The design tokens MCP server ([packages/design-tokens-mcp/](packages/design-tokens-mcp/)) enables AI assistants to **query, search, analyze, and update design tokens** across 12 global + 50 component token files.
+
+### Tools (28)
+
+**Query/Search**: `get_token`, `list_tokens`, `search_tokens`, `get_tokens_by_type`, `list_files`, `get_token_stats`
+**Color**: `get_branding_color_palette`, color-specific analysis tools
+**Typography/Spacing**: `get_typography_tokens`, `get_spacing_tokens`
+**Component tokens**: Query tokens for any of 50+ individual components
+**Write**: `update_branding_token` — Modify token values
+**Analysis**: `audit_tokens` — Quality checks (naming, refs, governance)
+**Theme generation**: `theme_from_image` (vision-based), `theme_from_css` (CSS extraction)
+
+### Resources (4)
+
+- `tokens://overview` — Summary stats (total tokens, files, categories)
+- `tokens://files` — Token file catalog with descriptions
+- `tokens://branding` — Current branding token values
+- `tokens://components` — Component token catalog (50 files)
+
+### Prompts (3 guided workflows)
+
+| Prompt                     | Purpose                                 |
+| -------------------------- | --------------------------------------- |
+| `audit-tokens`             | Token quality audit workflow            |
+| `update-branding`          | Guided branding token modification      |
+| `explore-component-tokens` | Explore tokens for a specific component |
+
+### Transport
+
+- **stdio** (default): `npm start`
+- **HTTP** (streamable): `npm run start:http` (port 8080)
+
+### Token Sync
+
+Tokens are synced from the design system at build time:
+
+```bash
+pnpm --filter design-tokens-mcp run sync-tokens  # Part of `build` script
+```
 
 ## Common Patterns
 
@@ -324,10 +536,8 @@ Steps:
 2. Add to `components` map in [packages/website/components/index.tsx](packages/website/components/index.tsx)
 3. Update `packages/website/components/section/section.schema.json` to include new component in the `anyOf` clause of the `components` field
 4. Update `packages/website/package.json` to also include the new component schema in the `create-storyblok-config` script
-5. Run `pnpm --filter website create-storyblok-config` to update CMS schema
-6. Inside `packages/website/cms/components.123456.json` remove everything except the new component definition
-7. Run `pnpm --filter website push-components` to sync with Storyblok
-8. Run `pnpm --filter website generate-content-types` to update TypeScript types
+5. Run `pnpm --filter website update-storyblok-config` to generate, merge, and push the updated CMS schema
+6. Run `pnpm --filter website generate-content-types` to update TypeScript types
 
 Important:
 

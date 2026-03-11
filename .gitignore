@@ -46,6 +46,11 @@ next-env.d.ts
 # storyblok
 packages/website/types/components.*.json
 packages/website/tmp/*
+.storyblok/
+packages/website/cms/merged/
+packages/website/cms/components.generated.json
+packages/website/cms/presets.generated.json
+packages/website/cms/merge-report.json
 
 # kickstartDS
 *.dereffed.json
@@ -72,5 +77,10 @@ packages/website/public/pagefind
 
 # Build outputs
 packages/storyblok-services/dist/
-packages/mcp-server/dist/
-packages/n8n-nodes/dist/
+packages/storyblok-mcp/dist/
+packages/storyblok-n8n/dist/
+packages/component-builder-mcp/dist/
+packages/design-tokens-mcp/dist/
+packages/design-tokens-editor/dist/
+packages/design-system/dist/
+packages/design-system/storybook-static/

@@ -649,7 +649,7 @@ A new traversal pass (`annotateFieldDescriptions`) enriches field descriptions. 
 
 The `DEFAULT_PROPERTIES_TO_DROP` list is split: `spaceBefore` and `spaceAfter` are moved to an "annotate" list instead of being dropped.
 
-### 4. `mcp-server/src/index.ts` — Prompt assembly
+### 4. `storyblok-mcp/src/index.ts` — Prompt assembly
 
 The `generate_section` handler is extended to:
 

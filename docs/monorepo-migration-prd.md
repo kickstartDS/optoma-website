@@ -110,14 +110,14 @@ storyblok-starter-premium/           ← Git root
 │   │   ├── jest.config.js
 │   │   ├── src/
 │   │   └── test/
-│   ├── mcp-server/                  ← MCP server
+│   ├── storyblok-mcp/                  ← MCP server
 │   │   ├── package.json
 │   │   ├── tsconfig.json
 │   │   ├── Dockerfile
 │   │   ├── schemas/
 │   │   ├── config/
 │   │   └── src/
-│   └── n8n-nodes/                   ← n8n community node
+│   └── storyblok-n8n/                   ← n8n community node
 │       ├── package.json
 │       ├── tsconfig.json
 │       ├── jest.config.js
@@ -128,7 +128,7 @@ storyblok-starter-premium/           ← Git root
 │       └── workflows/
 ├── config/                          ← Root-level Kamal deploy configs
 │   ├── deploy.yml                   ← Website deploy
-│   └── deploy-mcp.yml              ← MCP server deploy (moved from mcp-server/config/)
+│   └── deploy-mcp.yml              ← MCP server deploy (moved from storyblok-mcp/config/)
 └── db/                              ← Umami analytics (stays at root)
     └── Dockerfile
 ```
@@ -245,7 +245,7 @@ No other changes — the dual ESM+CJS build, exports map, and tsconfigs remain i
 
 The website package stays `"private": true` since it's deployed as a Docker image, not published to npm.
 
-#### 4.5.3 `packages/mcp-server/package.json`
+#### 4.5.3 `packages/storyblok-mcp/package.json`
 
 ```diff
   "dependencies": {
@@ -259,7 +259,7 @@ The website package stays `"private": true` since it's deployed as a Docker imag
 + }
 ```
 
-#### 4.5.4 `packages/n8n-nodes/package.json`
+#### 4.5.4 `packages/storyblok-n8n/package.json`
 
 ```diff
   "dependencies": {
@@ -269,7 +269,7 @@ The website package stays `"private": true` since it's deployed as a Docker imag
   }
 ```
 
-The `repository.directory` field should be updated to `"packages/n8n-nodes"`.
+The `repository.directory` field should be updated to `"packages/storyblok-n8n"`.
 
 ### 4.6 Changesets Configuration
 
@@ -361,7 +361,7 @@ ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
 ```
 
-#### 4.7.2 MCP Server Dockerfile (`packages/mcp-server/Dockerfile`)
+#### 4.7.2 MCP Server Dockerfile (`packages/storyblok-mcp/Dockerfile`)
 
 ```dockerfile
 FROM node:20-alpine AS builder
@@ -370,11 +370,11 @@ WORKDIR /app
 # Copy workspace config
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
-COPY packages/mcp-server/package.json ./packages/mcp-server/
+COPY packages/storyblok-mcp/package.json ./packages/storyblok-mcp/
 RUN pnpm install --frozen-lockfile
 # Copy source
 COPY packages/storyblok-services/ ./packages/storyblok-services/
-COPY packages/mcp-server/ ./packages/mcp-server/
+COPY packages/storyblok-mcp/ ./packages/storyblok-mcp/
 # Build
 RUN pnpm --filter @kickstartds/storyblok-services run build
 RUN pnpm --filter @kickstartds/storyblok-mcp-server run build
@@ -388,7 +388,7 @@ RUN pnpm --filter @kickstartds/storyblok-mcp-server deploy --prod /prod/mcp-serv
 
 WORKDIR /prod/mcp-server
 # Copy runtime assets
-COPY packages/mcp-server/schemas/ ./schemas/
+COPY packages/storyblok-mcp/schemas/ ./schemas/
 COPY docs/skills/ ./skills/
 
 ENV NODE_ENV=production
@@ -417,7 +417,7 @@ ENTRYPOINT ["node", "dist/index.js"]
       NEXT_STORYBLOK_API_TOKEN: ...
 ```
 
-#### `config/deploy-mcp.yml` (MCP Server — moved from `mcp-server/config/`)
+#### `config/deploy-mcp.yml` (MCP Server — moved from `storyblok-mcp/config/`)
 
 ```diff
   builder:
@@ -425,7 +425,7 @@ ENTRYPOINT ["node", "dist/index.js"]
 -   context: ../
 -   dockerfile: Dockerfile
 +   context: .
-+   dockerfile: packages/mcp-server/Dockerfile
++   dockerfile: packages/storyblok-mcp/Dockerfile
 ```
 
 Both configs use the repo root as build context, with explicit `dockerfile` paths.
@@ -524,8 +524,8 @@ jobs:
 | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
 | 1.1  | Create `packages/` directory                                                                                                                                                                                                                                                                                                                         | None                  |
 | 1.2  | Move `shared/storyblok-services/` → `packages/storyblok-services/`                                                                                                                                                                                                                                                                                   | Low                   |
-| 1.3  | Move `mcp-server/` → `packages/mcp-server/`                                                                                                                                                                                                                                                                                                          | Low                   |
-| 1.4  | Move `n8n-nodes-storyblok-kickstartds/` → `packages/n8n-nodes/`                                                                                                                                                                                                                                                                                      | Low                   |
+| 1.3  | Move `storyblok-mcp/` → `packages/storyblok-mcp/`                                                                                                                                                                                                                                                                                                          | Low                   |
+| 1.4  | Move `n8n-nodes-storyblok-kickstartds/` → `packages/storyblok-n8n/`                                                                                                                                                                                                                                                                                      | Low                   |
 | 1.5  | Move website files into `packages/website/` (all root-level app files: `pages/`, `components/`, `helpers/`, `token/`, `cms/`, `scripts/`, `plugins/`, `public/`, `resources/`, `types/`, `next.config.js`, `tsconfig.json`, `middleware.ts`, `plopfile.mjs`, `sd.config.cjs`, `index.scss`, `fonts.scss`, `next-env.d.ts`, `next-sitemap.config.js`) | Medium — largest move |
 | 1.6  | Keep at root: `docs/`, `config/`, `db/`, `LICENSE-*`, `COPYRIGHT.md`, `README.md`, `.github/`                                                                                                                                                                                                                                                        | None                  |
 | 1.7  | Delete all nested `package-lock.json` and `node_modules/`                                                                                                                                                                                                                                                                                            | None                  |
@@ -566,10 +566,10 @@ jobs:
 | Step | Action                                                                                                 | Risk   |
 | ---- | ------------------------------------------------------------------------------------------------------ | ------ |
 | 5.1  | Rewrite `packages/website/Dockerfile` for pnpm (see §4.7.1)                                            | Medium |
-| 5.2  | Rewrite `packages/mcp-server/Dockerfile` for pnpm (see §4.7.2)                                         | Medium |
-| 5.3  | Move `mcp-server/config/deploy.yml` → `config/deploy-mcp.yml`                                          | Low    |
+| 5.2  | Rewrite `packages/storyblok-mcp/Dockerfile` for pnpm (see §4.7.2)                                         | Medium |
+| 5.3  | Move `storyblok-mcp/config/deploy.yml` → `config/deploy-mcp.yml`                                          | Low    |
 | 5.4  | Update `config/deploy.yml` — add `dockerfile: packages/website/Dockerfile`                             | Low    |
-| 5.5  | Update `config/deploy-mcp.yml` — change context to `.`, dockerfile to `packages/mcp-server/Dockerfile` | Low    |
+| 5.5  | Update `config/deploy-mcp.yml` — change context to `.`, dockerfile to `packages/storyblok-mcp/Dockerfile` | Low    |
 | 5.6  | Update `packages/website/netlify.toml` for pnpm build commands                                         | Low    |
 | 5.7  | Test Docker builds locally: `docker build -f packages/website/Dockerfile .`                            | Medium |
 | 5.8  | Test Kamal deploy: `kamal deploy` from root                                                            | Medium |
@@ -640,14 +640,14 @@ This is the complete list of files/directories that move, for use during impleme
 
 | Source                         | Destination                                                  |
 | ------------------------------ | ------------------------------------------------------------ |
-| `mcp-server/`                  | `packages/mcp-server/`                                       |
-| `mcp-server/config/deploy.yml` | `config/deploy-mcp.yml` (also keep copy for backward compat) |
+| `storyblok-mcp/`                  | `packages/storyblok-mcp/`                                       |
+| `storyblok-mcp/config/deploy.yml` | `config/deploy-mcp.yml` (also keep copy for backward compat) |
 
 ### n8n Nodes
 
 | Source                             | Destination           |
 | ---------------------------------- | --------------------- |
-| `n8n-nodes-storyblok-kickstartds/` | `packages/n8n-nodes/` |
+| `n8n-nodes-storyblok-kickstartds/` | `packages/storyblok-n8n/` |
 
 ### Stays at Root
 
@@ -756,7 +756,7 @@ This tells Next.js to look for dependencies relative to the monorepo root, which
 - [ ] `pnpm --filter website dev` starts Next.js dev server with SSL proxy
 - [ ] Storyblok Visual Editor preview works at `https://localhost:3010/`
 - [ ] `docker build -f packages/website/Dockerfile .` produces working image
-- [ ] `docker build -f packages/mcp-server/Dockerfile .` produces working image
+- [ ] `docker build -f packages/storyblok-mcp/Dockerfile .` produces working image
 - [ ] `kamal deploy` from root deploys website successfully
 - [ ] `pnpm changeset` creates a changeset file
 - [ ] `pnpm changeset publish --dry-run` shows correct packages to publish
@@ -843,7 +843,7 @@ pnpm changeset publish            # publish to npm
 
 # Docker
 docker build -f packages/website/Dockerfile -t website .
-docker build -f packages/mcp-server/Dockerfile -t mcp-server .
+docker build -f packages/storyblok-mcp/Dockerfile -t mcp-server .
 
 # Kamal
 cd config && kamal deploy          # website

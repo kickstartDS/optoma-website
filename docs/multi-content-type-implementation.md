@@ -17,8 +17,8 @@ Phase 1 → 2 → 5 → 3 → 4 → 6 → 7 → 8 → 9
 - [ ] **1.3** Implement `createRegistryFromDirectory()` helper (load `*.schema.dereffed.json` from `node_modules` by allowlist)
 - [ ] **1.4** Auto-derive `hasSection` and `rootArrayFields` from each schema during registration (via `buildValidationRules`)
 - [ ] **1.5** Export `SchemaRegistry`, `ContentTypeEntry`, `createRegistryFromDirectory` from `shared/storyblok-services/src/index.ts`
-- [ ] **1.6** Replace `PAGE_SCHEMA` / `PAGE_VALIDATION_RULES` in `mcp-server/src/services.ts` with registry (keep aliases for backward compat)
-- [ ] **1.7** Update `rules_rootMatchesSchema()` in `mcp-server/src/services.ts` to consult registry (detect content type from `content.component`, look up matching rules)
+- [ ] **1.6** Replace `PAGE_SCHEMA` / `PAGE_VALIDATION_RULES` in `storyblok-mcp/src/services.ts` with registry (keep aliases for backward compat)
+- [ ] **1.7** Update `rules_rootMatchesSchema()` in `storyblok-mcp/src/services.ts` to consult registry (detect content type from `content.component`, look up matching rules)
 - [ ] **1.8** Verify shared services package compiles cleanly (`npx tsc --noEmit`)
 - [ ] **1.9** Verify MCP server compiles cleanly (`npx tsc --noEmit`)
 
@@ -41,12 +41,12 @@ Phase 1 → 2 → 5 → 3 → 4 → 6 → 7 → 8 → 9
 _Note: Numbered as Phase 5 per the PRD but implemented third in dependency order._
 
 - [ ] **5.1** Confirm `processForStoryblok()` in `shared/storyblok-services/src/transform.ts` has no hardcoded field names (expected: already generic — verify, no code change)
-- [ ] **5.2** Update `StoryblokService.createPageWithContent()` in `mcp-server/src/services.ts` — accept `contentType` param, use dynamic `component` value and root array field name from registry
+- [ ] **5.2** Update `StoryblokService.createPageWithContent()` in `storyblok-mcp/src/services.ts` — accept `contentType` param, use dynamic `component` value and root array field name from registry
 - [ ] **5.3** Update `StoryblokService.importContentAtPosition()` — accept `contentType` and `targetField` params, read/write the correct root array from the schema instead of hardcoded `section`
 - [ ] **5.4** Update `StoryblokService.importByPrompterReplacement()` — search for prompter in the correct root array(s) based on content type
 - [ ] **5.5** Update asset URL rewriting wrappers — use dynamic root array key instead of hardcoded `{ section: ... }`
 - [ ] **5.6** Update section-level annotations (setting `component: "section"`, deleting `type`) — only apply to arrays that are section-typed containers, not all root arrays
-- [ ] **5.7** Relax Zod schemas in `mcp-server/src/config.ts` — replace hardcoded `section: z.array(sectionSchema)` in `import_content` schema with `z.record(z.unknown())` for the content envelope; move structural validation to runtime via registry
+- [ ] **5.7** Relax Zod schemas in `storyblok-mcp/src/config.ts` — replace hardcoded `section: z.array(sectionSchema)` in `import_content` schema with `z.record(z.unknown())` for the content envelope; move structural validation to runtime via registry
 - [ ] **5.8** Relax Zod schemas for `import_content_at_position` — accept `targetField` param, rename `sections` to a more generic name or keep with updated description
 - [ ] **5.9** Verify MCP server compiles cleanly
 
@@ -54,8 +54,8 @@ _Note: Numbered as Phase 5 per the PRD but implemented third in dependency order
 
 ### 3.1 `generate_content`
 
-- [ ] **3.1.1** Add `contentType` param to Zod schema in `mcp-server/src/config.ts` (default: `"page"`)
-- [ ] **3.1.2** Update handler in `mcp-server/src/index.ts` — look up schema from registry, pass to `generateAndPrepareContent()` as `pageSchema`
+- [ ] **3.1.1** Add `contentType` param to Zod schema in `storyblok-mcp/src/config.ts` (default: `"page"`)
+- [ ] **3.1.2** Update handler in `storyblok-mcp/src/index.ts` — look up schema from registry, pass to `generateAndPrepareContent()` as `pageSchema`
 - [ ] **3.1.3** For Tier 1: `componentType` and `sectionCount` continue targeting `section.components` slot — verify no code change needed
 - [ ] **3.1.4** Update tool description to mention supported content types
 
@@ -105,7 +105,7 @@ _Note: Numbered as Phase 5 per the PRD but implemented third in dependency order
 
 ### 3.8 `analyze_content_patterns`
 
-- [ ] **3.8.1** Update `analyzeContentPatterns()` in `mcp-server/src/services.ts` — look up root array fields from registry instead of hardcoding `story.content.section`
+- [ ] **3.8.1** Update `analyzeContentPatterns()` in `storyblok-mcp/src/services.ts` — look up root array fields from registry instead of hardcoding `story.content.section`
 - [ ] **3.8.2** For Tier 1: iterate the schema-derived root array field name (e.g. still `section` for page/blog-post/blog-overview)
 - [ ] **3.8.3** Use content type's own `rules.subComponentMap` for sub-component counting
 - [ ] **3.8.4** Update unused component detection to use the content type's `rules.allKnownComponents`

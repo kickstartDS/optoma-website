@@ -212,7 +212,7 @@ export type RootContentType = (typeof ROOT_CONTENT_TYPES)[number];
  * base directory for each content type in the allowlist.
  *
  * @param baseDir - Path to the components directory containing per-component
- *   subdirectories (e.g. `node_modules/@kickstartds/ds-agency-premium/dist/components`).
+ *   subdirectories (e.g. `node_modules/@kickstartds/design-system/dist/components`).
  * @param contentTypes - Content type names to load (defaults to `ROOT_CONTENT_TYPES`).
  * @returns A populated `SchemaRegistry`.
  */

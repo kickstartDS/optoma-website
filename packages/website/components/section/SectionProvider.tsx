@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, forwardRef, useContext } from "react";
-import { SectionContext } from "@kickstartds/ds-agency-premium/section";
+import { SectionContext } from "@kickstartds/design-system/section";
 import { HeadlineLevelProvider } from "../headline/HeadlineLevelContext";
 import AiBadgeComponent from "../prompter/prompter-badge/PrompterBadge";
 

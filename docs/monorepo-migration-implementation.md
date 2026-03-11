@@ -8,8 +8,8 @@ Tracks progress of implementing the [monorepo-migration-prd.md](monorepo-migrati
 
 - [x] 1.1 Create `packages/` directory
 - [x] 1.2 Move `shared/storyblok-services/` → `packages/storyblok-services/`
-- [x] 1.3 Move `mcp-server/` → `packages/mcp-server/`
-- [x] 1.4 Move `n8n-nodes-storyblok-kickstartds/` → `packages/n8n-nodes/`
+- [x] 1.3 Move `storyblok-mcp/` → `packages/storyblok-mcp/`
+- [x] 1.4 Move `n8n-nodes-storyblok-kickstartds/` → `packages/storyblok-n8n/`
 - [x] 1.5 Move website files into `packages/website/` (pages, components, helpers, token, cms, scripts, plugins, public, resources, types, next.config.js, tsconfig.json, middleware.ts, plopfile.mjs, sd.config.cjs, index.scss, fonts.scss, next-env.d.ts, next-sitemap.config.js, netlify.toml, Dockerfile)
 - [x] 1.6 Move website `package.json` to `packages/website/package.json` (strip workspace-only concerns)
 - [x] 1.7 Delete all nested `package-lock.json` and `node_modules/`
@@ -45,7 +45,7 @@ Tracks progress of implementing the [monorepo-migration-prd.md](monorepo-migrati
 ## Phase 5: Update Docker & Deployment
 
 - [x] 5.1 Rewrite `packages/website/Dockerfile` for pnpm
-- [x] 5.2 Rewrite `packages/mcp-server/Dockerfile` for pnpm
+- [x] 5.2 Rewrite `packages/storyblok-mcp/Dockerfile` for pnpm
 - [x] 5.3 Update `config/deploy.yml` for new paths
 - [x] 5.4 Move MCP deploy config to `config/deploy-mcp.yml`
 - [x] 5.5 Update `packages/website/netlify.toml` for pnpm

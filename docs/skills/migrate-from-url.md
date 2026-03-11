@@ -37,14 +37,26 @@ Der Editor möchte Inhalte von einer externen Webseite übernehmen – z.B. bei 
 - **Wann:** Wenn die Quellseite Icons enthält oder die Zielkomponenten Icon-Felder haben (z.B. Features, CTAs)
 - **Zweck:** Nur gültige Icon-Bezeichner verwenden – die Icons der Quellseite müssen auf verfügbare Bezeichner gemappt werden
 
-### Schritt 3: Inhalte in Design-System-Struktur umwandeln
+### Schritt 3: Seitenstruktur planen und Sektionen generieren
 
-- **Tool:** `generate_content`
+Zuerst die Sektionsfolge planen, dann jede Sektion einzeln generieren:
+
+- **Tool:** `plan_page`
 - **Parameter:**
-  - `system`: _„Du bist ein Content-Architekt. Strukturiere den folgenden Website-Inhalt in Design-System-Sektionen. Behalte den Inhalt so nah wie möglich am Original, passe aber die Struktur an die verfügbaren Komponenten an."_
-  - `prompt`: Das Markdown aus Schritt 1, ggf. mit Hinweisen des Editors (z.B. _„Lass den Footer-Text weg"_, _„Ändere den Firmennamen auf XYZ"_)
-  - `sectionCount`: Aus der Markdown-Struktur ableiten (z.B. 1 Hero + 2–3 Inhaltssektionen + 1 CTA)
+  - `intent`: Kurzbeschreibung basierend auf dem gescrapten Inhalt (z.B. _„Produktseite mit Überschrift, Features und Kontaktformular"_)
+- Plan dem Editor vorstellen und bestätigen lassen
+
+Dann für JEDE geplante Sektion:
+
+- **Tool:** `generate_section`
+- **Parameter:**
+  - `componentType`: Der Sektionstyp aus dem Plan (z.B. `"hero"`, `"features"`, `"text"`)
+  - `prompt`: Das relevante Markdown-Segment aus Schritt 1 + ggf. Hinweise des Editors (z.B. _„Lass den Footer-Text weg"_, _„Ändere den Firmennamen auf XYZ"_)
+  - `previousSection` / `nextSection`: Typ der Nachbar-Sektionen für Übergänge
+- **Vorteil:** Jede Sektion wird isoliert angezeigt — der Editor kann Abweichungen vom Original sofort erkennen und Korrekturen anfordern
 - **Ergebnis dem Editor zeigen** – besonders bei Migrationen ist ein Review-Schritt wichtig, da KI-Umstrukturierung vom Original abweichen kann
+
+> 💡 **Warum nicht `generate_content`?** Bei Migrationen ist die Kontrolle über einzelne Sektionen besonders wichtig — der Editor muss prüfen, ob die KI-Umstrukturierung den Originalinhalt korrekt abbildet. `generate_section` ermöglicht Review pro Sektion.
 
 ### Schritt 4: Seite in Storyblok anlegen
 
@@ -82,6 +94,6 @@ Der Editor möchte Inhalte von einer externen Webseite übernehmen – z.B. bei 
 
 - **Text direkt aus dem Chat:** Falls kein Scrape möglich, kann der Editor den Text einfach einfügen → Schritt 1 überspringen, direkt zu Schritt 3 mit dem eingefügten Text als Prompt
 - **Bulk-Migration:** Für viele Seiten besser einen n8n-Workflow verwenden (siehe Content Operations Workflows Dokument). Ordnerstruktur vorab mit `ensure_path` anlegen, dann Seiten parallel erstellen.
-- **Andere Content-Typen migrieren:** `contentType` bei `generate_content` und `create_page_with_content` übergeben — z.B. `contentType: "blog-post"` für Blogposts, `contentType: "event-detail"` für Events. Bei Hybrid-Typen (blog-post, blog-overview) zusätzlich `generate_root_field` für Root-Felder (`head`, `aside`, `cta`) und `generate_seo` für SEO-Metadaten aufrufen, dann über `rootFields` an `create_page_with_content` übergeben. **Wichtig bei blog-post:** Sektionen sollten überwiegend `text` und `split-even` sein — niemals `hero` oder `cta` als Sektionen (werden über Root-Felder `head` und `cta` abgedeckt). Bei Tier-2-Typen (event-detail, event-list) `rootFields` für die Wurzel-Felder setzen.
+- **Andere Content-Typen migrieren:** `contentType` bei `plan_page`, `generate_section` und `create_page_with_content` übergeben — z.B. `contentType: "blog-post"` für Blogposts, `contentType: "event-detail"` für Events. Bei Hybrid-Typen (blog-post, blog-overview) zusätzlich `generate_root_field` für Root-Felder (`head`, `aside`, `cta`) und `generate_seo` für SEO-Metadaten aufrufen, dann über `rootFields` an `create_page_with_content` übergeben. **Wichtig bei blog-post:** Sektionen sollten überwiegend `text` und `split-even` sein — niemals `hero` oder `cta` als Sektionen (werden über Root-Felder `head` und `cta` abgedeckt). Bei Tier-2-Typen (event-detail, event-list) `rootFields` für die Wurzel-Felder setzen.
 - **Nur Inhalte extrahieren, nicht anlegen:** Schritte 1–3 durchführen und dem Editor das Ergebnis als JSON zeigen, ohne Storyblok-Import
 - **Zu bestehender Seite hinzufügen:** Statt `create_page_with_content` in Schritt 4 → `import_content_at_position` verwenden (siehe Skill „Bestehende Seite erweitern")

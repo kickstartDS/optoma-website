@@ -6,10 +6,10 @@ import { useRouter } from "next/router";
 import { JsonLd } from "react-schemaorg";
 import { BreadcrumbList } from "schema-dts";
 
-import DsaProviders from "@kickstartds/ds-agency-premium/providers";
-import { Header } from "@kickstartds/ds-agency-premium/header";
-import { Footer } from "@kickstartds/ds-agency-premium/footer";
-import { Breadcrumb } from "@kickstartds/ds-agency-premium/breadcrumb";
+import DsaProviders from "@kickstartds/design-system/providers";
+import { Header } from "@kickstartds/design-system/header";
+import { Footer } from "@kickstartds/design-system/footer";
+import { Breadcrumb } from "@kickstartds/design-system/breadcrumb";
 import { initStoryblok } from "@/helpers/storyblok";
 import { unflatten } from "@/helpers/unflatten";
 import Meta from "@/components/Meta";
@@ -19,13 +19,13 @@ import ComponentProviders from "@/components/ComponentProviders";
 import ImageSizeProviders from "@/components/ImageSizeProviders";
 import ImageRatioProviders from "@/components/ImageRatioProviders";
 
-import palette from "@kickstartds/ds-agency-premium/global.client.js";
-import "@kickstartds/ds-agency-premium/global.css";
+import palette from "@kickstartds/design-system/global.client.js";
+import "@kickstartds/design-system/global.css";
 import "@/index.scss";
 import "@/components/prompter/prompter.scss";
 import { BlurHashProvider } from "@/components/BlurHashContext";
 import { LanguageProvider } from "@/components/LanguageContext";
-import { Section } from "@kickstartds/ds-agency-premium/components/section/index.js";
+import { Section } from "@kickstartds/design-system/components/section/index.js";
 import { StoryblokComponent } from "@storyblok/react";
 
 initStoryblok(process.env.NEXT_STORYBLOK_API_TOKEN);
@@ -67,7 +67,14 @@ export default function App({
   const headerProps = settings?.header ? unflatten(settings?.header) : {};
   const footerProps = settings?.footer ? unflatten(settings?.footer) : {};
   const storyProps = story?.content ? unflatten(story?.content) : {};
-  const token = storyProps?.token || settings?.token || "";
+
+  // Theme CSS: page-level theme overrides global theme
+  const themeCss = storyProps?.themeCss || settings?.themeCss || "";
+  // Manual token overrides layer on top of the selected theme
+  const tokenOverrides = storyProps?.token || settings?.token || "";
+  // Combined token string: theme CSS + manual overrides
+  const token = [themeCss, tokenOverrides].filter(Boolean).join("\n");
+
   const router = useRouter();
 
   const invertHeader = storyProps?.header?.inverted
