@@ -108,6 +108,8 @@ export const components = {
   page: editablePage,
   global: Global,
   global_reference: GlobalReference,
+  settings: dynamic(() => import("./SettingsPreview")),
+  "token-theme": dynamic(() => import("./TokenThemePreview")),
   "blog-overview": dynamic(() => import("./BlogOverview")),
   "blog-post": dynamic(() => import("./BlogPost")),
   "event-detail": dynamic(() => import("./EventDetail")),
