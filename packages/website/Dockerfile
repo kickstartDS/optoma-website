@@ -12,10 +12,22 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 # Copy pnpm patches so they are applied during install
 COPY patches/ ./patches/
-# Copy package.json files for all required workspace packages
+# Copy package.json files for all workspace packages (pnpm needs the full workspace graph)
+COPY packages/component-builder-mcp/package.json ./packages/component-builder-mcp/
+COPY packages/design-system/package.json ./packages/design-system/
+# Copy pre-built design system dist (injectWorkspacePackages copies it into the store at install time)
+COPY packages/design-system/dist/ ./packages/design-system/dist/
+COPY packages/design-tokens-editor/package.json ./packages/design-tokens-editor/
+COPY packages/design-tokens-mcp/package.json ./packages/design-tokens-mcp/
+COPY packages/schema-layer-editor/package.json ./packages/schema-layer-editor/
+COPY packages/storyblok-mcp/package.json ./packages/storyblok-mcp/
+COPY packages/storyblok-n8n/package.json ./packages/storyblok-n8n/
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
+COPY packages/storyblok-theme-select-field-plugin/package.json ./packages/storyblok-theme-select-field-plugin/
 COPY packages/website/package.json ./packages/website/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
+# Run only native addon postinstall scripts that were skipped above
+RUN pnpm rebuild
 
 FROM base AS builder
 ARG NEXT_STORYBLOK_SPACE_ID
@@ -37,8 +49,9 @@ ARG CACHEBUST=0
 COPY packages/storyblok-services/ ./packages/storyblok-services/
 COPY packages/website/ ./packages/website/
 
-# Build shared lib first, then website
+# Build shared lib first, then re-inject so the website can resolve it
 RUN pnpm --filter @kickstartds/storyblok-services run build
+RUN pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm --filter @kickstartds/storyblok-starter-premium run build
 
 FROM base AS runner
