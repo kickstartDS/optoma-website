@@ -20,7 +20,7 @@ patchedDependencies:
     hash: 16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c
     path: patches/@kickstartds__jsonschema-utils@3.9.0.patch
   '@kickstartds/jsonschema2storyblok':
-    hash: 1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1
+    hash: 60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456
     path: patches/@kickstartds__jsonschema2storyblok.patch
   storybook-addon-playroom:
     hash: 0c3588a5e18aaf64b97e5e0d383b2db50f31ab0a41736054f8da5f3511ccabb9
@@ -178,7 +178,7 @@ importers:
         version: 6.5.1(jest@30.2.0(@types/node@20.4.5)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.3))(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))
       kickstartds:
         specifier: 3.5.0--canary.62.324.0
-        version: 3.5.0--canary.62.324.0(038a3d8288bf90678233f4461d1d6b5a)
+        version: 3.5.0--canary.62.324.0(67dc4a56b318d4f099b1820c7fb5eead)
       lazysizes:
         specifier: ^5.3.2
         version: 5.3.2
@@ -609,9 +609,6 @@ importers:
       vite-plugin-css-injected-by-js:
         specifier: ^4.0.1
         version: 4.0.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
-      vite-plugin-singlefile:
-        specifier: ^2.3.0
-        version: 2.3.0(rollup@4.59.0)(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
 
   packages/website:
     dependencies:
@@ -726,7 +723,7 @@ importers:
         version: 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/jsonschema2storyblok':
         specifier: ^1.7.0
-        version: 1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(3ae78907a694c064f82b89cb7939a1bf)
+        version: 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/jsonschema2types':
         specifier: ^1.2.8
         version: 1.2.8(3ae78907a694c064f82b89cb7939a1bf)
@@ -798,7 +795,7 @@ importers:
         version: 5.0.1
       kickstartds:
         specifier: 3.5.0--canary.62.324.0
-        version: 3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0)
+        version: 3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0)
       local-ssl-proxy:
         specifier: ^2.0.5
         version: 2.0.5
@@ -12608,13 +12605,6 @@ packages:
     peerDependencies:
       vite: '>2.0.0-0'
 
-  vite-plugin-singlefile@2.3.0:
-    resolution: {integrity: sha512-DAcHzYypM0CasNLSz/WG0VdKOCxGHErfrjOoyIPiNxTPTGmO6rRD/te93n1YL/s+miXq66ipF1brMBikf99c6A==}
-    engines: {node: '>18.0.0'}
-    peerDependencies:
-      rollup: ^4.44.1
-      vite: ^5.4.11 || ^6.0.0 || ^7.0.0
-
   vite@4.5.14:
     resolution: {integrity: sha512-+v57oAaoYNnO3hIu5Z/tJRZjq5aHM2zDve9YZ8HngVHbhk66RStobhb1sqPMIPEleV6cNKYK4eGrAbE9Ulbl2g==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -16183,7 +16173,7 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(3ae78907a694c064f82b89cb7939a1bf)':
+  '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf)':
     dependencies:
       '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
       ajv: 8.18.0
@@ -16196,7 +16186,7 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(714b024ce2080f276c61cf6f9cb90cea)':
+  '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(714b024ce2080f276c61cf6f9cb90cea)':
     dependencies:
       '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(714b024ce2080f276c61cf6f9cb90cea)
       ajv: 8.18.0
@@ -23903,7 +23893,7 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  kickstartds@3.5.0--canary.62.324.0(038a3d8288bf90678233f4461d1d6b5a):
+  kickstartds@3.5.0--canary.62.324.0(67dc4a56b318d4f099b1820c7fb5eead):
     dependencies:
       '@apidevtools/json-schema-ref-parser': 9.1.2
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
@@ -23913,7 +23903,7 @@ snapshots:
       '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(714b024ce2080f276c61cf6f9cb90cea)
       '@kickstartds/jsonschema2stackbit': 1.7.8(714b024ce2080f276c61cf6f9cb90cea)
       '@kickstartds/jsonschema2staticcms': 2.9.39(714b024ce2080f276c61cf6f9cb90cea)
-      '@kickstartds/jsonschema2storyblok': 1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(714b024ce2080f276c61cf6f9cb90cea)
+      '@kickstartds/jsonschema2storyblok': 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(714b024ce2080f276c61cf6f9cb90cea)
       '@kickstartds/jsonschema2types': 1.2.7(714b024ce2080f276c61cf6f9cb90cea)
       '@kickstartds/jsonschema2uniform': 1.4.26(714b024ce2080f276c61cf6f9cb90cea)
       '@kickstartds/style-dictionary': 4.0.4(style-dictionary@3.9.2)
@@ -23962,7 +23952,7 @@ snapshots:
       - debug
       - supports-color
 
-  kickstartds@3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0):
+  kickstartds@3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0):
     dependencies:
       '@apidevtools/json-schema-ref-parser': 9.1.2
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
@@ -23972,7 +23962,7 @@ snapshots:
       '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/jsonschema2stackbit': 1.7.8(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/jsonschema2staticcms': 2.9.39(3ae78907a694c064f82b89cb7939a1bf)
-      '@kickstartds/jsonschema2storyblok': 1.7.0(patch_hash=1ec1f6f4a5e44d4bcb2bde2459baa6a1ebadf44b35d1282ce9f44eb5e4ace6e1)(3ae78907a694c064f82b89cb7939a1bf)
+      '@kickstartds/jsonschema2storyblok': 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/jsonschema2types': 1.2.8(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/jsonschema2uniform': 1.4.26(3ae78907a694c064f82b89cb7939a1bf)
       '@kickstartds/style-dictionary': 4.0.4(style-dictionary@3.9.2)
@@ -28023,12 +28013,6 @@ snapshots:
 
   vite-plugin-css-injected-by-js@4.0.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
-      vite: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
-
-  vite-plugin-singlefile@2.3.0(rollup@4.59.0)(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
-    dependencies:
-      micromatch: 4.0.8
-      rollup: 4.59.0
       vite: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
 
   vite@4.5.14(@types/node@20.4.5)(sass@1.97.3)(terser@5.46.0):
