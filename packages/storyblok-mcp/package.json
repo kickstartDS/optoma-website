@@ -13,7 +13,8 @@
     "storyblok-mcp-server": "./dist/index.js"
   },
   "scripts": {
-    "build": "node scripts/extract-tokens.js && node scripts/bundle-render.js && tsc && node scripts/bundle-render.js",
+    "build": "node scripts/sync-schemas.js && node scripts/extract-tokens.js && node scripts/bundle-render.js && tsc && node scripts/bundle-render.js",
+    "sync-schemas": "node scripts/sync-schemas.js",
     "build:tokens": "node scripts/extract-tokens.js",
     "build:render": "node scripts/bundle-render.js",
     "start": "node dist/index.js",

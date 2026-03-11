@@ -2,3 +2,6 @@ node_modules/
 dist/
 *.js.map
 .env
+
+# Auto-generated build artifacts
+nodes/StoryblokKickstartDs/schemas/*.schema.dereffed.json
