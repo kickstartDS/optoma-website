@@ -95,9 +95,9 @@ export function ThemeSelect({
               ?.name as string) || (story as { name: string }).name,
           colors: extractThemeColors(
             (story as { content?: { tokens?: string } }).content
-              ?.tokens as string
+              ?.tokens as string,
           ),
-        })
+        }),
       );
 
       fetched.sort((a, b) => a.name.localeCompare(b.name));
