@@ -38,9 +38,13 @@ export function startServer(config: StoryblokConfig, port: number): void {
 
   app.listen(port, () => {
     console.log(
-      `\n  Design Tokens Editor API server running on http://localhost:${port}`
+      `\n  Design Tokens Editor API server running on http://localhost:${port}`,
     );
     console.log(`  Storyblok Space: ${config.spaceId}`);
+    console.log(
+      `  OAuth Token: ${config.oauthToken ? config.oauthToken.slice(0, 8) + "..." : "(missing)"}`,
+    );
+    console.log(`  API Base: ${config.apiBase}`);
     console.log();
   });
 }

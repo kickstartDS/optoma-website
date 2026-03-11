@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://optoma.mydesignsystem.com/hero.schema.json",
+  "type": "object",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "headline": {
+          "x-cms-hidden": false,
+          "title": "Eine überschriebene Headline",
+          "x-cms-order": 2
+        },
+        "sub": {
+          "x-cms-hidden": false,
+          "title": "Eine überschriebene Sub",
+          "x-cms-order": 1
+        },
+        "text": {
+          "x-cms-hidden": false,
+          "title": "Ein überschriebener Text",
+          "x-cms-order": 0
+        },
+        "colorNeutral": {
+          "x-cms-hidden": true,
+          "x-cms-order": 4
+        },
+        "highlightText": {
+          "x-cms-hidden": true,
+          "x-cms-order": 3
+        },
+        "height": {
+          "x-cms-hidden": true,
+          "x-cms-order": 5
+        },
+        "textbox": {
+          "x-cms-hidden": true,
+          "x-cms-order": 6
+        },
+        "mobileTextBelow": {
+          "x-cms-hidden": true,
+          "x-cms-order": 7
+        },
+        "invertText": {
+          "x-cms-hidden": true,
+          "x-cms-order": 8
+        },
+        "skipButton": {
+          "x-cms-hidden": true,
+          "x-cms-order": 10
+        },
+        "overlay": {
+          "x-cms-hidden": true,
+          "x-cms-order": 11
+        },
+        "textPosition": {
+          "x-cms-hidden": true,
+          "x-cms-order": 13
+        },
+        "buttons": {
+          "x-cms-order": 9
+        },
+        "image": {
+          "x-cms-order": 12,
+          "properties": {
+            "indent": {
+              "default": "left"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "$ref": "http://schema.mydesignsystem.com/hero.schema.json"
+    }
+  ],
+  "additionalProperties": false
+}

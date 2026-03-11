@@ -8,7 +8,11 @@
  * - css: Compiled CSS custom properties
  */
 
-const STORYBLOK_API_BASE = "https://mapi.storyblok.com/v1";
+const STORYBLOK_API_BASE_DEFAULT = "https://api.storyblok.com/v1";
+
+function getApiBase(config: StoryblokConfig): string {
+  return config.apiBase || STORYBLOK_API_BASE_DEFAULT;
+}
 
 interface StoryblokStory {
   id: number;
@@ -36,6 +40,7 @@ interface StoryblokSingleResponse {
 export interface StoryblokConfig {
   oauthToken: string;
   spaceId: string;
+  apiBase: string;
 }
 
 function headers(config: StoryblokConfig): Record<string, string> {
@@ -45,22 +50,43 @@ function headers(config: StoryblokConfig): Record<string, string> {
   };
 }
 
+// ─── Rate-limited fetch ───────────────────────────────────────────────
+
+/** Storyblok Management API allows max 6 req/s. Keep a safe margin. */
+const REQUESTS_PER_SECOND = 3;
+const MIN_INTERVAL = 1000 / REQUESTS_PER_SECOND;
+let lastRequestTime = 0;
+
+async function rateLimitedFetch(
+  input: string,
+  init?: RequestInit,
+): Promise<Response> {
+  const now = Date.now();
+  const wait = Math.max(0, lastRequestTime + MIN_INTERVAL - now);
+  lastRequestTime = now + wait;
+  if (wait > 0) {
+    await new Promise((resolve) => setTimeout(resolve, wait));
+  }
+  return fetch(input, init);
+}
+
 /**
  * Find a story/folder by its full slug via the Management API.
  * Returns the story object or null if not found.
  */
 async function findByFullSlug(
   config: StoryblokConfig,
-  fullSlug: string
+  fullSlug: string,
 ): Promise<StoryblokStory | null> {
-  const res = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${
-      config.spaceId
-    }/stories?by_slugs=${encodeURIComponent(fullSlug)}&per_page=1`,
-    { headers: headers(config) }
-  );
+  const url = `${getApiBase(config)}/spaces/${config.spaceId}/stories?by_slugs=${encodeURIComponent(fullSlug)}&per_page=1`;
+  console.log(`[storyblok] findByFullSlug GET ${url}`);
+  const res = await rateLimitedFetch(url, { headers: headers(config) });
+  console.log(`[storyblok] findByFullSlug → ${res.status}`);
   if (!res.ok) return null;
   const data = (await res.json()) as StoryblokListResponse;
+  console.log(
+    `[storyblok] findByFullSlug stories found: ${data.stories.length}`,
+  );
   return data.stories[0] ?? null;
 }
 
@@ -72,35 +98,37 @@ async function createFolder(
   config: StoryblokConfig,
   name: string,
   slug: string,
-  parentId?: number
+  parentId?: number,
 ): Promise<number> {
   const story: Record<string, unknown> = {
     name,
     slug,
     is_folder: true,
-    content: { component: "page", _uid: crypto.randomUUID() },
   };
   if (parentId !== undefined) {
     story.parent_id = parentId;
   }
 
-  const res = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories/`,
-    {
-      method: "POST",
-      headers: headers(config),
-      body: JSON.stringify({ story }),
-    }
-  );
+  const url = `${getApiBase(config)}/spaces/${config.spaceId}/stories/`;
+  const payload = JSON.stringify({ story });
+  console.log(`[storyblok] createFolder POST ${url}`);
+  console.log(`[storyblok] createFolder payload: ${payload}`);
+  const res = await rateLimitedFetch(url, {
+    method: "POST",
+    headers: headers(config),
+    body: payload,
+  });
 
   if (!res.ok) {
     const body = await res.text();
+    console.error(`[storyblok] createFolder FAILED ${res.status}: ${body}`);
     throw new Error(
-      `Failed to create folder "${slug}": ${res.status} — ${body}`
+      `Failed to create folder "${slug}": ${res.status} — ${body}`,
     );
   }
 
   const created = (await res.json()) as StoryblokSingleResponse;
+  console.log(`[storyblok] createFolder OK → id=${created.story.id}`);
   return created.story.id;
 }
 
@@ -117,13 +145,20 @@ async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
   let parentId: number | undefined;
 
   for (const seg of segments) {
+    console.log(`[storyblok] ensureThemesFolder checking "${seg.fullSlug}"`);
     const existing = await findByFullSlug(config, seg.fullSlug);
     if (existing) {
+      console.log(
+        `[storyblok] ensureThemesFolder "${seg.fullSlug}" exists → id=${existing.id}`,
+      );
       parentId = existing.id;
       continue;
     }
 
     // Folder doesn't exist — create it
+    console.log(
+      `[storyblok] ensureThemesFolder creating "${seg.fullSlug}" (parentId=${parentId})`,
+    );
     parentId = await createFolder(config, seg.name, seg.slug, parentId);
   }
 
@@ -132,9 +167,13 @@ async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
 
 /** List all token theme names. */
 export async function listThemes(config: StoryblokConfig): Promise<string[]> {
-  const url = `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories?starts_with=settings/themes/&content_type=token-theme&per_page=100`;
-  const res = await fetch(url, { headers: headers(config) });
+  const url = `${getApiBase(config)}/spaces/${config.spaceId}/stories?starts_with=settings/themes/&content_type=token-theme&per_page=100`;
+  const res = await rateLimitedFetch(url, { headers: headers(config) });
 
+  if (res.status === 404) {
+    // Folder or content type doesn't exist yet — no themes available
+    return [];
+  }
   if (!res.ok) {
     throw new Error(`Failed to list themes: ${res.status}`);
   }
@@ -146,15 +185,19 @@ export async function listThemes(config: StoryblokConfig): Promise<string[]> {
 /** Get a single token theme by slug. Returns the tokens JSON string or null. */
 export async function getTheme(
   config: StoryblokConfig,
-  slug: string
+  slug: string,
 ): Promise<string | null> {
-  const url = `${STORYBLOK_API_BASE}/spaces/${
+  const url = `${getApiBase(config)}/spaces/${
     config.spaceId
   }/stories?starts_with=settings/themes/${encodeURIComponent(
-    slug
+    slug,
   )}&content_type=token-theme`;
-  const res = await fetch(url, { headers: headers(config) });
+  const res = await rateLimitedFetch(url, { headers: headers(config) });
 
+  if (res.status === 404) {
+    // Folder or content type doesn't exist yet — treat as "not found"
+    return null;
+  }
   if (!res.ok) {
     throw new Error(`Failed to fetch theme: ${res.status}`);
   }
@@ -163,6 +206,17 @@ export async function getTheme(
   const story = data.stories.find((s) => s.slug === slug);
 
   if (!story) return null;
+
+  // The list endpoint may not include `content` — fetch the full story if needed
+  if (!story.content) {
+    const fullRes = await rateLimitedFetch(
+      `${getApiBase(config)}/spaces/${config.spaceId}/stories/${story.id}`,
+      { headers: headers(config) },
+    );
+    if (!fullRes.ok) return null;
+    const fullData = (await fullRes.json()) as StoryblokSingleResponse;
+    return fullData.story.content?.tokens || null;
+  }
 
   // Return the tokens field content as parsed JSON (it's stored as a JSON string)
   return story.content.tokens || null;
@@ -173,7 +227,7 @@ export async function createTheme(
   config: StoryblokConfig,
   slug: string,
   tokens: string,
-  css: string
+  css: string,
 ): Promise<boolean> {
   // Check if it already exists
   const existing = await getTheme(config, slug);
@@ -181,8 +235,8 @@ export async function createTheme(
 
   const folderId = await ensureThemesFolder(config);
 
-  const res = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories`,
+  const res = await rateLimitedFetch(
+    `${getApiBase(config)}/spaces/${config.spaceId}/stories`,
     {
       method: "POST",
       headers: headers(config),
@@ -200,7 +254,7 @@ export async function createTheme(
         },
         publish: 1,
       }),
-    }
+    },
   );
 
   if (!res.ok) {
@@ -216,16 +270,20 @@ export async function updateTheme(
   config: StoryblokConfig,
   slug: string,
   tokens: string,
-  css: string
+  css: string,
 ): Promise<boolean> {
   // Find the story by slug
-  const url = `${STORYBLOK_API_BASE}/spaces/${
+  const url = `${getApiBase(config)}/spaces/${
     config.spaceId
   }/stories?starts_with=settings/themes/${encodeURIComponent(
-    slug
+    slug,
   )}&content_type=token-theme`;
-  const res = await fetch(url, { headers: headers(config) });
+  const res = await rateLimitedFetch(url, { headers: headers(config) });
 
+  if (res.status === 404) {
+    // Folder or content type doesn't exist yet — treat as "not found"
+    return false;
+  }
   if (!res.ok) {
     throw new Error(`Failed to fetch theme for update: ${res.status}`);
   }
@@ -235,8 +293,8 @@ export async function updateTheme(
 
   if (!story) return false;
 
-  const updateRes = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories/${story.id}`,
+  const updateRes = await rateLimitedFetch(
+    `${getApiBase(config)}/spaces/${config.spaceId}/stories/${story.id}`,
     {
       method: "PUT",
       headers: headers(config),
@@ -251,7 +309,7 @@ export async function updateTheme(
         },
         publish: 1,
       }),
-    }
+    },
   );
 
   if (!updateRes.ok) {
@@ -265,16 +323,20 @@ export async function updateTheme(
 /** Delete a token theme by slug. */
 export async function deleteTheme(
   config: StoryblokConfig,
-  slug: string
+  slug: string,
 ): Promise<boolean> {
   // Find the story by slug
-  const url = `${STORYBLOK_API_BASE}/spaces/${
+  const url = `${getApiBase(config)}/spaces/${
     config.spaceId
   }/stories?starts_with=settings/themes/${encodeURIComponent(
-    slug
+    slug,
   )}&content_type=token-theme`;
-  const res = await fetch(url, { headers: headers(config) });
+  const res = await rateLimitedFetch(url, { headers: headers(config) });
 
+  if (res.status === 404) {
+    // Folder or content type doesn't exist yet — nothing to delete
+    return false;
+  }
   if (!res.ok) {
     throw new Error(`Failed to fetch theme for deletion: ${res.status}`);
   }
@@ -284,12 +346,12 @@ export async function deleteTheme(
 
   if (!story) return false;
 
-  const deleteRes = await fetch(
-    `${STORYBLOK_API_BASE}/spaces/${config.spaceId}/stories/${story.id}`,
+  const deleteRes = await rateLimitedFetch(
+    `${getApiBase(config)}/spaces/${config.spaceId}/stories/${story.id}`,
     {
       method: "DELETE",
       headers: headers(config),
-    }
+    },
   );
 
   if (!deleteRes.ok) {

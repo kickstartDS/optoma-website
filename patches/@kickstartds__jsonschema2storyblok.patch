@@ -9,6 +9,7 @@ index 4b0cfbe..3b0b8e7 100644
 +    if (subSchema.type === 'string' && subSchema.format && subSchema.format === 'theme') {
 +        field.type = 'custom';
 +        field.field_type = 'storyblok-theme-select-field-plugin';
++        field.options = [];
 +    }
 +    if (subSchema.type === 'string' && subSchema.format && subSchema.format === 'textarea') {
 +        field.type = 'textarea';

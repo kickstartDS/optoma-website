@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://schema.mydesignsystem.com/cms/event-detail.schema.json",
+  "$id": "http://schema.mydesignsystem.com/event-detail.schema.json",
   "title": "Event Detail",
   "type": "object",
   "properties": {
