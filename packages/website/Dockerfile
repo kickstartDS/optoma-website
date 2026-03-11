@@ -52,7 +52,7 @@ COPY packages/website/ ./packages/website/
 # Build shared lib first, then re-inject so the website can resolve it
 RUN pnpm --filter @kickstartds/storyblok-services run build
 RUN pnpm install --frozen-lockfile --ignore-scripts
-RUN pnpm --filter @kickstartds/storyblok-starter-premium run build
+RUN pnpm --filter @kickstartds/ruhmesmeile-storyblok-starter run build
 
 FROM base AS runner
 WORKDIR /app

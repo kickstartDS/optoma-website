@@ -193,7 +193,7 @@ Commit the updated files in `__snapshots__/` and `static/img/screenshots/` (trac
 ### Update previews in Storyblok
 
 ```bash
-pnpm --filter @kickstartds/storyblok-starter-premium run update-previews
+pnpm --filter @kickstartds/ruhmesmeile-storyblok-starter run update-previews
 ```
 
 ## Content Schema & Migrations
