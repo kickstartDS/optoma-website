@@ -30,7 +30,7 @@ export const Global: FC<GlobalStoryblok & SbBlokData> = (props) =>
   ));
 
 export const GlobalReference: FC<GlobalReferenceStoryblok & SbBlokData> = (
-  props
+  props,
 ) =>
   isGlobalReference(props.blok) &&
   props.blok.reference?.map(
@@ -38,7 +38,7 @@ export const GlobalReference: FC<GlobalReferenceStoryblok & SbBlokData> = (
       isGlobal(reference) &&
       reference.global?.map((global) => (
         <StoryblokComponent blok={global} key={global._uid} />
-      ))
+      )),
   );
 
 export const editable =
@@ -46,7 +46,7 @@ export const editable =
   // eslint-disable-next-line react/display-name
   ({ blok }: { blok: SbBlokData }) => {
     const { component, components, type, typeProp, _uid, ...props } = unflatten(
-      isStoryblokComponent(blok) ? blok.content : blok
+      isStoryblokComponent(blok) ? blok.content : blok,
     );
 
     if (isGlobalReference(blok)) {
@@ -57,7 +57,7 @@ export const editable =
               isGlobal(reference) &&
               reference.global?.map((global) => (
                 <StoryblokComponent blok={global} key={global._uid} />
-              ))
+              )),
           )}
         </div>
       );
@@ -75,25 +75,25 @@ export const editable =
                       reference.global?.map((global) => (
                         <StoryblokComponent blok={global} key={global._uid} />
                       ))
-                    : ""
+                    : "",
                 );
               }
 
               return (
                 <StoryblokComponent blok={nestedBlok} key={nestedBlok._uid} />
               );
-            }
+            },
           )}
       </Component>
     );
   };
 
 const Hero = dynamic(() =>
-  import("@kickstartds/design-system/hero").then((mod) => mod.Hero)
+  import("@kickstartds/design-system/hero").then((mod) => mod.Hero),
 );
 
 const DynamicMosaic = dynamic(() =>
-  import("@kickstartds/design-system/mosaic").then((mod) => mod.Mosaic)
+  import("@kickstartds/design-system/mosaic").then((mod) => mod.Mosaic),
 );
 
 const MosaicWrapper: FC<Record<string, any>> = (props) => {
@@ -118,226 +118,220 @@ export const components = {
   "blog-teaser": editable(
     dynamic(() =>
       import("@kickstartds/design-system/blog-teaser").then(
-        (mod) => mod.BlogTeaserContextDefault
-      )
-    )
+        (mod) => mod.BlogTeaserContextDefault,
+      ),
+    ),
   ),
   "blog-aside": editable(
     dynamic(() =>
       import("@kickstartds/design-system/blog-aside").then(
-        (mod) => mod.BlogAsideContextDefault
-      )
-    )
+        (mod) => mod.BlogAsideContextDefault,
+      ),
+    ),
   ),
   "blog-author": editable(
     dynamic(() =>
       import("@kickstartds/design-system/blog-author").then(
-        (mod) => mod.BlogAuthorContextDefault
-      )
-    )
+        (mod) => mod.BlogAuthorContextDefault,
+      ),
+    ),
   ),
   "blog-head": editable(
     dynamic(() =>
       import("@kickstartds/design-system/blog-head").then(
-        (mod) => mod.BlogHeadContextDefault
-      )
-    )
+        (mod) => mod.BlogHeadContextDefault,
+      ),
+    ),
   ),
   section: editable(Section, "components"),
   "business-card": editable(
     dynamic(() =>
       import("@kickstartds/design-system/business-card").then(
-        (mod) => mod.BusinessCardContextDefault
-      )
-    )
+        (mod) => mod.BusinessCardContextDefault,
+      ),
+    ),
   ),
   button: editable(
     dynamic(() =>
-      import("@kickstartds/design-system/button").then((mod) => mod.Button)
-    )
+      import("@kickstartds/design-system/button").then((mod) => mod.Button),
+    ),
   ),
   contact: editable(
     dynamic(() =>
-      import("@kickstartds/design-system/contact").then(
-        (mod) => mod.Contact
-      )
-    )
+      import("@kickstartds/design-system/contact").then((mod) => mod.Contact),
+    ),
   ),
   "content-nav": editable(
     dynamic(() =>
       import("@kickstartds/design-system/content-nav").then(
-        (mod) => mod.ContentNavContextDefault
-      )
-    )
+        (mod) => mod.ContentNavContextDefault,
+      ),
+    ),
   ),
   cta: editable(
     dynamic(() =>
       import("@kickstartds/design-system/cta").then(
-        (mod) => mod.CtaContextDefault
-      )
-    )
+        (mod) => mod.CtaContextDefault,
+      ),
+    ),
   ),
   divider: editable(
     dynamic(() =>
       import("@kickstartds/design-system/divider").then(
-        (mod) => mod.DividerContextDefault
-      )
-    )
+        (mod) => mod.DividerContextDefault,
+      ),
+    ),
   ),
   downloads: editable(
     dynamic(() =>
       import("@kickstartds/design-system/downloads").then(
-        (mod) => mod.DownloadsContextDefault
-      )
-    )
+        (mod) => mod.DownloadsContextDefault,
+      ),
+    ),
   ),
   "event-latest-teaser": editable(
     dynamic(() =>
       import("@kickstartds/design-system/event-latest-teaser").then(
-        (mod) => mod.EventLatestTeaserContextDefault
-      )
-    )
+        (mod) => mod.EventLatestTeaserContextDefault,
+      ),
+    ),
   ),
   "event-list-teaser": editable(
     dynamic(() =>
       import("@kickstartds/design-system/event-list-teaser").then(
-        (mod) => mod.EventListTeaserContextDefault
-      )
-    )
+        (mod) => mod.EventListTeaserContextDefault,
+      ),
+    ),
   ),
   faq: editable(
     dynamic(() =>
       import("@kickstartds/design-system/faq").then(
-        (mod) => mod.FaqContextDefault
-      )
-    )
+        (mod) => mod.FaqContextDefault,
+      ),
+    ),
   ),
   features: editable(
     dynamic(() =>
       import("@kickstartds/design-system/features").then(
-        (mod) => mod.FeaturesContextDefault
-      )
-    )
+        (mod) => mod.FeaturesContextDefault,
+      ),
+    ),
   ),
   feature: editable(
     dynamic(() =>
       import("@kickstartds/design-system/feature").then(
-        (mod) => mod.FeatureContextDefault
-      )
-    )
+        (mod) => mod.FeatureContextDefault,
+      ),
+    ),
   ),
   gallery: editable(
     dynamic(() =>
-      import("@kickstartds/design-system/gallery").then(
-        (mod) => mod.Gallery
-      )
-    )
+      import("@kickstartds/design-system/gallery").then((mod) => mod.Gallery),
+    ),
   ),
   headline: editable(
     dynamic(() =>
-      import("@kickstartds/design-system/headline").then(
-        (mod) => mod.Headline
-      )
-    )
+      import("@kickstartds/design-system/headline").then((mod) => mod.Headline),
+    ),
   ),
   html: editable(
     dynamic(() =>
       import("@kickstartds/design-system/html").then(
-        (mod) => mod.HtmlContextDefault
-      )
-    )
+        (mod) => mod.HtmlContextDefault,
+      ),
+    ),
   ),
   prompter: editable(
     dynamic(() =>
       import("./prompter/PrompterComponent").then(
-        (mod) => mod.PrompterComponent
-      )
-    )
+        (mod) => mod.PrompterComponent,
+      ),
+    ),
   ),
 
   "info-table": editable(
     dynamic(() =>
       import("./info-table/InfoTableComponent").then(
-        (mod) => mod.InfoTableContextDefault
-      )
-    )
+        (mod) => mod.InfoTableContextDefault,
+      ),
+    ),
   ),
   "split-even": editable(
     dynamic(() =>
       import("@kickstartds/design-system/split-even").then(
-        (mod) => mod.SplitEven
-      )
+        (mod) => mod.SplitEven,
+      ),
     ),
-    "firstComponents"
+    "firstComponents",
   ),
   "split-weighted": editable(
     dynamic(() =>
       import("@kickstartds/design-system/split-weighted").then(
-        (mod) => mod.SplitWeighted
-      )
+        (mod) => mod.SplitWeighted,
+      ),
     ),
-    "mainComponents"
+    "mainComponents",
   ),
   stats: editable(
     dynamic(() =>
       import("@kickstartds/design-system/stats").then(
-        (mod) => mod.StatsContextDefault
-      )
-    )
+        (mod) => mod.StatsContextDefault,
+      ),
+    ),
   ),
   stat: editable(
     dynamic(() =>
       import("@kickstartds/design-system/stat").then(
-        (mod) => mod.StatContextDefault
-      )
-    )
+        (mod) => mod.StatContextDefault,
+      ),
+    ),
   ),
   timeline: editable(
     dynamic(() =>
       import("./timeline/TimelineComponent").then(
-        (mod) => mod.TimelineContextDefault
-      )
-    )
+        (mod) => mod.TimelineContextDefault,
+      ),
+    ),
   ),
   "teaser-card": editable(
     dynamic(() =>
       import("@kickstartds/design-system/teaser-card").then(
-        (mod) => mod.TeaserCard
-      )
-    )
+        (mod) => mod.TeaserCard,
+      ),
+    ),
   ),
   testimonials: editable(
     dynamic(() =>
       import("@kickstartds/design-system/testimonials").then(
-        (mod) => mod.Testimonials
-      )
-    )
+        (mod) => mod.Testimonials,
+      ),
+    ),
   ),
   testimonial: editable(
     dynamic(() =>
       import("@kickstartds/design-system/testimonial").then(
-        (mod) => mod.TestimonialContextDefault
-      )
-    )
+        (mod) => mod.TestimonialContextDefault,
+      ),
+    ),
   ),
   text: editable(
     dynamic(() =>
       import("@kickstartds/design-system/text").then(
-        (mod) => mod.TextContextDefault
-      )
-    )
+        (mod) => mod.TextContextDefault,
+      ),
+    ),
   ),
   "image-text": editable(
     dynamic(() =>
       import("@kickstartds/design-system/image-text").then(
-        (mod) => mod.ImageTextContextDefault
-      )
-    )
+        (mod) => mod.ImageTextContextDefault,
+      ),
+    ),
   ),
   logos: editable(
     dynamic(() =>
-      import("@kickstartds/design-system/logos").then((mod) => mod.Logos)
-    )
+      import("@kickstartds/design-system/logos").then((mod) => mod.Logos),
+    ),
   ),
   hero: editable((props: ComponentProps<typeof Hero>) => (
     <ImageAutoSizeProvider>
@@ -348,16 +342,16 @@ export const components = {
   "video-curtain": editable(
     dynamic(() =>
       import("@kickstartds/design-system/video-curtain").then(
-        (mod) => mod.VideoCurtainContextDefault
-      )
-    )
+        (mod) => mod.VideoCurtainContextDefault,
+      ),
+    ),
   ),
   "image-story": editable(
     dynamic(() =>
       import("@kickstartds/design-system/image-story").then(
-        (mod) => mod.ImageStory
-      )
-    )
+        (mod) => mod.ImageStory,
+      ),
+    ),
   ),
   slider: editable(Slider, "components"),
 };

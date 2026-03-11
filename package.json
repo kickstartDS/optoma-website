@@ -1,5 +1,5 @@
 {
-  "name": "@kickstartds/storyblok-starter-premium-monorepo",
+  "name": "@kickstartds/ruhmesmeile-storyblok-starter-monorepo",
   "private": true,
   "packageManager": "pnpm@10.30.3",
   "scripts": {

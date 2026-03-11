@@ -9,7 +9,7 @@
   STORYBLOK_REGION = "Add the region you used on Storyblok for the newly created Space here"
 
 [build]
-  command = "(pnpm --filter website run netlify-init && pnpm --filter '...@kickstartds/storyblok-starter-premium' run build) || pnpm --filter '...@kickstartds/storyblok-starter-premium' run build"
+  command = "(pnpm --filter website run netlify-init && pnpm --filter '...@kickstartds/ruhmesmeile-storyblok-starter' run build) || pnpm --filter '...@kickstartds/ruhmesmeile-storyblok-starter' run build"
   publish = ".next"
   base = "/"
 

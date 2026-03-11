@@ -1,9 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+interface ThemeColors {
+  primary: string | null;
+  fg: string | null;
+  bg: string | null;
+  bgInverted: string | null;
+}
+
 interface Theme {
   slug: string;
   name: string;
-  primaryColor: string | null;
+  colors: ThemeColors;
 }
 
 interface ThemeSelectProps {
@@ -15,20 +22,37 @@ interface ThemeSelectProps {
 
 const STORYBLOK_CDN = "https://api.storyblok.com/v2/cdn/stories";
 
-/** Extract the primary brand color from the tokens JSON string. */
-function extractPrimaryColor(tokensJson: string | undefined): string | null {
-  if (!tokensJson) return null;
+/** Convert [0-1] float components to hex color. */
+function componentsToHex(components: number[] | undefined): string | null {
+  if (!components || components.length < 3) return null;
+  const hex = (v: number) =>
+    Math.round(v * 255)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${hex(components[0])}${hex(components[1])}${hex(components[2])}`;
+}
+
+/** Extract theme colors from the W3C Design Token JSON structure. */
+function extractThemeColors(tokensJson: string | undefined): ThemeColors {
+  const fallback: ThemeColors = {
+    primary: null,
+    fg: null,
+    bg: null,
+    bgInverted: null,
+  };
+  if (!tokensJson) return fallback;
   try {
     const tokens = JSON.parse(tokensJson);
-    // Navigate the branding token structure for the primary color
-    return (
-      tokens?.["ks-brand-color"]?.primary ||
-      tokens?.["ks-brand-color-primary"] ||
-      tokens?.color?.primary ||
-      null
-    );
+    const color = tokens?.color;
+    if (!color) return fallback;
+    return {
+      primary: componentsToHex(color.primary?.$root?.$value?.components),
+      fg: componentsToHex(color.fg?.$root?.$value?.components),
+      bg: componentsToHex(color.bg?.$root?.$value?.components),
+      bgInverted: componentsToHex(color.bg?.inverted?.$value?.components),
+    };
   } catch {
-    return null;
+    return fallback;
   }
 }
 
@@ -69,7 +93,7 @@ export function ThemeSelect({
           name:
             ((story as { content?: { name?: string } }).content
               ?.name as string) || (story as { name: string }).name,
-          primaryColor: extractPrimaryColor(
+          colors: extractThemeColors(
             (story as { content?: { tokens?: string } }).content
               ?.tokens as string
           ),
@@ -118,11 +142,12 @@ export function ThemeSelect({
 
   return (
     <div style={styles.container}>
-      {/* Current selection display */}
-      <div style={styles.selectedRow}>
+      {/* Current selection */}
+      <div style={styles.selectedSection}>
+        <div style={styles.selectedLabel}>Selected theme</div>
         {selectedTheme ? (
-          <>
-            <ColorDot color={selectedTheme.primaryColor} />
+          <div style={styles.selectedCard}>
+            <ThemeSwatch colors={selectedTheme.colors} size={36} />
             <span style={styles.selectedName}>{selectedTheme.name}</span>
             <button
               type="button"
@@ -132,56 +157,147 @@ export function ThemeSelect({
             >
               ✕
             </button>
-          </>
+          </div>
         ) : (
-          <span style={styles.placeholder}>No theme selected</span>
+          <div style={styles.selectedCardEmpty}>
+            <span style={styles.placeholder}>No theme selected</span>
+          </div>
         )}
       </div>
 
-      {/* Search input */}
-      {themes.length > 5 && (
-        <input
-          type="text"
-          placeholder="Search themes…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={styles.searchInput}
-        />
-      )}
+      {/* Available themes */}
+      <div style={styles.listSection}>
+        <div style={styles.listLabel}>Available themes</div>
 
-      {/* Theme list */}
-      <div style={styles.list}>
-        {filtered.map((theme) => (
-          <button
-            key={theme.slug}
-            type="button"
-            style={{
-              ...styles.option,
-              ...(theme.slug === value ? styles.optionActive : {}),
-            }}
-            onClick={() => onChange(theme.slug)}
-          >
-            <ColorDot color={theme.primaryColor} />
-            <span>{theme.name}</span>
-          </button>
-        ))}
-        {filtered.length === 0 && (
-          <div style={styles.noResults}>No matching themes</div>
+        {themes.length > 5 && (
+          <input
+            type="text"
+            placeholder="Search themes…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={styles.searchInput}
+          />
         )}
+
+        <div style={styles.list}>
+          {filtered.map((theme) => {
+            const isActive = theme.slug === value;
+            return (
+              <button
+                key={theme.slug}
+                type="button"
+                style={{
+                  ...styles.option,
+                  ...(isActive ? styles.optionActive : {}),
+                }}
+                onClick={() => onChange(theme.slug)}
+              >
+                <ThemeSwatch colors={theme.colors} size={28} />
+                <span style={isActive ? styles.optionNameActive : undefined}>
+                  {theme.name}
+                </span>
+                {isActive && <span style={styles.checkmark}>✓</span>}
+              </button>
+            );
+          })}
+          {filtered.length === 0 && (
+            <div style={styles.noResults}>No matching themes</div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-function ColorDot({ color }: { color: string | null }) {
+/**
+ * 4-dot theme swatch inspired by the Storybook ThemePreview component.
+ * Shows fg + primary on light bg (left half) and primary + fg on dark bg (right half).
+ */
+function ThemeSwatch({
+  colors,
+  size = 28,
+}: {
+  colors: ThemeColors;
+  size?: number;
+}) {
+  const bg = colors.bg || "#ffffff";
+  const bgInv = colors.bgInverted || "#1a1a1a";
+  const fg = colors.fg || "#1a1a1a";
+  const primary = colors.primary || "#0070f3";
+  const dotSize = size * 0.28;
+
   return (
     <span
       style={{
-        ...styles.dot,
-        backgroundColor: color || "#ccc",
-        borderColor: color ? "transparent" : "#999",
+        display: "inline-flex",
+        width: size,
+        height: size,
+        borderRadius: 4,
+        overflow: "hidden",
+        flexShrink: 0,
+        boxShadow:
+          "rgba(0,0,0,0.1) 0px 1px 3px 0px, rgba(0,0,0,0.06) 0px 1px 2px 0px",
       }}
-    />
+    >
+      {/* Light half */}
+      <span
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: dotSize * 0.3,
+          backgroundColor: bg,
+        }}
+      >
+        <span
+          style={{
+            width: dotSize,
+            height: dotSize,
+            borderRadius: "50%",
+            backgroundColor: fg,
+          }}
+        />
+        <span
+          style={{
+            width: dotSize,
+            height: dotSize,
+            borderRadius: "50%",
+            backgroundColor: primary,
+          }}
+        />
+      </span>
+      {/* Dark half */}
+      <span
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: dotSize * 0.3,
+          backgroundColor: bgInv,
+        }}
+      >
+        <span
+          style={{
+            width: dotSize,
+            height: dotSize,
+            borderRadius: "50%",
+            backgroundColor: primary,
+          }}
+        />
+        <span
+          style={{
+            width: dotSize,
+            height: dotSize,
+            borderRadius: "50%",
+            backgroundColor: fg,
+          }}
+        />
+      </span>
+    </span>
   );
 }
 
@@ -192,78 +308,115 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 14,
     lineHeight: 1.4,
   },
-  selectedRow: {
+  selectedSection: {
+    marginBottom: 12,
+  },
+  selectedLabel: {
+    fontSize: 11,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    color: "#6b7280",
+    marginBottom: 6,
+  },
+  selectedCard: {
     display: "flex",
     alignItems: "center",
-    gap: 8,
-    padding: "6px 0",
-    marginBottom: 6,
+    gap: 10,
+    padding: "8px 10px",
+    borderRadius: 6,
+    border: "2px solid #2563eb",
+    backgroundColor: "#eff6ff",
+  },
+  selectedCardEmpty: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "8px 10px",
+    borderRadius: 6,
+    border: "2px dashed #d1d5db",
+    backgroundColor: "#f9fafb",
   },
   selectedName: {
     fontWeight: 600,
     flex: 1,
+    color: "#111827",
   },
   placeholder: {
-    color: "#999",
+    color: "#9ca3af",
     fontStyle: "italic",
+    fontSize: 13,
   },
   clearBtn: {
     background: "none",
     border: "none",
     cursor: "pointer",
-    color: "#999",
+    color: "#6b7280",
     fontSize: 14,
     padding: "2px 6px",
     borderRadius: 4,
+    lineHeight: 1,
+  },
+  listSection: {},
+  listLabel: {
+    fontSize: 11,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    color: "#6b7280",
+    marginBottom: 6,
   },
   searchInput: {
     width: "100%",
     padding: "6px 8px",
-    border: "1px solid #ddd",
+    border: "1px solid #d1d5db",
     borderRadius: 4,
     fontSize: 13,
     marginBottom: 4,
     boxSizing: "border-box",
   },
   list: {
-    maxHeight: 200,
+    maxHeight: 220,
     overflowY: "auto",
-    border: "1px solid #eee",
-    borderRadius: 4,
+    border: "1px solid #e5e7eb",
+    borderRadius: 6,
+    backgroundColor: "#ffffff",
   },
   option: {
     display: "flex",
     alignItems: "center",
     gap: 8,
     width: "100%",
-    padding: "8px 10px",
+    padding: "7px 10px",
     border: "none",
     background: "none",
     cursor: "pointer",
     textAlign: "left",
     fontSize: 13,
-    borderBottom: "1px solid #f5f5f5",
+    borderBottom: "1px solid #f3f4f6",
+    color: "#374151",
   },
   optionActive: {
-    backgroundColor: "#e8f0fe",
-    fontWeight: 600,
+    backgroundColor: "#eff6ff",
   },
-  dot: {
-    display: "inline-block",
-    width: 14,
-    height: 14,
-    borderRadius: "50%",
-    border: "1px solid transparent",
-    flexShrink: 0,
+  optionNameActive: {
+    fontWeight: 600,
+    color: "#1d4ed8",
+  },
+  checkmark: {
+    marginLeft: "auto",
+    color: "#2563eb",
+    fontWeight: 700,
+    fontSize: 14,
   },
   noResults: {
     padding: "12px 10px",
-    color: "#999",
+    color: "#9ca3af",
     textAlign: "center",
     fontSize: 13,
   },
   empty: {
-    color: "#999",
+    color: "#9ca3af",
     fontSize: 13,
   },
 };

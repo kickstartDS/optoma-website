@@ -20,7 +20,7 @@ packages/
 | Package                                                  | npm                                      | Description                                                                     |
 | -------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------- |
 | [design-system](packages/design-system/)                 | `@kickstartds/design-system`             | 74+ React components, 5 themes, design tokens, Storybook, Playroom              |
-| [website](packages/website/)                             | `@kickstartds/storyblok-starter-premium` | Next.js 13 site with Storyblok CMS, ISR, Visual Editor, AI Prompter             |
+| [website](packages/website/)                             | `@kickstartds/ruhmesmeile-storyblok-starter` | Next.js 13 site with Storyblok CMS, ISR, Visual Editor, AI Prompter             |
 | [storyblok-services](packages/storyblok-services/)       | `@kickstartds/storyblok-services`        | Shared library for schema preparation, validation, transforms, pattern analysis |
 | [storyblok-mcp](packages/storyblok-mcp/)                 | `@kickstartds/storyblok-mcp-server`      | MCP server exposing 30+ CMS tools to AI assistants                              |
 | [storyblok-n8n](packages/storyblok-n8n/)                 | `n8n-nodes-storyblok-kickstartds`        | n8n community node with 22 operations for automated content pipelines           |

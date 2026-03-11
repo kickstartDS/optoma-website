@@ -154,7 +154,7 @@
 
 ## ADR-009: Changeset Ignore List for Private Packages
 
-**Decision:** Add `@kickstartds/design-tokens-editor` and `@kickstartds/schema-layer-editor` to the Changesets `ignore` array, alongside the existing `@kickstartds/storyblok-starter-premium` (website).
+**Decision:** Add `@kickstartds/design-tokens-editor` and `@kickstartds/schema-layer-editor` to the Changesets `ignore` array, alongside the existing `@kickstartds/ruhmesmeile-storyblok-starter` (website).
 
 **Rationale:**
 - Private packages (`private: true`) should not participate in version bumping or changelog generation

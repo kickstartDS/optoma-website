@@ -13,7 +13,7 @@ The repository currently contains **4 distinct packages** that are informally wi
 
 | Package                           | Name                                     | Type                   | Depends on shared                   |
 | --------------------------------- | ---------------------------------------- | ---------------------- | ----------------------------------- |
-| Root                              | `@kickstartds/storyblok-starter-premium` | Next.js 13 website     | `file:shared/storyblok-services`    |
+| Root                              | `@kickstartds/ruhmesmeile-storyblok-starter` | Next.js 13 website     | `file:shared/storyblok-services`    |
 | `shared/storyblok-services`       | `@kickstartds/storyblok-services`        | Library (dual ESM+CJS) | —                                   |
 | `mcp-server`                      | `@kickstartds/storyblok-mcp-server`      | MCP server             | `file:../shared/storyblok-services` |
 | `n8n-nodes-storyblok-kickstartds` | `n8n-nodes-storyblok-kickstartds`        | n8n community node     | `file:../shared/storyblok-services` |
@@ -136,7 +136,7 @@ storyblok-starter-premium/           ← Git root
 ### 3.3 Package Dependency Graph
 
 ```
-@kickstartds/storyblok-starter-premium (website)
+@kickstartds/ruhmesmeile-storyblok-starter (website)
   └── @kickstartds/storyblok-services (workspace:*)
 
 @kickstartds/storyblok-mcp-server
@@ -156,7 +156,7 @@ All three consumers depend on `storyblok-services` via `workspace:*`. During `pn
 
 ```jsonc
 {
-  "name": "@kickstartds/storyblok-starter-premium-monorepo",
+  "name": "@kickstartds/ruhmesmeile-storyblok-starter-monorepo",
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
@@ -285,7 +285,7 @@ The `repository.directory` field should be updated to `"packages/storyblok-n8n"`
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@kickstartds/storyblok-starter-premium"]
+  "ignore": ["@kickstartds/ruhmesmeile-storyblok-starter"]
 }
 ```
 
@@ -342,7 +342,7 @@ COPY --from=deps /app/packages/website/node_modules ./packages/website/node_modu
 COPY . .
 # Build shared lib first, then website
 RUN pnpm --filter @kickstartds/storyblok-services run build
-RUN pnpm --filter @kickstartds/storyblok-starter-premium run build
+RUN pnpm --filter @kickstartds/ruhmesmeile-storyblok-starter run build
 
 FROM base AS runner
 WORKDIR /app
@@ -437,7 +437,7 @@ Both configs use the repo root as build context, with explicit `dockerfile` path
 ```diff
   [build]
 -   command = "(npm run netlify-init && npm run build) || npm run build"
-+   command = "npx pnpm install --frozen-lockfile && pnpm --filter @kickstartds/storyblok-services run build && pnpm --filter @kickstartds/storyblok-starter-premium run build"
++   command = "npx pnpm install --frozen-lockfile && pnpm --filter @kickstartds/storyblok-services run build && pnpm --filter @kickstartds/ruhmesmeile-storyblok-starter run build"
     publish = ".next"
 +   base = "/"
 ```
@@ -449,7 +449,7 @@ Alternatively, Netlify can be configured to use pnpm natively by setting the `PN
   PNPM_VERSION = "9.15.0"
 
 [build]
-  command = "pnpm --filter '...@kickstartds/storyblok-starter-premium' run build"
+  command = "pnpm --filter '...@kickstartds/ruhmesmeile-storyblok-starter' run build"
   publish = "packages/website/.next"
   base = "/"
 ```
@@ -558,7 +558,7 @@ jobs:
 | ---- | --------------------------------------------------------------------------------------- | ---- |
 | 4.1  | Run `pnpm add -Dw @changesets/cli`                                                      | None |
 | 4.2  | Run `pnpm changeset init` — creates `.changeset/config.json`                            | None |
-| 4.3  | Configure: `"ignore": ["@kickstartds/storyblok-starter-premium"]`, `"access": "public"` | None |
+| 4.3  | Configure: `"ignore": ["@kickstartds/ruhmesmeile-storyblok-starter"]`, `"access": "public"` | None |
 | 4.4  | Add `publishConfig.access` to publishable packages                                      | None |
 
 ### Phase 5: Update Docker & Deployment
@@ -770,7 +770,7 @@ This tells Next.js to look for dependencies relative to the monorepo root, which
 
 | #   | Question                                                                                                                                                                                                                    | Decision Needed By |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| Q1  | Should the website package name change from `@kickstartds/storyblok-starter-premium` to something shorter (e.g. `@kickstartds/website`)? It's private so it doesn't matter for npm, but affects `pnpm --filter` ergonomics. | Phase 1            |
+| Q1  | Should the website package name change from `@kickstartds/ruhmesmeile-storyblok-starter` to something shorter (e.g. `@kickstartds/website`)? It's private so it doesn't matter for npm, but affects `pnpm --filter` ergonomics. | Phase 1            |
 | Q2  | Should we add more `pnpm --filter` aliases in the root `package.json` scripts (e.g. `"test:services": "pnpm --filter storyblok-services test"`)?                                                                            | Phase 3            |
 | Q3  | Should the MCP server also be published to npm (as a standalone CLI) in addition to Docker? Its `package.json` already has a `bin` field.                                                                                   | Phase 4            |
 | Q4  | Do we need a `packages/shared-config/` package for shared TypeScript/ESLint configs, or is the repo too small for that?                                                                                                     | Post-migration     |
