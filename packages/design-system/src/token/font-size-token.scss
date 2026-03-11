@@ -1,6 +1,5 @@
 // Branding
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   // Calculated BP Factor
@@ -52,7 +51,6 @@
 // Base Token
 // Calculated Growth/Shrink of the font-size
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-font-size-display-xxs-base: calc(
@@ -105,7 +103,6 @@
 // BP-Factor Calculation
 // (Low Breakpoint Scaling on Small font-sizes / High Breakpoint Scaling on Large font-sizes)
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-font-size-display-xxs-bp-factor-phone: calc(1 * var(--font-size-display-xxs-bp-factor));
@@ -419,7 +416,6 @@
 
 // font-sizes get BP-factor applied
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-font-size-display-xxs: calc(var(--ks-font-size-display-xxs-base) * var(--ks-font-size-display-xxs-bp-factor, 1));
@@ -466,7 +462,6 @@
 // BP-factor gets redefined on each breakpoints
 @media (min-width: 36em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-font-size-display-bp-factor: var(--ks-font-size-display-bp-factor-phone);
@@ -509,7 +504,6 @@
 
 @media (min-width: 48em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-font-size-display-xxs-bp-factor: var(--ks-font-size-display-xxs-bp-factor-tablet);
@@ -548,7 +542,6 @@
 
 @media (min-width: 62em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-font-size-display-xxs-bp-factor: var(--ks-font-size-display-xxs-bp-factor-laptop);
@@ -587,7 +580,6 @@
 
 @media (min-width: 75em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-font-size-display-xxs-bp-factor: var(--ks-font-size-display-xxs-bp-factor-desktop);

@@ -1,6 +1,5 @@
 // Branding
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   // Calculated BP Factor
@@ -16,7 +15,6 @@
 // Base Token
 // Calculated Growth/Shrink of the spacing
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-spacing-xxs-base: calc(var(--ks-spacing-xs-base) * var(--ks-scale-spacing-shrink-factor));
@@ -31,7 +29,6 @@
 // BP-Factor Calculation
 // (Small Spacing: Lower Breakpoint Scaling / Large Spacing: Larger Breakpoint Scaling)
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-spacing-xxs-bp-factor-phone: calc(1 * var(--ks-scale-spacing-xxs-bp-factor));
@@ -83,7 +80,6 @@
 }
 
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-spacing-stack-xxs: var(--ks-spacing-xxs);
@@ -129,7 +125,6 @@
 
 // Spacings get BP-factor applied
 :root,
-[ks-theme],
 [ks-inverted="false"],
 [ks-inverted="true"] {
   --ks-spacing-xxs: calc(var(--ks-spacing-xxs-base) * var(--ks-spacing-xxs-bp-factor, 1));
@@ -144,7 +139,6 @@
 // BP-factor gets redefined on each breakpoints
 @media (min-width: 36em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-spacing-xxs-bp-factor: var(--ks-spacing-xxs-bp-factor-phone);
@@ -159,7 +153,6 @@
 
 @media (min-width: 48em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-spacing-xxs-bp-factor: var(--ks-spacing-xxs-bp-factor-tablet);
@@ -174,7 +167,6 @@
 
 @media (min-width: 62em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-spacing-xxs-bp-factor: var(--ks-spacing-xxs-bp-factor-laptop);
@@ -189,7 +181,6 @@
 
 @media (min-width: 75em) {
   :root,
-  [ks-theme],
   [ks-inverted="false"],
   [ks-inverted="true"] {
     --ks-spacing-xxs-bp-factor: var(--ks-spacing-xxs-bp-factor-desktop);

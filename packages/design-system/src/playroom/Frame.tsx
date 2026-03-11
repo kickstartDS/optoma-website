@@ -5,8 +5,8 @@ import { useTheme } from "../themes/useTheme";
 
 export default function Frame({
   children,
-  themeName,
+  theme,
 }: PropsWithChildren<{ themeName: string | null; theme: any | null }>) {
-  useTheme(themeName);
+  useTheme(theme?.tokens);
   return <PageWrapper>{children}</PageWrapper>;
 }

@@ -3,14 +3,14 @@ import "./branding-switch.scss";
 
 export const BRANDINGS = [
   { label: "Default", file: "branding-tokens.css" },
-  { label: "Mint", file: "branding-token-mint.css" },
-  { label: "Neon", file: "branding-token-neon.css" },
-  { label: "Burgundy", file: "branding-token-burgundy.css" },
-  { label: "Blizzard", file: "branding-token-blizzard.css" },
-  { label: "Coffee", file: "branding-token-coffee.css" },
-  { label: "Water", file: "branding-token-water.css" },
-  { label: "Ember", file: "branding-token-ember.css" },
-  { label: "Granit", file: "branding-token-granit.css" },
+  { label: "Blizzard", file: "branding-tokens-blizzard.css" },
+  { label: "Burgundy", file: "branding-tokens-burgundy.css" },
+  { label: "Coffee", file: "branding-tokens-coffee.css" },
+  { label: "Ember", file: "branding-tokens-ember.css" },
+  { label: "Granit", file: "branding-tokens-granit.css" },
+  { label: "Mint", file: "branding-tokens-mint.css" },
+  { label: "Neon", file: "branding-tokens-neon.css" },
+  { label: "Water", file: "branding-tokens-water.css" },
 ];
 
 const TOKEN_PATH = "/src/token/";

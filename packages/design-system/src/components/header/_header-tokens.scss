@@ -1,5 +1,4 @@
 :root,
-[ks-theme],
 [ks-inverted] {
   //Global token for calculation of header height
   --dsa-header--height: calc(var(--dsa-logo--height) + var(--dsa-header--spacing-vertical) * 2);

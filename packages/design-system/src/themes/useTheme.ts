@@ -1,12 +1,22 @@
 import { useEffect } from "react";
-import "./themes.scss";
 
-export const useTheme = (themeName: string) => {
+export const useTheme = (themeCss?: string) => {
   useEffect(() => {
-    if (themeName && themeName !== "dsa") {
-      document.body.setAttribute("ks-theme", themeName);
-    } else {
-      document.body.removeAttribute("ks-theme");
+    const id = "branding-token-link";
+    const existing = document.getElementById(id) as HTMLLinkElement | null;
+
+    if (!themeCss) {
+      existing?.remove();
+      return;
     }
-  }, [themeName]);
+
+    let link = existing;
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.id = id;
+      document.head.appendChild(link);
+    }
+    link.href = themeCss;
+  }, [themeCss]);
 };

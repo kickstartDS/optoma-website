@@ -8,7 +8,6 @@ import { Preview } from "@storybook/react-vite";
 import { unpackDecorator } from "@kickstartds/core/lib/storybook";
 import { CssPropsParameter } from "@kickstartds/storybook-addon-component-tokens";
 import { light } from "./themes";
-import { themeSwitchDecorator, globalThemeTypes } from "./themeSwitch";
 
 import { PageWrapper } from "../src/components/page-wrapper/PageWrapperComponent";
 import { providerDecorator } from "../src/components/Providers";
@@ -80,16 +79,12 @@ const preview: Preview = {
   },
   decorators: [
     unpackDecorator,
-    themeSwitchDecorator,
     (Story) => (
       <PageWrapper>
         <Story />
       </PageWrapper>
     ),
   ],
-  globalTypes: {
-    ...globalThemeTypes,
-  },
 };
 
 export default preview;
