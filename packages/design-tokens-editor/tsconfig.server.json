@@ -7,7 +7,7 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist/server",
-    "rootDir": "./src",
+    "rootDir": "./src/server",
     "declaration": true,
     "sourceMap": true,
     "resolveJsonModule": true,
