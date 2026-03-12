@@ -4,7 +4,7 @@ import { INodeProperties } from "n8n-workflow";
  * Parameter definitions for the "Theme" resource.
  *
  * Visible when resource = "theme".
- * Operations: list, get, apply, remove
+ * Operations: list, get, create, update, apply, remove
  */
 
 // ─── Operations ─────────────────────────────────────────────────────────
@@ -28,6 +28,20 @@ export const themeOperations: INodeProperties = {
       description:
         "Get the full details of a theme including branding tokens and compiled CSS",
       action: "Get a theme",
+    },
+    {
+      name: "Create Theme",
+      value: "create",
+      description:
+        "Create a new design token theme from a W3C DTCG branding token object",
+      action: "Create a theme",
+    },
+    {
+      name: "Update Theme",
+      value: "update",
+      description:
+        "Update an existing theme with new W3C DTCG branding tokens (rejects system themes)",
+      action: "Update a theme",
     },
     {
       name: "Apply Theme",
@@ -70,6 +84,107 @@ export const themeFields: INodeProperties[] = [
       show: {
         resource: ["theme"],
         operation: ["get"],
+      },
+    },
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // Create Theme fields
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    displayName: "Theme Name",
+    name: "createThemeName",
+    type: "string",
+    default: "",
+    required: true,
+    description:
+      'Display name for the new theme (e.g. "Dark Mode", "Corporate Blue")',
+    placeholder: "My Theme",
+    displayOptions: {
+      show: {
+        resource: ["theme"],
+        operation: ["create"],
+      },
+    },
+  },
+  {
+    displayName: "Tokens (JSON)",
+    name: "createThemeTokens",
+    type: "json",
+    default: "{}",
+    required: true,
+    description:
+      "W3C DTCG branding token object as JSON. Must include at least a color section.",
+    typeOptions: {
+      rows: 10,
+    },
+    displayOptions: {
+      show: {
+        resource: ["theme"],
+        operation: ["create"],
+      },
+    },
+  },
+  {
+    displayName: "Publish",
+    name: "createPublish",
+    type: "boolean",
+    default: true,
+    description: "Whether to publish the theme after creation",
+    displayOptions: {
+      show: {
+        resource: ["theme"],
+        operation: ["create"],
+      },
+    },
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // Update Theme fields
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    displayName: "Theme Slug or UUID",
+    name: "updateThemeSlugOrUuid",
+    type: "string",
+    default: "",
+    required: true,
+    description: 'The slug (e.g. "dark-mode") or UUID of the theme to update',
+    placeholder: "dark-mode",
+    displayOptions: {
+      show: {
+        resource: ["theme"],
+        operation: ["update"],
+      },
+    },
+  },
+  {
+    displayName: "Tokens (JSON)",
+    name: "updateThemeTokens",
+    type: "json",
+    default: "{}",
+    required: true,
+    description:
+      "New W3C DTCG branding token object as JSON. Replaces the existing tokens entirely.",
+    typeOptions: {
+      rows: 10,
+    },
+    displayOptions: {
+      show: {
+        resource: ["theme"],
+        operation: ["update"],
+      },
+    },
+  },
+  {
+    displayName: "Publish",
+    name: "updatePublish",
+    type: "boolean",
+    default: true,
+    description: "Whether to publish the theme after update",
+    displayOptions: {
+      show: {
+        resource: ["theme"],
+        operation: ["update"],
       },
     },
   },

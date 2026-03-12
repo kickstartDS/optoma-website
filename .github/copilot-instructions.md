@@ -342,7 +342,7 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/storyblok-mcp/src/elicitation.ts](packages/storyblok-mcp/src/elicitation.ts) - tryElicit() helper + 5 pre-built elicitation form schemas
 - [packages/storyblok-mcp/src/progress.ts](packages/storyblok-mcp/src/progress.ts) - ProgressReporter class for step-by-step progress notifications
 - [packages/storyblok-mcp/src/ui/](packages/storyblok-mcp/src/ui/) - MCP Apps extension: interactive HTML previews, app-only tools, theme bridge
-- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (26 operations across 4 resources)
+- [packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/StoryblokKickstartDs.node.ts) - Main n8n node implementation (28 operations across 4 resources)
 - [packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts](packages/storyblok-n8n/nodes/StoryblokKickstartDs/GenericFunctions.ts) - Re-exports from shared services for use in n8n node
 - [packages/design-system/rollup.config.mjs](packages/design-system/rollup.config.mjs) - Design system Rollup build config (component bundling, token extraction)
 - [packages/design-system/.storybook/main.ts](packages/design-system/.storybook/main.ts) - Storybook configuration (addons, framework, stories)
@@ -363,14 +363,14 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 
 ## n8n Community Node
 
-The project includes an n8n community node package ([packages/storyblok-n8n/](packages/storyblok-n8n/)) that provides **26 operations across 4 resources** for automating Storyblok content workflows without an LLM intermediary:
+The project includes an n8n community node package ([packages/storyblok-n8n/](packages/storyblok-n8n/)) that provides **28 operations across 4 resources** for automating Storyblok content workflows without an LLM intermediary:
 
 | Resource       | Operations | Description                                                                                  |
 | -------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | **AI Content** | 7          | generate, import, generateSection, planPage, analyzePatterns, generateRootField, generateSeo |
 | **Story**      | 8          | list, get, createPage, update, delete, replaceSection, updateSeo, search                     |
 | **Space**      | 7          | scrapeUrl, listComponents, getComponent, listAssets, listRecipes, listIcons, ensurePath      |
-| **Theme**      | 4          | list, get, apply, remove                                                                     |
+| **Theme**      | 6          | list, get, apply, remove, create, update                                                     |
 
 The n8n node consumes the same shared service library (`@kickstartds/storyblok-services`) as the MCP server, so validation, schema preparation, content transformation, and pattern analysis behave identically across both interfaces.
 
@@ -483,7 +483,7 @@ The component builder MCP server ([packages/component-builder-mcp/](packages/com
 
 The design tokens MCP server ([packages/design-tokens-mcp/](packages/design-tokens-mcp/)) enables AI assistants to **query, search, analyze, and update design tokens** across 12 global + 50 component token files.
 
-### Tools (28)
+### Tools (29)
 
 **Query/Search**: `get_token`, `list_tokens`, `search_tokens`, `get_tokens_by_type`, `list_files`, `get_token_stats`
 **Color**: `get_branding_color_palette`, color-specific analysis tools
@@ -491,13 +491,18 @@ The design tokens MCP server ([packages/design-tokens-mcp/](packages/design-toke
 **Component tokens**: Query tokens for any of 50+ individual components
 **Write**: `update_branding_token` — Modify token values
 **Analysis**: `audit_tokens` — Quality checks (naming, refs, governance)
-**Theme generation**: `theme_from_image` (vision-based), `theme_from_css` (CSS extraction)
+**Theme schema**: `get_theme_schema` — Returns W3C DTCG schema description with reference values for all branding token sections
+**Theme validation**: `validate_theme` — Validates a W3C DTCG token object against the branding schema (stateless, no side effects)
+**Theme listing**: `list_theme_values` — Flattens W3C DTCG tokens into a readable table; accepts optional `tokens` param for stateless use
+**Theme generation**: `theme_from_image` (vision-based), `theme_from_css` (CSS extraction) — both output W3C DTCG tokens for use with `create_theme`
+
+Branding tokens use **W3C Design Token Community Group (DTCG)** format. The recommended workflow for creating themes is: `get_theme_schema` → build W3C DTCG token object → `validate_theme` → `create_theme` (Storyblok MCP) or `update_theme`.
 
 ### Resources (4)
 
 - `tokens://overview` — Summary stats (total tokens, files, categories)
 - `tokens://files` — Token file catalog with descriptions
-- `tokens://branding` — Current branding token values
+- `tokens://branding` — Current branding token values (W3C DTCG format)
 - `tokens://components` — Component token catalog (50 files)
 
 ### Prompts (3 guided workflows)

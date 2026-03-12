@@ -58,6 +58,9 @@ import {
   applyTheme,
   removeTheme,
   previewThemeCSS,
+  createTheme,
+  updateTheme,
+  isSystemTheme,
   // Prompt constants
   PLACEHOLDER_IMAGE_INSTRUCTIONS,
   type StoryblokCredentials,
@@ -84,6 +87,9 @@ import {
   type ThemeSummary,
   type ThemeDetail,
   type ApplyThemeResult,
+  type CreateThemeResult,
+  type UpdateThemeResult,
+  type TokensToCssFn,
 } from "@kickstartds/storyblok-services";
 import type StoryblokClient from "storyblok-js-client";
 import * as path from "path";
@@ -136,6 +142,9 @@ export {
   applyTheme,
   removeTheme,
   previewThemeCSS,
+  createTheme,
+  updateTheme,
+  isSystemTheme,
   // Validation & quality
   checkCompositionalQuality,
   // Prompt constants
@@ -161,6 +170,9 @@ export {
   type ThemeSummary,
   type ThemeDetail,
   type ApplyThemeResult,
+  type CreateThemeResult,
+  type UpdateThemeResult,
+  type TokensToCssFn,
 };
 
 export { createOpenAiClient as getOpenAiClient } from "@kickstartds/storyblok-services";
@@ -194,7 +206,7 @@ export async function importContentIntoStory(
   sections: Record<string, unknown>[],
   publish: boolean,
   skipValidation = false,
-  contentType = "page"
+  contentType = "page",
 ): Promise<Record<string, any>> {
   const rules = registry.has(contentType)
     ? registry.get(contentType).rules
@@ -206,7 +218,7 @@ export async function importContentIntoStory(
     ensureSubItemComponents(
       sections as Record<string, any>[],
       rules.containerSlots,
-      rootArrayField
+      rootArrayField,
     );
   }
 
@@ -238,7 +250,7 @@ export async function insertContentAtPosition(
   sections: Record<string, unknown>[],
   publish: boolean,
   skipValidation = false,
-  contentType = "page"
+  contentType = "page",
 ): Promise<Record<string, any>> {
   const rules = registry.has(contentType)
     ? registry.get(contentType).rules
@@ -250,7 +262,7 @@ export async function insertContentAtPosition(
     ensureSubItemComponents(
       sections as Record<string, any>[],
       rules.containerSlots,
-      rootArrayField
+      rootArrayField,
     );
   }
 

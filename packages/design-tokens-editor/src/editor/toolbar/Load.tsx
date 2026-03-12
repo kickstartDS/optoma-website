@@ -46,7 +46,11 @@ export const Load = () => {
         <DialogTitle>Load</DialogTitle>
         <DialogContent sx={{ minWidth: "26em" }}>
           <form onSubmit={onSubmit} id={formId}>
-            <FormControl fullWidth sx={{ marginTop: 1 }} disabled={!presetNames}>
+            <FormControl
+              fullWidth
+              sx={{ marginTop: 1 }}
+              disabled={!presetNames}
+            >
               <InputLabel id={selectId}>Preset</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -55,9 +59,10 @@ export const Load = () => {
                 name="name"
                 defaultValue={presetName || ""}
               >
-                {presetNames?.map((presetName) => (
-                  <MenuItem key={presetName} value={presetName}>
-                    {presetName}
+                {presetNames?.map((entry) => (
+                  <MenuItem key={entry.name} value={entry.name}>
+                    {entry.name}
+                    {entry.system ? " 🔒" : ""}
                   </MenuItem>
                 ))}
               </Select>

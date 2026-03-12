@@ -108,7 +108,7 @@ function buildSectionSummary(sectionResult: GenerateSectionResult): string {
   for (const [key, value] of Object.entries(props)) {
     if (Array.isArray(value) && value.length > 0) {
       lines.push(
-        `${key}: ${value.length} item${value.length !== 1 ? "s" : ""}`
+        `${key}: ${value.length} item${value.length !== 1 ? "s" : ""}`,
       );
     }
   }
@@ -135,7 +135,7 @@ function extractSectionTypes(sections: Record<string, any>[]): string[] {
  */
 function getCompositionalWarnings(
   sections: Record<string, any>[],
-  contentType?: string
+  contentType?: string,
 ): Array<{
   level: string;
   message: string;
@@ -162,7 +162,7 @@ function getCompositionalWarnings(
 function buildWriteResult(
   storyblokService: StoryblokService,
   data: Record<string, any>,
-  result: Record<string, any>
+  result: Record<string, any>,
 ): Record<string, any> {
   const storyId = result?.id || result?.story?.id;
   const storyName = result?.name || result?.story?.name;
@@ -179,7 +179,7 @@ function buildWriteResult(
     const { annotations, resourceLinks } = createWriteAnnotations(
       storyblokService.getSpaceId(),
       storyId,
-      storyName
+      storyName,
     );
     response.content[0].annotations = annotations;
     response._meta = { resourceLinks };
@@ -617,6 +617,27 @@ tokens defined in the global settings.
 
 This is equivalent to calling \`apply_theme\` with no theme UUID.`;
 
+TOOL_DESCRIPTIONS.create_theme = `Create a new design token theme from W3C DTCG branding tokens.
+
+Accepts a theme name and a W3C Design Token Community Group (DTCG) format
+branding tokens object. Compiles the tokens to CSS custom properties server-side,
+creates a \`token-theme\` story under \`settings/themes/\`, and publishes it.
+
+The theme slug is derived from the name (e.g. "Brand Blue" → "brand-blue").
+System-managed themes cannot be overwritten.
+
+After creation, use \`apply_theme\` with the returned slug or UUID to apply
+the theme to a page or the global settings.`;
+
+TOOL_DESCRIPTIONS.update_theme = `Update an existing design token theme with new W3C DTCG branding tokens.
+
+Replaces all tokens on the theme story and recompiles the CSS custom properties.
+System-managed themes are protected and cannot be updated — to customize a
+system theme, use \`get_theme\` to load it, modify the tokens, then \`create_theme\`
+with a new name.
+
+Lookup is by slug (e.g. "brand-blue") or UUID.`;
+
 // ── Component usage hints ──────────────────────────────────────────
 
 const COMPONENT_USAGE_HINTS: Record<
@@ -706,12 +727,12 @@ interface ToolContext {
 
 async function handleGenerateContent(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   if (!deps.contentService.isConfigured()) {
     throw new ConfigurationError(
-      "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+      "OpenAI API key not configured. Set OPENAI_API_KEY environment variable.",
     );
   }
   const validated = schemas.generateContent.parse(args);
@@ -758,7 +779,7 @@ async function handleGenerateContent(
 
   if (!validated.schema) {
     throw new ConfigurationError(
-      "Either 'schema' or 'componentType'/'sectionCount' must be provided."
+      "Either 'schema' or 'componentType'/'sectionCount' must be provided.",
     );
   }
   const result = await deps.contentService.generateContent({
@@ -771,7 +792,7 @@ async function handleGenerateContent(
 
 async function handleImportContent(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.importContent.parse(args);
@@ -785,7 +806,7 @@ async function handleImportContent(
   ];
   const warnings = getCompositionalWarnings(
     Array.isArray(importSections) ? importSections : [],
-    importContentType
+    importContentType,
   );
   const result = await deps.storyblokService.importContent({
     ...validated,
@@ -804,19 +825,19 @@ async function handleImportContent(
   return buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 }
 
 async function handleImportContentAtPosition(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.importContentAtPosition.parse(args);
   const warnings = getCompositionalWarnings(
     validated.sections as Record<string, any>[],
-    validated.contentType
+    validated.contentType,
   );
   const result = await deps.storyblokService.importContentAtPosition({
     storyUid: validated.storyUid,
@@ -839,13 +860,13 @@ async function handleImportContentAtPosition(
   return buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 }
 
 async function handleCreatePageWithContent(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps, server, extra } = ctx;
   const validated = schemas.createPageWithContent.parse(args);
@@ -857,7 +878,7 @@ async function handleCreatePageWithContent(
   if (validated.path) {
     if (validated.parentId) {
       throw new ValidationError(
-        "'path' and 'parentId' are mutually exclusive. Provide one or the other."
+        "'path' and 'parentId' are mutually exclusive. Provide one or the other.",
       );
     }
     parentId = await deps.storyblokService.ensurePath(validated.path);
@@ -867,7 +888,7 @@ async function handleCreatePageWithContent(
   await createPageProgress.advance("Validating and rendering preview...");
   const warnings = getCompositionalWarnings(
     validated.sections as Record<string, any>[],
-    validated.contentType
+    validated.contentType,
   );
 
   // Check for missing SEO metadata
@@ -905,14 +926,14 @@ async function handleCreatePageWithContent(
   } catch (renderErr) {
     console.error(
       `[MCP] SSR page preview render failed (non-fatal):`,
-      renderErr
+      renderErr,
     );
   }
 
   // Pre-compute page metadata for the gate (needed by all tiers)
   const pageName = validated.name || "Untitled";
   const sectionTypes = extractSectionTypes(
-    validated.sections as Record<string, any>[]
+    validated.sections as Record<string, any>[],
   );
 
   // Step 3: User confirmation gate — three tiers:
@@ -943,7 +964,7 @@ async function handleCreatePageWithContent(
                 "Page preview is now visible to the user. Do NOT respond, summarize, or describe next steps. Say nothing. Wait silently for the user's next message.",
             },
             null,
-            2
+            2,
           ),
         },
       ],
@@ -966,13 +987,13 @@ async function handleCreatePageWithContent(
   const confirmPrompt = elicitPageConfirmation(
     pageName,
     sectionTypes.length,
-    sectionTypes
+    sectionTypes,
   );
   const confirmResult = await tryElicit(
     server.server,
     confirmPrompt.message,
     confirmPrompt.properties,
-    confirmPrompt.required
+    confirmPrompt.required,
   );
 
   let shouldPublish = !!validated.publish;
@@ -992,7 +1013,7 @@ async function handleCreatePageWithContent(
                   "Page creation cancelled by user. No changes were made in Storyblok.",
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -1031,7 +1052,7 @@ async function handleCreatePageWithContent(
   const writeResult = buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 
   // Attach structuredContent for ext-apps page preview
@@ -1060,7 +1081,7 @@ async function handleCreatePageWithContent(
 
 async function handleGetIdeas(
   _args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const result = await deps.storyblokService.getIdeas();
@@ -1069,7 +1090,7 @@ async function handleGetIdeas(
 
 async function handleListStories(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.listStories.parse(args);
@@ -1086,14 +1107,14 @@ async function handleListStories(
 
 async function handleGetStory(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps, server } = ctx;
   const validated = schemas.getStory.parse(args);
   const result = await deps.storyblokService.getStory(
     validated.identifier,
     validated.findBy,
-    validated.version
+    validated.version,
   );
 
   const textResult = {
@@ -1129,7 +1150,7 @@ async function handleGetStory(
       } catch (renderErr) {
         console.error(
           `[MCP] get_story SSR preview render failed (non-fatal):`,
-          renderErr
+          renderErr,
         );
         // Fall back to metadata-only (no rendered HTML)
         rendered = sections.map((s: any, i: number) => ({
@@ -1156,12 +1177,12 @@ async function handleGetStory(
               renderedHtml: string | null;
               index: number;
             },
-            i: number
+            i: number,
           ) => ({
             componentType: r.componentType || "section",
             renderedHtml: r.renderedHtml || null,
             sectionData: sections[i],
-          })
+          }),
         ),
         // Per-story token CSS (from content.token) with global settings fallback
         ...((storyContent?.token || deps.globalTokenCss.current) && {
@@ -1172,7 +1193,7 @@ async function handleGetStory(
   } catch (err) {
     console.error(
       `[MCP] get_story structuredContent assembly failed (non-fatal):`,
-      err
+      err,
     );
   }
 
@@ -1181,7 +1202,7 @@ async function handleGetStory(
 
 async function handleCreateStory(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.createStory.parse(args);
@@ -1189,7 +1210,7 @@ async function handleCreateStory(
   if (validated.path) {
     if (validated.parentId) {
       throw new ValidationError(
-        "'path' and 'parentId' are mutually exclusive. Provide one or the other."
+        "'path' and 'parentId' are mutually exclusive. Provide one or the other.",
       );
     }
     parentId = await deps.storyblokService.ensurePath(validated.path);
@@ -1207,13 +1228,13 @@ async function handleCreateStory(
   return buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 }
 
 async function handleUpdateStory(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.updateStory.parse(args);
@@ -1225,7 +1246,7 @@ async function handleUpdateStory(
       slug: validated.slug,
     },
     validated.publish,
-    validated.skipValidation
+    validated.skipValidation,
   );
   const data = {
     success: true,
@@ -1237,26 +1258,26 @@ async function handleUpdateStory(
   return buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 }
 
 async function handleDeleteStory(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps, server } = ctx;
   const validated = schemas.deleteStory.parse(args);
 
   // Try to elicit confirmation for destructive action
   const deleteConfirmation = elicitDeleteConfirmation(
-    `Story #${validated.storyId}`
+    `Story #${validated.storyId}`,
   );
   const elicitResult = await tryElicit(
     server.server,
     deleteConfirmation.message,
     deleteConfirmation.properties,
-    deleteConfirmation.required
+    deleteConfirmation.required,
   );
 
   // If elicitation was supported and user cancelled/declined, abort
@@ -1272,11 +1293,41 @@ async function handleDeleteStory(
           text: JSON.stringify(
             { success: false, message: "Deletion cancelled by user" },
             null,
-            2
+            2,
           ),
         },
       ],
     };
+  }
+
+  // Guard: reject deletion of system-managed token-theme stories
+  try {
+    const story = (await deps.storyblokService.getStoryManagement(
+      String(validated.storyId),
+    )) as Record<string, any>;
+    if (
+      story?.content?.component === "token-theme" &&
+      story?.content?.system === true
+    ) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                success: false,
+                error: `Cannot delete story #${validated.storyId}: it is a system-managed theme and is protected from deletion.`,
+              },
+              null,
+              2,
+            ),
+          },
+        ],
+        isError: true,
+      };
+    }
+  } catch {
+    // Story not found or fetch failed — let deleteStory handle it
   }
 
   await deps.storyblokService.deleteStory(validated.storyId);
@@ -1290,7 +1341,7 @@ async function handleDeleteStory(
             message: `Story ${validated.storyId} deleted successfully`,
           },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -1299,13 +1350,13 @@ async function handleDeleteStory(
 
 async function handleReplaceSection(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.replaceSection.parse(args);
   const warnings = getCompositionalWarnings(
     [validated.section as Record<string, any>],
-    validated.contentType
+    validated.contentType,
   );
   const result = await deps.storyblokService.replaceSection({
     storyUid: validated.storyUid,
@@ -1330,13 +1381,13 @@ async function handleReplaceSection(
   return buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 }
 
 async function handleUpdateSeo(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.updateSeo.parse(args);
@@ -1363,13 +1414,13 @@ async function handleUpdateSeo(
   return buildWriteResult(
     deps.storyblokService,
     data,
-    result as Record<string, any>
+    result as Record<string, any>,
   );
 }
 
 async function handleListComponents(
   _args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const result = await deps.storyblokService.listComponents();
@@ -1435,12 +1486,12 @@ async function handleListComponents(
 
 async function handleGetComponent(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.getComponent.parse(args);
   const result = await deps.storyblokService.getComponent(
-    validated.componentName
+    validated.componentName,
   );
   const name = validated.componentName;
   const allCTs = registry.listContentTypes();
@@ -1491,7 +1542,7 @@ async function handleGetComponent(
         text: JSON.stringify(
           { composition_rules: compositionRules, schema: result },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -1500,7 +1551,7 @@ async function handleGetComponent(
 
 async function handleListAssets(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.listAssets.parse(args);
@@ -1510,13 +1561,13 @@ async function handleListAssets(
 
 async function handleSearchContent(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.searchContent.parse(args);
   const result = await deps.storyblokService.searchContent(
     validated.query,
-    validated.contentType
+    validated.contentType,
   );
   return {
     content: [
@@ -1530,7 +1581,7 @@ async function handleSearchContent(
 
 async function handleScrapeUrl(
   args: Record<string, unknown>,
-  _ctx: ToolContext
+  _ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const validated = schemas.scrapeUrl.parse(args);
   const result = await scrapeUrl(validated);
@@ -1539,7 +1590,7 @@ async function handleScrapeUrl(
 
 async function handleListIcons(
   _args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   return {
@@ -1554,7 +1605,7 @@ async function handleListIcons(
               "Use these identifiers for any icon field in component content (e.g. hero cta_icon, feature icon, contact-info icon).",
           },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -1563,7 +1614,7 @@ async function handleListIcons(
 
 async function handleAnalyzeContentPatterns(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.analyzeContentPatterns.parse(args);
@@ -1574,7 +1625,7 @@ async function handleAnalyzeContentPatterns(
       validated.contentType
     }, startsWith: ${validated.startsWith || "all"}, refresh: ${
       validated.refresh
-    }, cached: ${isDefaultQuery && !!deps.cachedPatterns.current})...`
+    }, cached: ${isDefaultQuery && !!deps.cachedPatterns.current})...`,
   );
 
   let analysis: ContentPatternAnalysis;
@@ -1590,7 +1641,7 @@ async function handleAnalyzeContentPatterns(
     analysis = await analyzeContentPatterns(
       deps.storyblokService.getContentClient(),
       rules,
-      { ...validated, derefSchema }
+      { ...validated, derefSchema },
     );
     if (isDefaultQuery) {
       deps.cachedPatterns.current = analysis;
@@ -1603,7 +1654,7 @@ async function handleAnalyzeContentPatterns(
 
 async function handleListRecipes(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.listRecipes.parse(args);
@@ -1612,13 +1663,13 @@ async function handleListRecipes(
       validated.intent || "all"
     }, contentType: ${validated.contentType || "all"}, includePatterns: ${
       validated.includePatterns
-    })...`
+    })...`,
   );
 
   const filterContentType = validated.contentType;
   const filteredRecipes = filterContentType
     ? (deps.sectionRecipes.recipes as Array<Record<string, unknown>>).filter(
-        (r) => !r.contentType || r.contentType === filterContentType
+        (r) => !r.contentType || r.contentType === filterContentType,
       )
     : deps.sectionRecipes.recipes;
   const filteredTemplates = filterContentType
@@ -1642,7 +1693,7 @@ async function handleListRecipes(
     result.livePatterns = {
       componentFrequency: deps.cachedPatterns.current.componentFrequency.slice(
         0,
-        15
+        15,
       ),
       commonSequences: deps.cachedPatterns.current.commonSequences.slice(0, 10),
       subComponentCounts: deps.cachedPatterns.current.subComponentCounts,
@@ -1660,7 +1711,7 @@ async function handleListRecipes(
 
 async function handlePlanPage(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps, server } = ctx;
   const validated = schemas.planPage.parse(args);
@@ -1669,7 +1720,7 @@ async function handlePlanPage(
 
   if (!deps.contentService.isConfigured()) {
     throw new ConfigurationError(
-      "OpenAI API key is required for plan_page. Set OPENAI_API_KEY environment variable."
+      "OpenAI API key is required for plan_page. Set OPENAI_API_KEY environment variable.",
     );
   }
 
@@ -1679,7 +1730,7 @@ async function handlePlanPage(
       ? registry.get(planContentType)
       : registry.page;
     console.error(
-      `[MCP] plan_page: fetching filtered patterns (startsWith: ${validated.startsWith})...`
+      `[MCP] plan_page: fetching filtered patterns (startsWith: ${validated.startsWith})...`,
     );
     patternsSource = await analyzeContentPatterns(
       deps.storyblokService.getContentClient(),
@@ -1688,7 +1739,7 @@ async function handlePlanPage(
         contentType: planContentType,
         startsWith: validated.startsWith,
         derefSchema: planEntry.schema,
-      }
+      },
     );
   } else {
     patternsSource = deps.cachedPatterns.current;
@@ -1705,7 +1756,7 @@ async function handlePlanPage(
       intent: validated.intent,
       sectionCount: validated.sectionCount,
       patterns: patternsSource,
-    }
+    },
   );
 
   // Plan review gate — two tiers:
@@ -1737,7 +1788,7 @@ async function handlePlanPage(
                 "Plan review is now visible to the user. Do NOT respond, summarize, or describe next steps. Say nothing. Wait silently for the user's next message.",
             },
             null,
-            2
+            2,
           ),
         },
       ],
@@ -1765,7 +1816,7 @@ async function handlePlanPage(
 
 async function handleGenerateSection(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps, server, extra } = ctx;
   const validated = schemas.generateSection.parse(args);
@@ -1787,7 +1838,7 @@ async function handleGenerateSection(
     if (availableComponents.length === 0) {
       throw new ValidationError(
         `No section components found for content type "${sectionContentType}". ` +
-          `Please provide componentType explicitly.`
+          `Please provide componentType explicitly.`,
       );
     }
 
@@ -1796,7 +1847,7 @@ async function handleGenerateSection(
       server.server,
       picker.message,
       picker.properties,
-      picker.required
+      picker.required,
     );
 
     if (elicitResult.accepted && elicitResult.content?.componentType) {
@@ -1815,7 +1866,7 @@ async function handleGenerateSection(
                 message: "Section generation cancelled by user",
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -1824,20 +1875,20 @@ async function handleGenerateSection(
       // Elicitation unsupported — return helpful error
       throw new ValidationError(
         `componentType is required. Available types for ${sectionContentType}: ${availableComponents.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
     }
   }
 
   const sectionProgress = new ProgressReporter(extra, 3);
   console.error(
-    `[MCP] Generating section: ${resolvedComponentType} (contentType: ${sectionContentType})...`
+    `[MCP] Generating section: ${resolvedComponentType} (contentType: ${sectionContentType})...`,
   );
 
   if (!deps.contentService.isConfigured()) {
     throw new ConfigurationError(
-      "OpenAI API key is required for generate_section. Set OPENAI_API_KEY environment variable."
+      "OpenAI API key is required for generate_section. Set OPENAI_API_KEY environment variable.",
     );
   }
 
@@ -1849,7 +1900,7 @@ async function handleGenerateSection(
       ? registry.get(sectionContentType)
       : registry.page;
     console.error(
-      `[MCP] generate_section: fetching filtered patterns (startsWith: ${validated.startsWith})...`
+      `[MCP] generate_section: fetching filtered patterns (startsWith: ${validated.startsWith})...`,
     );
     sectionPatternsSource = await analyzeContentPatterns(
       deps.storyblokService.getContentClient(),
@@ -1858,7 +1909,7 @@ async function handleGenerateSection(
         contentType: sectionContentType,
         startsWith: validated.startsWith,
         derefSchema: sectionEntry.schema,
-      }
+      },
     );
   } else {
     sectionPatternsSource = deps.cachedPatterns.current;
@@ -1870,7 +1921,7 @@ async function handleGenerateSection(
 
   // Step 2: Generate section via OpenAI
   await sectionProgress.advance(
-    `Generating ${resolvedComponentType} section...`
+    `Generating ${resolvedComponentType} section...`,
   );
   const sectionResult: GenerateSectionResult = await generateSectionContent(
     deps.contentService.getClient(),
@@ -1884,7 +1935,7 @@ async function handleGenerateSection(
       patterns: sectionPatternsSource,
       recipes: deps.sectionRecipes as SectionRecipes,
       scopeLabel: validated.startsWith || undefined,
-    }
+    },
   );
 
   // Step 3: Render preview HTML (best-effort, non-blocking)
@@ -1943,7 +1994,7 @@ async function handleGenerateSection(
                 "Section preview is now visible to the user. Do NOT respond, summarize, or describe next steps. Say nothing. Wait silently for the user's next message.",
             },
             null,
-            2
+            2,
           ),
         },
       ],
@@ -1955,13 +2006,13 @@ async function handleGenerateSection(
   const sectionSummary = buildSectionSummary(sectionResult);
   const approvalPrompt = elicitSectionApproval(
     sectionResult.componentType,
-    sectionSummary
+    sectionSummary,
   );
   const approvalResult = await tryElicit(
     server.server,
     approvalPrompt.message,
     approvalPrompt.properties,
-    approvalPrompt.required
+    approvalPrompt.required,
   );
 
   if (approvalResult.accepted) {
@@ -1980,7 +2031,7 @@ async function handleGenerateSection(
                   "Section rejected by user. Ask if they want to try a different component type or prompt.",
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -2002,7 +2053,7 @@ async function handleGenerateSection(
                   "User wants modifications. Ask what changes they'd like, then call generate_section again with an updated prompt.",
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -2028,7 +2079,7 @@ async function handleGenerateSection(
               "Section generated successfully. Present this section to the user and WAIT for their explicit approval before generating the next section or calling any other tool. Ask the user if they want to: (1) approve and continue, (2) request modifications, or (3) reject and try a different approach.",
           },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -2038,18 +2089,18 @@ async function handleGenerateSection(
 
 async function handleGenerateRootField(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.generateRootField.parse(args);
   const rfContentType = validated.contentType || "blog-post";
   console.error(
-    `[MCP] Generating root field "${validated.fieldName}" for ${rfContentType}...`
+    `[MCP] Generating root field "${validated.fieldName}" for ${rfContentType}...`,
   );
 
   if (!deps.contentService.isConfigured()) {
     throw new ConfigurationError(
-      "OpenAI API key is required for generate_root_field. Set OPENAI_API_KEY environment variable."
+      "OpenAI API key is required for generate_root_field. Set OPENAI_API_KEY environment variable.",
     );
   }
 
@@ -2078,7 +2129,7 @@ async function handleGenerateRootField(
             note: `Root field "${rfResult.fieldName}" generated for ${rfContentType}. Pass this as rootFields.${rfResult.fieldName} to create_page_with_content.`,
           },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -2087,7 +2138,7 @@ async function handleGenerateRootField(
 
 async function handleGenerateSeo(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.generateSeo.parse(args);
@@ -2096,7 +2147,7 @@ async function handleGenerateSeo(
 
   if (!deps.contentService.isConfigured()) {
     throw new ConfigurationError(
-      "OpenAI API key is required for generate_seo. Set OPENAI_API_KEY environment variable."
+      "OpenAI API key is required for generate_seo. Set OPENAI_API_KEY environment variable.",
     );
   }
 
@@ -2118,7 +2169,7 @@ async function handleGenerateSeo(
             note: `SEO metadata generated for ${seoContentType}. Pass this as rootFields.seo to create_page_with_content.`,
           },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -2127,7 +2178,7 @@ async function handleGenerateSeo(
 
 async function handleContentAudit(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps, extra } = ctx;
   const validated = schemas.contentAudit.parse(args);
@@ -2162,7 +2213,7 @@ async function handleContentAudit(
 
   const auditResults = await runContentAudit(
     deps.storyblokService.getContentClient(),
-    auditOptions
+    auditOptions,
   );
 
   return {
@@ -2178,7 +2229,7 @@ async function handleContentAudit(
 
 async function handleEnsurePath(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.ensurePath.parse(args);
@@ -2195,7 +2246,7 @@ async function handleEnsurePath(
             path: validated.path,
           },
           null,
-          2
+          2,
         ),
       },
     ],
@@ -2208,7 +2259,7 @@ async function handleEnsurePath(
 
 async function handleListThemes(
   _args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const themes = await deps.storyblokService.listThemes();
@@ -2224,7 +2275,7 @@ async function handleListThemes(
 
 async function handleGetTheme(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.getTheme.parse(args);
@@ -2240,7 +2291,7 @@ async function handleGetTheme(
               hint: "Use list_themes to see available themes.",
             },
             null,
-            2
+            2,
           ),
         },
       ],
@@ -2254,7 +2305,7 @@ async function handleGetTheme(
 
 async function handleApplyTheme(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.applyTheme.parse(args);
@@ -2274,7 +2325,7 @@ async function handleApplyTheme(
                 hint: "Use list_themes to see available themes.",
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -2287,7 +2338,7 @@ async function handleApplyTheme(
   const result = await deps.storyblokService.applyTheme(
     validated.storyId,
     themeUuid,
-    validated.publish
+    validated.publish,
   );
 
   return {
@@ -2297,14 +2348,46 @@ async function handleApplyTheme(
 
 async function handleRemoveTheme(
   args: Record<string, unknown>,
-  ctx: ToolContext
+  ctx: ToolContext,
 ): Promise<Record<string, any>> {
   const { deps } = ctx;
   const validated = schemas.removeTheme.parse(args);
   const result = await deps.storyblokService.removeTheme(
     validated.storyId,
-    validated.publish
+    validated.publish,
   );
+  return {
+    content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+  };
+}
+
+async function handleCreateTheme(
+  args: Record<string, unknown>,
+  ctx: ToolContext,
+): Promise<Record<string, any>> {
+  const { deps } = ctx;
+  const validated = schemas.createTheme.parse(args);
+  const result = await deps.storyblokService.createTheme({
+    name: validated.name,
+    tokens: validated.tokens as Record<string, unknown>,
+    publish: validated.publish,
+  });
+  return {
+    content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+  };
+}
+
+async function handleUpdateTheme(
+  args: Record<string, unknown>,
+  ctx: ToolContext,
+): Promise<Record<string, any>> {
+  const { deps } = ctx;
+  const validated = schemas.updateTheme.parse(args);
+  const result = await deps.storyblokService.updateTheme({
+    slugOrUuid: validated.slugOrUuid,
+    tokens: validated.tokens as Record<string, unknown>,
+    publish: validated.publish,
+  });
   return {
     content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
   };
@@ -2335,7 +2418,7 @@ function registerSingleTool(
   name: string,
   inputSchema: Record<string, any> | undefined,
   handler: (args: any, extra: ProgressExtra) => Promise<Record<string, any>>,
-  meta?: Record<string, any>
+  meta?: Record<string, any>,
 ): void {
   const config: Record<string, any> = {
     description: TOOL_DESCRIPTIONS[name],
@@ -2359,7 +2442,7 @@ function registerSingleTool(
       // Automatically extract structuredContent from the first text block.
       if (hasOutputSchema && result.content && !result.structuredContent) {
         const firstText = (result.content as any[]).find(
-          (c: any) => c.type === "text" && c.text
+          (c: any) => c.type === "text" && c.text,
         );
         if (firstText) {
           try {
@@ -2385,7 +2468,7 @@ function registerSingleTool(
         });
         console.error(
           `[MCP Error] [VALIDATION_ERROR] Invalid input parameters:`,
-          JSON.stringify(validationErr.details, null, 2)
+          JSON.stringify(validationErr.details, null, 2),
         );
         throw validationErr;
       }
@@ -2423,7 +2506,7 @@ function registerSingleTool(
  */
 export function registerTools(
   server: McpServer,
-  deps: ToolRegistrationDeps
+  deps: ToolRegistrationDeps,
 ): void {
   // Build a ToolContext factory — creates context from the extra param
   const ctx = (extra: ProgressExtra): ToolContext => ({
@@ -2438,7 +2521,7 @@ export function registerTools(
     "generate_content",
     schemas.generateContent.shape,
     (args, extra) => handleGenerateContent(args, ctx(extra)),
-    { ui: { resourceUri: PAGE_BUILDER_URI } }
+    { ui: { resourceUri: PAGE_BUILDER_URI } },
   );
 
   // ── import_content ───────────────────────────────────────────
@@ -2446,7 +2529,7 @@ export function registerTools(
     server,
     "import_content",
     schemas.importContent.shape,
-    (args, extra) => handleImportContent(args, ctx(extra))
+    (args, extra) => handleImportContent(args, ctx(extra)),
   );
 
   // ── import_content_at_position ───────────────────────────────
@@ -2454,7 +2537,7 @@ export function registerTools(
     server,
     "import_content_at_position",
     schemas.importContentAtPosition.shape,
-    (args, extra) => handleImportContentAtPosition(args, ctx(extra))
+    (args, extra) => handleImportContentAtPosition(args, ctx(extra)),
   );
 
   // ── create_page_with_content ─────────────────────────────────
@@ -2463,12 +2546,12 @@ export function registerTools(
     "create_page_with_content",
     schemas.createPageWithContent.shape,
     (args, extra) => handleCreatePageWithContent(args, ctx(extra)),
-    { ui: { resourceUri: PAGE_BUILDER_URI } }
+    { ui: { resourceUri: PAGE_BUILDER_URI } },
   );
 
   // ── get_ideas ────────────────────────────────────────────────
   registerSingleTool(server, "get_ideas", undefined, (args, extra) =>
-    handleGetIdeas(args, ctx(extra))
+    handleGetIdeas(args, ctx(extra)),
   );
 
   // ── list_stories ─────────────────────────────────────────────
@@ -2476,7 +2559,7 @@ export function registerTools(
     server,
     "list_stories",
     schemas.listStories.shape,
-    (args, extra) => handleListStories(args, ctx(extra))
+    (args, extra) => handleListStories(args, ctx(extra)),
   );
 
   // ── get_story ────────────────────────────────────────────────
@@ -2485,7 +2568,7 @@ export function registerTools(
     "get_story",
     schemas.getStory.shape,
     (args, extra) => handleGetStory(args, ctx(extra)),
-    { ui: { resourceUri: PAGE_BUILDER_URI } }
+    { ui: { resourceUri: PAGE_BUILDER_URI } },
   );
 
   // ── create_story ─────────────────────────────────────────────
@@ -2493,7 +2576,7 @@ export function registerTools(
     server,
     "create_story",
     schemas.createStory.shape,
-    (args, extra) => handleCreateStory(args, ctx(extra))
+    (args, extra) => handleCreateStory(args, ctx(extra)),
   );
 
   // ── update_story ─────────────────────────────────────────────
@@ -2501,7 +2584,7 @@ export function registerTools(
     server,
     "update_story",
     schemas.updateStory.shape,
-    (args, extra) => handleUpdateStory(args, ctx(extra))
+    (args, extra) => handleUpdateStory(args, ctx(extra)),
   );
 
   // ── delete_story ─────────────────────────────────────────────
@@ -2509,7 +2592,7 @@ export function registerTools(
     server,
     "delete_story",
     schemas.deleteStory.shape,
-    (args, extra) => handleDeleteStory(args, ctx(extra))
+    (args, extra) => handleDeleteStory(args, ctx(extra)),
   );
 
   // ── replace_section ──────────────────────────────────────────
@@ -2517,7 +2600,7 @@ export function registerTools(
     server,
     "replace_section",
     schemas.replaceSection.shape,
-    (args, extra) => handleReplaceSection(args, ctx(extra))
+    (args, extra) => handleReplaceSection(args, ctx(extra)),
   );
 
   // ── update_seo ───────────────────────────────────────────────
@@ -2525,12 +2608,12 @@ export function registerTools(
     server,
     "update_seo",
     schemas.updateSeo.shape,
-    (args, extra) => handleUpdateSeo(args, ctx(extra))
+    (args, extra) => handleUpdateSeo(args, ctx(extra)),
   );
 
   // ── list_components ──────────────────────────────────────────
   registerSingleTool(server, "list_components", undefined, (args, extra) =>
-    handleListComponents(args, ctx(extra))
+    handleListComponents(args, ctx(extra)),
   );
 
   // ── get_component ────────────────────────────────────────────
@@ -2538,7 +2621,7 @@ export function registerTools(
     server,
     "get_component",
     schemas.getComponent.shape,
-    (args, extra) => handleGetComponent(args, ctx(extra))
+    (args, extra) => handleGetComponent(args, ctx(extra)),
   );
 
   // ── list_assets ──────────────────────────────────────────────
@@ -2546,7 +2629,7 @@ export function registerTools(
     server,
     "list_assets",
     schemas.listAssets.shape,
-    (args, extra) => handleListAssets(args, ctx(extra))
+    (args, extra) => handleListAssets(args, ctx(extra)),
   );
 
   // ── search_content ───────────────────────────────────────────
@@ -2554,7 +2637,7 @@ export function registerTools(
     server,
     "search_content",
     schemas.searchContent.shape,
-    (args, extra) => handleSearchContent(args, ctx(extra))
+    (args, extra) => handleSearchContent(args, ctx(extra)),
   );
 
   // ── scrape_url ───────────────────────────────────────────────
@@ -2562,12 +2645,12 @@ export function registerTools(
     server,
     "scrape_url",
     schemas.scrapeUrl.shape,
-    (args, extra) => handleScrapeUrl(args, ctx(extra))
+    (args, extra) => handleScrapeUrl(args, ctx(extra)),
   );
 
   // ── list_icons ───────────────────────────────────────────────
   registerSingleTool(server, "list_icons", undefined, (args, extra) =>
-    handleListIcons(args, ctx(extra))
+    handleListIcons(args, ctx(extra)),
   );
 
   // ── analyze_content_patterns ─────────────────────────────────
@@ -2575,7 +2658,7 @@ export function registerTools(
     server,
     "analyze_content_patterns",
     schemas.analyzeContentPatterns.shape,
-    (args, extra) => handleAnalyzeContentPatterns(args, ctx(extra))
+    (args, extra) => handleAnalyzeContentPatterns(args, ctx(extra)),
   );
 
   // ── list_recipes ─────────────────────────────────────────────
@@ -2583,7 +2666,7 @@ export function registerTools(
     server,
     "list_recipes",
     schemas.listRecipes.shape,
-    (args, extra) => handleListRecipes(args, ctx(extra))
+    (args, extra) => handleListRecipes(args, ctx(extra)),
   );
 
   // ── plan_page ────────────────────────────────────────────────
@@ -2592,7 +2675,7 @@ export function registerTools(
     "plan_page",
     schemas.planPage.shape,
     (args, extra) => handlePlanPage(args, ctx(extra)),
-    { ui: { resourceUri: PLAN_REVIEW_URI } }
+    { ui: { resourceUri: PLAN_REVIEW_URI } },
   );
 
   // ── generate_section ─────────────────────────────────────────
@@ -2601,7 +2684,7 @@ export function registerTools(
     "generate_section",
     schemas.generateSection.shape,
     (args, extra) => handleGenerateSection(args, ctx(extra)),
-    { ui: { resourceUri: SECTION_PREVIEW_URI } }
+    { ui: { resourceUri: SECTION_PREVIEW_URI } },
   );
 
   // ── generate_root_field ──────────────────────────────────────
@@ -2609,7 +2692,7 @@ export function registerTools(
     server,
     "generate_root_field",
     schemas.generateRootField.shape,
-    (args, extra) => handleGenerateRootField(args, ctx(extra))
+    (args, extra) => handleGenerateRootField(args, ctx(extra)),
   );
 
   // ── generate_seo ─────────────────────────────────────────────
@@ -2617,7 +2700,7 @@ export function registerTools(
     server,
     "generate_seo",
     schemas.generateSeo.shape,
-    (args, extra) => handleGenerateSeo(args, ctx(extra))
+    (args, extra) => handleGenerateSeo(args, ctx(extra)),
   );
 
   // ── content_audit ────────────────────────────────────────────
@@ -2626,7 +2709,7 @@ export function registerTools(
     "content_audit",
     schemas.contentAudit.shape,
     (args, extra) => handleContentAudit(args, ctx(extra)),
-    { ui: { resourceUri: AUDIT_REPORT_URI } }
+    { ui: { resourceUri: AUDIT_REPORT_URI } },
   );
 
   // ── ensure_path ──────────────────────────────────────────────
@@ -2634,7 +2717,7 @@ export function registerTools(
     server,
     "ensure_path",
     schemas.ensurePath.shape,
-    (args, extra) => handleEnsurePath(args, ctx(extra))
+    (args, extra) => handleEnsurePath(args, ctx(extra)),
   );
 
   // ── list_themes ──────────────────────────────────────────────
@@ -2642,7 +2725,7 @@ export function registerTools(
     server,
     "list_themes",
     schemas.listThemes.shape,
-    (args, extra) => handleListThemes(args, ctx(extra))
+    (args, extra) => handleListThemes(args, ctx(extra)),
   );
 
   // ── get_theme ────────────────────────────────────────────────
@@ -2650,7 +2733,7 @@ export function registerTools(
     server,
     "get_theme",
     schemas.getTheme.shape,
-    (args, extra) => handleGetTheme(args, ctx(extra))
+    (args, extra) => handleGetTheme(args, ctx(extra)),
   );
 
   // ── apply_theme ──────────────────────────────────────────────
@@ -2658,7 +2741,7 @@ export function registerTools(
     server,
     "apply_theme",
     schemas.applyTheme.shape,
-    (args, extra) => handleApplyTheme(args, ctx(extra))
+    (args, extra) => handleApplyTheme(args, ctx(extra)),
   );
 
   // ── remove_theme ─────────────────────────────────────────────
@@ -2666,6 +2749,22 @@ export function registerTools(
     server,
     "remove_theme",
     schemas.removeTheme.shape,
-    (args, extra) => handleRemoveTheme(args, ctx(extra))
+    (args, extra) => handleRemoveTheme(args, ctx(extra)),
+  );
+
+  // ── create_theme ─────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "create_theme",
+    schemas.createTheme.shape,
+    (args, extra) => handleCreateTheme(args, ctx(extra)),
+  );
+
+  // ── update_theme ─────────────────────────────────────────────
+  registerSingleTool(
+    server,
+    "update_theme",
+    schemas.updateTheme.shape,
+    (args, extra) => handleUpdateTheme(args, ctx(extra)),
   );
 }

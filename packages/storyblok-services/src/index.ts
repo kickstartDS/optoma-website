@@ -235,5 +235,15 @@ export {
   applyTheme,
   removeTheme,
   previewThemeCSS,
+  createTheme,
+  updateTheme,
+  isSystemTheme,
 } from "./themes.js";
-export type { ThemeSummary, ThemeDetail, ApplyThemeResult } from "./themes.js";
+export type {
+  ThemeSummary,
+  ThemeDetail,
+  ApplyThemeResult,
+  CreateThemeResult,
+  UpdateThemeResult,
+  TokensToCssFn,
+} from "./themes.js";

@@ -50,14 +50,14 @@ export const PROMPT_DEFINITIONS: PromptDefinition[] = [
   {
     name: "update-branding",
     description:
-      "Guided workflow to update branding tokens (colors, fonts, spacing factors). " +
-      "Reviews current values, makes changes via update_branding_token, and validates " +
-      "the impact with get_branding_color_palette.",
+      "Guided workflow to create or update a branding theme using W3C DTCG tokens. " +
+      "Reviews the current token schema, builds a W3C token object, validates it, " +
+      "then creates/updates the theme via the Storyblok MCP.",
     arguments: [
       {
         name: "intent",
         description:
-          "What you want to change (e.g., 'update primary color to blue', 'increase base font size')",
+          "What you want to change (e.g., 'create a dark blue theme', 'update primary color to blue')",
         required: true,
       },
     ],
@@ -86,7 +86,7 @@ export const PROMPT_DEFINITIONS: PromptDefinition[] = [
  */
 export function getPromptMessages(
   name: string,
-  args: Record<string, string>
+  args: Record<string, string>,
 ): { description: string; messages: PromptMessage[] } {
   switch (name) {
     case "audit-tokens":
@@ -154,13 +154,14 @@ function getUpdateBrandingMessages(args: Record<string, string>): {
           type: "text",
           text: `I'll help you ${intent}. Here's the workflow:
 
-1. **Review current values** — Call \`get_branding_color_palette\` and \`list_tokens\` (file: "branding") to see current branding token values
-2. **Identify tokens to change** — Based on your intent, find the specific branding tokens
-3. **Preview impact** — Use \`search_tokens\` to find all tokens that reference the ones being changed
-4. **Make changes** — Use \`update_branding_token\` to update each token value
-5. **Validate** — Re-check the color palette and downstream tokens to confirm the changes look correct
+1. **Review token schema** — Call \`get_theme_schema\` to see the W3C DTCG branding token structure and field descriptions
+2. **Review current values** — Call \`list_theme_values\` to see all current branding token values as flat paths
+3. **Build token object** — Based on your intent, construct a W3C DTCG branding token object with the desired values
+4. **Validate** — Call \`validate_theme\` with the token object to check for structural issues
+5. **Persist** — Use the Storyblok MCP \`create_theme\` tool to save as a new theme, or \`update_theme\` to modify an existing one
+6. **Verify** — Call \`get_branding_color_palette\` and \`list_theme_values\` to confirm the changes look correct
 
-Let me start by reviewing the current branding tokens.`,
+Let me start by reviewing the token schema.`,
         },
       },
     ],

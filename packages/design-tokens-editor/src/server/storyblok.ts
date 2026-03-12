@@ -165,8 +165,15 @@ async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
   return parentId!;
 }
 
-/** List all token theme names. */
-export async function listThemes(config: StoryblokConfig): Promise<string[]> {
+export interface ThemeListEntry {
+  name: string;
+  system: boolean;
+}
+
+/** List all token themes with metadata. */
+export async function listThemes(
+  config: StoryblokConfig,
+): Promise<ThemeListEntry[]> {
   const url = `${getApiBase(config)}/spaces/${config.spaceId}/stories?starts_with=settings/themes/&content_type=token-theme&per_page=100`;
   const res = await rateLimitedFetch(url, { headers: headers(config) });
 
@@ -179,7 +186,28 @@ export async function listThemes(config: StoryblokConfig): Promise<string[]> {
   }
 
   const data = (await res.json()) as StoryblokListResponse;
-  return data.stories.map((s) => s.slug);
+  return data.stories.map((s) => ({
+    name: s.slug,
+    system: s.content?.system === true,
+  }));
+}
+
+/** Check if a token theme is system-managed (protected from modification). */
+export async function isSystemTheme(
+  config: StoryblokConfig,
+  slug: string,
+): Promise<boolean> {
+  const url = `${getApiBase(config)}/spaces/${
+    config.spaceId
+  }/stories?starts_with=settings/themes/${encodeURIComponent(
+    slug,
+  )}&content_type=token-theme`;
+  const res = await rateLimitedFetch(url, { headers: headers(config) });
+  if (!res.ok) return false;
+  const data = (await res.json()) as StoryblokListResponse;
+  const story = data.stories.find((s) => s.slug === slug);
+  if (!story) return false;
+  return story.content?.system === true;
 }
 
 /** Get a single token theme by slug. Returns the tokens JSON string or null. */

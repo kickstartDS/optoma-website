@@ -282,9 +282,12 @@ export function getToolDefinitions(): Tool[] {
       },
     },
     {
-      name: "get_theme_config",
+      name: "get_theme_schema",
       description:
-        "Get the JSON theme configuration file (branding-token.json). This is the structured source of truth for theming that controls colors, fonts, spacing, breakpoints, and other design decisions.",
+        "Get the W3C DTCG branding token schema with field descriptions and reference values. " +
+        "Returns the schema mapping (field path → human-readable description) and the current default " +
+        "branding tokens as a reference. Use this to understand the token structure before building " +
+        "a theme object for validate_theme or the Storyblok MCP create_theme/update_theme tools.",
       inputSchema: {
         type: "object",
         properties: {
@@ -293,51 +296,55 @@ export function getToolDefinitions(): Tool[] {
             enum: [
               "color",
               "font",
-              "font-weight",
               "spacing",
-              "border-radius",
+              "border",
               "box-shadow",
               "breakpoints",
               "all",
             ],
             description:
-              "Get a specific section of the config (default: 'all')",
+              "Get a specific section of the schema (default: 'all')",
             default: "all",
           },
         },
       },
     },
     {
-      name: "update_theme_config",
+      name: "validate_theme",
       description:
-        "Update a value in the JSON theme configuration (branding-token.json). Use dot notation for nested paths like 'color.primary' or 'font.display.family'. This is the recommended way to change theme values.",
+        "Validate a W3C DTCG branding token object against the branding-tokens schema. " +
+        "Returns pass/fail with field-level errors. Call this before using the Storyblok MCP " +
+        "create_theme/update_theme tools to catch structural issues early.",
       inputSchema: {
         type: "object",
         properties: {
-          path: {
-            type: "string",
+          tokens: {
+            type: "object",
             description:
-              "Dot notation path to the value (e.g., 'color.primary', 'font.display.font-size', 'spacing.base')",
-          },
-          value: {
-            type: ["string", "number", "boolean", "object"],
-            description: "New value to set",
+              "The W3C DTCG branding token object to validate (same structure as branding-tokens.json)",
           },
         },
-        required: ["path", "value"],
+        required: ["tokens"],
       },
     },
     {
       name: "list_theme_values",
       description:
-        "List all values in the JSON theme configuration as a flat list with dot notation paths. Useful for seeing all configurable theme values at once.",
+        "Flatten a W3C DTCG branding token object into a list of dot-notation paths and values. " +
+        "If no 'tokens' object is provided, flattens the default branding tokens (synced from the Design System). " +
+        "Useful for comparing themes or seeing all configurable values at a glance.",
       inputSchema: {
         type: "object",
         properties: {
+          tokens: {
+            type: "object",
+            description:
+              "Optional: a W3C DTCG token object to flatten. If omitted, uses the default branding tokens.",
+          },
           filter: {
             type: "string",
             description:
-              "Filter paths containing this string (e.g., 'color', 'font', 'bp-factor')",
+              "Filter paths containing this string (e.g., 'color', 'font', 'spacing')",
           },
         },
       },
@@ -395,7 +402,7 @@ export function getToolDefinitions(): Tool[] {
     {
       name: "generate_theme_from_image",
       description:
-        "Analyze a website screenshot or design image to generate a branding theme. Accepts either a base64-encoded image or an image URL. Returns the image for visual analysis alongside the current theme schema with field descriptions. Use your vision capabilities to examine the image, extract colors, typography cues, and spacing characteristics, then call update_theme_config for each value to apply the generated theme.",
+        "Analyze a website screenshot or design image to generate a branding theme. Accepts either a base64-encoded image or an image URL. Returns the image for visual analysis alongside the W3C DTCG token schema with field descriptions. Use your vision capabilities to examine the image, extract colors, typography cues, and spacing characteristics, then build a W3C DTCG token object. Call validate_theme to check it, then use the Storyblok MCP create_theme tool to persist it.",
       inputSchema: {
         type: "object",
         properties: {
@@ -425,7 +432,7 @@ export function getToolDefinitions(): Tool[] {
         "Fetch all CSS from a website (inline <style> blocks and linked stylesheets) and return it for analysis. " +
         "Extracts exact color values, font families, font sizes, spacing, border-radius, and CSS custom properties. " +
         "Returns the raw CSS along with a pre-parsed summary of unique colors, fonts, and custom properties found. " +
-        "Use this data together with the theme schema to generate accurate branding token values via update_theme_config.",
+        "Use this data together with the W3C DTCG theme schema to build a branding token object, then call validate_theme and Storyblok MCP create_theme to persist.",
       inputSchema: {
         type: "object",
         properties: {

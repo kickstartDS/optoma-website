@@ -13,7 +13,6 @@ const __dirname = path.dirname(__filename);
 
 export const TOKENS_DIR = path.join(__dirname, "..", "tokens");
 export const COMPONENT_TOKENS_DIR = path.join(TOKENS_DIR, "componentToken");
-export const BRANDING_JSON_FILE = path.join(TOKENS_DIR, "branding-token.json");
 
 // ── Token file categories with metadata ─────────────────────────────────────
 
@@ -25,9 +24,9 @@ export const TOKEN_FILES: TokenFilesMap = {
     category: "branding",
   },
   "branding-json": {
-    file: "branding-token.json",
+    file: "branding-tokens.json",
     description:
-      "Structured JSON theme configuration (editable source of truth)",
+      "W3C DTCG branding tokens (structured source of truth for theme generation)",
     category: "branding-config",
     isJson: true,
   },

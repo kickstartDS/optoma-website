@@ -22,11 +22,9 @@ import {
 } from "./parser.js";
 
 import {
-  readBrandingJson,
-  writeBrandingJson,
-  getNestedValue,
-  setNestedValue,
-  flattenJsonConfig,
+  readBrandingTokensW3C,
+  flattenW3CTokens,
+  validateW3CTokens,
   getBrandingSchemaDescription,
   getFactorDescription,
 } from "./branding.js";
@@ -64,7 +62,7 @@ type McpResult = {
  */
 export async function dispatch(
   name: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
 ): Promise<McpResult> {
   try {
     switch (name) {
@@ -113,7 +111,7 @@ export async function dispatch(
       case "list_tokens": {
         const tokens = await parseAllTokens(args.file as string | undefined);
         let filteredTokens = Array.from(tokens.entries()).map(
-          ([name, data]) => ({ name, ...data })
+          ([name, data]) => ({ name, ...data }),
         );
 
         // Merge component tokens if requested
@@ -137,7 +135,7 @@ export async function dispatch(
         if (args.category) {
           const categoryPattern = (args.category as string).toLowerCase();
           filteredTokens = filteredTokens.filter((token) =>
-            token.name.toLowerCase().includes(categoryPattern)
+            token.name.toLowerCase().includes(categoryPattern),
           );
         }
 
@@ -148,7 +146,7 @@ export async function dispatch(
             ? prefixPattern
             : `--${prefixPattern}`;
           filteredTokens = filteredTokens.filter((token) =>
-            token.name.toLowerCase().startsWith(normalizedPrefix)
+            token.name.toLowerCase().startsWith(normalizedPrefix),
           );
         }
 
@@ -259,7 +257,7 @@ export async function dispatch(
         let results: Record<string, unknown>[] = searchTokens(
           tokens,
           args.pattern as string,
-          (args.searchIn as string) || "both"
+          (args.searchIn as string) || "both",
         ).map((r) => ({ ...r, source: "global" }));
 
         // Merge component tokens if requested
@@ -294,7 +292,7 @@ export async function dispatch(
         }
 
         results.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         const limit = (args.limit as number) || 50;
@@ -375,7 +373,7 @@ export async function dispatch(
         }
 
         allColors.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -431,7 +429,7 @@ export async function dispatch(
         }
 
         typographyTokens.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -481,7 +479,7 @@ export async function dispatch(
         }
 
         spacingTokens.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -504,7 +502,7 @@ export async function dispatch(
 
         const result = await updateTokenInFile(
           args.name as string,
-          args.value as string
+          args.value as string,
         );
 
         return text({
@@ -548,7 +546,7 @@ export async function dispatch(
         }
 
         brandingTokens.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -559,70 +557,69 @@ export async function dispatch(
         });
       }
 
-      case "get_theme_config": {
-        const config = await readBrandingJson();
+      case "get_theme_schema": {
+        const schemaDescription = getBrandingSchemaDescription();
+        const tokens = await readBrandingTokensW3C();
 
         let result: Record<string, unknown>;
         if (args.section && args.section !== "all") {
-          const sectionData = (config as Record<string, unknown>)[
+          const sectionData = (tokens as Record<string, unknown>)[
             args.section as string
           ];
           if (sectionData === undefined) {
             throw new Error(
               `Unknown section: ${
                 args.section
-              }. Available sections: ${Object.keys(config).join(", ")}`
+              }. Available sections: ${Object.keys(tokens).join(", ")}`,
             );
           }
           result = {
             section: args.section,
             data: sectionData,
-            availableSections: Object.keys(config),
+            schemaDescription: Object.fromEntries(
+              Object.entries(schemaDescription).filter(([key]) =>
+                key.startsWith(args.section as string),
+              ),
+            ),
+            availableSections: Object.keys(tokens),
           };
         } else {
           result = {
-            sections: Object.keys(config),
-            config,
-            note: "Use the 'section' parameter to get specific sections like 'color', 'font', 'spacing', etc.",
+            sections: Object.keys(tokens),
+            schemaDescription,
+            referenceTokens: tokens,
+            note: "Use the 'section' parameter to get specific sections like 'color', 'font', 'spacing', etc. Token values follow W3C DTCG format. To create or update themes, use the Storyblok MCP create_theme/update_theme tools.",
           };
         }
 
         return text(result);
       }
 
-      case "update_theme_config": {
-        if (!args.path) {
+      case "validate_theme": {
+        if (!args.tokens || typeof args.tokens !== "object") {
           throw new Error(
-            "Path is required (e.g., 'color.primary', 'font.copy.font-size')"
+            "A 'tokens' object (W3C DTCG format) is required for validation",
           );
         }
-        if (args.value === undefined || args.value === null) {
-          throw new Error("Value is required");
-        }
 
-        const config = await readBrandingJson();
-        const oldValue = getNestedValue(config, args.path as string);
-
-        if (oldValue === undefined) {
-          throw new Error(`Path not found: ${args.path}`);
-        }
-
-        setNestedValue(config, args.path as string, args.value);
-        await writeBrandingJson(config);
+        const validationResult = await validateW3CTokens(
+          args.tokens as Record<string, unknown>,
+        );
 
         return text({
-          success: true,
-          message: "Theme configuration updated successfully",
-          path: args.path,
-          oldValue,
-          newValue: args.value,
-          note: "Remember to regenerate CSS tokens if needed",
+          ...validationResult,
+          note: validationResult.valid
+            ? "Tokens are valid. Use Storyblok MCP create_theme/update_theme to persist."
+            : "Fix the errors above and re-validate before creating/updating a theme.",
         });
       }
 
       case "list_theme_values": {
-        const config = await readBrandingJson();
-        const flatValues = flattenJsonConfig(config);
+        const tokens =
+          args.tokens && typeof args.tokens === "object"
+            ? (args.tokens as Record<string, unknown>)
+            : await readBrandingTokensW3C();
+        const flatValues = flattenW3CTokens(tokens);
 
         let filtered = flatValues;
         if (args.filter) {
@@ -630,7 +627,7 @@ export async function dispatch(
           filtered = flatValues.filter(
             (item) =>
               item.path.toLowerCase().includes(filterLower) ||
-              String(item.value).toLowerCase().includes(filterLower)
+              String(item.value).toLowerCase().includes(filterLower),
           );
         }
 
@@ -638,7 +635,7 @@ export async function dispatch(
           filter: (args.filter as string) || "none",
           totalValues: filtered.length,
           values: filtered,
-          note: "Use update_theme_config with the 'path' to modify values",
+          note: "Values are in W3C DTCG format. Use Storyblok MCP create_theme/update_theme to persist changes.",
         });
       }
 
@@ -650,7 +647,7 @@ export async function dispatch(
 
         for (const [tokenName, data] of tokens.entries()) {
           const isFactorToken = factorPatterns.some((pattern) =>
-            pattern.test(tokenName)
+            pattern.test(tokenName),
           );
 
           if (!isFactorToken) continue;
@@ -677,7 +674,7 @@ export async function dispatch(
         }
 
         factorTokens.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -710,24 +707,25 @@ export async function dispatch(
           });
         }
 
-        // Also get breakpoints from JSON config
-        const config = await readBrandingJson();
-        if ((config as Record<string, unknown>).breakpoints) {
-          for (const [bpName, bpValue] of Object.entries(
-            (config as Record<string, Record<string, unknown>>).breakpoints
-          )) {
+        // Also get breakpoints from W3C branding tokens
+        const w3cTokens = await readBrandingTokensW3C();
+        if ((w3cTokens as Record<string, unknown>).breakpoints) {
+          const bpFlat = flattenW3CTokens({
+            breakpoints: (w3cTokens as Record<string, unknown>).breakpoints,
+          } as Record<string, unknown>);
+          for (const entry of bpFlat) {
             breakpointTokens.push({
-              name: `breakpoint.${bpName}`,
-              value: bpValue as string,
-              file: "branding-token.json",
-              category: "json-config",
-              source: "json",
+              name: entry.path,
+              value: entry.value,
+              file: "branding-tokens.json",
+              category: "w3c-branding",
+              source: "w3c",
             });
           }
         }
 
         breakpointTokens.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -761,7 +759,7 @@ export async function dispatch(
         }
 
         durationTokens.sort((a, b) =>
-          (a.name as string).localeCompare(b.name as string)
+          (a.name as string).localeCompare(b.name as string),
         );
 
         return text({
@@ -776,12 +774,12 @@ export async function dispatch(
       case "generate_theme_from_image": {
         if (!args.imageBase64 && !args.imageUrl) {
           throw new Error(
-            "Either 'imageBase64' or 'imageUrl' must be provided"
+            "Either 'imageBase64' or 'imageUrl' must be provided",
           );
         }
         if (args.imageBase64 && args.imageUrl) {
           throw new Error(
-            "Provide either 'imageBase64' or 'imageUrl', not both"
+            "Provide either 'imageBase64' or 'imageUrl', not both",
           );
         }
 
@@ -797,8 +795,8 @@ export async function dispatch(
           mimeType = (args.mimeType as string) || "image/png";
         }
 
-        const config = await readBrandingJson();
-        const schemaDescription = getBrandingSchemaDescription();
+        const w3cConfig = await readBrandingTokensW3C();
+        const imageSchemaDescription = getBrandingSchemaDescription();
 
         return {
           content: [
@@ -814,22 +812,24 @@ export async function dispatch(
                   instruction:
                     "Analyze this image and generate a branding theme based on what you see. " +
                     "Look at the colors, typography style, spacing density, and visual personality of the design. " +
-                    "Then use the 'update_theme_config' tool to apply each value. " +
-                    "The 'path' parameter uses dot notation matching the schema below.",
-                  currentTheme: config,
-                  schemaDescription,
-                  availablePaths: Object.keys(schemaDescription),
+                    "Build a complete W3C DTCG branding token object matching the schema below, " +
+                    "then use the Storyblok MCP 'create_theme' tool to persist it. " +
+                    "Optionally call 'validate_theme' first to check validity.",
+                  referenceTokens: w3cConfig,
+                  schemaDescription: imageSchemaDescription,
+                  availablePaths: Object.keys(imageSchemaDescription),
                   tips: [
-                    "Extract the dominant brand color for 'color.primary'",
-                    "Identify if headings use a serif or sans-serif typeface for 'font.display.family'",
+                    "Extract the dominant brand color for 'color.primary.$root' — use W3C DTCG color format: { $type: 'color', $value: { colorSpace: 'srgb', components: [r, g, b] } } where r/g/b are 0-1 floats",
+                    "Identify if headings use a serif or sans-serif typeface for 'font.family.display'",
                     "Estimate spacing density: tight (base ~8-10), normal (12-14), generous (16-20)",
                     "Observe corner rounding: sharp (0-2px), slightly rounded (4-6px), rounded (8-12px), pill (16px+)",
                     "Derive inverted/dark-mode colors as lighter or more saturated variants of the base colors",
                     "For font families, provide a full CSS font stack with appropriate fallbacks",
+                    "After building the token object, call 'validate_theme' to check, then 'create_theme' on the Storyblok MCP to save",
                   ],
                 },
                 null,
-                2
+                2,
               ),
             },
           ],
@@ -845,7 +845,7 @@ export async function dispatch(
           maxStylesheets: (args.maxStylesheets as number) || 20,
         });
 
-        const cssConfig = await readBrandingJson();
+        const cssW3CConfig = await readBrandingTokensW3C();
         const cssSchemaDescription = getBrandingSchemaDescription();
 
         // Collect all CSS
@@ -901,8 +901,9 @@ export async function dispatch(
               instruction:
                 "Analyze the CSS extracted from this website and generate a branding theme. " +
                 "The CSS contains exact color values, font families, font sizes, spacing, and other design properties. " +
-                "Map these to the branding token schema and use 'update_theme_config' to apply each value. " +
-                "Pay special attention to :root/html CSS custom properties and the most frequently used values.",
+                "Build a complete W3C DTCG branding token object matching the schema below, " +
+                "then use the Storyblok MCP 'create_theme' tool to persist it. " +
+                "Optionally call 'validate_theme' first to check validity.",
               sourceUrl: args.url,
               summary: cssResult.summary,
               rootCustomProperties:
@@ -910,7 +911,7 @@ export async function dispatch(
                   ? rootProperties
                   : "No :root custom properties found",
               allCustomProperties: uniqueCustomProperties.slice(0, 200),
-              currentTheme: cssConfig,
+              referenceTokens: cssW3CConfig,
               schemaDescription: cssSchemaDescription,
               availablePaths: Object.keys(cssSchemaDescription),
               tips: [
@@ -920,10 +921,12 @@ export async function dispatch(
                 "Check for design system naming patterns (e.g., --color-primary, --font-base-size)",
                 "border-radius values indicate the design's corner rounding preference",
                 "If the site uses a CSS framework, its custom properties often define the complete palette",
+                "Build the W3C DTCG token object using color format: { $type: 'color', $value: { colorSpace: 'srgb', components: [r, g, b] } }",
+                "After building the token object, call 'validate_theme' to check, then 'create_theme' on the Storyblok MCP to save",
               ],
             },
             null,
-            2
+            2,
           ),
         });
 
@@ -1000,7 +1003,7 @@ export async function dispatch(
         }
 
         componentEntries.sort((a, b) =>
-          (a.slug as string).localeCompare(b.slug as string)
+          (a.slug as string).localeCompare(b.slug as string),
         );
 
         return text({
@@ -1013,7 +1016,7 @@ export async function dispatch(
       case "get_component_tokens": {
         if (!args.component) {
           throw new Error(
-            "Component name is required. Use list_components to discover valid names."
+            "Component name is required. Use list_components to discover valid names.",
           );
         }
 
@@ -1028,7 +1031,7 @@ export async function dispatch(
               (s) =>
                 s.includes(slug) ||
                 slug.includes(s) ||
-                s.split("-").some((part) => slug.includes(part))
+                s.split("-").some((part) => slug.includes(part)),
             )
             .slice(0, 5);
 
@@ -1046,7 +1049,7 @@ export async function dispatch(
         if (args.element) {
           const el = (args.element as string).toLowerCase();
           tokens = tokens.filter(
-            (t) => t.element && t.element.toLowerCase().includes(el)
+            (t) => t.element && t.element.toLowerCase().includes(el),
           );
         }
 
@@ -1054,7 +1057,7 @@ export async function dispatch(
         if (args.property) {
           const prop = (args.property as string).toLowerCase();
           tokens = tokens.filter((t) =>
-            t.cssProperty.toLowerCase().includes(prop)
+            t.cssProperty.toLowerCase().includes(prop),
           );
         }
 
@@ -1107,7 +1110,7 @@ export async function dispatch(
         const searchIn = (args.searchIn as string) || "both";
 
         let allTokens = await parseAllComponentTokens(
-          (args.component as string) || null
+          (args.component as string) || null,
         );
 
         // Apply category filter
@@ -1168,7 +1171,7 @@ export async function dispatch(
             throw new Error(
               `Rule '${args.ruleId}' not found. Available rules: ${rules
                 .map((r) => r.id)
-                .join(", ")}`
+                .join(", ")}`,
             );
           }
           result = [rule];
@@ -1207,7 +1210,7 @@ export async function dispatch(
             cssProperty: string;
             element?: string;
             value?: string;
-          }>
+          }>,
         );
         return text(validationResult);
       }
@@ -1220,14 +1223,14 @@ export async function dispatch(
           {
             interactive: (args.interactive as boolean) || false,
             inverted: (args.inverted as boolean) || false,
-          }
+          },
         );
         return text(recommendation);
       }
 
       case "validate_component_tokens": {
         const auditResult = await auditComponentTokens(
-          args.component as string
+          args.component as string,
         );
 
         // If it's an error result, return as-is
@@ -1244,16 +1247,16 @@ export async function dispatch(
           };
           const minLevel = severityOrder[args.severity as string] ?? 2;
           auditResult.violations = auditResult.violations.filter(
-            (v) => (severityOrder[v.severity] ?? 2) <= minLevel
+            (v) => (severityOrder[v.severity] ?? 2) <= minLevel,
           );
           auditResult.summary = {
             ...auditResult.summary,
             total: auditResult.violations.length,
             critical: auditResult.violations.filter(
-              (v) => v.severity === "critical"
+              (v) => v.severity === "critical",
             ).length,
             warning: auditResult.violations.filter(
-              (v) => v.severity === "warning"
+              (v) => v.severity === "warning",
             ).length,
             info: auditResult.violations.filter((v) => v.severity === "info")
               .length,
@@ -1266,7 +1269,7 @@ export async function dispatch(
       case "audit_all_components": {
         const fullAudit = await auditAllComponents(
           (args.category as string) || "all",
-          (args.minSeverity as string) || "info"
+          (args.minSeverity as string) || "info",
         );
         return text(fullAudit);
       }
@@ -1286,7 +1289,7 @@ export async function dispatch(
               timestamp: new Date().toISOString(),
             },
             null,
-            2
+            2,
           ),
         },
       ],
