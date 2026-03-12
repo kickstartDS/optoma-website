@@ -13,6 +13,7 @@ import {
   createTheme,
   updateTheme,
   deleteTheme,
+  isSystemTheme,
   type StoryblokConfig,
 } from "./storyblok.js";
 
@@ -72,9 +73,8 @@ export function createRoutes(config: StoryblokConfig): Router {
       // Compute CSS from tokens — import dynamically since it's an ESM module
       let css = "";
       try {
-        const { tokensToCss } = await import(
-          "@kickstartds/design-system/tokens/tokensToCss.mjs"
-        );
+        const { tokensToCss } =
+          await import("@kickstartds/design-system/tokens/tokensToCss.mjs");
         css = tokensToCss(body);
       } catch (e) {
         console.warn("Could not compute CSS from tokens:", e);
@@ -84,7 +84,7 @@ export function createRoutes(config: StoryblokConfig): Router {
         config,
         req.params.name,
         tokensJson,
-        css
+        css,
       );
       if (!created) {
         res.status(409).json("Token name already exists");
@@ -104,6 +104,16 @@ export function createRoutes(config: StoryblokConfig): Router {
 
   router.put("/api/tokens/:name", async (req: Request, res: Response) => {
     try {
+      // Guard: reject updates to system-managed themes
+      if (await isSystemTheme(config, req.params.name)) {
+        res
+          .status(403)
+          .json(
+            "System-managed theme cannot be modified. Use 'Save As' to create a copy.",
+          );
+        return;
+      }
+
       const body = req.body;
       if (!body || typeof body !== "object") {
         res.status(422).json("Missing or Invalid Data");
@@ -115,9 +125,8 @@ export function createRoutes(config: StoryblokConfig): Router {
       // Compute CSS from tokens
       let css = "";
       try {
-        const { tokensToCss } = await import(
-          "@kickstartds/design-system/tokens/tokensToCss.mjs"
-        );
+        const { tokensToCss } =
+          await import("@kickstartds/design-system/tokens/tokensToCss.mjs");
         css = tokensToCss(body);
       } catch (e) {
         console.warn("Could not compute CSS from tokens:", e);
@@ -127,7 +136,7 @@ export function createRoutes(config: StoryblokConfig): Router {
         config,
         req.params.name,
         tokensJson,
-        css
+        css,
       );
       if (!updated) {
         // If the theme doesn't exist yet, create it (PUT is idempotent)
@@ -147,6 +156,12 @@ export function createRoutes(config: StoryblokConfig): Router {
 
   router.delete("/api/tokens/:name", async (req: Request, res: Response) => {
     try {
+      // Guard: reject deletion of system-managed themes
+      if (await isSystemTheme(config, req.params.name)) {
+        res.status(403).json("System-managed theme cannot be deleted.");
+        return;
+      }
+
       await deleteTheme(config, req.params.name);
       res.status(200).json("OK");
     } catch (err) {

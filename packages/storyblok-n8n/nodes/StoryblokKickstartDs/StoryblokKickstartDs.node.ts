@@ -41,6 +41,9 @@ import {
   getTheme,
   applyTheme,
   removeTheme,
+  createTheme,
+  updateTheme,
+  isSystemTheme,
   // Validation & quality
   checkCompositionalQuality,
   // Space introspection shared functions
@@ -61,6 +64,7 @@ import {
   type ContentPatternAnalysis,
   type SubComponentStats,
 } from "./GenericFunctions";
+import { tokensToCss } from "@kickstartds/design-system/tokens/tokensToCss.mjs";
 
 // Backward-compatible alias via registry
 const PAGE_SCHEMA: Record<string, any> = registry.page.schema;
@@ -620,7 +624,7 @@ export class StoryblokKickstartDs implements INodeType {
             throw new NodeOperationError(
               this.getNode(),
               `Unknown AI Content operation: ${operation}`,
-              { itemIndex: i }
+              { itemIndex: i },
             );
           }
         } else if (resource === "story") {
@@ -644,7 +648,7 @@ export class StoryblokKickstartDs implements INodeType {
             throw new NodeOperationError(
               this.getNode(),
               `Unknown Story operation: ${operation}`,
-              { itemIndex: i }
+              { itemIndex: i },
             );
           }
         } else if (resource === "space") {
@@ -666,7 +670,7 @@ export class StoryblokKickstartDs implements INodeType {
             throw new NodeOperationError(
               this.getNode(),
               `Unknown Space operation: ${operation}`,
-              { itemIndex: i }
+              { itemIndex: i },
             );
           }
         } else if (resource === "theme") {
@@ -678,18 +682,22 @@ export class StoryblokKickstartDs implements INodeType {
             result = await executeApplyTheme.call(this, i);
           } else if (operation === "remove") {
             result = await executeRemoveTheme.call(this, i);
+          } else if (operation === "create") {
+            result = await executeCreateTheme.call(this, i);
+          } else if (operation === "update") {
+            result = await executeUpdateTheme.call(this, i);
           } else {
             throw new NodeOperationError(
               this.getNode(),
               `Unknown Theme operation: ${operation}`,
-              { itemIndex: i }
+              { itemIndex: i },
             );
           }
         } else {
           throw new NodeOperationError(
             this.getNode(),
             `Unknown resource: ${resource}`,
-            { itemIndex: i }
+            { itemIndex: i },
           );
         }
 
@@ -716,12 +724,12 @@ export class StoryblokKickstartDs implements INodeType {
 
 async function executeGenerate(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   // 1. Gather credentials
   const openAiCredentials = (await this.getCredentials(
     "openAiApi",
-    itemIndex
+    itemIndex,
   )) as unknown as OpenAiCredentials;
 
   const client = getOpenAiClient(openAiCredentials);
@@ -737,12 +745,12 @@ async function executeGenerate(
     const componentType = this.getNodeParameter(
       "autoComponentType",
       itemIndex,
-      ""
+      "",
     ) as string;
     const sectionCount = this.getNodeParameter(
       "autoSectionCount",
       itemIndex,
-      1
+      1,
     ) as number;
 
     try {
@@ -790,27 +798,27 @@ async function executeGenerate(
   if (schemaMode === "preset") {
     const presetKey = this.getNodeParameter(
       "presetSchema",
-      itemIndex
+      itemIndex,
     ) as string;
     const preset = PRESET_SCHEMAS[presetKey];
     if (!preset) {
       throw new NodeOperationError(
         this.getNode(),
         `Unknown preset schema: "${presetKey}". Available: ${Object.keys(
-          PRESET_SCHEMAS
+          PRESET_SCHEMAS,
         ).join(", ")}`,
-        { itemIndex }
+        { itemIndex },
       );
     }
     schema = { name: preset.name, strict: true, schema: preset.schema };
   } else {
     const customSchemaName = this.getNodeParameter(
       "customSchemaName",
-      itemIndex
+      itemIndex,
     ) as string;
     const customSchemaRaw = this.getNodeParameter(
       "customSchema",
-      itemIndex
+      itemIndex,
     ) as string;
 
     let parsedSchema: Record<string, unknown>;
@@ -823,7 +831,7 @@ async function executeGenerate(
       throw new NodeOperationError(
         this.getNode(),
         "Invalid JSON in custom schema field. Please provide a valid JSON Schema.",
-        { itemIndex }
+        { itemIndex },
       );
     }
 
@@ -861,12 +869,12 @@ async function executeGenerate(
 
 async function executeImport(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   // 1. Gather credentials
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -876,7 +884,7 @@ async function executeImport(
   const storyUid = this.getNodeParameter("storyUid", itemIndex) as string;
   const placementMode = this.getNodeParameter(
     "placementMode",
-    itemIndex
+    itemIndex,
   ) as string;
   const publish = this.getNodeParameter("publish", itemIndex, false) as boolean;
 
@@ -908,7 +916,7 @@ async function executeImport(
     throw new NodeOperationError(
       this.getNode(),
       "Invalid JSON in Page Content field. Expected an object with { content: { section: [...] } }.",
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -916,7 +924,7 @@ async function executeImport(
     throw new NodeOperationError(
       this.getNode(),
       "Page content has no sections to import. Provide at least one section object.",
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -924,7 +932,7 @@ async function executeImport(
   const skipTransform = this.getNodeParameter(
     "skipTransform",
     itemIndex,
-    false
+    false,
   ) as boolean;
 
   if (!skipTransform) {
@@ -941,7 +949,7 @@ async function executeImport(
       // ── Position-based insertion (no prompter needed) ───────────
       const insertPosition = this.getNodeParameter(
         "insertPosition",
-        itemIndex
+        itemIndex,
       ) as string;
 
       let positionIndex: number;
@@ -954,7 +962,7 @@ async function executeImport(
         positionIndex = this.getNodeParameter(
           "insertIndex",
           itemIndex,
-          0
+          0,
         ) as number;
       }
 
@@ -964,20 +972,20 @@ async function executeImport(
         storyUid,
         positionIndex,
         page.content.section,
-        publish
+        publish,
       );
 
       placementDetail =
         insertPosition === "end"
           ? "appended at end"
           : insertPosition === "beginning"
-          ? "inserted at beginning"
-          : `inserted at index ${positionIndex}`;
+            ? "inserted at beginning"
+            : `inserted at index ${positionIndex}`;
     } else {
       // ── Prompter replacement (original behaviour) ──────────────
       const prompterUid = this.getNodeParameter(
         "prompterUid",
-        itemIndex
+        itemIndex,
       ) as string;
 
       updatedStory = await importContentIntoStory(
@@ -986,7 +994,7 @@ async function executeImport(
         storyUid,
         prompterUid,
         page.content.section,
-        publish
+        publish,
       );
 
       placementDetail = `replaced prompter ${prompterUid}`;
@@ -995,7 +1003,7 @@ async function executeImport(
     // Check compositional quality (non-blocking warnings)
     const warnings = checkCompositionalQuality(
       page.content.section,
-      registry.page.rules
+      registry.page.rules,
     );
 
     return {
@@ -1027,11 +1035,11 @@ async function executeImport(
 
 async function executeListStories(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = createContentClient({
@@ -1042,19 +1050,19 @@ async function executeListStories(
   const contentType = this.getNodeParameter(
     "contentType",
     itemIndex,
-    "page"
+    "page",
   ) as string;
   const startsWith = this.getNodeParameter(
     "startsWith",
     itemIndex,
-    ""
+    "",
   ) as string;
   const page = this.getNodeParameter("page", itemIndex, 1) as number;
   const perPage = this.getNodeParameter("perPage", itemIndex, 25) as number;
   const excludeContent = this.getNodeParameter(
     "excludeContent",
     itemIndex,
-    true
+    true,
   ) as boolean;
 
   try {
@@ -1090,11 +1098,11 @@ async function executeListStories(
 
 async function executeGetStory(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = createContentClient({
@@ -1104,13 +1112,13 @@ async function executeGetStory(
 
   const identifier = this.getNodeParameter(
     "storyIdentifier",
-    itemIndex
+    itemIndex,
   ) as string;
   const findBy = this.getNodeParameter("findBy", itemIndex, "slug") as string;
   const version = this.getNodeParameter(
     "version",
     itemIndex,
-    "published"
+    "published",
   ) as string;
 
   try {
@@ -1143,11 +1151,11 @@ async function executeGetStory(
 
 async function executeCreatePage(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const managementClient = getStoryblokManagementClient(storyblokCredentials);
@@ -1165,13 +1173,13 @@ async function executeCreatePage(
   const contentType = this.getNodeParameter(
     "createContentType",
     itemIndex,
-    "page"
+    "page",
   ) as string;
   const path = this.getNodeParameter("path", itemIndex, "") as string;
   const parentIdParam = this.getNodeParameter(
     "parentId",
     itemIndex,
-    0
+    0,
   ) as number;
   const rootFieldsRaw = this.getNodeParameter("rootFields", itemIndex, "{}") as
     | string
@@ -1180,22 +1188,22 @@ async function executeCreatePage(
   const uploadAssets = this.getNodeParameter(
     "uploadAssets",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const assetFolderName = this.getNodeParameter(
     "assetFolderName",
     itemIndex,
-    "AI Generated"
+    "AI Generated",
   ) as string;
   const skipValidation = this.getNodeParameter(
     "skipValidation",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const skipTransform = this.getNodeParameter(
     "skipTransform",
     itemIndex,
-    false
+    false,
   ) as boolean;
 
   // Parse sections
@@ -1208,7 +1216,7 @@ async function executeCreatePage(
     throw new NodeOperationError(
       this.getNode(),
       "Invalid JSON in Sections field. Expected an array of section objects.",
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -1223,7 +1231,7 @@ async function executeCreatePage(
     throw new NodeOperationError(
       this.getNode(),
       "Invalid JSON in Root Fields field.",
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -1289,11 +1297,11 @@ async function executeCreatePage(
 
 async function executeUpdateStory(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -1308,12 +1316,12 @@ async function executeUpdateStory(
   const publish = this.getNodeParameter(
     "updatePublish",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const skipValidation = this.getNodeParameter(
     "updateSkipValidation",
     itemIndex,
-    false
+    false,
   ) as boolean;
 
   // Parse content if provided
@@ -1325,7 +1333,7 @@ async function executeUpdateStory(
       throw new NodeOperationError(
         this.getNode(),
         "Invalid JSON in Content field.",
-        { itemIndex }
+        { itemIndex },
       );
     }
   } else if (contentRaw && typeof contentRaw === "object") {
@@ -1353,7 +1361,7 @@ async function executeUpdateStory(
         publish,
         skipValidation,
       },
-      validationRules
+      validationRules,
     );
 
     return {
@@ -1377,11 +1385,11 @@ async function executeUpdateStory(
 
 async function executeDeleteStory(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -1412,11 +1420,11 @@ async function executeDeleteStory(
 
 async function executeReplaceSection(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -1424,40 +1432,40 @@ async function executeReplaceSection(
 
   const storyUid = this.getNodeParameter(
     "replaceSectionStoryUid",
-    itemIndex
+    itemIndex,
   ) as string;
   const position = this.getNodeParameter(
     "replaceSectionPosition",
-    itemIndex
+    itemIndex,
   ) as number;
   const sectionRaw = this.getNodeParameter(
     "replaceSectionContent",
-    itemIndex
+    itemIndex,
   ) as string | object;
   const publish = this.getNodeParameter(
     "replaceSectionPublish",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const uploadAssets = this.getNodeParameter(
     "replaceSectionUploadAssets",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const assetFolderName = this.getNodeParameter(
     "replaceSectionAssetFolderName",
     itemIndex,
-    "AI Generated"
+    "AI Generated",
   ) as string;
   const skipValidation = this.getNodeParameter(
     "replaceSectionSkipValidation",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const skipTransform = this.getNodeParameter(
     "replaceSectionSkipTransform",
     itemIndex,
-    false
+    false,
   ) as boolean;
 
   // Parse section JSON
@@ -1469,7 +1477,7 @@ async function executeReplaceSection(
     throw new NodeOperationError(
       this.getNode(),
       "Invalid JSON in Section field.",
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -1492,7 +1500,7 @@ async function executeReplaceSection(
       throw new NodeOperationError(
         this.getNode(),
         formatValidationErrors(validationResult.errors),
-        { itemIndex }
+        { itemIndex },
       );
     }
   }
@@ -1535,11 +1543,11 @@ async function executeReplaceSection(
 
 async function executeUpdateSeo(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -1547,47 +1555,47 @@ async function executeUpdateSeo(
 
   const storyUid = this.getNodeParameter(
     "updateSeoStoryUid",
-    itemIndex
+    itemIndex,
   ) as string;
   const title = this.getNodeParameter(
     "updateSeoTitle",
     itemIndex,
-    ""
+    "",
   ) as string;
   const description = this.getNodeParameter(
     "updateSeoDescription",
     itemIndex,
-    ""
+    "",
   ) as string;
   const keywords = this.getNodeParameter(
     "updateSeoKeywords",
     itemIndex,
-    ""
+    "",
   ) as string;
   const image = this.getNodeParameter(
     "updateSeoImage",
     itemIndex,
-    ""
+    "",
   ) as string;
   const cardImage = this.getNodeParameter(
     "updateSeoCardImage",
     itemIndex,
-    ""
+    "",
   ) as string;
   const publish = this.getNodeParameter(
     "updateSeoPublish",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const uploadAssets = this.getNodeParameter(
     "updateSeoUploadAssets",
     itemIndex,
-    false
+    false,
   ) as boolean;
   const assetFolderName = this.getNodeParameter(
     "updateSeoAssetFolderName",
     itemIndex,
-    "AI Generated"
+    "AI Generated",
   ) as string;
 
   // Build SEO object — only include non-empty fields
@@ -1602,7 +1610,7 @@ async function executeUpdateSeo(
     throw new NodeOperationError(
       this.getNode(),
       "At least one SEO field must be provided (title, description, keywords, image, or cardImage).",
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -1637,11 +1645,11 @@ async function executeUpdateSeo(
 
 async function executeSearchStories(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = createContentClient({
@@ -1653,7 +1661,7 @@ async function executeSearchStories(
   const contentType = this.getNodeParameter(
     "searchContentType",
     itemIndex,
-    ""
+    "",
   ) as string;
 
   try {
@@ -1682,11 +1690,11 @@ async function executeSearchStories(
 
 async function executeGenerateSection(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const openAiCredentials = (await this.getCredentials(
     "openAiApi",
-    itemIndex
+    itemIndex,
   )) as unknown as OpenAiCredentials;
 
   const client = getOpenAiClient(openAiCredentials);
@@ -1694,7 +1702,7 @@ async function executeGenerateSection(
   const componentType = this.getNodeParameter(
     "sectionComponentType",
     itemIndex,
-    ""
+    "",
   ) as string;
 
   if (!componentType) {
@@ -1702,7 +1710,7 @@ async function executeGenerateSection(
     const ct = this.getNodeParameter(
       "sectionContentType",
       itemIndex,
-      "page"
+      "page",
     ) as string;
     const entry = registry.has(ct) ? registry.get(ct) : registry.page;
     const allowed: string[] = [];
@@ -1712,7 +1720,7 @@ async function executeGenerateSection(
     throw new NodeOperationError(
       this.getNode(),
       `componentType is required. Available types: ${allowed.join(", ")}`,
-      { itemIndex }
+      { itemIndex },
     );
   }
 
@@ -1720,32 +1728,32 @@ async function executeGenerateSection(
   const systemOverride = this.getNodeParameter(
     "sectionSystem",
     itemIndex,
-    ""
+    "",
   ) as string;
   const previousSection = this.getNodeParameter(
     "sectionPrevious",
     itemIndex,
-    ""
+    "",
   ) as string;
   const nextSection = this.getNodeParameter(
     "sectionNext",
     itemIndex,
-    ""
+    "",
   ) as string;
   const contentType = this.getNodeParameter(
     "sectionContentType",
     itemIndex,
-    "page"
+    "page",
   ) as string;
   const startsWith = this.getNodeParameter(
     "sectionStartsWith",
     itemIndex,
-    ""
+    "",
   ) as string;
   const model = this.getNodeParameter(
     "sectionModel",
     itemIndex,
-    "gpt-4o"
+    "gpt-4o",
   ) as string;
 
   // Build system prompt with site-aware context
@@ -1760,7 +1768,7 @@ async function executeGenerateSection(
   if (startsWith) {
     const storyblokCredentials = (await this.getCredentials(
       "storyblokApi",
-      itemIndex
+      itemIndex,
     )) as unknown as StoryblokCredentials;
     const contentClient = createContentClient({
       spaceId: storyblokCredentials.spaceId,
@@ -1772,7 +1780,7 @@ async function executeGenerateSection(
     const filteredPatterns = await analyzeContentPatterns(
       contentClient,
       entry.rules,
-      { contentType, startsWith }
+      { contentType, startsWith },
     );
     const relevantStats = filteredPatterns.subComponentCounts[componentType] as
       | SubComponentStats
@@ -1781,7 +1789,7 @@ async function executeGenerateSection(
       system += `\n\nOn this site section (${startsWith}), ${componentType} sections typically have ${relevantStats.median} sub-items (range: ${relevantStats.min}-${relevantStats.max}).`;
     }
     const freq = filteredPatterns.componentFrequency.find(
-      (c: { component: string }) => c.component === componentType
+      (c: { component: string }) => c.component === componentType,
     );
     if (freq) {
       system += `\nIn this site section (${startsWith}), this component is used ${freq.count} times.`;
@@ -1802,11 +1810,11 @@ async function executeGenerateSection(
       (r: Record<string, unknown>) =>
         Array.isArray(r.components) &&
         r.components.includes(componentType) &&
-        r.contentType === contentType
+        r.contentType === contentType,
     ) ||
     (sectionRecipesData.recipes || []).find(
       (r: Record<string, unknown>) =>
-        Array.isArray(r.components) && r.components.includes(componentType)
+        Array.isArray(r.components) && r.components.includes(componentType),
     );
   if (matchingRecipe && (matchingRecipe as Record<string, unknown>).notes) {
     system += `\n\nBest practices for ${componentType}: ${
@@ -1819,7 +1827,7 @@ async function executeGenerateSection(
     // We already fetched filtered patterns above — pass them for guidance
     const storyblokCredentials2 = (await this.getCredentials(
       "storyblokApi",
-      itemIndex
+      itemIndex,
     )) as unknown as StoryblokCredentials;
     const contentClient2 = createContentClient({
       spaceId: storyblokCredentials2.spaceId,
@@ -1831,7 +1839,7 @@ async function executeGenerateSection(
     const guidancePatterns = await analyzeContentPatterns(
       contentClient2,
       guidanceEntry.rules,
-      { contentType, startsWith, derefSchema: guidanceEntry.schema }
+      { contentType, startsWith, derefSchema: guidanceEntry.schema },
     );
     const fieldGuidance = assembleFieldGuidance({
       componentType,
@@ -1907,11 +1915,11 @@ async function executeGenerateSection(
 
 async function executeGenerateRootField(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const openAiCredentials = (await this.getCredentials(
     "openAiApi",
-    itemIndex
+    itemIndex,
   )) as unknown as OpenAiCredentials;
 
   const client = getOpenAiClient(openAiCredentials);
@@ -1921,17 +1929,17 @@ async function executeGenerateRootField(
   const systemOverride = this.getNodeParameter(
     "rootFieldSystem",
     itemIndex,
-    ""
+    "",
   ) as string;
   const contentType = this.getNodeParameter(
     "rootFieldContentType",
     itemIndex,
-    "blog-post"
+    "blog-post",
   ) as string;
   const model = this.getNodeParameter(
     "rootFieldModel",
     itemIndex,
-    "gpt-4o"
+    "gpt-4o",
   ) as string;
 
   // Build system prompt
@@ -1978,11 +1986,11 @@ async function executeGenerateRootField(
 
 async function executeGenerateSeo(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const openAiCredentials = (await this.getCredentials(
     "openAiApi",
-    itemIndex
+    itemIndex,
   )) as unknown as OpenAiCredentials;
 
   const client = getOpenAiClient(openAiCredentials);
@@ -1991,17 +1999,17 @@ async function executeGenerateSeo(
   const contentType = this.getNodeParameter(
     "seoContentType",
     itemIndex,
-    "page"
+    "page",
   ) as string;
   const systemOverride = this.getNodeParameter(
     "seoSystem",
     itemIndex,
-    ""
+    "",
   ) as string;
   const model = this.getNodeParameter(
     "seoModel",
     itemIndex,
-    "gpt-4o"
+    "gpt-4o",
   ) as string;
 
   // Resolve content type schema
@@ -2039,11 +2047,11 @@ async function executeGenerateSeo(
 
 async function executePlanPage(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const openAiCredentials = (await this.getCredentials(
     "openAiApi",
-    itemIndex
+    itemIndex,
   )) as unknown as OpenAiCredentials;
 
   const client = getOpenAiClient(openAiCredentials);
@@ -2052,22 +2060,22 @@ async function executePlanPage(
   const sectionCount = this.getNodeParameter(
     "planSectionCount",
     itemIndex,
-    0
+    0,
   ) as number;
   const contentType = this.getNodeParameter(
     "planContentType",
     itemIndex,
-    "page"
+    "page",
   ) as string;
   const startsWith = this.getNodeParameter(
     "planStartsWith",
     itemIndex,
-    ""
+    "",
   ) as string;
   const model = this.getNodeParameter(
     "planModel",
     itemIndex,
-    "gpt-4o"
+    "gpt-4o",
   ) as string;
 
   // Resolve content type from registry
@@ -2092,7 +2100,7 @@ async function executePlanPage(
   if (startsWith) {
     const storyblokCredentials = (await this.getCredentials(
       "storyblokApi",
-      itemIndex
+      itemIndex,
     )) as unknown as StoryblokCredentials;
     const contentClient = createContentClient({
       spaceId: storyblokCredentials.spaceId,
@@ -2101,20 +2109,20 @@ async function executePlanPage(
     const filteredPatterns = await analyzeContentPatterns(
       contentClient,
       rules,
-      { contentType, startsWith }
+      { contentType, startsWith },
     );
     const topComponents = filteredPatterns.componentFrequency
       .slice(0, 10)
       .map(
         (c: { component: string; count: number }) =>
-          `${c.component} (used ${c.count}x)`
+          `${c.component} (used ${c.count}x)`,
       )
       .join(", ");
     const topSequences = filteredPatterns.commonSequences
       .slice(0, 8)
       .map(
         (s: { from: string; to: string; count: number }) =>
-          `${s.from} → ${s.to} (${s.count}x)`
+          `${s.from} → ${s.to} (${s.count}x)`,
       )
       .join(", ");
     const subItems = Object.entries(filteredPatterns.subComponentCounts)
@@ -2122,7 +2130,7 @@ async function executePlanPage(
         ([component, s]) =>
           `${component}: median ${(s as SubComponentStats).median} items (${
             (s as SubComponentStats).min
-          }-${(s as SubComponentStats).max})`
+          }-${(s as SubComponentStats).max})`,
       )
       .join(", ");
     patternsContext = `\n\nSite patterns (from ${startsWith}):\n- Most used: ${topComponents}\n- Common sequences: ${topSequences}\n- Sub-item counts: ${subItems}`;
@@ -2206,11 +2214,11 @@ Return a JSON object with:
 
 async function executeAnalyzePatterns(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const contentClient = createContentClient({
@@ -2221,12 +2229,12 @@ async function executeAnalyzePatterns(
   const contentType = this.getNodeParameter(
     "patternContentType",
     itemIndex,
-    "page"
+    "page",
   ) as string;
   const startsWith = this.getNodeParameter(
     "patternStartsWith",
     itemIndex,
-    ""
+    "",
   ) as string;
 
   // Resolve validation rules for the content type
@@ -2297,13 +2305,13 @@ import sectionRecipesData from "./schemas/section-recipes.json";
 
 async function executeScrapeUrl(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const url = this.getNodeParameter("scrapeUrlTarget", itemIndex) as string;
   const selector = this.getNodeParameter(
     "scrapeSelector",
     itemIndex,
-    ""
+    "",
   ) as string;
 
   try {
@@ -2336,11 +2344,11 @@ async function executeScrapeUrl(
 
 async function executeListComponents(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -2368,11 +2376,11 @@ async function executeListComponents(
 
 async function executeGetComponent(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -2380,7 +2388,7 @@ async function executeGetComponent(
 
   const componentName = this.getNodeParameter(
     "componentName",
-    itemIndex
+    itemIndex,
   ) as string;
 
   try {
@@ -2405,11 +2413,11 @@ async function executeGetComponent(
 
 async function executeListAssets(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const client = getStoryblokManagementClient(storyblokCredentials);
@@ -2419,13 +2427,13 @@ async function executeListAssets(
   const folderId = this.getNodeParameter(
     "assetFolderId",
     itemIndex,
-    0
+    0,
   ) as number;
   const page = this.getNodeParameter("assetPage", itemIndex, 1) as number;
   const perPage = this.getNodeParameter(
     "assetPerPage",
     itemIndex,
-    25
+    25,
   ) as number;
 
   try {
@@ -2459,18 +2467,18 @@ async function executeListAssets(
 
 async function executeListRecipes(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const intent = this.getNodeParameter("recipeIntent", itemIndex, "") as string;
   const contentType = this.getNodeParameter(
     "recipeContentType",
     itemIndex,
-    ""
+    "",
   ) as string;
   const includeLivePatterns = this.getNodeParameter(
     "recipeIncludeLivePatterns",
     itemIndex,
-    false
+    false,
   ) as boolean;
 
   // Filter recipes by contentType if specified
@@ -2481,21 +2489,21 @@ async function executeListRecipes(
   const filteredRecipes = contentType
     ? recipes.filter(
         (r: Record<string, unknown>) =>
-          !r.contentType || r.contentType === contentType
+          !r.contentType || r.contentType === contentType,
       )
     : recipes;
 
   const filteredTemplates = contentType
     ? pageTemplates.filter(
         (t: Record<string, unknown>) =>
-          !t.contentType || t.contentType === contentType
+          !t.contentType || t.contentType === contentType,
       )
     : pageTemplates;
 
   const filteredAntiPatterns = contentType
     ? antiPatterns.filter(
         (a: Record<string, unknown>) =>
-          !a.contentType || a.contentType === contentType
+          !a.contentType || a.contentType === contentType,
       )
     : antiPatterns;
 
@@ -2529,7 +2537,7 @@ async function executeListRecipes(
 
 async function executeListIcons(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   return {
     icons: AVAILABLE_ICONS,
@@ -2545,11 +2553,11 @@ async function executeListIcons(
 
 async function executeEnsurePath(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const managementClient = getStoryblokManagementClient(storyblokCredentials);
@@ -2561,7 +2569,7 @@ async function executeEnsurePath(
 
   const folderPath = this.getNodeParameter(
     "ensurePathValue",
-    itemIndex
+    itemIndex,
   ) as string;
 
   try {
@@ -2569,7 +2577,7 @@ async function executeEnsurePath(
       managementClient,
       contentClient,
       spaceId,
-      folderPath
+      folderPath,
     );
 
     return {
@@ -2595,11 +2603,11 @@ async function executeEnsurePath(
 
 async function executeListThemes(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const contentClient = createContentClient({
@@ -2629,11 +2637,11 @@ async function executeListThemes(
 
 async function executeGetTheme(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const contentClient = createContentClient({
@@ -2643,7 +2651,7 @@ async function executeGetTheme(
 
   const slugOrUuid = this.getNodeParameter(
     "themeSlugOrUuid",
-    itemIndex
+    itemIndex,
   ) as string;
 
   try {
@@ -2672,11 +2680,11 @@ async function executeGetTheme(
 
 async function executeApplyTheme(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const managementClient = getStoryblokManagementClient(storyblokCredentials);
@@ -2685,7 +2693,7 @@ async function executeApplyTheme(
   const storyId = this.getNodeParameter("applyStoryId", itemIndex) as string;
   const themeUuid = this.getNodeParameter(
     "applyThemeUuid",
-    itemIndex
+    itemIndex,
   ) as string;
   const publish = this.getNodeParameter("applyPublish", itemIndex) as boolean;
 
@@ -2695,7 +2703,7 @@ async function executeApplyTheme(
       spaceId,
       storyId,
       themeUuid,
-      publish
+      publish,
     );
 
     return {
@@ -2719,11 +2727,11 @@ async function executeApplyTheme(
 
 async function executeRemoveTheme(
   this: IExecuteFunctions,
-  itemIndex: number
+  itemIndex: number,
 ): Promise<Record<string, unknown>> {
   const storyblokCredentials = (await this.getCredentials(
     "storyblokApi",
-    itemIndex
+    itemIndex,
   )) as unknown as StoryblokCredentials;
 
   const managementClient = getStoryblokManagementClient(storyblokCredentials);
@@ -2737,7 +2745,7 @@ async function executeRemoveTheme(
       managementClient,
       spaceId,
       storyId,
-      publish
+      publish,
     );
 
     return {
@@ -2753,6 +2761,129 @@ async function executeRemoveTheme(
     const message = error instanceof Error ? error.message : String(error);
     throw new NodeApiError(this.getNode(), { message } as any, {
       message: `Failed to remove theme from story ${storyId}: ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeCreateTheme(
+  this: IExecuteFunctions,
+  itemIndex: number,
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex,
+  )) as unknown as StoryblokCredentials;
+
+  const managementClient = getStoryblokManagementClient(storyblokCredentials);
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+  const spaceId = storyblokCredentials.spaceId;
+
+  const name = this.getNodeParameter("createThemeName", itemIndex) as string;
+  const tokensJson = this.getNodeParameter(
+    "createThemeTokens",
+    itemIndex,
+  ) as string;
+  const publish = this.getNodeParameter("createPublish", itemIndex) as boolean;
+
+  let tokens: Record<string, unknown>;
+  try {
+    tokens = JSON.parse(tokensJson);
+  } catch {
+    throw new NodeOperationError(
+      this.getNode(),
+      "createThemeTokens must be valid JSON",
+      { itemIndex },
+    );
+  }
+
+  try {
+    const result = await createTheme(managementClient, contentClient, spaceId, {
+      name,
+      tokens,
+      tokensToCss,
+      publish,
+    });
+
+    return {
+      ...result,
+      _meta: {
+        operation: "createTheme",
+        name,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to create theme "${name}": ${message}`,
+      itemIndex,
+    });
+  }
+}
+
+async function executeUpdateTheme(
+  this: IExecuteFunctions,
+  itemIndex: number,
+): Promise<Record<string, unknown>> {
+  const storyblokCredentials = (await this.getCredentials(
+    "storyblokApi",
+    itemIndex,
+  )) as unknown as StoryblokCredentials;
+
+  const managementClient = getStoryblokManagementClient(storyblokCredentials);
+  const contentClient = createContentClient({
+    spaceId: storyblokCredentials.spaceId,
+    apiToken: storyblokCredentials.apiToken,
+  });
+  const spaceId = storyblokCredentials.spaceId;
+
+  const slugOrUuid = this.getNodeParameter(
+    "updateThemeSlugOrUuid",
+    itemIndex,
+  ) as string;
+  const tokensJson = this.getNodeParameter(
+    "updateThemeTokens",
+    itemIndex,
+  ) as string;
+  const publish = this.getNodeParameter("updatePublish", itemIndex) as boolean;
+
+  let tokens: Record<string, unknown>;
+  try {
+    tokens = JSON.parse(tokensJson);
+  } catch {
+    throw new NodeOperationError(
+      this.getNode(),
+      "updateThemeTokens must be valid JSON",
+      { itemIndex },
+    );
+  }
+
+  try {
+    const result = await updateTheme(managementClient, contentClient, spaceId, {
+      slugOrUuid,
+      tokens,
+      tokensToCss,
+      publish,
+    });
+
+    return {
+      ...result,
+      _meta: {
+        operation: "updateTheme",
+        slugOrUuid,
+        published: publish,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NodeApiError(this.getNode(), { message } as any, {
+      message: `Failed to update theme "${slugOrUuid}": ${message}`,
       itemIndex,
     });
   }

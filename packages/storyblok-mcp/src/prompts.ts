@@ -190,8 +190,9 @@ export const PROMPT_DEFINITIONS: PromptDefinition[] = [
   {
     name: "theme-management",
     description:
-      "Browse available design token themes and apply one to a page or the global " +
-      "settings. Lists themes, lets you preview one, then applies it.",
+      "Browse, create, update, and apply design token themes. " +
+      "Lists themes, lets you preview one, create new themes from W3C DTCG tokens, " +
+      "update existing themes, or apply a theme to a page or the global settings.",
     arguments: [
       {
         name: "storyId",
@@ -217,7 +218,7 @@ export const PROMPT_DEFINITIONS: PromptDefinition[] = [
  */
 export function getPromptMessages(
   promptName: string,
-  args: Record<string, string>
+  args: Record<string, string>,
 ): PromptMessage[] {
   switch (promptName) {
     case "create-page":
@@ -285,7 +286,7 @@ function getCreatePageMessages(args: Record<string, string>): PromptMessage[] {
 }
 
 function getMigrateFromUrlMessages(
-  args: Record<string, string>
+  args: Record<string, string>,
 ): PromptMessage[] {
   const url = args.url || "[URL not provided]";
   const slug = args.slug ? ` with slug '${args.slug}'` : "";
@@ -326,7 +327,7 @@ function getMigrateFromUrlMessages(
 }
 
 function getCreateBlogPostMessages(
-  args: Record<string, string>
+  args: Record<string, string>,
 ): PromptMessage[] {
   const topic = args.topic || "[topic not provided]";
   const slug = args.slug ? ` with slug '${args.slug}'` : "";
@@ -372,7 +373,7 @@ function getCreateBlogPostMessages(
 }
 
 function getContentAuditMessages(
-  args: Record<string, string>
+  args: Record<string, string>,
 ): PromptMessage[] {
   const startsWith = args.startsWith
     ? ` (filtered to stories starting with '${args.startsWith}')`
@@ -456,7 +457,7 @@ function getExtendPageMessages(args: Record<string, string>): PromptMessage[] {
 }
 
 function getTranslatePageMessages(
-  args: Record<string, string>
+  args: Record<string, string>,
 ): PromptMessage[] {
   const sourceSlug = args.sourceSlug || "[source slug not provided]";
   const targetLanguage =
@@ -506,7 +507,7 @@ function getTranslatePageMessages(
 }
 
 function getThemeManagementMessages(
-  args: Record<string, string>
+  args: Record<string, string>,
 ): PromptMessage[] {
   const storyId = args.storyId || "";
   const themeSlug = args.themeSlug || "";
@@ -523,8 +524,8 @@ function getThemeManagementMessages(
           hasTheme && hasStory
             ? `Apply the theme '${themeSlug}' to story ${storyId}.`
             : hasTheme
-            ? `Show me what the '${themeSlug}' theme contains and help me apply it.`
-            : "Help me browse and apply a design token theme.",
+              ? `Show me what the '${themeSlug}' theme contains and help me apply it.`
+              : "Help me browse and apply a design token theme.",
           "",
           "Follow this workflow:",
           "1. Call `list_themes` to see all available themes",
@@ -554,6 +555,9 @@ function getThemeManagementMessages(
           "- To apply a theme globally, apply it to the `settings` story",
           "- To apply per-page, apply it to that specific page story",
           "- Use `remove_theme` to reset a story to the default branding",
+          "- To create a new theme: build W3C DTCG tokens → call `create_theme` with name + tokens",
+          "- To update an existing theme: call `update_theme` with slugOrUuid + tokens",
+          "- System-managed themes (system: true) cannot be updated or deleted",
         ].join("\n"),
       },
     },

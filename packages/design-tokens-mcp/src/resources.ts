@@ -16,7 +16,10 @@ import {
   COMPONENT_CATEGORIES,
 } from "./constants.js";
 import { getTokenStats, getComponentTokenStats } from "./parser.js";
-import { readBrandingJson } from "./branding.js";
+import {
+  readBrandingTokensW3C,
+  getBrandingSchemaDescription,
+} from "./branding.js";
 
 // ---------------------------------------------------------------------------
 // Resource list
@@ -39,9 +42,9 @@ export const resources: Resource[] = [
   },
   {
     uri: "tokens://branding",
-    name: "Branding Tokens",
+    name: "Branding Tokens (W3C DTCG)",
     description:
-      "Current branding token values — the foundational layer (colors, fonts, spacing factors) that all other tokens derive from.",
+      "Current default branding tokens in W3C DTCG format — the foundational layer (colors, fonts, spacing) that all other tokens derive from. Includes schema field descriptions.",
     mimeType: "application/json",
   },
   {
@@ -78,7 +81,7 @@ export async function readResource(uri: string): Promise<ReadResourceResult> {
                 componentCategories: Object.keys(COMPONENT_CATEGORIES),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -105,13 +108,23 @@ export async function readResource(uri: string): Promise<ReadResourceResult> {
     }
 
     case "tokens://branding": {
-      const branding = await readBrandingJson();
+      const branding = await readBrandingTokensW3C();
+      const schemaDescription = getBrandingSchemaDescription();
       return {
         contents: [
           {
             uri,
             mimeType: "application/json",
-            text: JSON.stringify(branding, null, 2),
+            text: JSON.stringify(
+              {
+                format: "W3C DTCG",
+                tokens: branding,
+                schemaDescription,
+                note: "These are the default branding tokens synced from the Design System. To create or update themes, use the Storyblok MCP create_theme/update_theme tools.",
+              },
+              null,
+              2,
+            ),
           },
         ],
       };
@@ -129,7 +142,7 @@ export async function readResource(uri: string): Promise<ReadResourceResult> {
               description: meta?.description ?? "",
             };
           }),
-        })
+        }),
       );
       return {
         contents: [

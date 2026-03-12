@@ -2,6 +2,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import StoryblokClient from "storyblok-js-client";
 import { OpenAI } from "openai";
+import { tokensToCss } from "@kickstartds/design-system/tokens/tokensToCss.mjs";
 import { StoryblokConfig } from "./config.js";
 import {
   createStoryblokClient,
@@ -61,6 +62,8 @@ import {
   applyTheme as sharedApplyTheme,
   removeTheme as sharedRemoveTheme,
   previewThemeCSS as sharedPreviewThemeCSS,
+  createTheme as sharedCreateTheme,
+  updateTheme as sharedUpdateTheme,
   type PrepareSchemaOptions,
   type ValidationRules,
   type ValidationWarning,
@@ -77,6 +80,8 @@ import {
   type ThemeSummary,
   type ThemeDetail,
   type ApplyThemeResult,
+  type CreateThemeResult,
+  type UpdateThemeResult,
 } from "@kickstartds/storyblok-services";
 
 // Load all content type schemas via the registry
@@ -99,7 +104,7 @@ function rules_rootMatchesSchema(content: Record<string, any>): boolean {
   const entry = registry.detectContentType(content);
   const rules = entry ? entry.rules : PAGE_VALIDATION_RULES;
   return rules.rootArrayFields.some((field: string) =>
-    Array.isArray(content[field])
+    Array.isArray(content[field]),
   );
 }
 
@@ -108,7 +113,7 @@ function rules_rootMatchesSchema(content: Record<string, any>): boolean {
  * Detects the content type from the registry; falls back to page rules.
  */
 function getValidationRulesForContent(
-  content: Record<string, any>
+  content: Record<string, any>,
 ): ValidationRules {
   const entry = registry.detectContentType(content);
   return entry ? entry.rules : PAGE_VALIDATION_RULES;
@@ -129,6 +134,8 @@ export type {
   ThemeSummary,
   ThemeDetail,
   ApplyThemeResult,
+  CreateThemeResult,
+  UpdateThemeResult,
 };
 export { PLACEHOLDER_IMAGE_INSTRUCTIONS } from "@kickstartds/storyblok-services";
 export { stripEmptyAssetFields };
@@ -207,7 +214,7 @@ export class StoryblokService {
         "cdn/stories/industry/settings/settings",
         {
           version: "published",
-        }
+        },
       );
       const token = response.data?.story?.content?.token;
       if (typeof token === "string" && token.length > 0) {
@@ -217,7 +224,7 @@ export class StoryblokService {
     } catch (err) {
       console.error(
         "[StoryblokService] Failed to fetch settings token CSS:",
-        err
+        err,
       );
       return null;
     }
@@ -228,7 +235,7 @@ export class StoryblokService {
    */
   async getIdeas(): Promise<unknown> {
     const response = await this.managementClient.get(
-      `spaces/${this.spaceId}/ideas/`
+      `spaces/${this.spaceId}/ideas/`,
     );
     return response.data;
   }
@@ -253,7 +260,7 @@ export class StoryblokService {
   async getStory(
     identifier: string,
     findBy: "slug" | "id" | "uuid" = "slug",
-    version: "draft" | "published" = "published"
+    version: "draft" | "published" = "published",
   ): Promise<unknown> {
     const params: Record<string, unknown> = {
       version,
@@ -285,7 +292,7 @@ export class StoryblokService {
     return sharedGetStoryManagement(
       this.managementClient,
       this.spaceId,
-      String(storyId)
+      String(storyId),
     );
   }
 
@@ -336,7 +343,7 @@ export class StoryblokService {
       slug?: string;
     },
     publish: boolean = false,
-    skipValidation: boolean = false
+    skipValidation: boolean = false,
   ): Promise<unknown> {
     // Validate updated content against the Design System schema if applicable
     if (!skipValidation && updates.content) {
@@ -361,7 +368,7 @@ export class StoryblokService {
         slug: updates.slug,
         publish,
         skipValidation: true, // already validated above
-      }
+      },
     );
   }
 
@@ -373,7 +380,7 @@ export class StoryblokService {
     await sharedDeleteStory(
       this.managementClient,
       this.spaceId,
-      String(storyId)
+      String(storyId),
     );
   }
 
@@ -406,7 +413,7 @@ export class StoryblokService {
     if (entry.rules.flatAssetFields?.size) {
       normalizeAssetFieldNames(
         sections as Record<string, any>[],
-        entry.rules.flatAssetFields
+        entry.rules.flatAssetFields,
       );
     }
 
@@ -415,7 +422,7 @@ export class StoryblokService {
       ensureSubItemComponents(
         sections as Record<string, any>[],
         entry.rules.containerSlots,
-        rootArrayField
+        rootArrayField,
       );
     }
 
@@ -423,7 +430,7 @@ export class StoryblokService {
     if (!options.skipValidation) {
       const validationResult = validateSections(
         sections as Record<string, any>[],
-        entry.rules
+        entry.rules,
       );
       if (!validationResult.valid) {
         throw new Error(formatValidationErrors(validationResult.errors));
@@ -433,7 +440,7 @@ export class StoryblokService {
     if (!options.skipTransform) {
       const transformed = processForStoryblok(
         { [rootArrayField]: sections },
-        entry.rules.flatAssetFields
+        entry.rules.flatAssetFields,
       );
       sections = transformed[rootArrayField];
     }
@@ -478,7 +485,7 @@ export class StoryblokService {
     if (entry.rules.flatAssetFields?.size) {
       normalizeAssetFieldNames(
         sections as Record<string, any>[],
-        entry.rules.flatAssetFields
+        entry.rules.flatAssetFields,
       );
     }
 
@@ -487,7 +494,7 @@ export class StoryblokService {
       ensureSubItemComponents(
         sections as Record<string, any>[],
         entry.rules.containerSlots,
-        rootArrayField
+        rootArrayField,
       );
     }
 
@@ -495,7 +502,7 @@ export class StoryblokService {
     if (!options.skipValidation) {
       const validationResult = validateSections(
         sections as Record<string, any>[],
-        entry.rules
+        entry.rules,
       );
       if (!validationResult.valid) {
         throw new Error(formatValidationErrors(validationResult.errors));
@@ -505,7 +512,7 @@ export class StoryblokService {
     if (!options.skipTransform) {
       const transformed = processForStoryblok(
         { [rootArrayField]: sections },
-        entry.rules.flatAssetFields
+        entry.rules.flatAssetFields,
       );
       sections = transformed[rootArrayField];
     }
@@ -624,7 +631,7 @@ export class StoryblokService {
     if (entry.rules.flatAssetFields?.size) {
       normalizeAssetFieldNames(
         [section] as Record<string, any>[],
-        entry.rules.flatAssetFields
+        entry.rules.flatAssetFields,
       );
     }
 
@@ -633,7 +640,7 @@ export class StoryblokService {
       ensureSubItemComponents(
         [section] as Record<string, any>[],
         entry.rules.containerSlots,
-        entry.rootArrayFields[0] || "section"
+        entry.rootArrayFields[0] || "section",
       );
     }
 
@@ -641,7 +648,7 @@ export class StoryblokService {
     if (!options.skipValidation) {
       const validationResult = validateSections(
         [section] as Record<string, any>[],
-        entry.rules
+        entry.rules,
       );
       if (!validationResult.valid) {
         throw new Error(formatValidationErrors(validationResult.errors));
@@ -652,7 +659,7 @@ export class StoryblokService {
       const rootArrayField = entry.rootArrayFields[0] || "section";
       const transformed = processForStoryblok(
         { [rootArrayField]: [section] },
-        entry.rules.flatAssetFields
+        entry.rules.flatAssetFields,
       );
       section = transformed[rootArrayField][0];
     }
@@ -702,7 +709,7 @@ export class StoryblokService {
       this.managementClient,
       this.contentClient,
       this.spaceId,
-      folderPath
+      folderPath,
     );
   }
 
@@ -731,14 +738,14 @@ export class StoryblokService {
   async applyTheme(
     storyId: string,
     themeUuid: string | null,
-    publish: boolean = false
+    publish: boolean = false,
   ): Promise<ApplyThemeResult> {
     return sharedApplyTheme(
       this.managementClient,
       this.spaceId,
       storyId,
       themeUuid,
-      publish
+      publish,
     );
   }
 
@@ -748,13 +755,47 @@ export class StoryblokService {
    */
   async removeTheme(
     storyId: string,
-    publish: boolean = false
+    publish: boolean = false,
   ): Promise<ApplyThemeResult> {
     return sharedRemoveTheme(
       this.managementClient,
       this.spaceId,
       storyId,
-      publish
+      publish,
+    );
+  }
+
+  /**
+   * Create a new theme from W3C DTCG branding tokens.
+   * Delegates to shared `createTheme()`, injecting `tokensToCss` from the design system.
+   */
+  async createTheme(options: {
+    name: string;
+    tokens: Record<string, unknown>;
+    publish?: boolean;
+  }): Promise<CreateThemeResult> {
+    return sharedCreateTheme(
+      this.managementClient,
+      this.contentClient,
+      this.spaceId,
+      { ...options, tokensToCss },
+    );
+  }
+
+  /**
+   * Update an existing theme with new W3C DTCG branding tokens.
+   * Delegates to shared `updateTheme()`, injecting `tokensToCss` from the design system.
+   */
+  async updateTheme(options: {
+    slugOrUuid: string;
+    tokens: Record<string, unknown>;
+    publish?: boolean;
+  }): Promise<UpdateThemeResult> {
+    return sharedUpdateTheme(
+      this.managementClient,
+      this.contentClient,
+      this.spaceId,
+      { ...options, tokensToCss },
     );
   }
 }
@@ -786,7 +827,7 @@ export class ContentGenerationService {
   getClient(): OpenAI {
     if (!this.client) {
       throw new Error(
-        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable.",
       );
     }
     return this.client;
@@ -807,7 +848,7 @@ export class ContentGenerationService {
   }): Promise<unknown> {
     if (!this.client) {
       throw new Error(
-        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable.",
       );
     }
 
@@ -834,7 +875,7 @@ export class ContentGenerationService {
   }> {
     if (!this.client) {
       throw new Error(
-        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable.",
       );
     }
 
@@ -889,7 +930,7 @@ export class ContentGenerationService {
   }> {
     if (!this.client) {
       throw new Error(
-        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable.",
       );
     }
 
@@ -924,7 +965,7 @@ export class ContentGenerationService {
   }> {
     if (!this.client) {
       throw new Error(
-        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable."
+        "OpenAI API key not configured. Set OPENAI_API_KEY environment variable.",
       );
     }
 

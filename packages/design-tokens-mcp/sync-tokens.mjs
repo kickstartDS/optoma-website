@@ -39,7 +39,8 @@ const GLOBAL_TOKEN_FILES = [
   "border-color-token.scss",
   "border-token.scss",
   "box-shadow-token.scss",
-  "branding-token.json",
+  "branding-tokens.json",
+  "branding-tokens.schema.json",
   "branding-tokens.css",
   "color-token.scss",
   "font-size-token.scss",
@@ -66,7 +67,7 @@ async function main() {
   if (!(await exists(DS_TOKEN_DIR))) {
     console.error(`❌  Design system token dir not found: ${DS_TOKEN_DIR}`);
     console.error(
-      "    Make sure @kickstartds/design-system is present in the workspace."
+      "    Make sure @kickstartds/design-system is present in the workspace.",
     );
     process.exit(1);
   }
@@ -121,7 +122,7 @@ async function main() {
   }
 
   console.log(
-    `✔  Synced ${globalCount} global + ${componentCount} component token files from @kickstartds/design-system`
+    `✔  Synced ${globalCount} global + ${componentCount} component token files from @kickstartds/design-system`,
   );
 }
 

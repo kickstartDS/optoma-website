@@ -79,13 +79,13 @@ export const schemas = {
       })
       .optional()
       .describe(
-        "JSON schema for structured output. Optional when componentType or sectionCount is provided."
+        "JSON schema for structured output. Optional when componentType or sectionCount is provided.",
       ),
     componentType: z
       .string()
       .optional()
       .describe(
-        "Component type to generate (e.g. 'hero', 'faq'). When provided, schema is auto-derived."
+        "Component type to generate (e.g. 'hero', 'faq'). When provided, schema is auto-derived.",
       ),
     sectionCount: z
       .number()
@@ -96,13 +96,13 @@ export const schemas = {
       .optional()
       .default("page")
       .describe(
-        "Content type to generate for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'."
+        "Content type to generate for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'.",
       ),
     rootField: z
       .string()
       .optional()
       .describe(
-        "For Tier 2 (flat) content types: generate content for a specific root field only (e.g. 'locations', 'events')."
+        "For Tier 2 (flat) content types: generate content for a specific root field only (e.g. 'locations', 'events').",
       ),
   }),
 
@@ -125,27 +125,27 @@ export const schemas = {
       .optional()
       .default("page")
       .describe(
-        "Content type (e.g. 'page', 'blog-post'). Determines which schema to validate against. Default: 'page'."
+        "Content type (e.g. 'page', 'blog-post'). Determines which schema to validate against. Default: 'page'.",
       ),
     skipTransform: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Skip automatic content flattening for Storyblok (default: false)"
+        "Skip automatic content flattening for Storyblok (default: false)",
       ),
     uploadAssets: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs."
+        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs.",
       ),
     assetFolderName: z
       .string()
       .optional()
       .describe(
-        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
       ),
     skipValidation: z
       .boolean()
@@ -161,7 +161,7 @@ export const schemas = {
     position: z
       .number()
       .describe(
-        "Zero-based insertion index. 0 = beginning, -1 = end, any other value is clamped to bounds"
+        "Zero-based insertion index. 0 = beginning, -1 = end, any other value is clamped to bounds",
       ),
     sections: z
       .array(sectionSchema)
@@ -171,40 +171,40 @@ export const schemas = {
       .optional()
       .default("page")
       .describe(
-        "Content type (e.g. 'page', 'blog-post', 'event-detail'). Determines which schema to validate against. Default: 'page'."
+        "Content type (e.g. 'page', 'blog-post', 'event-detail'). Determines which schema to validate against. Default: 'page'.",
       ),
     targetField: z
       .string()
       .optional()
       .describe(
-        "Name of the root array field to insert into (e.g. 'section', 'locations', 'events'). Defaults to the content type's primary root array."
+        "Name of the root array field to insert into (e.g. 'section', 'locations', 'events'). Defaults to the content type's primary root array.",
       ),
     publish: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Publish the story immediately after importing (default: false)"
+        "Publish the story immediately after importing (default: false)",
       ),
     skipTransform: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Skip automatic content flattening for Storyblok (default: false)"
+        "Skip automatic content flattening for Storyblok (default: false)",
       ),
     uploadAssets: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs."
+        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs.",
       ),
     assetFolderName: z
       .string()
       .optional()
       .describe(
-        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
       ),
     skipValidation: z
       .boolean()
@@ -220,7 +220,7 @@ export const schemas = {
       .number()
       .optional()
       .describe(
-        "Parent folder ID (for nested content). Mutually exclusive with 'path'."
+        "Parent folder ID (for nested content). Mutually exclusive with 'path'.",
       ),
     path: z
       .string()
@@ -228,25 +228,25 @@ export const schemas = {
       .describe(
         "Folder path to create the page in (e.g. 'en/services/consulting'). " +
           "Intermediate folders are created automatically like mkdir -p. " +
-          "Mutually exclusive with 'parentId'."
+          "Mutually exclusive with 'parentId'.",
       ),
     sections: z
       .array(sectionSchema)
       .describe(
-        "Array of section objects to populate the page with. Missing _uid fields will be auto-generated."
+        "Array of section objects to populate the page with. Missing _uid fields will be auto-generated.",
       ),
     contentType: z
       .string()
       .optional()
       .default("page")
       .describe(
-        "Content type to create (e.g. 'page', 'blog-post', 'blog-overview'). Determines the component name and root array field. Default: 'page'."
+        "Content type to create (e.g. 'page', 'blog-post', 'blog-overview'). Determines the component name and root array field. Default: 'page'.",
       ),
     rootFields: z
       .record(z.unknown())
       .optional()
       .describe(
-        "Additional root-level fields for the content envelope (e.g. blog-post's 'head', 'aside', 'cta'). Merged into the content object alongside sections."
+        "Additional root-level fields for the content envelope (e.g. blog-post's 'head', 'aside', 'cta'). Merged into the content object alongside sections.",
       ),
     publish: z
       .boolean()
@@ -258,13 +258,13 @@ export const schemas = {
       .optional()
       .default(false)
       .describe(
-        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs."
+        "When true, image URLs in the content are downloaded and uploaded to Storyblok as native assets before saving. The original URLs are replaced with Storyblok CDN URLs.",
       ),
     assetFolderName: z
       .string()
       .optional()
       .describe(
-        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
       ),
     skipValidation: z
       .boolean()
@@ -294,7 +294,7 @@ export const schemas = {
       .optional()
       .default(true)
       .describe(
-        "Exclude story content from response. When true (default), only metadata is returned. Set to false for full content."
+        "Exclude story content from response. When true (default), only metadata is returned. Set to false for full content.",
       ),
   }),
 
@@ -325,7 +325,7 @@ export const schemas = {
       .describe(
         "Folder path to create the story in (e.g. 'en/blog'). " +
           "Intermediate folders are created automatically like mkdir -p. " +
-          "Mutually exclusive with 'parentId'."
+          "Mutually exclusive with 'parentId'.",
       ),
     content: z.record(z.unknown()).describe("Story content object"),
     isFolder: z
@@ -385,7 +385,7 @@ export const schemas = {
       .string()
       .optional()
       .describe(
-        "Optional CSS selector to extract a specific part of the page (e.g. 'main', 'article', '.content'). Defaults to 'main' if present, otherwise full body."
+        "Optional CSS selector to extract a specific part of the page (e.g. 'main', 'article', '.content'). Defaults to 'main' if present, otherwise full body.",
       ),
   }),
 
@@ -395,7 +395,7 @@ export const schemas = {
       .optional()
       .default("page")
       .describe(
-        "Filter stories by content type (default: 'page'). Use 'blog-post', 'event-detail', etc. for other types."
+        "Filter stories by content type (default: 'page'). Use 'blog-post', 'event-detail', etc. for other types.",
       ),
     startsWith: z
       .string()
@@ -406,7 +406,7 @@ export const schemas = {
       .optional()
       .default(false)
       .describe(
-        "Force a fresh analysis instead of using the cached result. Use after publishing new content."
+        "Force a fresh analysis instead of using the cached result. Use after publishing new content.",
       ),
   }),
 
@@ -415,20 +415,20 @@ export const schemas = {
       .string()
       .optional()
       .describe(
-        "Optional intent to help prioritize relevant recipes (e.g. 'product landing page', 'about page')"
+        "Optional intent to help prioritize relevant recipes (e.g. 'product landing page', 'about page')",
       ),
     includePatterns: z
       .boolean()
       .optional()
       .default(true)
       .describe(
-        "Include live patterns from existing content alongside static recipes (default: true)"
+        "Include live patterns from existing content alongside static recipes (default: true)",
       ),
     contentType: z
       .string()
       .optional()
       .describe(
-        "Filter recipes by content type (e.g. 'blog-post', 'event-detail'). When set, only recipes and templates for the specified content type (plus universal ones) are returned."
+        "Filter recipes by content type (e.g. 'blog-post', 'event-detail'). When set, only recipes and templates for the specified content type (plus universal ones) are returned.",
       ),
   }),
 
@@ -436,7 +436,7 @@ export const schemas = {
     intent: z
       .string()
       .describe(
-        "Description of the page to plan (e.g. 'Product landing page for our new AI feature')"
+        "Description of the page to plan (e.g. 'Product landing page for our new AI feature')",
       ),
     sectionCount: z
       .number()
@@ -447,14 +447,14 @@ export const schemas = {
       .optional()
       .default("page")
       .describe(
-        "Content type to plan for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'."
+        "Content type to plan for (e.g. 'page', 'blog-post', 'event-detail'). Default: 'page'.",
       ),
     startsWith: z
       .string()
       .optional()
       .describe(
         "Filter content patterns by slug prefix (e.g. 'case-studies/' or 'en/blog/'). " +
-          "When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache."
+          "When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache.",
       ),
   }),
 
@@ -463,7 +463,7 @@ export const schemas = {
       .string()
       .optional()
       .describe(
-        "Component type to generate (e.g. 'hero', 'features', 'faq'). If omitted, you will be asked to select one."
+        "Component type to generate (e.g. 'hero', 'features', 'faq'). If omitted, you will be asked to select one.",
       ),
     prompt: z.string().describe("Content description for this section"),
     system: z.string().optional().describe("System prompt override"),
@@ -480,14 +480,14 @@ export const schemas = {
       .optional()
       .default("page")
       .describe(
-        "Content type to generate for (e.g. 'page', 'blog-post'). Default: 'page'."
+        "Content type to generate for (e.g. 'page', 'blog-post'). Default: 'page'.",
       ),
     startsWith: z
       .string()
       .optional()
       .describe(
         "Filter content patterns by slug prefix (e.g. 'case-studies/' or 'en/blog/'). " +
-          "When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache."
+          "When set, patterns are fetched live from stories matching this prefix instead of using the global startup cache.",
       ),
   }),
 
@@ -497,7 +497,7 @@ export const schemas = {
       .describe(
         "Forward-slash-separated folder path to ensure exists " +
           "(e.g. 'en/services/consulting'). Missing intermediate folders " +
-          "are created automatically, like mkdir -p."
+          "are created automatically, like mkdir -p.",
       ),
   }),
 
@@ -506,25 +506,25 @@ export const schemas = {
       .string()
       .describe(
         "Name of the root-level field to generate (e.g. 'head', 'aside', 'cta'). " +
-          "Must be a valid root property on the content type schema."
+          "Must be a valid root property on the content type schema.",
       ),
     prompt: z
       .string()
       .describe(
-        "Content description for this field (e.g. 'Blog post about AI trends in 2026, author is Jane Doe')"
+        "Content description for this field (e.g. 'Blog post about AI trends in 2026, author is Jane Doe')",
       ),
     system: z
       .string()
       .optional()
       .describe(
-        "System prompt override. If omitted, a default content-writer prompt is used."
+        "System prompt override. If omitted, a default content-writer prompt is used.",
       ),
     contentType: z
       .string()
       .optional()
       .default("blog-post")
       .describe(
-        "Content type to generate for (e.g. 'blog-post', 'blog-overview'). Default: 'blog-post'."
+        "Content type to generate for (e.g. 'blog-post', 'blog-overview'). Default: 'blog-post'.",
       ),
     model: z
       .string()
@@ -536,20 +536,20 @@ export const schemas = {
     prompt: z
       .string()
       .describe(
-        "Summary of the page content to derive SEO metadata from. Include key topics, target audience, and primary keywords."
+        "Summary of the page content to derive SEO metadata from. Include key topics, target audience, and primary keywords.",
       ),
     contentType: z
       .string()
       .optional()
       .default("page")
       .describe(
-        "Content type (e.g. 'page', 'blog-post'). Determines which seo sub-schema to use. Default: 'page'."
+        "Content type (e.g. 'page', 'blog-post'). Determines which seo sub-schema to use. Default: 'page'.",
       ),
     system: z
       .string()
       .optional()
       .describe(
-        "System prompt override. If omitted, a default SEO-specialist prompt is used."
+        "System prompt override. If omitted, a default SEO-specialist prompt is used.",
       ),
     model: z
       .string()
@@ -564,44 +564,44 @@ export const schemas = {
     position: z
       .number()
       .describe(
-        "Zero-based index of the section to replace. -1 = last section."
+        "Zero-based index of the section to replace. -1 = last section.",
       ),
     section: sectionSchema.describe(
-      "The replacement section object. Must be a valid section component."
+      "The replacement section object. Must be a valid section component.",
     ),
     contentType: z
       .string()
       .optional()
       .default("page")
       .describe(
-        "Content type (e.g. 'page', 'blog-post'). Determines which schema to validate against. Default: 'page'."
+        "Content type (e.g. 'page', 'blog-post'). Determines which schema to validate against. Default: 'page'.",
       ),
     publish: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Publish the story immediately after replacing (default: false)"
+        "Publish the story immediately after replacing (default: false)",
       ),
     skipTransform: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Skip automatic content flattening for Storyblok (default: false)"
+        "Skip automatic content flattening for Storyblok (default: false)",
       ),
     uploadAssets: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "When true, image URLs in the section are downloaded and uploaded to Storyblok as native assets before saving."
+        "When true, image URLs in the section are downloaded and uploaded to Storyblok as native assets before saving.",
       ),
     assetFolderName: z
       .string()
       .optional()
       .describe(
-        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
       ),
     skipValidation: z
       .boolean()
@@ -614,7 +614,7 @@ export const schemas = {
     storyUid: z
       .string()
       .describe(
-        "The UID (or numeric ID) of the story to update SEO metadata for"
+        "The UID (or numeric ID) of the story to update SEO metadata for",
       ),
     seo: z
       .object({
@@ -634,7 +634,7 @@ export const schemas = {
           .union([z.string(), z.record(z.unknown())])
           .optional()
           .describe(
-            "OG image. Can be a URL string (uploaded when uploadAssets is true) or a Storyblok asset object."
+            "OG image. Can be a URL string (uploaded when uploadAssets is true) or a Storyblok asset object.",
           ),
         cardImage: z
           .union([z.string(), z.record(z.unknown())])
@@ -647,20 +647,20 @@ export const schemas = {
       .optional()
       .default(false)
       .describe(
-        "Publish the story immediately after updating SEO (default: false)"
+        "Publish the story immediately after updating SEO (default: false)",
       ),
     uploadAssets: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "When true, image URLs in the SEO data are downloaded and uploaded to Storyblok as native assets before saving."
+        "When true, image URLs in the SEO data are downloaded and uploaded to Storyblok as native assets before saving.",
       ),
     assetFolderName: z
       .string()
       .optional()
       .describe(
-        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'."
+        "Name of the Storyblok asset folder to upload images into. Created if it does not exist. Defaults to 'AI Generated'.",
       ),
   }),
 
@@ -669,7 +669,7 @@ export const schemas = {
       .string()
       .optional()
       .describe(
-        "Filter stories by slug prefix (e.g. 'en/' for English pages). When omitted, all stories are audited."
+        "Filter stories by slug prefix (e.g. 'en/' for English pages). When omitted, all stories are audited.",
       ),
     staleMonths: z
       .number()
@@ -689,26 +689,26 @@ export const schemas = {
     storyId: z
       .string()
       .describe(
-        "The numeric ID (or string representation) of the page or settings story to apply the theme to"
+        "The numeric ID (or string representation) of the page or settings story to apply the theme to",
       ),
     themeUuid: z
       .string()
       .optional()
       .describe(
-        "UUID of the token-theme to apply. Omit or pass empty string to clear the theme."
+        "UUID of the token-theme to apply. Omit or pass empty string to clear the theme.",
       ),
     themeSlug: z
       .string()
       .optional()
       .describe(
-        "Slug of the token-theme to apply (resolved to UUID server-side). Alternative to themeUuid."
+        "Slug of the token-theme to apply (resolved to UUID server-side). Alternative to themeUuid.",
       ),
     publish: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Publish the story immediately after applying the theme (default: false)"
+        "Publish the story immediately after applying the theme (default: false)",
       ),
   }),
 
@@ -716,14 +716,55 @@ export const schemas = {
     storyId: z
       .string()
       .describe(
-        "The numeric ID (or string representation) of the story to remove the theme from"
+        "The numeric ID (or string representation) of the story to remove the theme from",
       ),
     publish: z
       .boolean()
       .optional()
       .default(false)
       .describe(
-        "Publish the story immediately after removing the theme (default: false)"
+        "Publish the story immediately after removing the theme (default: false)",
+      ),
+  }),
+
+  createTheme: z.object({
+    name: z
+      .string()
+      .describe(
+        "Display name for the new theme (e.g. 'Brand Blue'). Used to derive the URL slug.",
+      ),
+    tokens: z
+      .record(z.unknown())
+      .describe(
+        "W3C Design Token Community Group (DTCG) format branding tokens object. " +
+          "Structure: { color: { primary: { $root: { $type: 'color', $value: { colorSpace: 'srgb', components: [r, g, b] } } } } }. " +
+          "Validated and compiled to CSS custom properties server-side.",
+      ),
+    publish: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe(
+        "Publish the theme story immediately after creation (default: true)",
+      ),
+  }),
+
+  updateTheme: z.object({
+    slugOrUuid: z
+      .string()
+      .describe("The slug (e.g. 'brand-blue') or UUID of the theme to update"),
+    tokens: z
+      .record(z.unknown())
+      .describe(
+        "Updated W3C Design Token Community Group (DTCG) format branding tokens object. " +
+          "Replaces all existing tokens. CSS is recompiled automatically.",
+      ),
+    publish: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe(
+        "Publish the theme story immediately after update (default: true)",
       ),
   }),
 };
@@ -762,3 +803,5 @@ export type ListThemesInput = z.infer<typeof schemas.listThemes>;
 export type GetThemeInput = z.infer<typeof schemas.getTheme>;
 export type ApplyThemeInput = z.infer<typeof schemas.applyTheme>;
 export type RemoveThemeInput = z.infer<typeof schemas.removeTheme>;
+export type CreateThemeInput = z.infer<typeof schemas.createTheme>;
+export type UpdateThemeInput = z.infer<typeof schemas.updateTheme>;

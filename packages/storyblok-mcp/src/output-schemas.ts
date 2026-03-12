@@ -33,7 +33,7 @@ export const planPageOutputSchema = z
       .record(z.unknown())
       .optional()
       .describe(
-        "Root field metadata with priority annotations (for hybrid content types like blog-post)"
+        "Root field metadata with priority annotations (for hybrid content types like blog-post)",
       ),
     reviewStatus: z
       .string()
@@ -61,7 +61,7 @@ export const generateSectionOutputSchema = z
       .record(z.unknown())
       .optional()
       .describe(
-        "Design System shape before Storyblok flattening (for preview/debugging)"
+        "Design System shape before Storyblok flattening (for preview/debugging)",
       ),
     componentType: z
       .string()
@@ -115,7 +115,7 @@ export const analyzeContentPatternsOutputSchema = z
           component: z.string(),
           count: z.number(),
           percentage: z.number(),
-        })
+        }),
       )
       .describe("Array of component usage frequencies"),
     commonSequences: z
@@ -130,7 +130,7 @@ export const analyzeContentPatternsOutputSchema = z
       .record(z.unknown())
       .optional()
       .describe(
-        "Typical sub-component item counts (e.g., features typically has 4 items)"
+        "Typical sub-component item counts (e.g., features typically has 4 items)",
       ),
     pageArchetypes: z
       .array(z.record(z.unknown()))
@@ -162,7 +162,7 @@ export const listStoriesOutputSchema = z
             published_at: z.string().optional(),
             is_folder: z.boolean().optional(),
           })
-          .passthrough()
+          .passthrough(),
       )
       .describe("Array of story objects"),
     total: z
@@ -210,7 +210,7 @@ export const listComponentsOutputSchema = z
               .optional()
               .describe("Human-readable nesting constraint explanation"),
           })
-          .passthrough()
+          .passthrough(),
       )
       .describe("Array of annotated component definitions"),
   })
@@ -228,7 +228,7 @@ export const getComponentOutputSchema = z
         .record(z.unknown())
         .optional()
         .describe(
-          "Child slots this component defines and their accepted types"
+          "Child slots this component defines and their accepted types",
         ),
     }),
     schema: z
@@ -273,6 +273,27 @@ export const applyThemeOutputSchema = z
   })
   .passthrough();
 
+/** Output schema for create_theme */
+export const createThemeOutputSchema = z
+  .object({
+    success: z.boolean().describe("Whether the theme was created successfully"),
+    storyId: z.number().describe("The new theme story's numeric ID"),
+    slug: z.string().describe("The theme slug"),
+    fullSlug: z
+      .string()
+      .describe("Full slug path (e.g. 'settings/themes/brand-blue')"),
+  })
+  .passthrough();
+
+/** Output schema for update_theme */
+export const updateThemeOutputSchema = z
+  .object({
+    success: z.boolean().describe("Whether the theme was updated successfully"),
+    storyId: z.number().describe("The theme story's numeric ID"),
+    slug: z.string().describe("The theme slug"),
+  })
+  .passthrough();
+
 // ── Content audit result schema ────────────────────────────────────
 
 /** Output schema for content_audit */
@@ -287,21 +308,21 @@ export const contentAuditOutputSchema = z
         byCategory: z
           .record(z.unknown())
           .describe(
-            "Findings by category (images, content, seo, freshness, composition)"
+            "Findings by category (images, content, seo, freshness, composition)",
           ),
         bySeverity: z.record(z.number()),
         byRule: z.record(z.number()),
         healthScore: z
           .number()
           .describe(
-            "Health score from 0–100 — composition findings contribute to the score alongside images, content, SEO, and freshness"
+            "Health score from 0–100 — composition findings contribute to the score alongside images, content, SEO, and freshness",
           ),
       })
       .passthrough(),
     findings: z
       .array(z.record(z.unknown()))
       .describe(
-        "All audit findings with rule, severity, category, and story. Composition findings are prefixed with 'composition-'"
+        "All audit findings with rule, severity, category, and story. Composition findings are prefixed with 'composition-'",
       ),
     topOffenders: z
       .array(z.record(z.unknown()))
@@ -339,6 +360,8 @@ export const OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
   // Theme management
   apply_theme: applyThemeOutputSchema,
   remove_theme: applyThemeOutputSchema,
+  create_theme: createThemeOutputSchema,
+  update_theme: updateThemeOutputSchema,
 
   // NOTE: list_stories, get_story, list_components are excluded because
   // their handlers return raw Storyblok API shapes (arrays or passthrough
@@ -355,7 +378,7 @@ export const OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
  */
 export function buildStoryblokEditorUrl(
   spaceId: string | number,
-  storyId: string | number
+  storyId: string | number,
 ): string {
   return `https://app.storyblok.com/#/me/spaces/${spaceId}/stories/0/0/${storyId}`;
 }
@@ -367,7 +390,7 @@ export function buildStoryblokEditorUrl(
 export function createWriteAnnotations(
   spaceId: string | number,
   storyId: string | number,
-  storyName?: string
+  storyName?: string,
 ): {
   annotations: {
     audience: string[];

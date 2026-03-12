@@ -9,10 +9,16 @@ import {
 import { useSearchParams } from "../utils/router";
 import { useGet, usePut } from "../utils/useFetch";
 
+export interface PresetListEntry {
+  name: string;
+  system: boolean;
+}
+
 export interface IPresetContext {
   presetName: string | undefined;
   preset: any | undefined;
-  presetNames: string[] | undefined;
+  presetNames: PresetListEntry[] | undefined;
+  isSystemPreset: boolean;
   getPresetList: () => Promise<void>;
   selectPreset: (name: string) => void;
   savePreset: (tokens: any, name?: string | null) => Promise<void>;
@@ -22,6 +28,7 @@ const PresetContext = createContext<IPresetContext>({
   presetName: undefined,
   preset: undefined,
   presetNames: undefined,
+  isSystemPreset: false,
   async getPresetList() {},
   selectPreset() {},
   async savePreset() {},
@@ -35,7 +42,12 @@ export const PresetContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const { execute: getPreset, data: preset } = useGet();
   const { execute: putPreset } = usePut();
-  const { execute: getPresetList, data: presetNames } = useGet("/api/tokens/");
+  const { execute: getPresetList, data: presetNames } =
+    useGet<PresetListEntry[]>("/api/tokens/");
+
+  const isSystemPreset = Boolean(
+    presetName && presetNames?.find((p) => p.name === presetName)?.system,
+  );
 
   useEffect(() => {
     if (tokenParam !== presetName) {
@@ -46,7 +58,7 @@ export const PresetContextProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     if (presetName) {
       getPreset(`/api/tokens/${presetName}`).catch(() =>
-        searchParams.delete("t", undefined, true)
+        searchParams.delete("t", undefined, true),
       );
     }
   }, [presetName]);
@@ -58,6 +70,7 @@ export const PresetContextProvider: FC<PropsWithChildren> = ({ children }) => {
         preset,
         getPresetList,
         presetNames,
+        isSystemPreset,
         selectPreset(name) {
           if (name !== tokenParam) searchParams.set("t", name);
         },
