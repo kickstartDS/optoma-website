@@ -28,7 +28,7 @@ RUN cd packages/design-system && pnpm run build-storybook
 # Serve stage — minimal nginx to serve static Storybook
 FROM nginx:alpine AS production
 
-LABEL org.opencontainers.image.source="https://github.com/kickstartDS/storyblok-starter-premium"
+LABEL org.opencontainers.image.source="https://github.com/kickstartDS/ruhmesmeile-storyblok-starter"
 LABEL org.opencontainers.image.description="kickstartDS Design System Storybook"
 
 # Custom nginx config for port 8080 and SPA routing

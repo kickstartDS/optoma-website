@@ -11,6 +11,7 @@ COPY patches/ ./patches/
 # Copy package.json files for required workspace packages
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
 COPY packages/storyblok-mcp/package.json ./packages/storyblok-mcp/
+COPY packages/design-system/package.json ./packages/design-system/
 
 # Install dependencies (--ignore-scripts prevents prepublishOnly from firing
 # before source/tsconfig files are copied into the image)
@@ -23,6 +24,13 @@ ARG CACHEBUST=0
 # Copy source code
 COPY packages/storyblok-services/ ./packages/storyblok-services/
 COPY packages/storyblok-mcp/ ./packages/storyblok-mcp/
+
+# Copy pre-built design-system dist (needed for token extraction and SSR
+# component bundling). Component JS bundles reference shared chunks at the
+# dist root (e.g. helpers-*.js), so the entire dist/ tree is required.
+# static/ (screenshots, ~105 MB) is excluded via .dockerignore.
+# Requires: pnpm --filter @kickstartds/design-system build  before deploying.
+COPY packages/design-system/dist/ ./packages/design-system/dist/
 
 # Build shared lib first, then MCP server
 RUN pnpm --filter @kickstartds/storyblok-services run build

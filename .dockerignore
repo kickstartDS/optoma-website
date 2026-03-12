@@ -3,3 +3,5 @@ npm-debug.log
 .next
 .env.local
 *.pem
+# Exclude heavy screenshot assets from design-system dist (~105 MB)
+packages/design-system/dist/static
