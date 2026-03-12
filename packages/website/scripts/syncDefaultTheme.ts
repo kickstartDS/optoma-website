@@ -56,8 +56,8 @@ async function main(): Promise<void> {
     "node_modules",
     "@kickstartds",
     "design-system",
-    "src",
-    "token",
+    "dist",
+    "tokens",
     "branding-tokens.json",
   );
 
