@@ -48,6 +48,22 @@
         }
       }
     },
+    "onPrimary": {
+      "$root": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0, 0.0706, 0.2392]
+        }
+      },
+      "inverted": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.8314, 0.8941, 1]
+        }
+      }
+    },
     "link": {
       "$root": {
         "$type": "color",
@@ -311,6 +327,10 @@
         "unit": "px"
       }
     },
+    "factor": {
+      "$type": "number",
+      "$value": 1.5
+    },
     "shrink-factor": {
       "$type": "number",
       "$value": 1.4
@@ -343,6 +363,10 @@
     "opacity-factor": {
       "$type": "number",
       "$value": 1.51
+    },
+    "spread-factor": {
+      "$type": "number",
+      "$value": 1.5
     }
   },
   "border": {
@@ -354,6 +378,10 @@
           "unit": "px"
         }
       }
+    },
+    "radius-factor": {
+      "$type": "number",
+      "$value": 1.8
     }
   }
 }

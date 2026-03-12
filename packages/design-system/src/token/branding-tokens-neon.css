@@ -52,10 +52,12 @@
   --ks-brand-font-size-mono-grow-factor: 1.5;
   --ks-brand-font-size-mono-bp-factor: 1.5;
   --ks-brand-spacing-base: 18px;
+  --ks-brand-spacing-factor: 1.5;
   --ks-brand-spacing-shrink-factor: 1.5;
   --ks-brand-spacing-grow-factor: 1.5;
   --ks-brand-spacing-bp-factor: 1.5;
   --ks-brand-border-width-default: 1px;
+  --ks-brand-border-radius-factor: 1.8;
   --ks-brand-duration-factor: 1.51;
   --ks-brand-box-shadow-blur-factor: 1.48;
   --ks-brand-box-shadow-spread-factor: 1.49;

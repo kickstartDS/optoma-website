@@ -369,6 +369,10 @@
         "unit": "px"
       }
     },
+    "factor": {
+      "$type": "number",
+      "$value": 1.5
+    },
     "shrink-factor": {
       "$type": "number",
       "$value": 1.5
@@ -383,7 +387,9 @@
     }
   },
   "_fontHref": {
-    "display": "https://fonts.googleapis.com/css2?family=Oswald"
+    "display": "https://fonts.googleapis.com/css2?family=Oswald",
+    "copy": "",
+    "interface": ""
   },
   "border": {
     "radius-factor": {
@@ -401,9 +407,17 @@
     }
   },
   "box-shadow": {
+    "blur-factor": {
+      "$type": "number",
+      "$value": 1
+    },
     "opacity-factor": {
       "$type": "number",
       "$value": 1
+    },
+    "spread-factor": {
+      "$type": "number",
+      "$value": 1.5
     }
   },
   "duration": {
