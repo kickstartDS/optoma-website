@@ -5,22 +5,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.1882,
-            0.3961,
-            0.7529
-          ]
+          "components": [0, 0.4941, 0.4353]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.3059,
-            0.5137,
-            0.8784
-          ]
+          "components": [1, 1, 1]
         }
       }
     },
@@ -29,22 +21,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            1,
-            1,
-            1
-          ]
+          "components": [1, 1, 1]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            1,
-            1,
-            1
-          ]
+          "components": [0.0824, 0.0824, 0.0824]
         }
       }
     },
@@ -53,22 +37,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            1,
-            1,
-            1
-          ]
+          "components": [1, 1, 1]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.0588,
-            0.1255,
-            0.2431
-          ]
+          "components": [0.0824, 0.0824, 0.0824]
         }
       }
     },
@@ -77,22 +53,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.0235,
-            0.0314,
-            0.1216
-          ]
+          "components": [0.0824, 0.0824, 0.0824]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            1,
-            1,
-            1
-          ]
+          "components": [1, 1, 1]
         }
       }
     },
@@ -101,22 +69,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.1882,
-            0.3961,
-            0.7529
-          ]
+          "components": [0, 0.4941, 0.4353]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.5961,
-            0.698,
-            0.8784
-          ]
+          "components": [0, 0.4941, 0.4353]
         }
       }
     },
@@ -125,22 +85,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.1373,
-            0.5137,
-            0.1059
-          ]
+          "components": [0.1373, 0.5137, 0.1059]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.4314,
-            0.8588,
-            0.3922
-          ]
+          "components": [0.4314, 0.8588, 0.3922]
         }
       }
     },
@@ -149,22 +101,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            1,
-            0.102,
-            0.3412
-          ]
+          "components": [1, 0.102, 0.3412]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.8235,
-            0.1137,
-            0.2824
-          ]
+          "components": [0.8235, 0.1137, 0.2824]
         }
       }
     },
@@ -173,22 +117,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.3922,
-            0.7608,
-            0.8588
-          ]
+          "components": [0.3922, 0.7608, 0.8588]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0,
-            0.4431,
-            0.5608
-          ]
+          "components": [0, 0.4431, 0.5608]
         }
       }
     },
@@ -197,22 +133,14 @@
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0.3922,
-            0.7608,
-            0.8588
-          ]
+          "components": [0.3922, 0.7608, 0.8588]
         }
       },
       "inverted": {
         "$type": "color",
         "$value": {
           "colorSpace": "srgb",
-          "components": [
-            0,
-            0.4431,
-            0.5608
-          ]
+          "components": [0, 0.4431, 0.5608]
         }
       }
     },
@@ -223,15 +151,15 @@
       },
       "2": {
         "$type": "number",
-        "$value": 0.85
+        "$value": 0.9
       },
       "3": {
         "$type": "number",
-        "$value": 0.73
+        "$value": 0.81
       },
       "4": {
         "$type": "number",
-        "$value": 0.61
+        "$value": 0.68
       },
       "5": {
         "$type": "number",
@@ -239,15 +167,15 @@
       },
       "6": {
         "$type": "number",
-        "$value": 0.39
+        "$value": 0.32
       },
       "7": {
         "$type": "number",
-        "$value": 0.27
+        "$value": 0.19
       },
       "8": {
         "$type": "number",
-        "$value": 0.15
+        "$value": 0.1
       },
       "9": {
         "$type": "number",
@@ -259,64 +187,15 @@
     "family": {
       "display": {
         "$type": "fontFamily",
-        "$value": [
-          "Montserrat",
-          "Baskerville",
-          "Baskerville Old Face",
-          "Hoefler Text",
-          "Times New Roman",
-          "serif"
-        ]
+        "$value": ["Inter"]
       },
       "copy": {
         "$type": "fontFamily",
-        "$value": [
-          "system-ui",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Avenir Next",
-          "Avenir",
-          "Segoe UI",
-          "Lucida Grande",
-          "Helvetica Neue",
-          "Helvetica",
-          "Fira Sans",
-          "Roboto",
-          "Noto",
-          "Droid Sans",
-          "Cantarell",
-          "Oxygen",
-          "Ubuntu",
-          "Franklin Gothic Medium",
-          "Century Gothic",
-          "Liberation Sans",
-          "sans-serif"
-        ]
+        "$value": ["Inter"]
       },
       "interface": {
         "$type": "fontFamily",
-        "$value": [
-          "system-ui",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Avenir Next",
-          "Avenir",
-          "Segoe UI",
-          "Lucida Grande",
-          "Helvetica Neue",
-          "Helvetica",
-          "Fira Sans",
-          "Roboto",
-          "Noto",
-          "Droid Sans",
-          "Cantarell",
-          "Oxygen",
-          "Ubuntu",
-          "Franklin Gothic Medium",
-          "Century Gothic",
-          "Liberation Sans",
-          "sans-serif"
-        ]
+        "$value": ["Inter"]
       },
       "mono": {
         "$type": "fontFamily",
@@ -441,17 +320,24 @@
     }
   },
   "spacing": {
+    "base": {
+      "$type": "dimension",
+      "$value": {
+        "value": 18,
+        "unit": "px"
+      }
+    },
     "factor": {
       "$type": "number",
-      "$value": 1.5
+      "$value": 1.58
     },
     "shrink-factor": {
       "$type": "number",
-      "$value": 1.5
+      "$value": 1.42
     },
     "grow-factor": {
       "$type": "number",
-      "$value": 1.5
+      "$value": 1.48
     },
     "bp-factor": {
       "$type": "number",
@@ -470,27 +356,27 @@
     },
     "radius-factor": {
       "$type": "number",
-      "$value": 1.5
+      "$value": 1.8
     }
   },
   "box-shadow": {
     "blur-factor": {
       "$type": "number",
-      "$value": 1.5
+      "$value": 1
     },
     "opacity-factor": {
       "$type": "number",
-      "$value": 1.5
+      "$value": 1
     },
     "spread-factor": {
       "$type": "number",
       "$value": 1.5
     }
   },
-  "duration": {
-    "factor": {
-      "$type": "number",
-      "$value": 1.5
-    }
+  "duration": {},
+  "_fontHref": {
+    "display": "https://fonts.googleapis.com/css2?family=Inter",
+    "copy": "https://fonts.googleapis.com/css2?family=Inter",
+    "interface": "https://fonts.googleapis.com/css2?family=Inter"
   }
 }

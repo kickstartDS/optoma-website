@@ -334,6 +334,10 @@
         "unit": "px"
       }
     },
+    "factor": {
+      "$type": "number",
+      "$value": 1.5
+    },
     "shrink-factor": {
       "$type": "number",
       "$value": 1.5
@@ -348,6 +352,7 @@
     }
   },
   "_fontHref": {
+    "display": "https://fonts.googleapis.com/css2?family=Montserrat",
     "copy": "https://fonts.googleapis.com/css2?family=Montserrat",
     "interface": "https://fonts.googleapis.com/css2?family=Montserrat"
   },
@@ -360,6 +365,10 @@
           "unit": "px"
         }
       }
+    },
+    "radius-factor": {
+      "$type": "number",
+      "$value": 1.8
     }
   },
   "duration": {
