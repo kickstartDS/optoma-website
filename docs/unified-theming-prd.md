@@ -505,3 +505,101 @@ The `settings` story explicitly references `theme: "default"` so editors see it 
 ### OQ8: Migration of Existing Themes
 
 **Decision: Absence = false. No migration needed.** Existing themes created by the Design Tokens Editor are already in W3C format. The `system` field won't exist on them, and its absence is treated as `false`. No backfill required.
+
+---
+
+## Part 3: Storybook Theme Switcher (Phase 5)
+
+### Motivation
+
+Phases 1–4 unified the theme format, storage, and CRUD across all production systems. But the **developer experience** is disconnected: Storybook — where components are developed and previewed — has no way to switch between themes. The infrastructure exists (a `useTheme` hook, 9 pre-compiled CSS variations, a `BrandingSwitch` in Playroom) but none of it is wired into Storybook's toolbar.
+
+This phase closes the loop: every Storybook story becomes previewable under any theme, from both the Design System's static variations and CMS-managed Storyblok themes.
+
+### Current State
+
+| Piece                                                             | Status                                                                             |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `useTheme(cssUrl)` hook in `src/themes/useTheme.ts`               | Done — injects `<link id="branding-token-link">`                                   |
+| 9 static CSS variations in `dist/tokens/branding-tokens-*.css`    | Built — Default + Blizzard, Burgundy, Coffee, Ember, Granit, Mint, Neon, Water     |
+| `BrandingSwitch` dropdown in `src/playground/demo-page-controls/` | Done — but only used in Playroom's DemoPageControls, not Storybook                 |
+| `themes/index.ts` registry                                        | Incomplete — only exports `dsa` theme (missing 8 other entries)                    |
+| Storybook `globalTypes.theme` toolbar                             | **Missing** — `Header.stories.tsx` reads `globals.theme` but no toolbar is defined |
+| Theme injection decorator in Storybook                            | **Missing** — nothing calls `useTheme()` based on selected global                  |
+
+### Proposed Design
+
+#### Toolbar with Dual Theme Sources
+
+A single Storybook toolbar dropdown (`globalTypes.theme`) presents themes from two sources:
+
+1. **CMS themes** — Fetched from Storyblok `token-theme` stories at Storybook startup. Displayed first. Excludes `system: true` themes (the default is already baked in).
+2. **Static themes** — The 9 pre-compiled CSS variations shipped with the Design System. Always available, no credentials needed.
+
+```
+┌─ Theme ─────────────────────┐
+│ Default                     │  ← No override, baked-in CSS
+│ ── CMS Themes ────────────  │  ← Only if Storyblok themes found
+│ Brand Blue                  │  ← story.content.css (inline <style>)
+│ Dark Mode                   │
+│ ── Static Themes ─────────  │
+│ Blizzard                    │  ← dist/tokens/branding-tokens-blizzard.css
+│ Burgundy                    │
+│ Coffee                      │
+│ ...                         │
+└─────────────────────────────┘
+```
+
+Selecting "Default" removes any injected override. Selecting a CMS theme injects `story.content.css` via a `<style>` tag. Selecting a static theme loads the corresponding CSS file via a `<link>` tag.
+
+#### Decorator
+
+A Storybook decorator reads `context.globals.theme`, determines the source (CMS vs static), and injects the CSS accordingly. This applies to **every story** automatically — no per-story opt-in.
+
+### Decisions
+
+**OQ9: CMS theme loading strategy**
+
+**Decision: (c) Runtime fetch in a decorator.** The decorator fetches CMS themes client-side on mount via the Storyblok CDN API. Always fresh — no pre-scripts, no generated files, no build step. The API token is exposed to the client preview iframe but this is acceptable since the CDN API token is read-only and the Storybook is not publicly deployed.
+
+**OQ10: Static theme CSS delivery for production Storybook builds**
+
+**Decision: (a) Copy CSS files to `static/`.** Static theme CSS files are copied to the Storybook `static/` directory so they're served as static assets in both dev and production builds. Simple and reliable.
+
+**OQ11: Logo switching**
+
+**Decision: (a) CSS tokens only.** The toolbar only switches CSS design tokens. The logo stays on the DSA default. Logo switching can be revisited later if needed.
+
+**OQ12: Theme-aware Storybook UI chrome**
+
+**Decision: (a) Preview canvas only.** The default token theme (Design System source of truth) styles the Storybook manager UI. The theme switcher only affects the story preview canvas — the sidebar, toolbar, and other manager chrome remain unchanged.
+
+**OQ13: Credential handling**
+
+**Decision: (a) `STORYBLOK_API_TOKEN` env var.** Already available in `.env.local`. Exposed to the Storybook build via `viteFinal` env config so the decorator can use it at runtime. Acceptable because the CDN API token is read-only and Storybook is not publicly hosted.
+
+**OQ14: Dropdown grouping UX**
+
+**Decision: (a) Disabled separator items.** The toolbar dropdown uses disabled separator items (`── CMS Themes ──` / `── Static Themes ──`) to visually group themes by source.
+
+**OQ15: Playroom alignment**
+
+**Decision: Out of scope.** Playroom's `BrandingSwitch` continues to work independently. Unifying the Playroom and Storybook theme switchers is deferred to a future phase.
+
+### Phase 5 Implementation Plan
+
+**Scope:** Add a theme toolbar to Storybook that switches between static Design System variations and CMS-managed Storyblok themes on every story.
+
+**Changes:**
+
+1. **Copy static theme CSS to `static/tokens/`** — Copy `src/token/branding-tokens-*.css` to `static/tokens/` so they're available as static assets in both dev and production builds. Add a build step or script to keep them in sync.
+2. **`.storybook/preview.tsx`** — Define `globalTypes.theme` toolbar with the 9 static theme entries + "Default". Add a decorator that:
+   - On mount, fetches CMS themes from Storyblok CDN API (if `STORYBLOK_API_TOKEN` is available) and merges them into the toolbar items
+   - On theme change, injects a `<link>` tag for static themes or a `<style>` tag for CMS themes (using `story.content.css`)
+   - On "Default" selection, removes any injected override
+3. **`.storybook/main.ts`** — Expose `STORYBLOK_API_TOKEN` env var to the client build via `viteFinal` so the decorator can fetch CMS themes at runtime
+4. **`src/components/header/Header.stories.tsx`** — Simplify theme handling (no longer needs manual `themes/index.ts` lookup since the decorator handles CSS injection globally)
+
+**Not changed:** `themes/index.ts` (stays as-is), `BrandingSwitch` (Playroom, out of scope), Storybook manager theme (`.storybook/themes.ts` unchanged).
+
+**Result:** Every Storybook story is previewable under any theme. Static Design System variations are always available. CMS themes appear automatically if `STORYBLOK_API_TOKEN` is set — no restart needed, always fresh. The Storybook manager UI remains styled by the default theme.

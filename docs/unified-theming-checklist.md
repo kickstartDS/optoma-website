@@ -111,6 +111,49 @@
 
 ---
 
+## Phase 5: Storybook Theme Switcher
+
+> Adds a theme switcher toolbar to Storybook for previewing stories under any static or CMS-managed theme.
+
+### Static Theme Setup
+
+- [x] **5.1** Copy `src/token/branding-tokens*.css` to `static/tokens/` for production Storybook builds
+- [x] **5.2** Add `copy-theme-css` script to `package.json` (copies branding CSS to `static/tokens/`)
+- [x] **5.3** Integrate `copy-theme-css` into `storybook` and `build-storybook` scripts
+
+### Manager-Side Theme Tool
+
+- [x] **5.4** Create `.storybook/ThemeTool.tsx` — custom toolbar dropdown component
+  - Dropdown with three groups: Default | CMS Themes (if available) | Static Themes
+  - Uses `WithTooltip` + `TooltipLinkList` from `storybook/internal/components`
+  - Fetches CMS themes from Storyblok CDN API on mount (runtime, if `STORYBLOK_API_TOKEN` is set)
+  - Filters out `system: true` themes
+  - Uses `useGlobals()` / `updateGlobals()` to set selected theme + CMS CSS content
+- [x] **5.5** Update `.storybook/manager.ts` → `.storybook/manager.tsx` to register ThemeTool
+
+### Preview-Side Decorator
+
+- [x] **5.6** Add theme injection decorator to `.storybook/preview.tsx`
+  - "default" → remove any override CSS
+  - Static theme → inject `<link>` pointing to `/tokens/branding-tokens-{name}.css`
+  - CMS theme → inject `<style>` with CSS from `globals.themeCss`
+- [x] **5.7** Add `initialGlobals.theme = 'default'` to preview config
+
+### Storybook Config
+
+- [x] **5.8** Expose `STORYBLOK_API_TOKEN` env var in `.storybook/main.ts` via `viteFinal` define
+
+### Story Updates
+
+- [x] **5.9** Simplify `Header.stories.tsx` — remove per-story `globals.theme` logo lookup (decorator handles CSS globally)
+
+### Verification
+
+- [x] **5.10** Build and verify `design-system` compiles (`pnpm --filter @kickstartds/design-system build`)
+- [x] **5.11** Verify `build-storybook` runs successfully
+
+---
+
 ## Post-Implementation
 
 - [x] **P.1** Update `copilot-instructions.md` to document new theme tools and workflows

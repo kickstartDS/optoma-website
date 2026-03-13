@@ -194,3 +194,38 @@ The `validate_theme` tool validates W3C token objects against `branding-tokens.s
 - `create_theme` and `update_theme` run the same validation before persisting
 - The LLM must construct a complete token object — it cannot create a "colors-only" theme
 - Analysis tools like `list_theme_values` do not require valid input (they operate on whatever is provided)
+
+---
+
+## ADR-9: Custom Manager Tool for Dynamic Storybook Theme Dropdown
+
+### Context
+
+Storybook's built-in `globalTypes.toolbar` annotation provides a static dropdown — items are declared at configuration time and cannot be changed at runtime. The Storybook theme switcher needs to show both static Design System themes (known at build time) and CMS-managed themes from Storyblok (only known at runtime after an API call).
+
+Two approaches were considered:
+
+1. **`globalTypes.toolbar`** — Simple, declarative, but limited to static items. CMS themes would require a build-time fetch script to generate the items array before Storybook starts.
+2. **Custom manager Tool component** — Register a Tool via `addons.add()` with `types.TOOL` in `.storybook/manager.tsx`. The Tool renders its own dropdown using `WithTooltip` + `TooltipLinkList` from `storybook/internal/components`, fetches CMS themes at runtime, and uses `useGlobals()` / `updateGlobals()` to communicate with the preview decorator.
+
+### Decision
+
+**Use a custom manager Tool component.** This allows runtime-fetched CMS themes to appear in the toolbar dropdown alongside static themes, without requiring a build-time script. The Tool fetches themes on mount and renders a grouped dropdown (Default | CMS Themes | Static Themes) with visual separators between groups (provided by `TooltipLinkList`'s grouped links array).
+
+### Data Flow
+
+```
+Manager Tool (mount) → fetch CMS themes from Storyblok CDN API
+Manager Tool (select) → updateGlobals({ theme: "blizzard" | "cms:slug", themeCss: "..." })
+Preview Decorator → reads globals.theme + globals.themeCss → injects CSS
+```
+
+For CMS themes, the manager stores the CSS content in `globals.themeCss` so the preview decorator can inject it without making a separate API call. For static themes, `themeCss` is cleared and the decorator injects a `<link>` tag pointing to the static CSS file.
+
+### Consequences
+
+- Requires `.storybook/manager.tsx` (renamed from `.ts`) to support JSX in the Tool component
+- The manager and preview communicate via globals — the standard Storybook pattern for cross-frame state
+- CMS themes appear automatically if `STORYBLOK_API_TOKEN` is set — no manual configuration
+- If the API token is not set or the fetch fails, only static themes are shown (graceful degradation)
+- The Storybook manager UI chrome remains unchanged (OQ12 decision: preview canvas only)

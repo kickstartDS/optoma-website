@@ -53,7 +53,8 @@
   "scripts": {
     "build": "rm -rf dist && pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run branding-tokens && rollup -c && tsc --emitDeclarationOnly --noCheck -p tsconfig.build.json && node scripts/generateDtsBarrels.mjs && pnpm run presets && cp snippets.json dist/components/presets.json",
     "prepack": "pnpm run build",
-    "build-storybook": "pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run search && storybook build",
+    "build-storybook": "pnpm run build-tokens && pnpm run schema && pnpm run token && pnpm run search && pnpm run copy-theme-css && storybook build",
+    "copy-theme-css": "mkdir -p static/tokens && cp src/token/branding-tokens*.css static/tokens/",
     "build-tokens": "kickstartDS tokens compile",
     "chromatic": "chromatic --build-script-name \"build-storybook\" --output-dir \"storybook-static\" --skip \"@(renovate/**|dependabot/**)\" --exit-zero-on-changes --exit-once-uploaded",
     "init-tokens": "kickstartDS tokens init",
@@ -68,7 +69,7 @@
     "schema:layer-types": "kickstartDS schema layer",
     "schema:create-defaults": "kickstartDS schema defaults",
     "start": "run-p watch:* storybook",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "pnpm run copy-theme-css && storybook dev -p 6006",
     "create-component-previews": "pnpm run test && rimraf static/img/screenshots && mkdir -p static/img/screenshots && cp __snapshots__/*.png static/img/screenshots",
     "test": "rimraf __snapshots__ && run-p -r test:*",
     "test:server": "npx http-server storybook-static --port 6006 --silent",

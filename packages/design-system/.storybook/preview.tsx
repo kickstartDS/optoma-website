@@ -1,4 +1,6 @@
+import React, { useEffect } from "react";
 import { actions } from "storybook/actions";
+import { useGlobals } from "storybook/preview-api";
 import {
   DocsContainer,
   DocsContainerProps,
@@ -14,6 +16,42 @@ import { providerDecorator } from "../src/components/Providers";
 import { LinkProvider } from "../src/docs/LinkProvider";
 
 import "./preview.css";
+
+const STATIC_THEME_FILES: Record<string, string> = {
+  blizzard: "/tokens/branding-tokens-blizzard.css",
+  burgundy: "/tokens/branding-tokens-burgundy.css",
+  coffee: "/tokens/branding-tokens-coffee.css",
+  ember: "/tokens/branding-tokens-ember.css",
+  granit: "/tokens/branding-tokens-granit.css",
+  mint: "/tokens/branding-tokens-mint.css",
+  neon: "/tokens/branding-tokens-neon.css",
+  water: "/tokens/branding-tokens-water.css",
+};
+
+const THEME_LINK_ID = "storybook-theme-override-link";
+const THEME_STYLE_ID = "storybook-theme-override-style";
+
+function clearThemeOverrides() {
+  document.getElementById(THEME_LINK_ID)?.remove();
+  document.getElementById(THEME_STYLE_ID)?.remove();
+}
+
+function injectThemeLink(href: string) {
+  clearThemeOverrides();
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.id = THEME_LINK_ID;
+  link.href = href;
+  document.head.appendChild(link);
+}
+
+function injectThemeStyle(css: string) {
+  clearThemeOverrides();
+  const style = document.createElement("style");
+  style.id = THEME_STYLE_ID;
+  style.textContent = css;
+  document.head.appendChild(style);
+}
 
 const myActions = actions("radio");
 window._ks.radio.on("*", myActions.radio);
@@ -79,12 +117,50 @@ const preview: Preview = {
   },
   decorators: [
     unpackDecorator,
-    (Story) => (
-      <PageWrapper>
-        <Story />
-      </PageWrapper>
-    ),
+    (Story) => {
+      const [globals] = useGlobals();
+      const theme = (globals.theme as string) || "default";
+      const themeCss = globals.themeCss as string | undefined;
+      const inverted = globals.inverted === true;
+
+      useEffect(() => {
+        if (theme === "default") {
+          clearThemeOverrides();
+        } else if (theme.startsWith("cms:") && themeCss) {
+          injectThemeStyle(themeCss);
+        } else if (STATIC_THEME_FILES[theme]) {
+          injectThemeLink(STATIC_THEME_FILES[theme]);
+        }
+        return () => clearThemeOverrides();
+      }, [theme, themeCss]);
+
+      useEffect(() => {
+        const root = document.getElementById("storybook-root");
+        if (!root) return;
+        if (inverted) {
+          root.setAttribute("ks-inverted", "true");
+          root.style.backgroundColor = "var(--ks-background-color-default)";
+        } else {
+          root.removeAttribute("ks-inverted");
+          root.style.backgroundColor = "";
+        }
+        return () => {
+          root.removeAttribute("ks-inverted");
+          root.style.backgroundColor = "";
+        };
+      }, [inverted]);
+
+      return (
+        <PageWrapper>
+          <Story />
+        </PageWrapper>
+      );
+    },
   ],
+  initialGlobals: {
+    theme: "default",
+    inverted: false,
+  },
 };
 
 export default preview;
