@@ -19,6 +19,11 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # Pass --build-arg CACHEBUST=$(date +%s) to force a fresh build.
 ARG CACHEBUST=0
 
+# Storyblok Preview API token — injected at build time by Vite `define`
+# so the theme switcher can fetch CMS themes from the CDN API.
+ARG STORYBLOK_API_TOKEN
+ENV STORYBLOK_API_TOKEN=${STORYBLOK_API_TOKEN}
+
 # Copy source code
 COPY packages/design-system/ ./packages/design-system/
 
