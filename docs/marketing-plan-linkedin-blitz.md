@@ -247,40 +247,47 @@ Fokus: Konkrete Workflows zeigen, technisches Vertrauen aufbauen.
 
 #### Freitag W2 – 🎥 Video (Screen-Recording)
 
-**Thema:** Live-Demo: Blog-Autopilot aus RSS-Feed
+**Thema:** Live-Demo: Blog-Autopilot – Ein AI Agent, 7 MCP-Tools, ein fertiger Blogpost
 
-> **Hook:** „Unser Blog schreibt sich quasi selbst. Nicht 100 % – aber die ersten 80 % macht die KI. Hier seht ihr wie."
+> **Hook:** „Unser Blog schreibt sich quasi selbst. Nicht mit einem Mega-Prompt – sondern mit einem AI Agent, der 7 spezialisierte Tools koordiniert. Hier seht ihr wie."
 >
-> **Video-Inhalt:** n8n-Dashboard öffnen → RSS-Feed-Workflow zeigen → Trigger: neuer Artikel im Branchen-Feed → `scrape_url` holt Volltext → `generate_content` schreibt eigenen Blogpost → Draft in Storyblok → Slack-Notification „Neuer Entwurf wartet auf Review" → kurzer Blick in Storyblok: fertiger Draft mit Bildern.
+> **Video-Inhalt:** n8n-Dashboard öffnen → einfacher Workflow: RSS-Feed-Trigger → ein einziger AI Agent Node (verbunden mit dem Storyblok MCP Server über HTTP) → der Agent entscheidet selbstständig, welche Tools er in welcher Reihenfolge aufruft: `scrape_url` holt den Volltext → `plan_page` plant die Blogpost-Struktur → `generate_section` erzeugt jede Sektion einzeln → `generate_root_field` füllt Titel, Sidebar und CTA → `generate_seo` erstellt Meta-Daten → `create_page_with_content` legt den fertigen Draft an → Slack-Notification „Neuer Entwurf wartet auf Review" → kurzer Blick in Storyblok: fertiger Blogpost mit allen Feldern.
 >
-> **CTA:** „80 % weniger Aufwand. 100 % Kontrolle. Der Redakteur prüft und publiziert – die KI liefert den Rohstoff."
+> **CTA:** „Ein AI Agent. 7 Tool-Aufrufe. Ein fertiger Blogpost als Draft. Der Redakteur prüft und publiziert – die KI liefert den Rohstoff."
 
 **LinkedIn-Post-Text:**
 
 > Unser Blog schreibt sich quasi selbst.
 >
-> Nicht 100 % – aber die ersten 80 % macht die KI. Hier seht ihr wie. 👇
+> Nicht mit einem Mega-Prompt. Sondern mit einem AI Agent, der 7 spezialisierte Tools koordiniert. Hier seht ihr wie. 👇
 >
-> Der Workflow im Video:
+> Der n8n-Workflow im Video hat genau 3 Nodes:
+> 📡 RSS-Feed-Trigger (neuer Artikel im Branchen-Feed)
+> 🤖 Ein AI Agent Node – verbunden mit unserem Storyblok MCP Server
+> 🔔 Slack-Notification am Ende
 >
-> 📡 RSS-Feed eines Branchenmagazins als Trigger
-> 🔍 Neuer Artikel erscheint → `scrape_url` extrahiert den Volltext als Markdown
-> 🧠 `generate_content` schreibt einen eigenen Blogpost – in unserem Tone of Voice, mit unserer Komponentenstruktur
-> 📝 Draft landet als Entwurf in Storyblok
-> 🔔 Slack-Nachricht: „Neuer Blog-Entwurf wartet auf Review"
+> Das Beeindruckende: Der Agent entscheidet selbst, welche Tools er braucht:
+>
+> 1️⃣ `scrape_url` – extrahiert den Quellartikel als sauberes Markdown
+> 2️⃣ `plan_page` – plant die Blogpost-Struktur (welche Sektionen, in welcher Reihenfolge)
+> 3️⃣ `generate_section` – erzeugt jede Sektion einzeln, passend zum Design System
+> 4️⃣ `generate_root_field` – füllt Titel, Autor, Sidebar und CTA
+> 5️⃣ `generate_seo` – erstellt SEO-Metadaten (Title, Description, Keywords)
+> 6️⃣ `create_page_with_content` – legt den fertigen Blogpost als Draft in Storyblok an
+>
+> Kein Custom Code. Keine n8n-Plugins. Nur ein Standard-AI-Agent mit MCP-Zugang.
 >
 > Der Redakteur öffnet den Draft, passt Nuancen an, ergänzt die eigene Perspektive – und publiziert.
 >
 > Der Unterschied:
 > ❌ Vorher: Leere Seite, 3 Stunden pro Artikel
-> ✅ Nachher: Fertiger Entwurf, 30 Minuten für Review + Feinschliff
+> ✅ Nachher: Fertiger Entwurf mit Struktur, SEO und Sidebar – 30 Min für Review
 >
-> 80 % weniger Aufwand. 100 % Kontrolle.
-> Die KI liefert den Rohstoff. Der Mensch liefert die Qualität.
+> Das ist der Punkt, an dem MCP spannend wird: Die KI nutzt nicht ein Tool – sie orchestriert einen ganzen Workflow. Autonom.
 >
-> 🔗 Workflow-Template im GitHub-Repo (Link in den Kommentaren)
+> 🔗 MCP Server Setup-Anleitung in den Kommentaren
 
-**Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#BlogAutomation` `#RSS`
+**Hashtags:** `#AIenabledCMS` `#ContentOperations` `#kickstartDS` `#MCP` `#AIAgent`
 
 ---
 
