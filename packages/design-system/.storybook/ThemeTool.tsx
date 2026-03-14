@@ -282,10 +282,10 @@ export const ThemeTool = memo(function ThemeTool() {
             (s: {
               slug: string;
               name: string;
-              content: { css?: string; tokens?: string };
+              content: { name?: string; css?: string; tokens?: string };
             }) => ({
               slug: s.slug,
-              name: s.name,
+              name: s.content?.name || s.name,
               css: s.content?.css || "",
               colors: extractThemeColors(s.content?.tokens),
             }),
@@ -299,30 +299,25 @@ export const ThemeTool = memo(function ThemeTool() {
 
   const selectTheme = useCallback(
     (themeId: string) => {
-      if (themeId.startsWith("cms:")) {
-        const slug = themeId.slice(4);
-        const theme = cmsThemes.find((t) => t.slug === slug);
-        updateGlobals({ theme: themeId, themeCss: theme?.css || "" });
-      } else {
-        updateGlobals({ theme: themeId, themeCss: undefined });
-      }
+      updateGlobals({ theme: themeId });
     },
-    [cmsThemes, updateGlobals],
+    [updateGlobals],
   );
 
   // Build grouped links for TooltipLinkList
-  const groups: Array<
-    Array<{
-      id: string;
-      title: string;
-      right: React.ReactNode;
-      active: boolean;
-      onClick: () => void;
-    }>
-  > = [];
+  type LinkItem = {
+    id: string;
+    title: string;
+    right?: React.ReactNode;
+    active: boolean;
+    onClick: () => void;
+    disabled?: boolean;
+    style?: React.CSSProperties;
+  };
+  const groups: Array<Array<LinkItem>> = [];
 
-  // Group 1: Default
-  groups.push([
+  // Group 1: Default + CMS themes
+  const themeGroup: LinkItem[] = [
     {
       id: "default",
       title: "Default",
@@ -330,22 +325,17 @@ export const ThemeTool = memo(function ThemeTool() {
       active: selectedTheme === "default",
       onClick: () => selectTheme("default"),
     },
-  ]);
+    ...cmsThemes.map((t) => ({
+      id: `cms:${t.slug}`,
+      title: t.name,
+      right: <ThemeSwatch colors={t.colors} />,
+      active: selectedTheme === `cms:${t.slug}`,
+      onClick: () => selectTheme(`cms:${t.slug}`),
+    })),
+  ];
+  groups.push(themeGroup);
 
-  // Group 2: CMS themes (only if available)
-  if (cmsThemes.length > 0) {
-    groups.push(
-      cmsThemes.map((t) => ({
-        id: `cms:${t.slug}`,
-        title: t.name,
-        right: <ThemeSwatch colors={t.colors} />,
-        active: selectedTheme === `cms:${t.slug}`,
-        onClick: () => selectTheme(`cms:${t.slug}`),
-      })),
-    );
-  }
-
-  // Group 3: Static themes
+  // Group 2: Built-in static themes
   groups.push(
     STATIC_THEMES.map((t) => ({
       id: t.value,

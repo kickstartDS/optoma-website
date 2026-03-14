@@ -86,6 +86,11 @@ const config: StorybookConfig = {
 
   viteFinal: async (config) => {
     return mergeConfig(config, {
+      define: {
+        STORYBLOK_API_TOKEN: JSON.stringify(
+          process.env.STORYBLOK_API_TOKEN || "",
+        ),
+      },
       optimizeDeps: {
         include: ["@storybook/addon-docs"],
       },

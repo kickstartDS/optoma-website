@@ -53,6 +53,26 @@ function injectThemeStyle(css: string) {
   document.head.appendChild(style);
 }
 
+// Pre-fetch CMS themes so the preview can apply them by ID
+const cmsThemeCssCache: Record<string, string> = {};
+(function fetchCmsThemes() {
+  const token =
+    typeof STORYBLOK_API_TOKEN !== "undefined" ? STORYBLOK_API_TOKEN : "";
+  if (!token) return;
+  fetch(
+    `https://api.storyblok.com/v2/cdn/stories?starts_with=settings/themes/&content_type=token-theme&token=${encodeURIComponent(token)}`,
+  )
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data.stories) return;
+      for (const s of data.stories) {
+        if (s.content?.system) continue;
+        if (s.content?.css) cmsThemeCssCache[s.slug] = s.content.css;
+      }
+    })
+    .catch(() => {});
+})();
+
 const myActions = actions("radio");
 window._ks.radio.on("*", myActions.radio);
 
@@ -120,19 +140,22 @@ const preview: Preview = {
     (Story) => {
       const [globals] = useGlobals();
       const theme = (globals.theme as string) || "default";
-      const themeCss = globals.themeCss as string | undefined;
       const inverted = globals.inverted === true;
 
       useEffect(() => {
         if (theme === "default") {
           clearThemeOverrides();
-        } else if (theme.startsWith("cms:") && themeCss) {
-          injectThemeStyle(themeCss);
+        } else if (theme.startsWith("cms:")) {
+          const slug = theme.slice(4);
+          const css = cmsThemeCssCache[slug];
+          if (css) {
+            injectThemeStyle(css);
+          }
         } else if (STATIC_THEME_FILES[theme]) {
           injectThemeLink(STATIC_THEME_FILES[theme]);
         }
         return () => clearThemeOverrides();
-      }, [theme, themeCss]);
+      }, [theme]);
 
       useEffect(() => {
         const root = document.getElementById("storybook-root");
