@@ -267,7 +267,7 @@ export const ThemeTool = memo(function ThemeTool() {
   // Fetch CMS themes from Storyblok CDN API on mount
   useEffect(() => {
     const token =
-      typeof STORYBLOK_API_TOKEN !== "undefined" ? STORYBLOK_API_TOKEN : "";
+      (window as unknown as Record<string, string>).__STORYBLOK_TOKEN__ || "";
     if (!token) return;
 
     fetch(

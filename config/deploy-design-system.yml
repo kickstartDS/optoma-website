@@ -35,8 +35,7 @@ builder:
   # Bust the source-code cache on every deploy so code changes always ship
   args:
     CACHEBUST: <%= Time.now.to_i %>
-  secrets:
-    - STORYBLOK_API_TOKEN
+    STORYBLOK_API_TOKEN: <%= ENV["STORYBLOK_API_TOKEN"] %>
 
 env:
   clear:

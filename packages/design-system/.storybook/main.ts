@@ -81,13 +81,11 @@ const config: StorybookConfig = {
     disableTelemetry: true,
   },
 
+  managerHead: (head) =>
+    `${head}<script>window.__STORYBLOK_TOKEN__=${JSON.stringify(process.env.STORYBLOK_API_TOKEN || "")}</script>`,
+
   viteFinal: async (config) => {
     return mergeConfig(config, {
-      define: {
-        STORYBLOK_API_TOKEN: JSON.stringify(
-          process.env.STORYBLOK_API_TOKEN || "",
-        ),
-      },
       optimizeDeps: {
         include: ["@storybook/addon-docs"],
       },
