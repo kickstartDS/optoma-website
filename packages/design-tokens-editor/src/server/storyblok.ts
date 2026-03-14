@@ -167,7 +167,9 @@ async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
 
 export interface ThemeListEntry {
   name: string;
+  displayName: string;
   system: boolean;
+  tokens?: string;
 }
 
 /** List all token themes with metadata. */
@@ -188,7 +190,9 @@ export async function listThemes(
   const data = (await res.json()) as StoryblokListResponse;
   return data.stories.map((s) => ({
     name: s.slug,
+    displayName: s.content?.name || s.name || s.slug,
     system: s.content?.system === true,
+    tokens: s.content?.tokens || undefined,
   }));
 }
 
