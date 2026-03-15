@@ -94,6 +94,7 @@ STORYBLOK_API_TOKEN=your-preview-token
 STORYBLOK_OAUTH_TOKEN=your-oauth-token
 STORYBLOK_SPACE_ID=123456
 OPENAI_API_KEY=sk-your-openai-key  # Optional
+MCP_JWT_SECRET=your-jwt-secret     # Optional, enables auth in HTTP mode
 ```
 
 4. Build the shared library and MCP server:
@@ -186,6 +187,7 @@ Set these in your shell or CI environment before deploying:
 | `STORYBLOK_OAUTH_TOKEN`   | Storyblok Management API OAuth token        |
 | `STORYBLOK_SPACE_ID`      | Storyblok space ID                          |
 | `OPENAI_API_KEY`          | OpenAI API key (optional)                   |
+| `MCP_JWT_SECRET`          | JWT signing secret for auth (optional)      |
 
 #### Deploy
 
@@ -911,6 +913,8 @@ pnpm --filter @kickstartds/storyblok-mcp-server run dev  # Watch mode
 | `OPENAI_API_KEY`        | No       | OpenAI API key for content generation                 |
 | `MCP_TRANSPORT`         | No       | Transport mode: `stdio` (default) or `http`           |
 | `MCP_PORT`              | No       | HTTP port when using `http` transport (default: 8080) |
+| `MCP_JWT_SECRET`        | No       | JWT signing secret for HTTP auth (disables auth when unset) |
+| `MCP_REVOKED_TOKENS`    | No       | Comma-separated JTI blocklist for token revocation    |
 
 ## Error Handling
 

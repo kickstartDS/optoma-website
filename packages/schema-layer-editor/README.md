@@ -212,6 +212,6 @@ src/
 
 ## Related Docs
 
-- [PRD](../docs/schema-layer-editor-prd.md)
-- [ADRs](../docs/adr-schema-layer-editor.md)
-- [Checklist](../docs/schema-layer-editor-checklist.md)
+- [PRD](../docs/internal/prd/schema-layer-editor-prd.md)
+- [ADRs](../docs/adr/adr-schema-layer-editor.md)
+- [Checklist](../docs/internal/checklists/schema-layer-editor-checklist.md)

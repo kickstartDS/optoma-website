@@ -20,7 +20,7 @@
  * Skips with a warning if any env var is missing (safe for CI/preview builds).
  * Skips if the existing theme content is identical (avoids unnecessary publishes).
  *
- * @see docs/adr-unified-theming.md ADR-5 (Explicit Default with Skip-Injection)
+ * @see docs/adr/adr-unified-theming.md ADR-5 (Explicit Default with Skip-Injection)
  */
 
 import { readFileSync } from "node:fs";

@@ -4,7 +4,7 @@
  *
  * Merges a generated Storyblok component config with the live (pulled) config
  * to produce a safe-to-push output. See docs/storyblok-config-update-analysis.md
- * and docs/adr-storyblok-config-merge.md for context.
+ * and docs/adr/adr-storyblok-config-merge.md for context.
  *
  * Usage:
  *   npx tsx scripts/mergeStoryblokConfig.ts [options]

@@ -29,7 +29,7 @@ export const App = () => {
               )}
               sx={{
                 borderRight: 1,
-                borderColor: "grey.500",
+                borderColor: "divider",
               }}
             >
               <Editor />

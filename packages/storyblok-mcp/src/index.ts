@@ -8,6 +8,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
+import {
+  verifyToken,
+  extractBearerToken,
+  isAuthEnabled,
+} from "@kickstartds/shared-auth";
 import { loadConfig } from "./config.js";
 import {
   StoryblokService,
@@ -62,8 +67,8 @@ function loadSkills(): Skill[] {
   if (!skillsDir) {
     console.error(
       `Skills directory not found (searched: ${candidates.join(
-        ", "
-      )}), skipping skill loading`
+        ", ",
+      )}), skipping skill loading`,
     );
     return [];
   }
@@ -81,7 +86,7 @@ function loadSkills(): Skill[] {
     });
   } catch {
     console.error(
-      `Skills directory not found at ${skillsDir}, skipping skill loading`
+      `Skills directory not found at ${skillsDir}, skipping skill loading`,
     );
     return [];
   }
@@ -93,7 +98,7 @@ const skills = loadSkills();
 console.error(
   `Loaded ${skills.length} skill(s): ${
     skills.map((s) => s.id).join(", ") || "none"
-  }`
+  }`,
 );
 
 // Load section recipes (curated component combination guidance)
@@ -105,13 +110,13 @@ try {
     __dirname_recipes,
     "..",
     "schemas",
-    "section-recipes.json"
+    "section-recipes.json",
   );
   sectionRecipes = JSON.parse(readFileSync(recipesPath, "utf-8"));
   console.error(
     `Loaded section recipes: ${
       (sectionRecipes.recipes || []).length
-    } recipes, ${(sectionRecipes.pageTemplates || []).length} page templates`
+    } recipes, ${(sectionRecipes.pageTemplates || []).length} page templates`,
   );
 } catch {
   console.error("Section recipes not found, skipping");
@@ -187,10 +192,10 @@ async function warmPatternCache(): Promise<ContentPatternAnalysis> {
   cachedPatterns.current = await analyzeContentPatterns(
     storyblokService.getContentClient(),
     PAGE_VALIDATION_RULES,
-    { contentType: "page", derefSchema: registry.page.schema }
+    { contentType: "page", derefSchema: registry.page.schema },
   );
   console.error(
-    `[MCP] Pattern cache ready (${cachedPatterns.current.totalStoriesAnalyzed} stories, ${cachedPatterns.current.componentFrequency.length} components, ${cachedPatterns.current.fieldProfiles.length} field profiles)`
+    `[MCP] Pattern cache ready (${cachedPatterns.current.totalStoriesAnalyzed} stories, ${cachedPatterns.current.componentFrequency.length} components, ${cachedPatterns.current.fieldProfiles.length} field profiles)`,
   );
   return cachedPatterns.current;
 }
@@ -251,7 +256,7 @@ async function main() {
   } catch (err) {
     console.error(`[MCP] Warning: Could not warm pattern cache: ${err}`);
     console.error(
-      "[MCP] Patterns will be fetched on first analyze_content_patterns call."
+      "[MCP] Patterns will be fetched on first analyze_content_patterns call.",
     );
   }
 
@@ -293,20 +298,38 @@ async function main() {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader(
         "Access-Control-Allow-Methods",
-        "GET, POST, DELETE, OPTIONS"
+        "GET, POST, DELETE, OPTIONS",
       );
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, mcp-session-id, Last-Event-ID, mcp-protocol-version"
+        "Content-Type, Authorization, mcp-session-id, Last-Event-ID, mcp-protocol-version",
       );
       res.setHeader(
         "Access-Control-Expose-Headers",
-        "mcp-session-id, mcp-protocol-version"
+        "mcp-session-id, mcp-protocol-version",
       );
 
       if (req.method === "OPTIONS") {
         res.writeHead(204).end();
         return;
+      }
+
+      // ── Auth guard ──────────────────────────────────────
+      if (isAuthEnabled()) {
+        const token = extractBearerToken(req);
+        const user = token ? verifyToken(token) : null;
+        if (!user) {
+          res.writeHead(401, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({
+              jsonrpc: "2.0",
+              error: { code: -32001, message: "Unauthorized" },
+              id: null,
+            }),
+          );
+          return;
+        }
+        console.error(`Authenticated: ${user.sub} (role: ${user.role})`);
       }
 
       try {
@@ -347,7 +370,7 @@ async function main() {
               jsonrpc: "2.0",
               error: { code: -32603, message: "Internal server error" },
               id: null,
-            })
+            }),
           );
         }
       }
@@ -355,15 +378,20 @@ async function main() {
 
     httpServer.listen(PORT, () => {
       console.error(
-        `Storyblok MCP Server (Streamable HTTP, stateless) listening on port ${PORT}`
+        `Storyblok MCP Server (Streamable HTTP, stateless) listening on port ${PORT}`,
       );
       console.error(`Endpoint: http://0.0.0.0:${PORT}/mcp`);
       console.error(`Health check: http://0.0.0.0:${PORT}/health`);
       console.error(
         `OpenAI integration: ${
           contentService.isConfigured() ? "enabled" : "disabled"
-        }`
+        }`,
       );
+      if (!isAuthEnabled()) {
+        console.error(
+          "⚠ MCP_JWT_SECRET not set — authentication disabled. All requests are unauthenticated.",
+        );
+      }
     });
 
     // Graceful shutdown
@@ -381,7 +409,7 @@ async function main() {
     console.error(
       `OpenAI integration: ${
         contentService.isConfigured() ? "enabled" : "disabled"
-      }`
+      }`,
     );
 
     await mcpServer.connect(transport);

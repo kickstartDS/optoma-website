@@ -42,6 +42,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@kickstartds/shared-auth": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "devDependencies": {

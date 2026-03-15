@@ -10,6 +10,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 COPY patches/ ./patches/
 # Copy package.json files for the editor and its workspace dependency
 COPY packages/design-tokens-editor/package.json ./packages/design-tokens-editor/
+COPY packages/shared-auth/package.json ./packages/shared-auth/
 COPY packages/design-system/package.json ./packages/design-system/
 
 # Install dependencies
@@ -19,10 +20,12 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 ARG CACHEBUST=0
 
 # Copy source code for both packages
+COPY packages/shared-auth/ ./packages/shared-auth/
 COPY packages/design-system/ ./packages/design-system/
 COPY packages/design-tokens-editor/ ./packages/design-tokens-editor/
 
-# Build design system first (tokens needed for tokensToCss)
+# Build shared auth and design system first (tokens needed for tokensToCss)
+RUN pnpm --filter @kickstartds/shared-auth run build
 RUN cd packages/design-system && pnpm run build
 
 # Re-inject workspace packages so the built dist/ is visible in node_modules

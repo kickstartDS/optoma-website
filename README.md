@@ -9,11 +9,12 @@ packages/
   design-system/          — Core Design System (74+ React components, tokens, Storybook, Playroom)
   website/                — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
   storyblok-services/     — Shared library (schema, validation, transforms)
+  shared-auth/            — Shared JWT authentication library (HS256 verification, revocation)
   storyblok-mcp/          — Storyblok MCP server (content generation, CMS tools)
   storyblok-n8n/          — n8n community node for Storyblok workflows
   component-builder-mcp/  — MCP server (component-building instructions & templates)
   design-tokens-mcp/      — MCP server (design token querying, analysis, governance)
-  design-tokens-editor/   — Browser-based Design Token WYSIWYG editor (Vite SPA, Netlify)
+  design-tokens-editor/   — Browser-based Design Token WYSIWYG editor (Vite SPA + Express, Kamal/Docker)
   schema-layer-editor/    — Schema Layer Editor (Vite SPA)
 ```
 
@@ -26,7 +27,8 @@ packages/
 | [storyblok-n8n](packages/storyblok-n8n/)                 | `n8n-nodes-storyblok-kickstartds`        | n8n community node with 22 operations for automated content pipelines           |
 | [component-builder-mcp](packages/component-builder-mcp/) | `@kickstartds/component-builder-mcp`     | MCP server with 7 read-only tools for component development guidance            |
 | [design-tokens-mcp](packages/design-tokens-mcp/)         | `@kickstartds/design-tokens-mcp`         | MCP server with 28 tools for token querying, analysis, and governance           |
-| [design-tokens-editor](packages/design-tokens-editor/)   | _(private)_                              | Browser-based visual token editor with live preview (Vite + Netlify)            |
+| [shared-auth](packages/shared-auth/)                     | `@kickstartds/shared-auth`               | Shared JWT authentication library (HS256 verification, revocation)              |
+| [design-tokens-editor](packages/design-tokens-editor/)   | _(private)_                              | Browser-based visual token editor with live preview (Vite + Express)            |
 | [schema-layer-editor](packages/schema-layer-editor/)     | `@kickstartds/schema-layer-editor`       | Visual editor for JSON Schema layers (Vite SPA)                                 |
 
 **Package manager:** pnpm 10.30.3 · **Versioning:** [Changesets](https://github.com/changesets/changesets) for independent per-package publishing
@@ -244,6 +246,20 @@ Prompt → Schema Preparation → OpenAI Structured Output → Post-Processing �
 4. **Transform**: Design System nested props → Storyblok flat format (`image.src` → `image_src`)
 5. **Validation**: Schema-driven nesting rules + compositional quality warnings
 6. **Import**: Create or update stories in Storyblok via Management API
+
+## Authentication
+
+All hosted services (3 MCP servers + Design Tokens Editor) support optional **JWT authentication** with a shared HS256 secret. Auth is disabled by default for local development.
+
+```bash
+# Generate a signing secret
+node scripts/issue-token.mjs --generate-secret
+
+# Issue a token for a user
+MCP_JWT_SECRET="your-secret" node scripts/issue-token.mjs --user alice --role admin --expires 90d
+```
+
+See [docs/guides/authentication.md](docs/guides/authentication.md) for the full guide — setup, client configuration, revocation, and troubleshooting.
 
 ## Deployment
 

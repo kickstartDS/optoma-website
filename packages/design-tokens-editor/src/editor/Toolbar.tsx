@@ -1,22 +1,24 @@
 import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import { Code } from "./toolbar/Code";
-import { Css } from "./toolbar/Css";
-import { Load } from "./toolbar/Load";
-import { Restore } from "./toolbar/Restore";
-import { Save } from "./toolbar/Save";
-import { SaveAs } from "./toolbar/SaveAs";
+import Typography from "@mui/material/Typography";
 
 export const EditorToolbar = () => {
   return (
-    <AppBar position="static">
+    <AppBar position="static" elevation={0}>
       <Toolbar variant="dense">
-        <Restore />
-        <Save />
-        <SaveAs />
-        <Load />
-        <Code />
-        <Css />
+        <Box
+          component="img"
+          src="/logo.svg"
+          alt="kickstartDS"
+          sx={{ height: 24, mr: 1.5 }}
+        />
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: 500, whiteSpace: "nowrap" }}
+        >
+          Design Tokens Editor
+        </Typography>
       </Toolbar>
     </AppBar>
   );

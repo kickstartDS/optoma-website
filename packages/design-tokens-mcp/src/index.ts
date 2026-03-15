@@ -14,6 +14,11 @@ import {
   GetPromptRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
+import {
+  verifyToken,
+  extractBearerToken,
+  isAuthEnabled,
+} from "@kickstartds/shared-auth";
 import { TOKENS_DIR } from "./constants.js";
 import { getTokenStats } from "./parser.js";
 import { getToolDefinitions } from "./tools.js";
@@ -46,7 +51,7 @@ function createMcpServer(): Server {
         resources: {},
         prompts: {},
       },
-    }
+    },
   );
 
   // ── Tool handlers ─────────────────────────────────────────────
@@ -87,7 +92,7 @@ function createMcpServer(): Server {
     for (const arg of definition.arguments ?? []) {
       if (arg.required && (!promptArgs || !promptArgs[arg.name])) {
         throw new Error(
-          `Missing required argument '${arg.name}' for prompt '${name}'`
+          `Missing required argument '${arg.name}' for prompt '${name}'`,
         );
       }
     }
@@ -123,7 +128,7 @@ async function main(): Promise<void> {
               status: "ok",
               version: SERVER_VERSION,
               tokens: stats.totalTokens,
-            })
+            }),
           );
           return;
         }
@@ -138,20 +143,38 @@ async function main(): Promise<void> {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader(
           "Access-Control-Allow-Methods",
-          "GET, POST, DELETE, OPTIONS"
+          "GET, POST, DELETE, OPTIONS",
         );
         res.setHeader(
           "Access-Control-Allow-Headers",
-          "Content-Type, mcp-session-id, Last-Event-ID, mcp-protocol-version"
+          "Content-Type, Authorization, mcp-session-id, Last-Event-ID, mcp-protocol-version",
         );
         res.setHeader(
           "Access-Control-Expose-Headers",
-          "mcp-session-id, mcp-protocol-version"
+          "mcp-session-id, mcp-protocol-version",
         );
 
         if (req.method === "OPTIONS") {
           res.writeHead(204).end();
           return;
+        }
+
+        // ── Auth guard ──────────────────────────────────────
+        if (isAuthEnabled()) {
+          const token = extractBearerToken(req);
+          const user = token ? verifyToken(token) : null;
+          if (!user) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(
+              JSON.stringify({
+                jsonrpc: "2.0",
+                error: { code: -32001, message: "Unauthorized" },
+                id: null,
+              }),
+            );
+            return;
+          }
+          console.error(`Authenticated: ${user.sub} (role: ${user.role})`);
         }
 
         try {
@@ -161,7 +184,7 @@ async function main(): Promise<void> {
             const chunks: Uint8Array[] = [];
             for await (const chunk of req) {
               chunks.push(
-                typeof chunk === "string" ? Buffer.from(chunk) : chunk
+                typeof chunk === "string" ? Buffer.from(chunk) : chunk,
               );
             }
             body = JSON.parse(Buffer.concat(chunks).toString());
@@ -191,7 +214,7 @@ async function main(): Promise<void> {
                 jsonrpc: "2.0",
                 error: { code: -32603, message: "Internal server error" },
                 id: null,
-              })
+              }),
             );
           }
         }
@@ -199,12 +222,17 @@ async function main(): Promise<void> {
 
       httpServer.listen(PORT, () => {
         console.error(
-          `Design Tokens MCP Server v${SERVER_VERSION} (Streamable HTTP, stateless) listening on port ${PORT}`
+          `Design Tokens MCP Server v${SERVER_VERSION} (Streamable HTTP, stateless) listening on port ${PORT}`,
         );
         console.error(`  Endpoint:     http://0.0.0.0:${PORT}/mcp`);
         console.error(`  Health check: http://0.0.0.0:${PORT}/health`);
         console.error(`  Tokens directory: ${TOKENS_DIR}`);
         console.error(`  Total tokens available: ${stats.totalTokens}`);
+        if (!isAuthEnabled()) {
+          console.error(
+            "⚠ MCP_JWT_SECRET not set — authentication disabled. All requests are unauthenticated.",
+          );
+        }
       });
 
       // Graceful shutdown
@@ -222,7 +250,7 @@ async function main(): Promise<void> {
       await mcpServer.connect(transport);
 
       console.error(
-        `Design Tokens MCP Server v${SERVER_VERSION} running on stdio`
+        `Design Tokens MCP Server v${SERVER_VERSION} running on stdio`,
       );
       console.error(`Tokens directory: ${TOKENS_DIR}`);
       console.error(`Total tokens available: ${stats.totalTokens}`);

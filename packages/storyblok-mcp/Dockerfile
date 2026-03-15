@@ -10,6 +10,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 COPY patches/ ./patches/
 # Copy package.json files for required workspace packages
 COPY packages/storyblok-services/package.json ./packages/storyblok-services/
+COPY packages/shared-auth/package.json ./packages/shared-auth/
 COPY packages/storyblok-mcp/package.json ./packages/storyblok-mcp/
 COPY packages/design-system/package.json ./packages/design-system/
 
@@ -22,6 +23,7 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 ARG CACHEBUST=0
 
 # Copy source code
+COPY packages/shared-auth/ ./packages/shared-auth/
 COPY packages/storyblok-services/ ./packages/storyblok-services/
 COPY packages/storyblok-mcp/ ./packages/storyblok-mcp/
 
@@ -33,6 +35,7 @@ COPY packages/storyblok-mcp/ ./packages/storyblok-mcp/
 COPY packages/design-system/dist/ ./packages/design-system/dist/
 
 # Build shared lib first, then MCP server
+RUN pnpm --filter @kickstartds/shared-auth run build
 RUN pnpm --filter @kickstartds/storyblok-services run build
 
 # With injectWorkspacePackages the workspace dep is copied (not symlinked)

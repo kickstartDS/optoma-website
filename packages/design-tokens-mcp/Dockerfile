@@ -9,6 +9,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 # Copy pnpm patches so they are applied during install
 COPY patches/ ./patches/
 # Copy package.json for the design-tokens-mcp package
+COPY packages/shared-auth/package.json ./packages/shared-auth/
 COPY packages/design-tokens-mcp/package.json ./packages/design-tokens-mcp/
 
 # Install dependencies
@@ -18,13 +19,15 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 ARG CACHEBUST=0
 
 # Copy source code
+COPY packages/shared-auth/ ./packages/shared-auth/
 COPY packages/design-tokens-mcp/ ./packages/design-tokens-mcp/
 
 # Copy tokens from design-system (sync-tokens reads from ../design-system)
 COPY packages/design-system/src/token/ ./packages/design-system/src/token/
 COPY packages/design-system/src/components/ ./packages/design-system/src/components/
 
-# Run token sync + TypeScript build
+# Build shared auth, then run token sync + TypeScript build
+RUN pnpm --filter @kickstartds/shared-auth run build
 RUN pnpm --filter @kickstartds/design-tokens-mcp run build
 
 # Production stage — use pnpm deploy for a pruned, self-contained bundle

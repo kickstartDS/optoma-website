@@ -27,7 +27,7 @@ function AppInner() {
   const { contentTypes, components, loading, error } = useSchemas();
   const { safeMode, toggleSafeMode } = useOverrides();
   const [selectedType, setSelectedType] = useState<ContentTypeName | null>(
-    null
+    null,
   );
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -39,7 +39,7 @@ function AppInner() {
 
   const selectedContentType = useMemo(
     () => contentTypes.find((ct) => ct.name === selectedType) || null,
-    [contentTypes, selectedType]
+    [contentTypes, selectedType],
   );
 
   // Get the fields to display in Panel 3
@@ -68,8 +68,8 @@ function AppInner() {
         fieldNode && fieldNode.children.length > 0
           ? fieldNode.children
           : fieldNode
-          ? [fieldNode]
-          : [];
+            ? [fieldNode]
+            : [];
       return {
         componentName: `${selectedItem.componentName}::${selectedItem.name}`,
         displayName: `${selectedItem.componentName} → ${selectedItem.name}`,
@@ -90,7 +90,10 @@ function AppInner() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Schema Layer Editor</h1>
+        <div className="header-brand">
+          <img src="/logo.svg" alt="kickstartDS" className="header-logo" />
+          <h1>Schema Layer Editor</h1>
+        </div>
         <div className="header-actions">
           <label
             className={`safe-mode-toggle ${

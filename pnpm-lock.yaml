@@ -35,10 +35,13 @@ importers:
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.0
-        version: 2.29.8(@types/node@22.19.13)
+        version: 2.29.8(@types/node@25.5.0)
 
   packages/component-builder-mcp:
     dependencies:
+      '@kickstartds/shared-auth':
+        specifier: workspace:*
+        version: link:../shared-auth
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.27.1(zod@4.3.6)
@@ -259,22 +262,25 @@ importers:
         version: 3.7.0(@jsonforms/core@3.7.0)(react@19.2.1)
       '@kickstartds/base':
         specifier: ^4.0.2
-        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
+        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
       '@kickstartds/blog':
         specifier: ^4.0.2
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
       '@kickstartds/content':
         specifier: ^4.1.1
-        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
+        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
       '@kickstartds/core':
         specifier: ^4.0.2
-        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))
+        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))
       '@kickstartds/design-system':
         specifier: workspace:*
-        version: file:packages/design-system(46187ce8b1a43cb10735fb48600f9526)
+        version: file:packages/design-system(09ab90ecd25ca9addcf42278e1562bb5)
       '@kickstartds/form':
         specifier: ^4.0.2
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/shared-auth':
+        specifier: workspace:*
+        version: link:../shared-auth
       '@mui/icons-material':
         specifier: ^7.3.5
         version: 7.3.9(@mui/material@7.3.9(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.1))(@types/react@19.2.14)(react@19.2.1))(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@types/react@19.2.14)(react@19.2.1)
@@ -287,6 +293,9 @@ importers:
       classnames:
         specifier: ^2.3.2
         version: 2.5.1
+      cookie-parser:
+        specifier: ^1.4.6
+        version: 1.4.7
       cors:
         specifier: ^2.8.5
         version: 2.8.6
@@ -309,12 +318,18 @@ importers:
       '@dotenvx/dotenvx':
         specifier: ^1.7.0
         version: 1.52.0
+      '@types/cookie-parser':
+        specifier: ^1.4.0
+        version: 1.4.10(@types/express@4.17.25)
       '@types/cors':
         specifier: ^2.8.0
         version: 2.8.19
       '@types/express':
         specifier: ^4.17.0
         version: 4.17.25
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.14
@@ -329,7 +344,7 @@ importers:
         version: 0.6.37
       '@vitejs/plugin-react':
         specifier: ^5.1.2
-        version: 5.1.4(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       concurrently:
         specifier: ^8.2.0
         version: 8.2.2
@@ -344,10 +359,13 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.2.7
-        version: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+        version: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/design-tokens-mcp:
     dependencies:
+      '@kickstartds/shared-auth':
+        specifier: workspace:*
+        version: link:../shared-auth
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.27.1(zod@4.3.6)
@@ -361,6 +379,9 @@ importers:
 
   packages/schema-layer-editor:
     dependencies:
+      '@kickstartds/design-system':
+        specifier: workspace:*
+        version: file:packages/design-system(a2eb8bbf6dd6b73e542d5cb419a26efc)
       commander:
         specifier: ^12.0.0
         version: 12.1.0
@@ -374,11 +395,11 @@ importers:
         specifier: ^11.0.0
         version: 11.1.0
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^19.0.0
+        version: 19.2.1
       react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+        specifier: ^19.0.0
+        version: 19.2.1(react@19.2.1)
     devDependencies:
       '@types/cors':
         specifier: ^2.8.0
@@ -390,11 +411,11 @@ importers:
         specifier: ^20.0.0
         version: 20.4.5
       '@types/react':
-        specifier: ^18.2.0
-        version: 18.2.17
+        specifier: ^19.0.0
+        version: 19.2.14
       '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.2.7
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^4.2.0
         version: 4.7.0(vite@5.4.21(@types/node@20.4.5)(sass@1.97.3)(terser@5.46.0))
@@ -413,6 +434,22 @@ importers:
       vitest:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.4.5)(happy-dom@13.10.1)(jsdom@28.1.0(@noble/hashes@1.8.0))(sass@1.97.3)(terser@5.46.0)
+
+  packages/shared-auth:
+    dependencies:
+      jsonwebtoken:
+        specifier: ^9.0.0
+        version: 9.0.3
+    devDependencies:
+      '@types/jsonwebtoken':
+        specifier: ^9.0.0
+        version: 9.0.10
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.4.5
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
   packages/storyblok-icon-sprite-picker-field-plugin:
     dependencies:
@@ -437,37 +474,40 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^5.1.2
-        version: 5.1.4(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       vite:
         specifier: ^7.2.7
-        version: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+        version: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-css-injected-by-js:
         specifier: ^4.0.1
-        version: 4.0.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 4.0.1(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
 
   packages/storyblok-mcp:
     dependencies:
       '@kickstartds/base':
         specifier: ^4.1.0
-        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/blog':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/content':
         specifier: ^4.1.1
-        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/core':
         specifier: ^4.1.0
-        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
+        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
       '@kickstartds/design-system':
         specifier: workspace:*
-        version: file:packages/design-system(1e92aae8d49a424ca8b2b5c98cf08bce)
+        version: file:packages/design-system(fdfacb49277fbb1074ddd2a4049c89c4)
       '@kickstartds/form':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/shared-auth':
+        specifier: workspace:*
+        version: link:../shared-auth
       '@kickstartds/storyblok-services':
         specifier: workspace:*
         version: file:packages/storyblok-services(@noble/hashes@1.8.0)(ws@8.19.0)(zod@3.25.76)
@@ -633,16 +673,16 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^5.1.2
-        version: 5.1.4(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       vite:
         specifier: ^7.2.7
-        version: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+        version: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-css-injected-by-js:
         specifier: ^4.0.1
-        version: 4.0.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 4.0.1(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
 
   packages/website:
     dependencies:
@@ -651,25 +691,25 @@ importers:
         version: 1.52.0
       '@kickstartds/base':
         specifier: ^4.1.0
-        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/blog':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/content':
         specifier: ^4.1.1
-        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/core':
         specifier: ^4.1.0
-        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
+        version: 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
       '@kickstartds/design-system':
         specifier: workspace:*
-        version: file:packages/design-system(dd7b92bef19cc6419df44ed808361f04)
+        version: file:packages/design-system(d9a7e69ff6193e7fc10eb8557abb3069)
       '@kickstartds/form':
         specifier: ^4.1.0
-        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+        version: 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       '@kickstartds/storyblok-mcp-server':
         specifier: workspace:*
-        version: file:packages/storyblok-mcp(@storybook/types@7.6.24)(c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0))(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))(tinycolor2@1.6.0)(traverse@0.6.11)(ws@8.19.0)
+        version: file:packages/storyblok-mcp(@storybook/types@7.6.24)(c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0))(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))(tinycolor2@1.6.0)(traverse@0.6.11)(ws@8.19.0)
       '@kickstartds/storyblok-services':
         specifier: workspace:*
         version: file:packages/storyblok-services(@noble/hashes@1.8.0)(ws@8.19.0)(zod@3.25.76)
@@ -754,13 +794,13 @@ importers:
         version: 1.0.5
       '@kickstartds/jsonschema-utils':
         specifier: ^3.9.0
-        version: 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
+        version: 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
       '@kickstartds/jsonschema2storyblok':
         specifier: ^1.7.0
-        version: 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf)
+        version: 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(d709c3f130a7d7b0207f797b84b34684)
       '@kickstartds/jsonschema2types':
         specifier: ^1.2.8
-        version: 1.2.8(3ae78907a694c064f82b89cb7939a1bf)
+        version: 1.2.8(d709c3f130a7d7b0207f797b84b34684)
       '@kickstartds/style-dictionary':
         specifier: ^4.0.2
         version: 4.0.4(style-dictionary@3.9.2)
@@ -829,7 +869,7 @@ importers:
         version: 5.0.1
       kickstartds:
         specifier: 3.5.0--canary.62.324.0
-        version: 3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0)
+        version: 3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2stackbit@1.7.8(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2staticcms@2.9.39(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2types@1.2.8(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2uniform@1.4.26(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0)
       local-ssl-proxy:
         specifier: ^2.0.5
         version: 2.0.5
@@ -3280,6 +3320,10 @@ packages:
     resolution: {integrity: sha512-C3l+HEofAulRHHX8KKW+dYMvteUptxgbyRrAuhmCGEuBAUYwVWmtIyC1RftvGs4syf8eSiOJvWbXORNIx0RYkw==}
     engines: {node: '>=18.16'}
 
+  '@kickstartds/shared-auth@file:packages/shared-auth':
+    resolution: {directory: packages/shared-auth, type: directory}
+    engines: {node: '>=24.0.0'}
+
   '@kickstartds/storyblok-mcp-server@file:packages/storyblok-mcp':
     resolution: {directory: packages/storyblok-mcp, type: directory}
     engines: {node: '>=24.0.0'}
@@ -4576,9 +4620,6 @@ packages:
   '@storybook/channels@7.6.24':
     resolution: {integrity: sha512-rNSifUbCjUPWQMZPptY5VTY4c4iOrCzDKmmDeBeurPH0ZiDvnJjW7v9dlXzlDNoXFUv+jBE+RjrEfNWsnJhvsQ==}
 
-  '@storybook/client-logger@7.6.23':
-    resolution: {integrity: sha512-p1Z5pRWSsF/FCtkJ5/99ysuw82Raon8JmnlxxpyIVDJ5KD3VutBX9pZL8XPa8C1IKvc0oBfqSgBUdTRRo0lqYQ==}
-
   '@storybook/client-logger@7.6.24':
     resolution: {integrity: sha512-Xgn62FLhTzGJFl/uAMukJrfqAhiInkJ91ZwZMqEl8bdgeGO6ISkijDqQebqI0KyqB4ZpD11jVvEOQ/TowLebZw==}
 
@@ -4670,8 +4711,8 @@ packages:
     peerDependencies:
       storybook: ^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0
 
-  '@storybook/theming@7.6.23':
-    resolution: {integrity: sha512-6bCWsDEetonFJFE796RSG0fWWC+d76YSewtVNhbWYfqfb/IBlYtffA9/413unQB7pAmAMTQVNgTcJOT+vGtMuQ==}
+  '@storybook/theming@7.6.24':
+    resolution: {integrity: sha512-HuH7fkscjq5+qJTTWEY0xRZ9CMaBFpk+NdevA0eHCcBlo4yhMWb1PTUw9PHch4EIU7ng7l9tEPEaxLQT4vFUPg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -5027,6 +5068,11 @@ packages:
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
+  '@types/cookie-parser@1.4.10':
+    resolution: {integrity: sha512-B4xqkqfZ8Wek+rCOeRxsjMS9OgvzebEzzLYw7NHYuvzb7IdxOkI0ZHGgeEBX4PUM7QGVvNSK60T3OvWj3YfBRg==}
+    peerDependencies:
+      '@types/express': '*'
+
   '@types/cors@2.8.19':
     resolution: {integrity: sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==}
 
@@ -5114,6 +5160,9 @@ packages:
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
+  '@types/jsonwebtoken@9.0.10':
+    resolution: {integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==}
+
   '@types/liftoff@4.0.3':
     resolution: {integrity: sha512-UgbL2kR5pLrWICvr8+fuSg0u43LY250q7ZMkC+XKC3E+rs/YBDEnQIzsnhU5dYsLlwMi3R75UvCL87pObP1sxw==}
 
@@ -5145,6 +5194,9 @@ packages:
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
 
+  '@types/ms@2.1.0':
+    resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
@@ -5153,6 +5205,9 @@ packages:
 
   '@types/node@22.19.13':
     resolution: {integrity: sha512-akNQMv0wW5uyRpD2v2IEyRSZiR+BeGuoB6L310EgGObO44HSMNT8z1xzio28V8qOrgYaopIDNA18YgdXd+qTiw==}
+
+  '@types/node@25.5.0':
+    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -5197,9 +5252,6 @@ packages:
     peerDependencies:
       '@types/react': '*'
 
-  '@types/react@18.2.17':
-    resolution: {integrity: sha512-u+e7OlgPPh+aryjOm5UJMX32OvB2E3QASOAqVMY6Ahs90djagxwv2ya0IctglNbNTexC12qCSMZG47KPfy1hAA==}
-
   '@types/react@19.2.14':
     resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
 
@@ -5208,9 +5260,6 @@ packages:
 
   '@types/retry@0.12.2':
     resolution: {integrity: sha512-XISRgDJ2Tc5q4TRqvgJtzsRkFYNJzZrhTdtMoGVBttwzzQJkPnS3WWTFc7kuDRoPtPakl+T+OfdEUjYJj7Jbow==}
-
-  '@types/scheduler@0.26.0':
-    resolution: {integrity: sha512-WFHp9YUJQ6CKshqoC37iOlHnQSmxNc795UhB26CyBBttrN9svdIrUjl/NjnNmfcwtncN0h/0PPAFWv9ovP8mLA==}
 
   '@types/send@0.17.6':
     resolution: {integrity: sha512-Uqt8rPBE8SY0RK8JB1EzVOIZ32uqy8HwdxCnoCOsYrvnswqmFZ/k+9Ikidlk/ImhsdvBsloHbAlewb2IEBV/Og==}
@@ -6112,6 +6161,9 @@ packages:
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
 
+  buffer-equal-constant-time@1.0.1:
+    resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
+
   buffer-equal@1.0.1:
     resolution: {integrity: sha512-QoV3ptgEaQpvVwbXdSO39iqPQTCxSF7A5U99AxbHYqUdCizL/lH2Z0A2y6nbZucxMEOtNyZfG2s6gsVugGpKkg==}
     engines: {node: '>=0.4'}
@@ -6627,6 +6679,13 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  cookie-parser@1.4.7:
+    resolution: {integrity: sha512-nGUvgXnotP3BsjiLX2ypbQnWoGUPIIfHQNZkkC668ntrzGWEZVW70HDEB1qnNGMicPje6EttlIgzo51YSwNQGw==}
+    engines: {node: '>= 0.8.0'}
+
+  cookie-signature@1.0.6:
+    resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
 
   cookie-signature@1.0.7:
     resolution: {integrity: sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==}
@@ -7176,6 +7235,9 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  ecdsa-sig-formatter@1.0.11:
+    resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
 
   eciesjs@0.4.17:
     resolution: {integrity: sha512-TOOURki4G7sD1wDCjj7NfLaXZZ49dFOeEb5y39IXpb8p0hRzVvfvzZHOi5JcT+PpyAbi/Y+lxPb8eTag2WYH8w==}
@@ -9275,6 +9337,10 @@ packages:
     resolution: {integrity: sha512-WJeiE0jGfxYmtLwBTEk8+y/mYcaleyLXWaqp5bJu0/ZTSeG0KQq/wWQ8pmnkKenEdN6pdnn6QtcoSUkbqDHWNw==}
     hasBin: true
 
+  jsonwebtoken@9.0.3:
+    resolution: {integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==}
+    engines: {node: '>=12', npm: '>=6'}
+
   jssha@3.3.1:
     resolution: {integrity: sha512-VCMZj12FCFMQYcFLPRm/0lOBbLi8uM2BhXPTqw3U4YAfs4AZfiApOoBLoN8cQE60Z50m1MYMTQVCfgF/KaCVhQ==}
 
@@ -9284,6 +9350,12 @@ packages:
 
   just-debounce@1.1.0:
     resolution: {integrity: sha512-qpcRocdkUmf+UTNBYx5w6dexX5J31AKK1OmPwH630a83DdVVUIngk55RSAiIGpQyoH0dlr872VHfPjnQnK1qDQ==}
+
+  jwa@2.0.1:
+    resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
+
+  jws@4.0.1:
+    resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
 
   kebab-case@1.0.2:
     resolution: {integrity: sha512-7n6wXq4gNgBELfDCpzKc+mRrZFs7D+wgfF5WRFLNAr4DA/qtr9Js8uOAVAfHhuLMfAcQ0pRKqbpjx+TcJVdE1Q==}
@@ -9465,9 +9537,27 @@ packages:
   lodash.flattendeep@4.4.0:
     resolution: {integrity: sha512-uHaJFihxmJcEX3kT4I23ABqKKalJ/zDrDg0lsFtc1h+3uw49SIJ5beyhx5ExVRti3AvKoOJngIj7xz3oylPdWQ==}
 
+  lodash.includes@4.3.0:
+    resolution: {integrity: sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==}
+
+  lodash.isboolean@3.0.3:
+    resolution: {integrity: sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==}
+
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
     deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+
+  lodash.isinteger@4.0.4:
+    resolution: {integrity: sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==}
+
+  lodash.isnumber@3.0.3:
+    resolution: {integrity: sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==}
+
+  lodash.isplainobject@4.0.6:
+    resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
+
+  lodash.isstring@4.0.1:
+    resolution: {integrity: sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==}
 
   lodash.keys@4.2.0:
     resolution: {integrity: sha512-J79MkJcp7Df5mizHiVNpjoHXLi4HLjh9VLS/M7lQSGoQ+0oQ+lWEigREkqKyizPB1IawvQLLKY8mzEcm1tkyxQ==}
@@ -9481,6 +9571,9 @@ packages:
   lodash.omit@4.5.0:
     resolution: {integrity: sha512-XeqSp49hNGmlkj2EJlfrQFIzQ6lXdNro9sddtQzcJY8QaoC2GO0DT7xaIokHeyM+mIT0mPMlPvkYzg2xCuHdZg==}
     deprecated: This package is deprecated. Use destructuring assignment syntax instead.
+
+  lodash.once@4.1.1:
+    resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
 
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
@@ -10847,11 +10940,6 @@ packages:
     resolution: {integrity: sha512-+NRMYs2DyTP4/tqWz371Oo50JqmWltR1h2gcdgUMAWZJIAvrd0/SqlCfx7tpzpl/s36rzw6qH2MjoNrxtRNYhA==}
     engines: {node: ^20.9.0 || >=22}
 
-  react-dom@18.2.0:
-    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
-    peerDependencies:
-      react: ^18.2.0
-
   react-dom@19.2.1:
     resolution: {integrity: sha512-ibrK8llX2a4eOskq1mXKu/TGZj9qzomO+sNfO98M6d9zIPOEhlBkMkBUBLd1vgS0gQsLDBzA+8jJBVXDnfHmJg==}
     peerDependencies:
@@ -10920,10 +11008,6 @@ packages:
     resolution: {integrity: sha512-Ir6+oPQZTVHfa6+JL9M7cvMILstFZH/H3jqeYeKI4MSUX+rIruVwFC6nGVXw9wqAw8L0Kg2KvfXxI85OvYQdpQ==}
     peerDependencies:
       react: ^16.6.3 || ^17.0.0
-
-  react@18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
-    engines: {node: '>=0.10.0'}
 
   react@19.2.1:
     resolution: {integrity: sha512-DGrYcCWK7tvYMnWh79yrPHt+vdx9tY+1gPZa7nJQtO/p8bLTDaHp4dzwEhQB7pZ4Xe3ok4XKuEPrVuc+wlpkmw==}
@@ -11302,9 +11386,6 @@ packages:
   saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
-
-  scheduler@0.23.2:
-    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
@@ -12419,6 +12500,9 @@ packages:
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
+  undici-types@7.18.2:
+    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
   undici@7.22.0:
     resolution: {integrity: sha512-RqslV2Us5BrllB+JeiZnK4peryVTndy9Dnqq62S3yYRRTj0tFQCwEniUy2167skdGOy3vqRzEvl1Dm4sV2ReDg==}
@@ -14307,7 +14391,7 @@ snapshots:
       - typeorm
       - ws
 
-  '@c15t/backend@1.8.0(@electric-sql/pglite@0.3.15)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(crossws@0.3.5)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)))(ws@8.19.0)':
+  '@c15t/backend@1.8.0(@electric-sql/pglite@0.3.15)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(crossws@0.3.5)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)))(ws@8.19.0)':
     dependencies:
       '@c15t/logger': 1.0.1
       '@c15t/translations': 1.8.0
@@ -14323,7 +14407,7 @@ snapshots:
       base-x: 5.0.1
       defu: 6.1.4
       drizzle-orm: 0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6)
-      fumadb: 0.1.2(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6))(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)))
+      fumadb: 0.1.2(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6))(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)))
       kysely: 0.27.6
       neverthrow: 8.2.0
       superjson: 2.2.6
@@ -14413,7 +14497,7 @@ snapshots:
     dependencies:
       '@changesets/types': 6.1.0
 
-  '@changesets/cli@2.29.8(@types/node@22.19.13)':
+  '@changesets/cli@2.29.8(@types/node@25.5.0)':
     dependencies:
       '@changesets/apply-release-plan': 7.0.14
       '@changesets/assemble-release-plan': 6.0.9
@@ -14429,7 +14513,7 @@ snapshots:
       '@changesets/should-skip-package': 0.1.2
       '@changesets/types': 6.1.0
       '@changesets/write': 0.4.0
-      '@inquirer/external-editor': 1.0.3(@types/node@22.19.13)
+      '@inquirer/external-editor': 1.0.3(@types/node@25.5.0)
       '@manypkg/get-packages': 1.1.3
       ansi-colors: 4.1.3
       ci-info: 3.9.0
@@ -15202,12 +15286,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.4.5
 
-  '@inquirer/external-editor@1.0.3(@types/node@22.19.13)':
+  '@inquirer/external-editor@1.0.3(@types/node@25.5.0)':
     dependencies:
       chardet: 2.1.1
       iconv-lite: 0.7.2
     optionalDependencies:
-      '@types/node': 22.19.13
+      '@types/node': 25.5.0
 
   '@inquirer/figures@1.0.15': {}
 
@@ -15876,19 +15960,28 @@ snapshots:
       '@jsonjoy.com/codegen': 17.67.0(tslib@2.8.1)
       tslib: 2.8.1
 
-  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)':
+  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485))
       classnames: 2.5.1
       markdown-to-jsx: 7.7.17(react@19.2.1)
       photoswipe: 5.4.4
       react: 19.2.1
 
-  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)':
+  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))
+      classnames: 2.5.1
+      markdown-to-jsx: 7.7.17(react@19.2.1)
+      photoswipe: 5.4.4
+      react: 19.2.1
+
+  '@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
       classnames: 2.5.1
       markdown-to-jsx: 7.7.17(react@19.2.1)
       photoswipe: 5.4.4
@@ -15903,20 +15996,29 @@ snapshots:
       photoswipe: 5.4.4
       react: 19.2.1
 
-  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)':
+  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485))
       classnames: 2.5.1
       date-fns: 2.30.0
       react: 19.2.1
 
-  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)':
+  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))
+      classnames: 2.5.1
+      date-fns: 2.30.0
+      react: 19.2.1
+
+  '@kickstartds/blog@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
       classnames: 2.5.1
       date-fns: 2.30.0
       react: 19.2.1
@@ -15937,22 +16039,32 @@ snapshots:
       js-yaml: 4.1.1
       to-json-schema: 0.2.5
 
-  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)':
+  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@glidejs/glide': 3.7.1(patch_hash=5789e9e3d626fd9184f499fc7f258f95caae73d9ff519acd6028eee56a31bd97)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485))
       classnames: 2.5.1
       countup.js: 2.9.0
       react: 19.2.1
 
-  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)':
+  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@glidejs/glide': 3.7.1(patch_hash=5789e9e3d626fd9184f499fc7f258f95caae73d9ff519acd6028eee56a31bd97)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))
+      classnames: 2.5.1
+      countup.js: 2.9.0
+      react: 19.2.1
+
+  '@kickstartds/content@4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@glidejs/glide': 3.7.1(patch_hash=5789e9e3d626fd9184f499fc7f258f95caae73d9ff519acd6028eee56a31bd97)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
       classnames: 2.5.1
       countup.js: 2.9.0
       react: 19.2.1
@@ -15967,7 +16079,7 @@ snapshots:
       countup.js: 2.9.0
       react: 19.2.1
 
-  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))':
+  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485))':
     dependencies:
       '@babel/runtime': 7.28.6
       '@storybook/types': 7.6.24
@@ -15983,9 +16095,9 @@ snapshots:
       pubsub-js: 1.9.5
       react: 19.2.1
       sass: 1.97.3
-      storybook-design-token: 3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)
+      storybook-design-token: 3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)
 
-  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))':
+  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))':
     dependencies:
       '@babel/runtime': 7.28.6
       '@storybook/types': 7.6.24
@@ -16001,7 +16113,25 @@ snapshots:
       pubsub-js: 1.9.5
       react: 19.2.1
       sass: 1.97.3
-      storybook-design-token: 3.0.0-beta.3(d930c488329066ea43c6259b860455e3)
+      storybook-design-token: 3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)
+
+  '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@storybook/types': 7.6.24
+      bourbon: 7.3.0
+      classnames: 2.5.1
+      del: 6.1.1
+      dependency-graph: 0.11.0
+      esbuild: 0.17.19
+      fast-glob: 3.3.3
+      fs-extra: 11.3.3
+      json-schema: 0.4.0
+      lazysizes: 5.3.2
+      pubsub-js: 1.9.5
+      react: 19.2.1
+      sass: 1.97.3
+      storybook-design-token: 3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)
 
   '@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@5.0.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.27.3)))':
     dependencies:
@@ -16021,15 +16151,15 @@ snapshots:
       sass: 1.97.3
       storybook-design-token: 5.0.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.27.3))
 
-  '@kickstartds/design-system@file:packages/design-system(1e92aae8d49a424ca8b2b5c98cf08bce)':
+  '@kickstartds/design-system@file:packages/design-system(09ab90ecd25ca9addcf42278e1562bb5)':
     dependencies:
       '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
       classnames: 2.5.1
       markdown-to-jsx: 7.7.17(react@19.2.1)
       react: 19.2.1
@@ -16037,39 +16167,19 @@ snapshots:
       tinycolor2: 1.6.0
       traverse: 0.6.11
     optionalDependencies:
-      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
+      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
-  '@kickstartds/design-system@file:packages/design-system(46187ce8b1a43cb10735fb48600f9526)':
+  '@kickstartds/design-system@file:packages/design-system(a2eb8bbf6dd6b73e542d5cb419a26efc)':
     dependencies:
       '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
       '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      classnames: 2.5.1
-      markdown-to-jsx: 7.7.17(react@19.2.1)
-      react: 19.2.1
-      react-dom: 19.2.1(react@19.2.1)
-      tinycolor2: 1.6.0
-      traverse: 0.6.11
-    optionalDependencies:
-      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
-    transitivePeerDependencies:
-      - '@bedrock-layout/css'
-
-  '@kickstartds/design-system@file:packages/design-system(dd7b92bef19cc6419df44ed808361f04)':
-    dependencies:
-      '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
-      '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
       classnames: 2.5.1
       markdown-to-jsx: 7.7.17(react@19.2.1)
       react: 19.2.1
@@ -16081,19 +16191,67 @@ snapshots:
     transitivePeerDependencies:
       - '@bedrock-layout/css'
 
-  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)':
+  '@kickstartds/design-system@file:packages/design-system(d9a7e69ff6193e7fc10eb8557abb3069)':
+    dependencies:
+      '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
+      '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      classnames: 2.5.1
+      markdown-to-jsx: 7.7.17(react@19.2.1)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+      tinycolor2: 1.6.0
+      traverse: 0.6.11
+    optionalDependencies:
+      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
+    transitivePeerDependencies:
+      - '@bedrock-layout/css'
+
+  '@kickstartds/design-system@file:packages/design-system(fdfacb49277fbb1074ddd2a4049c89c4)':
+    dependencies:
+      '@bedrock-layout/primitives': 3.0.47(@bedrock-layout/css@2.14.1)(react@19.2.1)
+      '@bedrock-layout/spacing-constants': 3.3.10(react@19.2.1)
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      classnames: 2.5.1
+      markdown-to-jsx: 7.7.17(react@19.2.1)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+      tinycolor2: 1.6.0
+      traverse: 0.6.11
+    optionalDependencies:
+      c15t: 1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0)
+    transitivePeerDependencies:
+      - '@bedrock-layout/css'
+
+  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485))
       classnames: 2.5.1
       react: 19.2.1
 
-  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)':
+  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3))
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54))
+      classnames: 2.5.1
+      react: 19.2.1
+
+  '@kickstartds/form@4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)':
+    dependencies:
+      '@babel/runtime': 7.28.6
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
       classnames: 2.5.1
       react: 19.2.1
 
@@ -16121,23 +16279,6 @@ snapshots:
       mkdirp: 1.0.4
       prettier: 2.8.8
 
-  '@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)':
-    dependencies:
-      '@bcherny/json-schema-ref-parser': 10.0.5-fork
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/cambria': 1.0.5
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      ajv: 8.18.0
-      change-case: 5.4.4
-      directed-graph-typed: 1.52.9
-      fast-glob: 3.3.3
-      import-meta-resolve: 3.0.0
-      json-schema-traverse: 1.0.0
-      jsonpointer: 5.0.1
-
   '@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(714b024ce2080f276c61cf6f9cb90cea)':
     dependencies:
       '@bcherny/json-schema-ref-parser': 10.0.5-fork
@@ -16155,18 +16296,22 @@ snapshots:
       json-schema-traverse: 1.0.0
       jsonpointer: 5.0.1
 
-  '@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf)':
+  '@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
+      '@bcherny/json-schema-ref-parser': 10.0.5-fork
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/cambria': 1.0.5
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
       ajv: 8.18.0
-      object-traversal: 1.0.1
-      pluralize-esm: 9.0.5
-    transitivePeerDependencies:
-      - '@kickstartds/base'
-      - '@kickstartds/blog'
-      - '@kickstartds/content'
-      - '@kickstartds/core'
-      - '@kickstartds/form'
+      change-case: 5.4.4
+      directed-graph-typed: 1.52.9
+      fast-glob: 3.3.3
+      import-meta-resolve: 3.0.0
+      json-schema-traverse: 1.0.0
+      jsonpointer: 5.0.1
 
   '@kickstartds/jsonschema2stackbit@1.7.8(714b024ce2080f276c61cf6f9cb90cea)':
     dependencies:
@@ -16181,12 +16326,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf)':
+  '@kickstartds/jsonschema2stackbit@1.7.8(d709c3f130a7d7b0207f797b84b34684)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
+      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
       ajv: 8.18.0
       object-traversal: 1.0.1
-      pluralize: 8.0.0
+      pluralize-esm: 9.0.5
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16207,12 +16352,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf)':
+  '@kickstartds/jsonschema2staticcms@2.9.39(d709c3f130a7d7b0207f797b84b34684)':
     dependencies:
-      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
+      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
       ajv: 8.18.0
       object-traversal: 1.0.1
-      uuid: 9.0.1
+      pluralize: 8.0.0
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16223,6 +16368,19 @@ snapshots:
   '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(714b024ce2080f276c61cf6f9cb90cea)':
     dependencies:
       '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(714b024ce2080f276c61cf6f9cb90cea)
+      ajv: 8.18.0
+      object-traversal: 1.0.1
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - '@kickstartds/base'
+      - '@kickstartds/blog'
+      - '@kickstartds/content'
+      - '@kickstartds/core'
+      - '@kickstartds/form'
+
+  '@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(d709c3f130a7d7b0207f797b84b34684)':
+    dependencies:
+      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
       ajv: 8.18.0
       object-traversal: 1.0.1
       uuid: 9.0.1
@@ -16246,24 +16404,12 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf)':
+  '@kickstartds/jsonschema2types@1.2.8(d709c3f130a7d7b0207f797b84b34684)':
     dependencies:
       '@kickstartds/json-schema-to-typescript': 13.1.20
-      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
+      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
       ajv: 8.18.0
       object-traversal: 1.0.1
-    transitivePeerDependencies:
-      - '@kickstartds/base'
-      - '@kickstartds/blog'
-      - '@kickstartds/content'
-      - '@kickstartds/core'
-      - '@kickstartds/form'
-
-  '@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf)':
-    dependencies:
-      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
-      ajv: 8.18.0
-      change-case: 5.4.4
     transitivePeerDependencies:
       - '@kickstartds/base'
       - '@kickstartds/blog'
@@ -16283,14 +16429,31 @@ snapshots:
       - '@kickstartds/core'
       - '@kickstartds/form'
 
-  '@kickstartds/storyblok-mcp-server@file:packages/storyblok-mcp(@storybook/types@7.6.24)(c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0))(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))(tinycolor2@1.6.0)(traverse@0.6.11)(ws@8.19.0)':
+  '@kickstartds/jsonschema2uniform@1.4.26(d709c3f130a7d7b0207f797b84b34684)':
     dependencies:
-      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
-      '@kickstartds/design-system': file:packages/design-system(dd7b92bef19cc6419df44ed808361f04)
-      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(react@19.2.1)
+      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
+      ajv: 8.18.0
+      change-case: 5.4.4
+    transitivePeerDependencies:
+      - '@kickstartds/base'
+      - '@kickstartds/blog'
+      - '@kickstartds/content'
+      - '@kickstartds/core'
+      - '@kickstartds/form'
+
+  '@kickstartds/shared-auth@file:packages/shared-auth':
+    dependencies:
+      jsonwebtoken: 9.0.3
+
+  '@kickstartds/storyblok-mcp-server@file:packages/storyblok-mcp(@storybook/types@7.6.24)(c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.1.6)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0))(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))(tinycolor2@1.6.0)(traverse@0.6.11)(ws@8.19.0)':
+    dependencies:
+      '@kickstartds/base': 4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/blog': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/content': 4.1.4(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
+      '@kickstartds/design-system': file:packages/design-system(d9a7e69ff6193e7fc10eb8557abb3069)
+      '@kickstartds/form': 4.2.0(@kickstartds/base@4.2.0(patch_hash=cebbe13791236b358cd4018afb3c91b80149ff0c93ddf1b3d797e3dbbd8126bb)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1))(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(react@19.2.1)
+      '@kickstartds/shared-auth': file:packages/shared-auth
       '@kickstartds/storyblok-services': file:packages/storyblok-services(ws@8.19.0)(zod@3.25.76)
       '@modelcontextprotocol/ext-apps': 1.1.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(zod@3.25.76)
       '@modelcontextprotocol/sdk': 1.27.1(zod@3.25.76)
@@ -16322,7 +16485,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       object-traversal: 1.0.1
       openai: 6.25.0(ws@8.19.0)(zod@3.25.76)
-      storyblok-js-client: 7.2.3
+      storyblok-js-client: 7.2.4
       turndown: 7.2.2
     transitivePeerDependencies:
       - '@noble/hashes'
@@ -16338,7 +16501,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       object-traversal: 1.0.1
       openai: 6.25.0(ws@8.19.0)(zod@3.25.76)
-      storyblok-js-client: 7.2.3
+      storyblok-js-client: 7.2.4
       turndown: 7.2.2
     transitivePeerDependencies:
       - '@noble/hashes'
@@ -16354,7 +16517,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       object-traversal: 1.0.1
       openai: 6.25.0(ws@8.19.0)(zod@4.3.6)
-      storyblok-js-client: 7.2.3
+      storyblok-js-client: 7.2.4
       turndown: 7.2.2
     transitivePeerDependencies:
       - '@noble/hashes'
@@ -17825,10 +17988,6 @@ snapshots:
       telejson: 7.2.0
       tiny-invariant: 1.3.3
 
-  '@storybook/client-logger@7.6.23':
-    dependencies:
-      '@storybook/global': 5.0.0
-
   '@storybook/client-logger@7.6.24':
     dependencies:
       '@storybook/global': 5.0.0
@@ -17956,10 +18115,10 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@storybook/theming@7.6.23(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@storybook/theming@7.6.24(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@emotion/use-insertion-effect-with-fallbacks': 1.2.0(react@19.2.1)
-      '@storybook/client-logger': 7.6.23
+      '@storybook/client-logger': 7.6.24
       '@storybook/global': 5.0.0
       memoizerific: 1.11.3
       react: 19.2.1
@@ -18319,6 +18478,10 @@ snapshots:
     dependencies:
       '@types/node': 20.4.5
 
+  '@types/cookie-parser@1.4.10(@types/express@4.17.25)':
+    dependencies:
+      '@types/express': 4.17.25
+
   '@types/cors@2.8.19':
     dependencies:
       '@types/node': 20.4.5
@@ -18431,6 +18594,11 @@ snapshots:
     dependencies:
       '@types/node': 20.4.5
 
+  '@types/jsonwebtoken@9.0.10':
+    dependencies:
+      '@types/ms': 2.1.0
+      '@types/node': 20.4.5
+
   '@types/liftoff@4.0.3':
     dependencies:
       '@types/fined': 1.1.5
@@ -18461,6 +18629,8 @@ snapshots:
 
   '@types/minimist@1.2.5': {}
 
+  '@types/ms@2.1.0': {}
+
   '@types/node@12.20.55': {}
 
   '@types/node@20.4.5': {}
@@ -18468,6 +18638,10 @@ snapshots:
   '@types/node@22.19.13':
     dependencies:
       undici-types: 6.21.0
+
+  '@types/node@25.5.0':
+    dependencies:
+      undici-types: 7.18.2
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -18507,12 +18681,6 @@ snapshots:
     dependencies:
       '@types/react': 19.2.14
 
-  '@types/react@18.2.17':
-    dependencies:
-      '@types/prop-types': 15.7.15
-      '@types/scheduler': 0.26.0
-      csstype: 3.2.3
-
   '@types/react@19.2.14':
     dependencies:
       csstype: 3.2.3
@@ -18520,8 +18688,6 @@ snapshots:
   '@types/resolve@1.20.6': {}
 
   '@types/retry@0.12.2': {}
-
-  '@types/scheduler@0.26.0': {}
 
   '@types/send@0.17.6':
     dependencies:
@@ -18796,7 +18962,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
+  '@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.29.0)
@@ -18804,7 +18970,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-rc.3
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -19590,6 +19756,8 @@ snapshots:
     dependencies:
       node-int64: 0.4.0
 
+  buffer-equal-constant-time@1.0.1: {}
+
   buffer-equal@1.0.1: {}
 
   buffer-from@1.1.2: {}
@@ -19737,9 +19905,9 @@ snapshots:
       - use-sync-external-store
       - ws
 
-  c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0):
+  c15t@1.8.3(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(@types/react@19.2.14)(crossws@0.3.5)(react@19.2.1)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)))(use-sync-external-store@1.6.0(react@19.2.1))(ws@8.19.0):
     dependencies:
-      '@c15t/backend': 1.8.0(@electric-sql/pglite@0.3.15)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(crossws@0.3.5)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)))(ws@8.19.0)
+      '@c15t/backend': 1.8.0(@electric-sql/pglite@0.3.15)(@opentelemetry/instrumentation@0.203.0(@opentelemetry/api@1.9.0))(crossws@0.3.5)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)))(ws@8.19.0)
       '@c15t/translations': 1.8.0
       '@orpc/client': 1.8.1(@opentelemetry/api@1.9.0)
       '@orpc/server': 1.8.1(@opentelemetry/api@1.9.0)(crossws@0.3.5)(ws@8.19.0)
@@ -20295,6 +20463,13 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
+  cookie-parser@1.4.7:
+    dependencies:
+      cookie: 0.7.2
+      cookie-signature: 1.0.6
+
+  cookie-signature@1.0.6: {}
+
   cookie-signature@1.0.7: {}
 
   cookie-signature@1.2.2: {}
@@ -20801,6 +20976,10 @@ snapshots:
       object.defaults: 1.1.0
 
   eastasianwidth@0.2.0: {}
+
+  ecdsa-sig-formatter@1.0.11:
+    dependencies:
+      safe-buffer: 5.2.1
 
   eciesjs@0.4.17:
     dependencies:
@@ -21965,18 +22144,18 @@ snapshots:
       drizzle-orm: 0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6)
       typeorm: 0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3))
 
-  fumadb@0.1.2(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6))(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3))):
+  fumadb@0.1.2(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6))(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3))):
     dependencies:
       '@clack/prompts': 0.11.0
       '@paralleldrive/cuid2': 2.3.1
       commander: 14.0.3
       kysely: 0.28.11
-      kysely-typeorm: 0.3.0(kysely@0.28.11)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)))
+      kysely-typeorm: 0.3.0(kysely@0.28.11)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)))
       semver: 7.7.4
       zod: 4.3.6
     optionalDependencies:
       drizzle-orm: 0.44.7(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(kysely@0.27.6)
-      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3))
+      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3))
     optional: true
 
   function-bind@1.1.2: {}
@@ -23910,6 +24089,19 @@ snapshots:
 
   jsonrepair@3.13.1: {}
 
+  jsonwebtoken@9.0.3:
+    dependencies:
+      jws: 4.0.1
+      lodash.includes: 4.3.0
+      lodash.isboolean: 3.0.3
+      lodash.isinteger: 4.0.4
+      lodash.isnumber: 3.0.3
+      lodash.isplainobject: 4.0.6
+      lodash.isstring: 4.0.1
+      lodash.once: 4.1.1
+      ms: 2.1.3
+      semver: 7.7.4
+
   jssha@3.3.1: {}
 
   jsx-ast-utils@3.3.5:
@@ -23920,6 +24112,17 @@ snapshots:
       object.values: 1.2.1
 
   just-debounce@1.1.0: {}
+
+  jwa@2.0.1:
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.2.1
+
+  jws@4.0.1:
+    dependencies:
+      jwa: 2.0.1
+      safe-buffer: 5.2.1
 
   kebab-case@1.0.2: {}
 
@@ -23986,19 +24189,19 @@ snapshots:
       - debug
       - supports-color
 
-  kickstartds@3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2stackbit@1.7.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2staticcms@2.9.39(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2types@1.2.8(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/jsonschema2uniform@1.4.26(3ae78907a694c064f82b89cb7939a1bf))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0):
+  kickstartds@3.5.0--canary.62.324.0(@babel/core@7.29.0)(@kickstartds/core@4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608)))(@kickstartds/jsonschema-utils@3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2stackbit@1.7.8(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2staticcms@2.9.39(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2storyblok@1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2types@1.2.8(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/jsonschema2uniform@1.4.26(d709c3f130a7d7b0207f797b84b34684))(@kickstartds/style-dictionary@4.0.4(style-dictionary@3.9.2))(@types/node@20.4.5)(chokidar@3.6.0):
     dependencies:
       '@apidevtools/json-schema-ref-parser': 9.1.2
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
       '@influxdata/influxdb-client': 1.35.0
       '@influxdata/influxdb-client-apis': 1.35.0(@influxdata/influxdb-client@1.35.0)
-      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e))
-      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(3ae78907a694c064f82b89cb7939a1bf)
-      '@kickstartds/jsonschema2stackbit': 1.7.8(3ae78907a694c064f82b89cb7939a1bf)
-      '@kickstartds/jsonschema2staticcms': 2.9.39(3ae78907a694c064f82b89cb7939a1bf)
-      '@kickstartds/jsonschema2storyblok': 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(3ae78907a694c064f82b89cb7939a1bf)
-      '@kickstartds/jsonschema2types': 1.2.8(3ae78907a694c064f82b89cb7939a1bf)
-      '@kickstartds/jsonschema2uniform': 1.4.26(3ae78907a694c064f82b89cb7939a1bf)
+      '@kickstartds/core': 4.1.0(@storybook/types@7.6.24)(react@19.2.1)(storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608))
+      '@kickstartds/jsonschema-utils': 3.9.0(patch_hash=16e9a7c1e9a2e62ea953080122db0de5befbbfae5368163fe8e62d50854ca35c)(d709c3f130a7d7b0207f797b84b34684)
+      '@kickstartds/jsonschema2stackbit': 1.7.8(d709c3f130a7d7b0207f797b84b34684)
+      '@kickstartds/jsonschema2staticcms': 2.9.39(d709c3f130a7d7b0207f797b84b34684)
+      '@kickstartds/jsonschema2storyblok': 1.7.0(patch_hash=60c2371db315f9bb187f271bde9abd471aaa1d89c5e27117cffb6e05d2d25456)(d709c3f130a7d7b0207f797b84b34684)
+      '@kickstartds/jsonschema2types': 1.2.8(d709c3f130a7d7b0207f797b84b34684)
+      '@kickstartds/jsonschema2uniform': 1.4.26(d709c3f130a7d7b0207f797b84b34684)
       '@kickstartds/style-dictionary': 4.0.4(style-dictionary@3.9.2)
       ajv: 8.18.0
       byline: 5.0.0
@@ -24073,10 +24276,10 @@ snapshots:
       kysely: 0.28.11
       typeorm: 0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@20.4.5)(typescript@5.9.3))
 
-  kysely-typeorm@0.3.0(kysely@0.28.11)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3))):
+  kysely-typeorm@0.3.0(kysely@0.28.11)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3))):
     dependencies:
       kysely: 0.28.11
-      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3))
+      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3))
     optional: true
 
   kysely@0.27.6: {}
@@ -24224,7 +24427,19 @@ snapshots:
 
   lodash.flattendeep@4.4.0: {}
 
+  lodash.includes@4.3.0: {}
+
+  lodash.isboolean@3.0.3: {}
+
   lodash.isequal@4.5.0: {}
+
+  lodash.isinteger@4.0.4: {}
+
+  lodash.isnumber@3.0.3: {}
+
+  lodash.isplainobject@4.0.6: {}
+
+  lodash.isstring@4.0.1: {}
 
   lodash.keys@4.2.0: {}
 
@@ -24233,6 +24448,8 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash.omit@4.5.0: {}
+
+  lodash.once@4.1.1: {}
 
   lodash.sortby@4.7.0: {}
 
@@ -25815,12 +26032,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-dom@18.2.0(react@18.2.0):
-    dependencies:
-      loose-envify: 1.4.0
-      react: 18.2.0
-      scheduler: 0.23.2
-
   react-dom@19.2.1(react@19.2.1):
     dependencies:
       react: 19.2.1
@@ -25882,10 +26093,6 @@ snapshots:
     dependencies:
       '@reach/observe-rect': 1.2.0
       react: 19.2.1
-
-  react@18.2.0:
-    dependencies:
-      loose-envify: 1.4.0
 
   react@19.2.1: {}
 
@@ -26325,10 +26532,6 @@ snapshots:
   saxes@6.0.0:
     dependencies:
       xmlchars: 2.2.0
-
-  scheduler@0.23.2:
-    dependencies:
-      loose-envify: 1.4.0
 
   scheduler@0.27.0: {}
 
@@ -26806,14 +27009,14 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  storybook-design-token@3.0.0-beta.3(2d5244eb7e950d3d170e6c515856095e):
+  storybook-design-token@3.0.0-beta.3(2e3c3ad36c1c9bb55cac8fe2e7256485):
     dependencies:
       '@storybook/blocks': 8.6.14(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/components': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/core-events': 7.6.24
       '@storybook/manager-api': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/preview-api': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
-      '@storybook/theming': 7.6.23(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@storybook/theming': 7.6.24(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@storybook/types': 7.6.24
       glob: 9.3.5
       jsdom: 21.1.2
@@ -26821,7 +27024,7 @@ snapshots:
       postcss: 8.5.6
       postcss-scss: 4.0.9(postcss@8.5.6)
       prettier: 2.8.8
-      raw-loader: 4.0.2(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.19.12))
+      raw-loader: 4.0.2(webpack@5.105.3(@swc/core@1.15.18))
       react-storage-hooks: 4.0.1(react@19.2.1)
       react-use-clipboard: 1.0.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react-virtual: 2.10.4(react@19.2.1)
@@ -26843,14 +27046,14 @@ snapshots:
       - utf-8-validate
       - webpack
 
-  storybook-design-token@3.0.0-beta.3(d930c488329066ea43c6259b860455e3):
+  storybook-design-token@3.0.0-beta.3(4461bb4e8b92c16c19ac103aebdd0c54):
     dependencies:
       '@storybook/blocks': 8.6.14(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/components': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/core-events': 7.6.24
       '@storybook/manager-api': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@storybook/preview-api': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
-      '@storybook/theming': 7.6.23(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@storybook/theming': 7.6.24(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@storybook/types': 7.6.24
       glob: 9.3.5
       jsdom: 21.1.2
@@ -26862,7 +27065,44 @@ snapshots:
       react-storage-hooks: 4.0.1(react@19.2.1)
       react-use-clipboard: 1.0.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react-virtual: 2.10.4(react@19.2.1)
-      vite: 4.5.14(@types/node@22.19.13)(sass@1.97.3)(terser@5.46.0)
+      vite: 4.5.14(@types/node@25.5.0)(sass@1.97.3)(terser@5.46.0)
+    optionalDependencies:
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+    transitivePeerDependencies:
+      - '@types/node'
+      - bufferutil
+      - canvas
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - utf-8-validate
+      - webpack
+
+  storybook-design-token@3.0.0-beta.3(bef48b934e1d9984605ca58e4a294608):
+    dependencies:
+      '@storybook/blocks': 8.6.14(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/components': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/core-events': 7.6.24
+      '@storybook/manager-api': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/preview-api': 8.6.14(storybook@10.2.15(patch_hash=9fc02117c2392276c66b7c2bf4f9d99038187b9af8a0201c2886d4f4b3a5db57)(@testing-library/dom@9.3.4)(prettier@3.8.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@storybook/theming': 7.6.24(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@storybook/types': 7.6.24
+      glob: 9.3.5
+      jsdom: 21.1.2
+      polished: 4.3.1
+      postcss: 8.5.6
+      postcss-scss: 4.0.9(postcss@8.5.6)
+      prettier: 2.8.8
+      raw-loader: 4.0.2(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.19.12))
+      react-storage-hooks: 4.0.1(react@19.2.1)
+      react-use-clipboard: 1.0.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react-virtual: 2.10.4(react@19.2.1)
+      vite: 4.5.14(@types/node@20.4.5)(sass@1.97.3)(terser@5.46.0)
     optionalDependencies:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
@@ -27510,14 +27750,14 @@ snapshots:
       '@swc/core': 1.15.18
     optional: true
 
-  ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3):
+  ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 22.19.13
+      '@types/node': 25.5.0
       acorn: 8.16.0
       acorn-walk: 8.3.5
       arg: 4.1.3
@@ -27729,7 +27969,7 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)):
+  typeorm@0.3.28(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.2.0
@@ -27747,7 +27987,7 @@ snapshots:
       uuid: 11.1.0
       yargs: 17.7.2
     optionalDependencies:
-      ts-node: 10.9.2(@swc/core@1.15.18)(@types/node@22.19.13)(typescript@5.9.3)
+      ts-node: 10.9.2(@swc/core@1.15.18)(@types/node@25.5.0)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -27800,6 +28040,8 @@ snapshots:
       undertaker-registry: 1.0.1
 
   undici-types@6.21.0: {}
+
+  undici-types@7.18.2: {}
 
   undici@7.22.0: {}
 
@@ -28045,9 +28287,9 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-css-injected-by-js@4.0.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
+  vite-plugin-css-injected-by-js@4.0.1(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
-      vite: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
 
   vite@4.5.14(@types/node@20.4.5)(sass@1.97.3)(terser@5.46.0):
     dependencies:
@@ -28060,13 +28302,13 @@ snapshots:
       sass: 1.97.3
       terser: 5.46.0
 
-  vite@4.5.14(@types/node@22.19.13)(sass@1.97.3)(terser@5.46.0):
+  vite@4.5.14(@types/node@25.5.0)(sass@1.97.3)(terser@5.46.0):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.5.6
       rollup: 3.30.0
     optionalDependencies:
-      '@types/node': 22.19.13
+      '@types/node': 25.5.0
       fsevents: 2.3.3
       sass: 1.97.3
       terser: 5.46.0
@@ -28099,7 +28341,7 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.2
 
-  vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2):
+  vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       esbuild: 0.27.3
       fdir: 6.5.0(picomatch@4.0.3)
@@ -28108,7 +28350,7 @@ snapshots:
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 22.19.13
+      '@types/node': 25.5.0
       fsevents: 2.3.3
       jiti: 2.6.1
       sass: 1.97.3
