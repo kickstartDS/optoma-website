@@ -28,144 +28,145 @@ export const EventDetail: Story = {
     },
   },
   args: pack({
-    title: "Systemics Design Conference 2025",
-    categories: [{ label: "Conference" }, { label: "Design Systems" }],
+    title: "Optoma at ISE 2026",
+    categories: [{ label: "Trade Show" }, { label: "Product Launch" }],
     intro:
-      "A full-day event for design system professionals and enthusiasts. Join us to learn, share, and connect with like-minded individuals.",
+      "Visit Optoma at ISE 2026, Europe's leading AV and systems integration exhibition. Experience our latest interactive displays, laser projectors, and professional signage solutions first-hand.",
     locations: [
       {
         displayMode: "compact",
-        locationName: `Köln Messe`,
-        address: `Messeplatz 1<br />
-      50679 Köln`,
+        locationName: `Fira de Barcelona, Gran Vía`,
+        address: `Av. Joan Carles I, 64<br />
+      08908 L'Hospitalet de Llobregat, Barcelona`,
         links: [
           {
-            url: "https://maps.google.com/?q=Berlin+Congress+Center",
+            url: "#",
             label: "Open in Google Maps",
           },
         ],
         dates: [
           {
-            date: "2025-09-18",
-            time: "09:00 – 17:00",
+            date: "2026-02-04",
+            time: "09:00 – 18:00",
             label: "Register",
             url: "#",
             ariaLabel:
-              "Register for the event on 18th September 2025 from 09:00 to 17:00",
+              "Register for ISE 2026 on 4th February 2026 from 09:00 to 18:00",
           },
           {
-            date: "2025-09-18",
-            time: "09:00 – 17:00",
+            date: "2026-02-05",
+            time: "09:00 – 18:00",
             label: "Register",
             url: "#",
             ariaLabel:
-              "Register for the event on 18th September 2025 from 09:00 to 17:00",
+              "Register for ISE 2026 on 5th February 2026 from 09:00 to 18:00",
           },
           {
-            date: "2025-09-18",
+            date: "2026-02-06",
             time: "09:00 – 17:00",
             label: "Register",
             url: "#",
             ariaLabel:
-              "Register for the event on 18th September 2025 from 09:00 to 17:00",
+              "Register for ISE 2026 on 6th February 2026 from 09:00 to 17:00",
           },
         ],
       },
       {
         displayMode: "compact",
-        locationName: `Berlin Congress Center (BCC) Redaktion & Event GmbH & Co. KG`,
-        address: `Alexanderplatz 1<br />
-      10178 Berlin`,
+        locationName: `ExCeL London`,
+        address: `Royal Victoria Dock<br />
+      London E16 1XL`,
         dates: [
           {
-            date: "2025-09-18",
-            time: "09:00 – 17:00",
+            date: "2026-01-22",
+            time: "09:30 – 17:30",
             label: "Register",
             url: "#",
             ariaLabel:
-              "Register for the event on 18th September 2025 from 09:00 to 17:00",
+              "Register for BETT Show 2026 on 22nd January 2026 from 09:30 to 17:30",
           },
           {
-            date: "2025-09-18",
-            time: "09:00 – 17:00",
+            date: "2026-01-23",
+            time: "09:30 – 17:30",
             label: "Register",
             url: "#",
             ariaLabel:
-              "Register for the event on 18th September 2025 from 09:00 to 17:00",
+              "Register for BETT Show 2026 on 23rd January 2026 from 09:30 to 17:30",
           },
         ],
         links: [
           {
-            url: "https://maps.google.com/?q=Berlin+Congress+Center",
+            url: "#",
             label: "Open in Google Maps",
           },
           {
-            url: "https://www.berlincongresscenter.com",
-            label: "Location Website",
+            url: "#",
+            label: "Venue Website",
           },
         ],
       },
     ],
     description: `
-Join us for a day of inspiring talks, hands-on workshops, and networking with design system experts from around the world.
+Join Optoma at ISE 2026 to discover our latest innovations in visual display technology. From interactive flat panels to laser projectors, see how our solutions are transforming workspaces and learning environments.
 
 **Highlights:**
-- Keynotes from industry leaders
-- Practical sessions on design tokens, accessibility, and scaling systems
-- Evening networking event with food & drinks
+- Live demonstrations of the Creative Touch 5-Series IFPDs
+- N-Series professional display showcase with OMS remote management
+- DuraCore laser projector experience zone
+- Expert-led workshops on AV integration and classroom technology
   `,
     images: [
       {
-        alt: "Alt text Image 1",
-        caption: "Caption Image 1",
-        src: "img/close-up-young-business-team-working.png",
+        alt: "Optoma interactive display demonstration",
+        caption: "Creative Touch 5-Series in action",
+        src: "img/optoma/ifpd-creative-board.jpg",
       },
       {
-        alt: "Alt text Image 2",
-        caption: "Caption Image 2",
-        src: "img/low-angle-tall-building-with-many-windows_23-2148230392.png",
+        alt: "Professional displays in a corporate setting",
+        caption: "N-Series professional signage",
+        src: "img/optoma/professional-signage.jpg",
       },
       {
-        src: "img/full-shot-different-people-working-together.png",
-        caption: "Caption Image 3",
-        alt: "Alt text Image 3",
+        src: "img/optoma/corporate-collaboration.jpg",
+        caption: "Collaboration solutions showcase",
+        alt: "Optoma collaboration technology",
       },
       {
-        src: "img/top-view-desk-with-keyboard-drawing-pad.png",
-        caption: "Caption Image 4",
-        alt: "Alt text Image 4",
+        src: "img/optoma/case-study-roblox.jpg",
+        caption: "Immersive projection experience",
+        alt: "Laser projection demonstration",
       },
     ],
     download: [
       {
-        name: "Product Brochure",
+        name: "Creative Touch 5-Series Datasheet",
         format: "PDF",
         size: "2.5 MB",
-        previewImage: "img/offset-image.png",
-        url: "img/offset-image.png",
+        previewImage: "img/optoma/ifpd-5g3-65inch.webp",
+        url: "#",
       },
       {
-        name: "Company Brochure",
-        previewImage: "img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
+        name: "N-Series Product Brochure",
+        previewImage: "img/optoma/professional-brand-image.jpg",
         format: "PDF",
         size: "3.2 MB",
-        url: "img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
+        url: "#",
       },
       {
-        name: "User Guide",
-        format: "DOC",
-        size: "20 KB",
-        url: "assets/user-guide.doc",
+        name: "Corporate Solutions Guide",
+        format: "PDF",
+        size: "1.8 MB",
+        url: "#",
       },
       {
-        name: "Technical Specifications",
-        format: "TXT",
-        size: "12 KB",
-        url: "assets/technical-specifications.txt",
+        name: "Education Solutions Guide",
+        format: "PDF",
+        size: "2.1 MB",
+        url: "#",
       },
     ],
     button: {
-      label: "See all Events",
+      label: "See All Events",
       url: "/#",
     },
   }),

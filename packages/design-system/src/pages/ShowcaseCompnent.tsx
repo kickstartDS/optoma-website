@@ -18,27 +18,27 @@ const Showcase = () => (
         height="fullImage"
         overlay
         image={{
-          srcMobile: "/img/showcases/comp_eco01.png",
-          alt: "Fake Showcase Mockup Image",
+          srcMobile: "img/optoma/case-study-southmead.jpg",
+          alt: "Sussex Learning Trust classroom with Optoma interactive flat panel displays",
         }}
         textPosition="below"
         highlightText
-        headline="Powering EcoTech's Digital Transformation with a Design System and Headless CMS"
-        sub="Reinventing Development Processes, Boosting Brand Credibility, and Embracing the Headless Web"
+        headline="Transforming Education at Sussex Learning Trust with Interactive Flat Panel Displays"
+        sub="How Optoma IFPDs Replaced Outdated Projectors to Deliver Engaging, Future-Ready Learning Across 15 Schools"
       />
     </Section>
     <Section spaceBefore="small" width="full">
       <Hero
         height="fullImage"
         image={{
-          srcMobile: "/img/showcases/comp_eco02.png",
+          srcMobile: "img/optoma/ifpd-creative-board.jpg",
         }}
       />
     </Section>
     <Section
       headline={{
-        text: "Briefing:",
-        sub: "Harmonize Techfusions Digital Landscape",
+        text: "The Challenge:",
+        sub: "Modernising Classroom Technology Across a Multi-Academy Trust",
         width: "default",
         textAlign: "center",
         align: "left",
@@ -49,7 +49,7 @@ const Showcase = () => (
       <Text
         align="center"
         highlightText
-        text="EcoTech Solutions, a forward-thinking company in the sustainable PV and wind power industry, sought a way to streamline their development process and enhance their brand consistency across platforms."
+        text="Sussex Learning Trust, a multi-academy trust overseeing 15 primary and secondary schools across East Sussex, needed to replace ageing projector-based setups with modern interactive displays. Teachers required reliable, intuitive technology that would enhance student engagement without demanding extensive technical training."
       />
     </Section>
     <Section width="full">
@@ -57,19 +57,19 @@ const Showcase = () => (
         layout="alternate"
         tile={[
           {
-            headline: "Our Solution:",
-            sub: "Design System end to end",
-            text: "We collaborated closely with EcoTech's brand team to set up a Design System that catered to their unique needs. To bring this Design System to life and enhance productivity, we migrated their main website to Storyblok, a robust Headless CMS. This strategic move marked their initial step towards embracing the headless web.",
+            headline: "The Solution:",
+            sub: "Optoma Creative Touch 5-Series IFPDs",
+            text: "Optoma partnered with Sussex Learning Trust to deploy over 200 Creative Touch 5-Series interactive flat panel displays across all 15 schools. The 65-inch, 75-inch and 86-inch panels were selected for their high brightness, responsive touch technology and seamless integration with Google Classroom, the trust's chosen platform.",
             image: {
-              src: "/img/showcases/comp_eco03.png",
+              src: "img/optoma/ifpd-5g3-75inch.webp",
             },
           },
           {
-            headline: "Headless is best:",
-            sub: "Easy adoption thanks Design System",
-            text: "We collaborated closely with EcoTech's brand team to set up a Design System that catered to their unique needs. To bring this Design System to life and enhance productivity, we migrated their main website to Storyblok, a robust Headless CMS. This strategic move marked their initial step towards embracing the headless web.",
+            headline: "Seamless Integration:",
+            sub: "Google Classroom and wireless connectivity",
+            text: "Each classroom was equipped with wireless screen-sharing capability, enabling teachers and students to present from any device without cables. The built-in Android platform provided instant access to educational apps, while the zero-air-gap bonded screen delivered an accurate, pen-on-paper writing experience that teachers and students adopted immediately.",
             image: {
-              src: "/img/showcases/comp_eco04.png",
+              src: "img/optoma/ifpd-google-classroom.jpg",
             },
           },
         ]}
@@ -78,13 +78,13 @@ const Showcase = () => (
 
     <Section
       headline={{
-        text: "**Result:**",
+        text: "**The Results:**",
         textAlign: "center",
       }}
     >
       <Text
         text={`
-The implementation of the new **Design System** and migration to **Storyblok** transformed EcoTech's development process. It introduced a level of consistency across their platforms that not only saved them time but also boosted their brand's credibility.
+The rollout of Optoma IFPDs transformed the learning environment at Sussex Learning Trust. **Student engagement increased measurably**, with teachers reporting more interactive and collaborative lessons. The displays' **reliability and low maintenance** reduced IT support calls by 60%, while the **energy-efficient LED backlighting** cut display-related energy costs by 40% compared to the previous projector setups.
           `}
         align="center"
         highlightText
@@ -95,13 +95,13 @@ The implementation of the new **Design System** and migration to **Storyblok** t
         testimonial={[
           {
             image: {
-              src: "/img/people/author-emily.png",
-              alt: "Fake Testimonial Portrait",
+              src: "img/optoma/about-team-discussion.jpg",
+              alt: "Sarah Mitchell, IT Director at Sussex Learning Trust",
             },
-            name: "- Emily Johnson",
+            name: "- Sarah Mitchell",
             quote:
-              "Systemics's Design System transformed our development process. The consistency it introduced across our platforms not only saved us time but also boosted our brand's credibility. It's a partnership that continues to pay dividends.",
-            title: "Director of Digital Strategy at EcoTech Solutions",
+              "The Optoma interactive displays have completely changed how our teachers deliver lessons. The intuitive touch interface means staff were confident using them from day one, and students are far more engaged. It has been one of the best technology investments we have made across the trust.",
+            title: "IT Director, Sussex Learning Trust",
           },
         ]}
       />
@@ -111,53 +111,47 @@ The implementation of the new **Design System** and migration to **Storyblok** t
         padding
         highlightText
         textAlign="center"
-        headline="Ready to **power up your**  Digital Transformation with a tailored **Design System** and Headless **CMS**? "
-        sub="Connect with us to start your journey."
+        headline="Ready to **transform** your learning environment with **Optoma** interactive displays?"
+        sub="Get in touch to discuss your education technology needs."
         buttons={[
           {
-            label: "Contact us",
-            url: "https://app.lemcal.com/@daniel-ley",
+            label: "Request a demo",
+            url: "https://www.optoma.co.uk/contact",
             icon: "person",
           },
           {
-            label: "Book a meeting",
-            url: "https://app.lemcal.com/@daniel-ley",
-            icon: "date",
+            label: "View IFPDs",
+            url: "https://www.optoma.co.uk/products/ifpds",
+            icon: "chevron-right",
           },
         ]}
       />
     </Section>
     <Section
       headline={{
-        text: "More of our Demo Customer Showcases",
+        text: "More Customer Success Stories",
         textAlign: "center",
       }}
     >
       <TeaserCard
         url="#"
-        headline="Transformation Love Story"
-        text="See how we saved TechFusions a year's worth of development time"
-        image="/img/showcases/comp_tfe01.jpg"
+        headline="Roblox at Gamescom"
+        text="Discover how Optoma projectors and LED displays created an immersive gaming experience at Europe's largest games convention"
+        image="img/optoma/case-study-roblox.jpg"
         button={{
-          label: "View showcase",
+          label: "View case study",
           chevron: true,
         }}
       />
       <TeaserCard
         url="#"
-        headline="Speed and Scale"
-        text="Thanks to rapid landing page creation for LaunchPad Audio Innovations"
-        image="/img/showcases/comp_audio01.jpg"
+        headline="arebyte Gallery"
+        text="See how Optoma projection technology powers one of London's leading digital art spaces"
+        image="img/optoma/case-study-arebyte.jpg"
         button={{
-          label: "View showcase",
+          label: "View case study",
           chevron: true,
         }}
-      />
-    </Section>
-    <Section>
-      <Text
-        align="center"
-        text={`Many thanks to Freepik. All website comps by [Freepik](https://www.freepik.com/free-psd/smart-home-app-web-template_16692832.htm).`}
       />
     </Section>
 

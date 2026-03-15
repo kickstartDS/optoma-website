@@ -42,11 +42,11 @@ export const TextWithLogos: Story = {
       <>
         <Cta
           highlightText
-          headline="Discover our solutions for Industry 4.0"
-          text={`We help companies make their production processes more efficient and future-proof through digitalization, automation, and smart technologies. Rely on our many years of experience in the industrial sector.
+          headline="Display solutions for every environment"
+          text={`From meeting rooms to classrooms, retail to live events — Optoma provides professional-grade display technology trusted by organisations in over 150 countries.
 
-Revolutionize your manufacturing with our tailored solutions designed to meet the specific needs of your industry.`}
-          buttons={[{ label: "Learn more" }]}
+Discover our range of interactive flat panels, laser projectors, and professional displays designed for seamless collaboration.`}
+          buttons={[{ label: "Explore solutions" }]}
         />
       </>
     ),
@@ -56,28 +56,28 @@ Revolutionize your manufacturing with our tailored solutions designed to meet th
           logosPerRow={3}
           logo={[
             {
-              src: "img/logos/logoipsum-344.svg",
-              alt: "Logo 1",
+              src: "img/optoma/logo-aws-partner.png",
+              alt: "AWS Partner",
             },
             {
-              src: "img/logos/logoipsum-347.svg",
-              alt: "Logo 2",
+              src: "img/optoma/logo-google-education.png",
+              alt: "Google for Education",
             },
             {
-              src: "img/logos/logoipsum-352.svg",
-              alt: "Logo 3",
+              src: "img/optoma/logo-sussex-trust.png",
+              alt: "Sussex Learning Trust",
             },
             {
-              src: "img/logos/logoipsum-356.svg",
-              alt: "Logo 4",
+              src: "img/optoma/logo-schindler.png",
+              alt: "Schindler Group",
             },
             {
-              src: "img/logos/logoipsum-358.svg",
-              alt: "Logo 5",
+              src: "img/optoma/logo-birmingham.png",
+              alt: "Birmingham City Council",
             },
             {
-              src: "img/logos/logoipsum-369.svg",
-              alt: "Logo 6",
+              src: "img/optoma/logo-sounds-vision.png",
+              alt: "Sounds & Vision",
             },
           ]}
         />
@@ -106,20 +106,18 @@ export const FAQWithForm: Story = {
           questions={[
             {
               answer:
-                "Experience the speed & scalability unlike anything seen before with our Headless CMS powered websites, web apps & composable architecture.",
-              question:
-                "What are the benefits of investing in a Design System?",
+                "Optoma products come with a standard manufacturer warranty. Projector lamps are covered for 1 year or 1,000 hours, whichever comes first. Extended warranty options are available through your reseller.",
+              question: "What warranty coverage comes with Optoma products?",
             },
             {
               answer:
-                "Experience the speed & scalability unlike anything seen before with our Headless CMS powered websites, web apps & composable architecture.",
-              question: "What is a Design System?",
+                "Yes. Contact our sales team or an authorised reseller to arrange a live demonstration at your premises. We can showcase our interactive flat panels, projectors, or professional displays.",
+              question: "Can I book a product demo?",
             },
             {
               answer:
-                "A Headless CMS plays a crucial role in a Design System by providing a content-first approach. It separates the back-end content from the front-end presentation layer, allowing for seamless integration with any design system. This results in a flexible, scalable, and platform-agnostic system that ensures content consistency across all platforms and devices.",
-              question:
-                "What is the role of a Headless CMS in a Design System?",
+                "Optoma Management Suite (OMS) is a cloud-based platform that lets you remotely monitor, manage, and update all your Optoma displays from a single dashboard — ideal for multi-site deployments.",
+              question: "What is Optoma Management Suite (OMS)?",
             },
           ]}
         />
@@ -133,8 +131,8 @@ export const FAQWithForm: Story = {
           style="h3"
           spaceAfter="minimum"
         />
-        <TextArea label="Ask us directly!" />
-        <Button label={"Submit"} />
+        <TextArea label="How can we help?" />
+        <Button label={"Send Enquiry"} />
       </>
     ),
   }),
@@ -167,12 +165,12 @@ export const MainTeaserWithGrid: Story = {
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Lorem Ipsum"
-          image="img/placeholder/avatar-wide.svg"
-          text="Lorem Ispum dolor sit amet, consectetur adipiscing elit."
+          headline="Creative Touch 5-Series"
+          image="img/optoma/ifpd-creative-board.jpg"
+          text="Interactive flat panel displays with built-in whiteboard and Google Classroom integration."
           imageRatio="landscape"
           button={{
-            label: "Mehr erfahren",
+            label: "Learn more",
             chevron: true,
           }}
         />
@@ -183,38 +181,38 @@ export const MainTeaserWithGrid: Story = {
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Dolor Sit Amet"
-          image="img/placeholder/avatar-wide.svg"
+          headline="N-Series Displays"
+          image="img/optoma/professional-brand-image.jpg"
         />
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Consectetur Adipiscing"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Laser Projectors"
+          image="img/optoma/case-study-roblox.jpg"
         />
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Eiusmod Tempor"
-          image="img/placeholder/avatar-wide.svg"
+          headline="LED Displays"
+          image="img/optoma/case-study-lente.jpg"
         />
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Incididunt Ut Labore"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Display Share"
+          image="img/optoma/corporate-collaboration.jpg"
         />
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Et Dolore Magna"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Management Suite"
+          image="img/optoma/corporate-communication.jpg"
         />
         <TeaserCard
           layout="compact"
           url={""}
-          headline="Ut Enim Ad Minim"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Accessories"
+          image="img/optoma/professional-signage.jpg"
         />
       </>
     ),

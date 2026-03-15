@@ -14,19 +14,19 @@ const JobDetail = () => (
     <Header {...headerProps} />
     <Section width="full" spaceAfter="none" spaceBefore="none">
       <Hero
-        headline="Frontend Developer (m/f/d)"
-        sub="Shape the digital future with us at Systemics"
-        text="Are you passionate about building outstanding web experiences? Join our agile team and help us deliver innovative solutions for leading brands."
+        headline="Partner Account Manager"
+        sub="Optoma Europe — Hemel Hempstead, UK"
+        text="Accelerate growth through strategic partner relationships across the UK AV/IT channel. Join Optoma's sales team and help expand our market-leading display solutions."
         textPosition="left"
         invertText
         image={{
-          srcMobile: "img/people-brainstorming-work-meeting.png",
-          alt: "Team brainstorming in a meeting room",
+          srcMobile: "img/optoma/corporate-huddle-spaces.jpg",
+          alt: "Modern office meeting space with Optoma display solutions",
         }}
         buttons={[
           {
-            label: "Apply Now",
-            url: "/apply",
+            label: "Apply now",
+            url: "mailto:recruitment@optoma.co.uk",
           },
         ]}
       />
@@ -34,13 +34,15 @@ const JobDetail = () => (
 
     <Section width="wide">
       <Cta
-        headline="Become Part of Our Team"
-        text={`Ready to take the next step in your career? As a Frontend Developer at Systemics, you’ll work on exciting projects, collaborate with talented colleagues, and help shape the digital future for leading brands. Apply now and start your journey with us!
+        headline="About This Role"
+        text={`As a Partner Account Manager at Optoma Europe, you will be responsible for developing and managing key channel partnerships to drive revenue growth across the UK AV/IT market.
 
-As a Frontend Developer, you will be responsible for creating user-friendly web applications that are both functional and visually appealing. You will work closely with our design and backend teams to implement new features and improve existing ones.`}
+You will work closely with resellers, system integrators and distribution partners to expand Optoma's footprint in corporate, education, and professional AV sectors. This is a strategic role that requires a strong network in the UK AV channel, commercial acumen and a passion for visual technology.
+
+This is a hybrid role based at our European headquarters in Hemel Hempstead, with regular travel to partner sites and industry events across the UK.`}
         image={{
-          src: "img/about/cta.png",
-          alt: "Team brainstorming in a meeting room",
+          src: "img/optoma/about-team-discussion.jpg",
+          alt: "Optoma team in a strategy meeting",
           padding: false,
         }}
       />
@@ -48,7 +50,7 @@ As a Frontend Developer, you will be responsible for creating user-friendly web 
 
     <Section
       headline={{
-        text: "Your Role",
+        text: "Key Responsibilities",
         sub: "What you will do",
       }}
       width="wide"
@@ -61,28 +63,28 @@ As a Frontend Developer, you will be responsible for creating user-friendly web 
         feature={[
           {
             icon: "arrow-right",
-            title: "Modern Web Development",
-            text: "Develop and maintain modern, responsive web applications using React and TypeScript",
+            title: "Partner Expansion",
+            text: "Identify, onboard and develop new channel partners to accelerate Optoma's market penetration across the UK AV/IT ecosystem.",
           },
           {
             icon: "arrow-right",
-            title: "Cross-Functional Collaboration",
-            text: "Collaborate closely with UX/UI designers and backend developers",
+            title: "Revenue Growth",
+            text: "Deliver predictable, scalable growth through disciplined pipeline management, accurate forecasting and CRM best practices.",
           },
           {
             icon: "arrow-right",
-            title: "Quality Assurance",
-            text: "Ensure high code quality through code reviews and automated testing",
+            title: "Visual Solutions Advocacy",
+            text: "Position Optoma's full range of projection, IFPD, LED and professional display solutions to meet partners' customer requirements.",
           },
           {
             icon: "arrow-right",
-            title: "Performance Optimization",
-            text: "Optimize applications for maximum speed and scalability",
+            title: "Channel Enablement",
+            text: "Provide product training, sales tools and marketing support to empower partners to sell Optoma solutions effectively.",
           },
           {
             icon: "arrow-right",
-            title: "Innovation & Improvement",
-            text: "Contribute your ideas to improve our products and processes",
+            title: "Brand Ambassador",
+            text: "Represent Optoma at trade shows, partner events and industry forums. Build brand awareness and thought leadership in the AV market.",
           },
         ]}
         style="besideSmall"
@@ -91,8 +93,8 @@ As a Frontend Developer, you will be responsible for creating user-friendly web 
 
     <Section
       headline={{
-        text: "Your Profile",
-        sub: "What we are looking for",
+        text: "What We're Looking For",
+        sub: "Skills and experience",
       }}
       width="wide"
     >
@@ -104,33 +106,33 @@ As a Frontend Developer, you will be responsible for creating user-friendly web 
         feature={[
           {
             icon: "arrow-right",
-            title: "Frontend Expertise",
-            text: "You have solid experience with React, TypeScript, and modern CSS frameworks.",
+            title: "AV Industry Knowledge",
+            text: "Strong understanding of AV products, technologies and market trends — particularly in projection, interactive displays, LED and professional displays.",
           },
           {
             icon: "arrow-right",
-            title: "UI/UX Sensibility",
-            text: "You care about great user experiences and have an eye for design details.",
+            title: "UK Channel Network",
+            text: "An established network of contacts within the UK AV/IT channel — resellers, distributors, system integrators and consultants.",
           },
           {
             icon: "arrow-right",
-            title: "Clean Code Mindset",
-            text: "You write maintainable, well-documented code and value best practices.",
+            title: "Account Management",
+            text: "Proven track record of managing strategic accounts, building long-term partnerships and delivering consistent revenue growth.",
           },
           {
             icon: "arrow-right",
-            title: "Team Player",
-            text: "You enjoy collaborating in cross-functional teams and sharing your knowledge.",
+            title: "Strategic Thinking",
+            text: "Ability to develop and execute partner business plans, identify market opportunities and translate them into actionable growth strategies.",
           },
           {
             icon: "arrow-right",
-            title: "Continuous Learner",
-            text: "You stay up to date with new technologies and are eager to grow your skills.",
+            title: "Communication Skills",
+            text: "Excellent presentation and negotiation skills. Comfortable engaging with stakeholders at all levels, from technical staff to C-suite executives.",
           },
           {
             icon: "arrow-right",
-            title: "Fluent in English",
-            text: "You communicate effectively in English, both written and spoken.",
+            title: "Hybrid Work Capability",
+            text: "Comfortable working in a hybrid environment — office-based in Hemel Hempstead with flexibility to work remotely and travel to partner sites.",
           },
         ]}
         style="besideSmall"
@@ -140,25 +142,25 @@ As a Frontend Developer, you will be responsible for creating user-friendly web 
     <Section
       headline={{
         text: "Frequently Asked Questions",
-        sub: "All about your application at Systemics",
+        sub: "Common questions about this vacancy",
       }}
     >
       <Faq
         questions={[
           {
-            question: "Is this position remote?",
+            question: "Where is this role based?",
             answer:
-              "Yes, you can work remotely from anywhere in Germany. We also have offices in several cities if you prefer working onsite.",
+              "This is a hybrid role based at Optoma's European headquarters in Hemel Hempstead, Hertfordshire. You'll split time between the office and working remotely, with regular travel to partner sites and trade events across the UK.",
           },
           {
-            question: "What does the application process look like?",
+            question: "What benefits are included?",
             answer:
-              "After submitting your application, we’ll review your documents and invite you to a video interview if there’s a match. The final step is a technical challenge and a meeting with the team.",
+              "We offer a competitive base salary with performance-based bonuses, private medical and dental insurance, a company pension scheme, up to 30 days annual leave plus bank holidays, and a company car or car allowance.",
           },
           {
-            question: "Do I need to speak German?",
+            question: "How do I apply?",
             answer:
-              "No, English is our working language. German skills are a plus, but not required.",
+              "Send your CV and cover letter to recruitment@optoma.co.uk, referencing the Partner Account Manager role. Our HR team will review your application and be in touch within 5 working days if your profile is a good fit.",
           },
         ]}
       />
@@ -166,42 +168,42 @@ As a Frontend Developer, you will be responsible for creating user-friendly web 
 
     <Section
       headline={{
-        text: "Ready to join us?",
-        sub: "We look forward to your application!",
+        text: "Interested in this role?",
+        sub: "Get in touch with our recruitment team",
       }}
     >
       <Contact
         image={{
-          alt: "Picture of Jim Johnsson",
+          alt: "Optoma recruitment team contact",
           aspectRatio: "wide",
           fullWidth: true,
           src: "img/people/contact-jim.png",
         }}
         links={[
           {
-            ariaLabel: "Link to Jim Johnsson's email",
+            ariaLabel: "Email the Optoma recruitment team",
             icon: "email",
-            label: "jim.johnsson@systemics.com",
+            label: "recruitment@optoma.co.uk",
             newTab: false,
-            url: "mailto:jim.johnsson@systemics.com",
+            url: "mailto:recruitment@optoma.co.uk",
           },
           {
             icon: "phone",
-            label: "+49 123 4567890",
+            label: "+44 (0)1923 691 800",
             newTab: true,
-            url: "tel:+491234567890",
+            url: "tel:+441923691800",
           },
           {
-            ariaLabel: "Link to Jim Johnsson's LinkedIn profile",
+            ariaLabel: "Visit Optoma Europe on LinkedIn",
             icon: "linkedin",
             label: "LinkedIn",
             newTab: true,
-            url: "https://www.linkedin.com/in/jimjohnsson/",
+            url: "#",
           },
         ]}
-        copy="If you have any questions about the position or your application, feel free to reach out to our Head of Recruitment, Jim Johnsson."
-        subtitle="Head of Recruitment"
-        title="Jim Johnsson"
+        copy="For any questions about this vacancy or life at Optoma, please contact our HR team. We're happy to arrange an informal conversation before you apply."
+        subtitle="HR & Recruitment"
+        title="Optoma Europe HR Team"
       />
     </Section>
 

@@ -28,14 +28,14 @@ export const AtmosphericVideoWithOverlay: Story = {
     },
   },
   args: pack({
-    headline: "This is the main headline",
-    sub: "Subheading for additional context",
-    text: "This is placeholder text used to demonstrate layout, spacing, and typography within the component.",
+    headline: "Brilliant Visuals, Limitless Possibilities",
+    sub: "Award-winning projection and display technology",
+    text: "From immersive installations to everyday collaboration, Optoma delivers stunning visual experiences that inspire, engage, and connect.",
     overlay: true,
     textPosition: "center",
     buttons: [
       {
-        label: "Start here",
+        label: "Explore Solutions",
       },
     ],
     video: {
@@ -54,16 +54,16 @@ export const ColorNeutralText: Story = {
     },
   },
   args: pack({
-    headline: "This is the main headline",
-    sub: "Subheading for additional context",
-    text: "This is placeholder text used to demonstrate layout, spacing, and typography within the component.",
+    headline: "Transform Your Meeting Rooms",
+    sub: "Professional displays built for modern workplaces",
+    text: "Optoma's N-Series professional displays combine 4K clarity with smart management tools, creating meeting spaces that drive productivity and collaboration.",
     textPosition: "corner",
     colorNeutral: true,
     highlightText: true,
     overlay: true,
     buttons: [
       {
-        label: "Start here",
+        label: "View Products",
       },
     ],
     video: {
@@ -82,15 +82,15 @@ export const ColorNeutralVideo: Story = {
     },
   },
   args: pack({
-    headline: "This is the main headline",
-    sub: "Subheading for additional context",
-    text: "This is placeholder text used to demonstrate layout, spacing, and typography within the component.",
+    headline: "Interactive Learning, Reimagined",
+    sub: "Creative Touch 5-Series for education",
+    text: "Engage students with intuitive touch technology, built-in whiteboard tools, and seamless Google Classroom integration — all on a stunning 4K display.",
     textPosition: "center",
     highlightText: true,
     overlay: true,
     buttons: [
       {
-        label: "Start here",
+        label: "Discover More",
       },
     ],
     video: {

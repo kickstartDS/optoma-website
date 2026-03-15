@@ -26,7 +26,7 @@ export const Default: Story = {
     },
   },
   args: pack({
-    name: "Jane Smith",
+    name: "Sarah Mitchell",
     image: {
       src: "img/people/author-emily.png",
       aspectRatio: "square",
@@ -34,11 +34,11 @@ export const Default: Story = {
     links: [
       {
         icon: "twitter",
-        label: "jane_smith",
+        label: "@OptomaUK",
       },
       {
         icon: "email",
-        label: "jane.smith@example.com",
+        label: "education@optoma.co.uk",
       },
     ],
   }),

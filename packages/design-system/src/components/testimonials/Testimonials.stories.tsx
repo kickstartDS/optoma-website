@@ -30,13 +30,13 @@ export const Simple: Story = {
   args: pack({
     testimonial: [
       {
-        quote: `This is an example testimonial used to demonstrate layout and typography.`,
+        quote: `The Creative Touch 5-Series has completely transformed how our teachers deliver lessons. Students are more engaged than ever, and the built-in whiteboard tools save us hours of preparation time.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of Sarah Mitchell",
         },
-        name: "Taylor Reed",
-        title: "Digital Platforms & Ecosystems",
+        name: "Sarah Mitchell",
+        title: "Head of Digital Learning, Sussex Learning Trust",
       },
     ],
   }),
@@ -52,13 +52,13 @@ export const WithTitle: Story = {
   args: pack({
     testimonial: [
       {
-        quote: `Sample feedback text showing how a testimonial could appear in this component.`,
+        quote: `We deployed Optoma N-Series displays across our entire office network. The remote management via OMS has been a game-changer — our IT team can monitor and update every screen from a single dashboard.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of David Chen",
         },
-        name: "Emily Johnson",
-        title: "Chief Marketing Officer",
+        name: "David Chen",
+        title: "IT Director, Schindler Group",
       },
     ],
   }),
@@ -75,33 +75,33 @@ export const ListLayout: Story = {
     layout: "list",
     testimonial: [
       {
-        quote: `This is an example testimonial used to demonstrate layout and typography.`,
+        quote: `The 4K UHD laser projectors from Optoma have elevated our training centre to a new level. The image quality is outstanding even in bright ambient light, and the DuraCore laser engine means virtually zero maintenance.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of Sarah Mitchell",
         },
-        name: "Emily Johnson",
-        title: "Chief Marketing Officer",
+        name: "Sarah Mitchell",
+        title: "Head of Digital Learning, Sussex Learning Trust",
         rating: 5,
       },
       {
-        quote: `Sample feedback text showing how a testimonial could appear in this component.`,
+        quote: `We chose Optoma for our boardrooms because of the seamless wireless sharing. Guests can present from any device within seconds — no dongles, no drivers, no delays.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of David Chen",
         },
-        name: "John Smith",
-        title: "Director of Digital Strategy",
+        name: "David Chen",
+        title: "IT Director, Schindler Group",
         rating: 4,
       },
       {
-        quote: `Placeholder quote intended to be replaced with real user feedback.`,
+        quote: `Optoma's LED displays delivered exactly the impact we needed for our immersive art installation. The colour accuracy and brightness were perfect for the gallery environment.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of James Porter",
         },
-        name: "Alex Chen",
-        title: "CEO",
+        name: "James Porter",
+        title: "Creative Director, arebyte Gallery",
         rating: 5,
       },
     ],
@@ -118,31 +118,31 @@ export const SliderLayout: Story = {
   args: pack({
     testimonial: [
       {
-        quote: `This is an example testimonial used to demonstrate layout and typography.`,
+        quote: `The Creative Touch 5-Series has completely transformed how our teachers deliver lessons. Students are more engaged than ever, and the built-in whiteboard tools save us hours of preparation time.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of Sarah Mitchell",
         },
-        name: "Emily Johnson",
-        title: "Chief Marketing Officer",
+        name: "Sarah Mitchell",
+        title: "Head of Digital Learning, Sussex Learning Trust",
       },
       {
-        quote: `Sample feedback text showing how a testimonial could appear in this component.`,
+        quote: `We chose Optoma for our boardrooms because of the seamless wireless sharing. Guests can present from any device within seconds — no dongles, no drivers, no delays.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of David Chen",
         },
-        name: "John Smith",
-        title: "Director of Digital Strategy",
+        name: "David Chen",
+        title: "IT Director, Schindler Group",
       },
       {
-        quote: `Placeholder quote intended to be replaced with real user feedback.`,
+        quote: `Optoma's LED displays delivered exactly the impact we needed for our immersive art installation. The colour accuracy and brightness were perfect for the gallery environment.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of James Porter",
         },
-        name: "Alex Chen",
-        title: "CEO",
+        name: "James Porter",
+        title: "Creative Director, arebyte Gallery",
       },
     ],
   }),
@@ -158,33 +158,33 @@ export const WithRating: Story = {
   args: pack({
     testimonial: [
       {
-        quote: `This is an example testimonial used to demonstrate layout and typography.`,
+        quote: `The Creative Touch 5-Series has completely transformed how our teachers deliver lessons. Students are more engaged than ever, and the built-in whiteboard tools save us hours of preparation time.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of Sarah Mitchell",
         },
-        name: "Emily Johnson",
-        title: "Chief Marketing Officer",
+        name: "Sarah Mitchell",
+        title: "Head of Digital Learning, Sussex Learning Trust",
         rating: 5,
       },
       {
-        quote: `Sample feedback text showing how a testimonial could appear in this component.`,
+        quote: `We chose Optoma for our boardrooms because of the seamless wireless sharing. Guests can present from any device within seconds — no dongles, no drivers, no delays.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of David Chen",
         },
-        name: "John Smith",
-        title: "Director of Digital Strategy",
+        name: "David Chen",
+        title: "IT Director, Schindler Group",
         rating: 4,
       },
       {
-        quote: `Placeholder quote intended to be replaced with real user feedback.`,
+        quote: `Optoma's LED displays delivered exactly the impact we needed for our immersive art installation. The colour accuracy and brightness were perfect for the gallery environment.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of James Porter",
         },
-        name: "Alex Chen",
-        title: "CEO",
+        name: "James Porter",
+        title: "Creative Director, arebyte Gallery",
         rating: 5,
       },
     ],
@@ -202,31 +202,31 @@ export const AlternatingLayout: Story = {
     layout: "alternating",
     testimonial: [
       {
-        quote: `This is an example testimonial used to demonstrate layout and typography.`,
+        quote: `The Creative Touch 5-Series has completely transformed how our teachers deliver lessons. Students are more engaged than ever, and the built-in whiteboard tools save us hours of preparation time.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of Sarah Mitchell",
         },
-        name: "Emily Johnson",
-        title: "Chief Marketing Officer",
+        name: "Sarah Mitchell",
+        title: "Head of Digital Learning, Sussex Learning Trust",
       },
       {
-        quote: `Sample feedback text showing how a testimonial could appear in this component.`,
+        quote: `We chose Optoma for our boardrooms because of the seamless wireless sharing. Guests can present from any device within seconds — no dongles, no drivers, no delays.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of David Chen",
         },
-        name: "John Smith",
-        title: "Director of Digital Strategy",
+        name: "David Chen",
+        title: "IT Director, Schindler Group",
       },
       {
-        quote: `Placeholder quote intended to be replaced with real user feedback.`,
+        quote: `Optoma's LED displays delivered exactly the impact we needed for our immersive art installation. The colour accuracy and brightness were perfect for the gallery environment.`,
         image: {
           src: "img/placeholder/avatar-round.svg",
-          alt: "Alt Text Testimonial Image",
+          alt: "Headshot of James Porter",
         },
-        name: "Alex Chen",
-        title: "CEO",
+        name: "James Porter",
+        title: "Creative Director, arebyte Gallery",
       },
     ],
   }),

@@ -23,106 +23,107 @@ type Story = StoryObj<typeof BlogPostComponent>;
 export const BlogPost: Story = {
   args: pack({
     head: {
-      date: "12/30/2022",
+      date: "03/15/2025",
       tags: [
         {
-          entry: "Technology",
+          entry: "Case Studies",
         },
         {
-          entry: "AI",
+          entry: "Education",
         },
       ],
-      headline: "The Future of AI: A Glimpse into the Unseen",
-      image: "img/close-up-young-business-team-working.png",
+      headline:
+        "How Sussex Learning Trust Transformed Classroom Engagement with Optoma IFPDs",
+      image: "img/optoma/ifpd-school1.jpg",
     },
     content: `
 ## Introduction
-The future of **Artificial Intelligence (AI)** is a topic that has been the subject of much debate. It's a field that's constantly evolving, with new advancements and breakthroughs happening all the time. [Learn more about AI](https://en.wikipedia.org/wiki/Artificial_intelligence)
+When **Sussex Learning Trust** set out to modernise technology across its 15 primary schools, the goal was clear: replace ageing projectors and interactive whiteboards with a solution that would genuinely transform how teachers and pupils interact in the classroom. [Learn more about Creative Touch](https://www.optoma.co.uk/ifpds)
 
-## The Current State of AI
-Today, AI is already a part of our daily lives. From *smart home devices* to *recommendation algorithms* on our favorite streaming services, AI is everywhere.
+## The Challenge
+Many classrooms were still relying on projector-and-whiteboard setups installed over a decade ago. Teachers reported *poor visibility*, *unreliable touch response*, and *limited collaboration features* — all of which hindered student engagement during lessons.
 
-## The Potential of AI
-The potential of AI is immense. It has the ability to revolutionize industries, from healthcare to finance, and everything in between.
+## Why Optoma Creative Touch?
+After evaluating displays from several manufacturers, the Trust selected the Optoma Creative Touch 5-Series for its zero-bonding technology, built-in Google EDLA certification, and seamless integration with Google Classroom — already widely used across the Trust's schools.
 
-## The Challenges of AI
-However, with great potential comes great challenges. Issues such as data privacy and the ethical implications of AI are just some of the hurdles that need to be overcome.
+## The Rollout
+Working with Optoma's approved reseller partner Sounds & Vision, the Trust deployed over 120 Creative Touch displays across all 15 schools during the summer break, minimising disruption to the academic calendar.
 
-## The Role of AI in Society
-AI has the potential to greatly impact society. It can lead to job creation in new industries, and can also help solve complex societal problems.
+## Results
+Within the first term, teachers reported a **40% increase in student engagement** during interactive lessons. The built-in Whiteboard app and wireless screen sharing via Display Share meant pupils could present work directly from their Chromebooks — fostering collaboration and confidence.
 
-## Conclusion
-The future of AI is exciting and full of potential. However, it's important that we navigate this future with caution, ensuring that the benefits of AI are accessible to all, while minimizing its potential risks.
+## What's Next
+The Trust is now exploring Optoma Management Suite (OMS) to centrally manage firmware updates and scheduling across the entire display estate, further reducing the burden on school IT coordinators.
           `,
     aside: {
       author: {
-        name: "Jane Doe",
-        byline: "Senior Developer",
+        name: "Sarah Mitchell",
+        byline: "Education Technology Specialist",
         image: {
           src: "img/people/contact-isabella.png",
-          alt: "Picture of Jane Doe",
+          alt: "Picture of Sarah Mitchell",
           aspectRatio: "square",
         },
-        twitter: "Janedoe",
-        email: "Jane.doe@example.com",
+        twitter: "OptomaUK",
+        email: "education@optoma.co.uk",
       },
       socialSharing: [
         {
           icon: "twitter",
-          url: "https://twitter.com/share?text=This%20is%20a%20blog%20post%20headline&url=https://example.com/blog",
+          url: "https://twitter.com/share?text=How%20Sussex%20Learning%20Trust%20Transformed%20Classrooms%20with%20Optoma%20IFPDs&url=https://www.optoma.co.uk/blog",
           title: "Share on Twitter",
         },
         {
           icon: "linkedin",
-          url: "https://www.linkedin.com/shareArticle?mini=true&url=https://example.com/blog&title=This%20is%20a%20blog%20post%20headline",
+          url: "https://www.linkedin.com/shareArticle?mini=true&url=https://www.optoma.co.uk/blog&title=Sussex%20Learning%20Trust%20Case%20Study",
           title: "Share on LinkedIn",
         },
       ],
-      readingTime: "5 min read",
-      date: "12/30/2022",
+      readingTime: "7 min read",
+      date: "03/15/2025",
     },
     contact: {
       image: {
         src: "img/people/contact-john.png",
-        alt: "Picture of Jane Smith",
+        alt: "Picture of Emma Richardson",
         fullWidth: false,
         aspectRatio: "vertical",
       },
-      title: "John Smith",
-      subtitle: "Sales Representative",
+      title: "Emma Richardson",
+      subtitle: "Regional Sales Manager",
       links: [
         {
-          icon: "xing",
-          label: "john.smith",
-          url: "mailto:mail@example.com",
+          icon: "email",
+          label: "emma.richardson@optoma.co.uk",
+          url: "mailto:emma.richardson@optoma.co.uk",
           newTab: false,
         },
         {
-          icon: "twitter",
-          label: "@john_smith",
-          url: "#",
+          icon: "phone",
+          label: "+44 (0)1923 691 800",
+          url: "tel:+441923691800",
           newTab: false,
         },
       ],
-      copy: "Leads with a vision for innovative, user-centric web designs, ensuring each project merges creativity with functionality to deliver outstanding digital experiences.",
+      copy: "Helping schools and organisations across the UK find the right display technology for their spaces. Get in touch to arrange a demo or discuss your requirements.",
     },
     cta: {
-      headline: "Ready to Transform Your Development Process?",
-      sub: "Start your journey today.",
+      headline: "Ready to Transform Your Learning Spaces?",
+      sub: "See the Creative Touch 5-Series in action.",
       buttons: [
         {
-          label: "Contact Us",
+          label: "Request a Demo",
           url: "#",
           icon: "person",
         },
         {
-          label: "Learn More",
+          label: "View All IFPDs",
           url: "#",
           icon: "date",
         },
       ],
       textAlign: "center",
-      text: "Get started with our design system today and experience a new level of efficiency and consistency in your projects.",
+      text: "Book a free demonstration at your school or office and experience the difference Optoma interactive displays can make.",
     },
   }),
 };

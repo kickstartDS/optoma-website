@@ -29,9 +29,9 @@ export const CountUpWithIcons: Story = {
   },
   args: pack({
     stat: [
-      { number: "150K", title: "Count", icon: "person" },
-      { number: "99%", title: "Rate", icon: "star" },
-      { number: "50h", title: "Duration", icon: "time" },
+      { number: "25+", title: "Years of Innovation", icon: "star" },
+      { number: "150+", title: "Countries Worldwide", icon: "map" },
+      { number: "50M+", title: "Products Installed", icon: "person" },
     ],
   }),
 };
@@ -47,16 +47,16 @@ export const CountUpWithDescription: Story = {
     align: "left",
     stat: [
       {
-        number: "1500",
-        title: "Users",
+        number: "0.5W",
+        title: "Standby Power",
         description:
-          "An example count used to visualize quantity-based information.",
+          "Industry-leading standby power consumption for energy-efficient operation across all professional display lines.",
       },
       {
-        number: "99.9%",
-        title: "Success Rate",
+        number: "30,000h",
+        title: "Laser Life",
         description:
-          "A sample percentage value displayed for demonstration purposes.",
+          "DuraCore laser engine delivers up to 30,000 hours of maintenance-free projection with consistent brightness.",
       },
     ],
   }),

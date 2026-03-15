@@ -30,29 +30,29 @@ export const TechnicalDetailsOnly: Story = {
   args: pack({
     download: [
       {
-        name: "Product Brochure",
+        name: "Creative Touch 5-Series Datasheet",
         format: "PDF",
-        size: "2.5 MB",
-        previewImage: "img/offset-image.png",
+        size: "4.8 MB",
+        previewImage: "img/optoma/ifpd-5g3-75inch.webp",
         url: "#",
       },
       {
-        name: "Company Brochure",
-        previewImage: "img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
+        name: "N-Series Professional Display Guide",
+        previewImage: "img/optoma/professional-brand-image.jpg",
         format: "PDF",
         size: "3.2 MB",
         url: "#",
       },
       {
-        name: "User Guide",
-        format: "DOC",
-        size: "20 KB",
+        name: "OMS Quick Start Guide",
+        format: "PDF",
+        size: "1.5 MB",
         url: "#",
       },
       {
-        name: "Technical Specifications",
-        format: "TXT",
-        size: "12 KB",
+        name: "Warranty Terms & Conditions",
+        format: "PDF",
+        size: "280 KB",
         url: "#",
       },
     ],
@@ -69,26 +69,28 @@ export const DescriptionOnly: Story = {
   args: pack({
     download: [
       {
-        name: "Product Brochure",
+        name: "Creative Touch 5-Series Brochure",
         description:
-          "Detailed product information and specifications. Recommended for all users.",
-        previewImage: "img/offset-image.png",
+          "Complete overview of the Creative Touch 5-Series interactive flat panel displays, including specifications, features, and educational use cases.",
+        previewImage: "img/optoma/ifpd-creative-board.jpg",
       },
       {
-        name: "Technical Specifications",
+        name: "Optoma Corporate Solutions Guide",
         description:
-          "In-depth technical details and requirements. Recommended for technical users.",
-        previewImage: "img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
+          "Detailed guide to Optoma's professional display and projection solutions for meeting rooms, huddle spaces, and large venues.",
+        previewImage: "img/optoma/corporate-collaboration.jpg",
       },
       {
-        name: "User Guide",
-        description: "Comprehensive guide to using our product.",
-        previewImage: "img/about/cta.png",
+        name: "Display Share User Manual",
+        description:
+          "Step-by-step guide to setting up and using Display Share wireless screen sharing across your organisation.",
+        previewImage: "img/optoma/professional-hybrid.jpg",
       },
       {
-        name: "Company Brochure",
-        description: "Overview of our company and services.",
-        previewImage: "img/view-modern-office.jpg",
+        name: "Sustainability Report",
+        description:
+          "Optoma's commitment to sustainability, including eco-friendly packaging, energy efficiency, and responsible manufacturing practices.",
+        previewImage: "img/optoma/corporate-communication.jpg",
       },
     ],
   }),
@@ -104,32 +106,34 @@ export const Complete: Story = {
   args: pack({
     download: [
       {
-        name: "Product Brochure",
+        name: "Creative Touch 5-Series Datasheet",
         format: "PDF",
-        size: "2.5 MB",
+        size: "4.8 MB",
         description:
-          "Detailed product information and specifications. Recommended for all users.",
-        previewImage: "img/offset-image.png",
+          'Full technical specifications, feature details, and comparison chart for 65", 75", and 86" models.',
+        previewImage: "img/optoma/ifpd-5g3-75inch.webp",
       },
       {
-        name: "Company Brochure",
-        description: "Overview of our company and services.",
-        previewImage: "img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
+        name: "Optoma Corporate Solutions Guide",
+        description:
+          "End-to-end guide for planning and deploying Optoma displays in corporate environments.",
+        previewImage: "img/optoma/corporate-collaboration.jpg",
         format: "PDF",
-        size: "3.2 MB",
+        size: "6.1 MB",
       },
       {
-        name: "User Guide",
-        description: "Comprehensive guide to using our product.",
-        format: "DOC",
-        size: "20 KB",
-      },
-      {
-        name: "Technical Specifications",
+        name: "OMS Quick Start Guide",
         description:
-          "In-depth technical details and requirements. Recommended for technical users.",
-        format: "TXT",
-        size: "12 KB",
+          "Get started with the Optoma Management Suite in minutes. Covers device registration, dashboard setup, and alert configuration.",
+        format: "PDF",
+        size: "1.5 MB",
+      },
+      {
+        name: "Warranty Terms & Conditions",
+        description:
+          "Comprehensive warranty policy for all Optoma product lines, including extended warranty options.",
+        format: "PDF",
+        size: "280 KB",
       },
     ],
   }),
@@ -145,26 +149,27 @@ export const Mixed: Story = {
   args: pack({
     download: [
       {
-        name: "Product Brochure",
+        name: "N-Series Specification Sheet",
         format: "PDF",
-        size: "2.5 MB",
+        size: "3.4 MB",
         description:
-          "Detailed product information and specifications. Recommended for all users.",
-        previewImage: "img/offset-image.png",
+          "Detailed specifications for the N-Series professional display range, including brightness, connectivity, and dimensions.",
+        previewImage: "img/optoma/professional-brand-image.jpg",
       },
       {
-        name: "User Guide",
+        name: "Display Share Setup Guide",
         format: "PDF",
         size: "1.2 MB",
-        previewImage: "img/about/cta.png",
+        previewImage: "img/optoma/professional-hybrid.jpg",
       },
       {
-        name: "Company Brochure",
-        previewImage: "img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
+        name: "Optoma Education Brochure",
+        previewImage: "img/optoma/ifpd-creative-board.jpg",
       },
       {
-        name: "Technical Specifications",
-        description: "In-depth technical details and requirements.",
+        name: "Firmware Update Notes",
+        description:
+          "Release notes for the latest firmware update, including bug fixes and new features.",
       },
     ],
   }),

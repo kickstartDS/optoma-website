@@ -28,14 +28,14 @@ export const BesideRightLayout: Story = {
     },
   },
   args: pack({
-    text: `This is a simple text paragraph that demonstrates standard body copy. It can be used to explain a topic, provide background information, or introduce related content in a neutral and readable way.
+    text: `Optoma's Interactive Flat Panel Displays bring collaboration to life in classrooms and meeting rooms alike. With built-in whiteboard software and wireless screen sharing, the Creative Touch 5-Series empowers teams to work together — whether in the room or connecting remotely.
 
-This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+The **Creative Touch 5-Series** is available in **[65", 75", and 86" sizes](#)**, featuring 4K UHD resolution, multi-touch capability, and integrated cloud whiteboard for seamless collaboration.
 
-*This paragraph is intended to demonstrate italic text formatting.*`,
+*Designed for 24/7 operation with industry-leading 0.5W standby power consumption.*`,
     image: {
-      src: "img/placeholder/image-gallery-02.svg",
-      alt: "Placeholder Image",
+      src: "img/optoma/ifpd-creative-board.jpg",
+      alt: "Optoma Creative Touch interactive flat panel display in a modern classroom",
     },
     layout: "beside-right",
   }),
@@ -49,14 +49,14 @@ export const AboveLayout: Story = {
     },
   },
   args: pack({
-    text: `This is a simple text paragraph that demonstrates standard body copy. It can be used to explain a topic, provide background information, or introduce related content in a neutral and readable way.
+    text: `Optoma's professional display solutions are built for the demands of corporate environments. From huddle spaces to large boardrooms, our N-Series displays deliver crisp 4K visuals with integrated remote management via the Optoma Management Suite.
 
-This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+Featuring **Display Share** wireless casting and **[OMS remote management](#)** capabilities, Optoma professional displays simplify IT administration while enhancing the meeting room experience.
 
-*This paragraph is intended to demonstrate italic text formatting.*`,
+*Every display is engineered for reliability, with 24/7 operation capability and eco-friendly packaging made from 99% recyclable materials.*`,
     image: {
-      src: "img/placeholder/image-gallery-02.svg",
-      alt: "Placeholder Image",
+      src: "img/optoma/professional-collaboration.jpg",
+      alt: "Optoma N-Series professional display in a corporate meeting room",
     },
     layout: "above",
   }),

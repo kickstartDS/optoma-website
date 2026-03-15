@@ -29,7 +29,7 @@ export const Default: Story = {
   },
   args: pack({
     author: {
-      name: "Jane Smith",
+      name: "Sarah Mitchell",
       image: {
         src: "img/people/author-emily.png",
         aspectRatio: "square",
@@ -37,27 +37,27 @@ export const Default: Story = {
       links: [
         {
           icon: "twitter",
-          label: "jane_smith",
+          label: "@OptomaUK",
         },
         {
           icon: "email",
-          label: "jane.smith@example.com",
+          label: "education@optoma.co.uk",
         },
       ],
     },
     socialSharing: [
       {
         icon: "twitter",
-        href: "https://twitter.com/share?text=The%20Future%20of%20AI&url=https://example.com/blog/the-future-of-ai",
+        href: "https://twitter.com/share?text=Sussex%20Learning%20Trust%20Case%20Study&url=https://www.optoma.co.uk/case-studies",
         title: "Share on Twitter",
       },
       {
         icon: "linkedin",
-        href: "https://www.linkedin.com/shareArticle?mini=true&url=https://example.com/blog/the-future-of-ai&title=The%20Future%20of%20AI&summary=The%20Future%20of%20AI&source=LinkedIn",
+        href: "https://www.linkedin.com/shareArticle?mini=true&url=https://www.optoma.co.uk/case-studies&title=Sussex%20Learning%20Trust%20Case%20Study",
         title: "Share on LinkedIn",
       },
     ],
-    readingTime: "5 min read",
-    date: "12/30/2022",
+    readingTime: "7 min read",
+    date: "03/15/2025",
   }),
 };

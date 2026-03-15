@@ -28,12 +28,12 @@ export const ProductTiles: Story = {
     },
   },
   args: pack({
-    headline: "Explore This Topic",
-    text: "This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration.",
-    image: "img/placeholder/avatar-wide.svg",
+    headline: "Interactive Flat Panel Displays",
+    text: 'Create, connect and teach with Optoma\'s Creative Touch 5-Series. Available in 65", 75" and 86" sizes with built-in Whiteboard software.',
+    image: "img/optoma/ifpd-creative-board.jpg",
     url: "#",
     button: {
-      label: "Learn more",
+      label: "View products",
       hidden: true,
     },
   }),
@@ -48,12 +48,12 @@ export const Compact: Story = {
   },
   args: pack({
     layout: "compact",
-    headline: "Explore This Topic",
-    text: "This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration.",
-    image: "img/people-brainstorming-work-meeting.png",
+    headline: "Sussex Learning Trust Case Study",
+    text: "Discover how Optoma interactive displays and visualisers are being adopted and utilised in exciting new ways across the Sussex Learning Trust schools.",
+    image: "img/optoma/case-study-southmead.jpg",
     url: "#",
     button: {
-      label: "Learn more",
+      label: "Read case study",
     },
   }),
 };
@@ -66,13 +66,13 @@ export const PageNavigation: Story = {
     },
   },
   args: pack({
-    headline: "Explore This Topic",
-    text: "This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration.",
-    image: "img/placeholder/avatar-wide.svg",
+    headline: "Corporate Solutions",
+    text: "From small huddle spaces to large conference rooms and lobbies — Optoma has display solutions to meet every corporate need.",
+    image: "img/optoma/corporate-stay-connected.jpg",
     imageRatio: "landscape",
     url: "#",
     button: {
-      label: "Learn more",
+      label: "Explore solutions",
     },
   }),
 };
@@ -85,15 +85,15 @@ export const ShowcasePreview: Story = {
     },
   },
   args: pack({
-    label: "Category Label",
+    label: "Case Study",
     layout: "row",
     imageRatio: "wide",
-    headline: "Explore This Topic",
-    text: "This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration.",
-    image: "img/placeholder/avatar-wide.svg",
+    headline: "Roblox Fans at Gamescom 2025",
+    text: "Optoma screens create next-level experiences for Roblox fans, delivering immersive visuals that captivated thousands of gaming enthusiasts.",
+    image: "img/optoma/case-study-roblox.jpg",
     url: "#",
     button: {
-      label: "Learn more",
+      label: "Find out more",
     },
   }),
 };

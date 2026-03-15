@@ -28,16 +28,17 @@ export const Default: Story = {
     },
   },
   args: pack({
-    date: "12/30/2022",
+    date: "06/15/2025",
     tags: [
       {
-        entry: "Technology",
+        entry: "Case Study",
       },
       {
-        entry: "AI",
+        entry: "Education",
       },
     ],
-    headline: "The Future of AI",
-    image: "img/close-up-young-business-team-working.png",
+    headline:
+      "How Sussex Learning Trust Transformed Classroom Engagement with Optoma IFPDs",
+    image: "img/optoma/ifpd-school1.jpg",
   }),
 };

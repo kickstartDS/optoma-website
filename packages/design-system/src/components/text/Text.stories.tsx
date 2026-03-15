@@ -29,11 +29,11 @@ export const SingleColumn: Story = {
   },
   args: pack({
     layout: "singleColumn",
-    text: `This is a simple text paragraph that demonstrates standard body copy. It can be used to explain a topic, provide background information, or introduce related content in a neutral and readable way.
+    text: `Optoma is a world-leading designer and manufacturer of projectors, interactive flat panel displays, and professional audio-visual solutions. For over 25 years, we have been powering collaboration, learning, and immersive experiences across more than 150 countries.
 
-This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+Our product portfolio includes **4K UHD laser projectors**, **[Creative Touch interactive displays](#)** for education and corporate environments, and professional LED signage for high-impact visual communication.
 
-*This paragraph is intended to demonstrate italic text formatting.*`,
+*From boardrooms to classrooms, Optoma delivers brilliant visuals that inspire.*`,
   }),
 };
 
@@ -46,11 +46,11 @@ export const Centered: Story = {
   },
   args: pack({
     align: "center",
-    text: `This is a simple text paragraph that demonstrates standard body copy. It can be used to explain a topic, provide background information, or introduce related content in a neutral and readable way.
+    text: `Optoma's commitment to innovation drives everything we do. From DuraCore laser technology with up to 30,000 hours of maintenance-free operation, to our intelligent Optoma Management Suite for remote fleet management — we engineer solutions that perform.
 
-This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+Our **eco-friendly approach** includes industry-leading 0.5W standby power, intelligent brightness adjustment, and **[sustainable packaging initiatives](#)** using 99% recyclable materials.
 
-*This paragraph is intended to demonstrate italic text formatting.*`,
+*Connect, present, and collaborate with confidence.*`,
   }),
 };
 
@@ -63,11 +63,11 @@ export const MultiColumn: Story = {
   },
   args: pack({
     layout: "multiColumn",
-    text: `This is a simple text paragraph that demonstrates standard body copy. It can be used to explain a topic, provide background information, or introduce related content in a neutral and readable way.
+    text: `Whether you're outfitting a single meeting room or deploying displays across an entire campus, Optoma provides end-to-end solutions tailored to your needs. Our dedicated pre-sales and support teams work closely with AV integrators and IT departments.
 
-This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+With **Display Share** wireless casting and **[Google for Education](#)** certification, Optoma interactive displays integrate seamlessly into existing workflows and infrastructure.
 
-*This paragraph is intended to demonstrate italic text formatting.*`,
+*Trusted by organisations worldwide, from FTSE 100 companies to primary schools.*`,
   }),
 };
 
@@ -80,10 +80,10 @@ export const Highlight: Story = {
   },
   args: pack({
     highlightText: true,
-    text: `This is a simple text paragraph that demonstrates standard body copy. It can be used to explain a topic, provide background information, or introduce related content in a neutral and readable way.
+    text: `Optoma's award-winning display solutions are designed to transform how organisations communicate, collaborate, and engage. Our range spans from compact projectors for huddle spaces to large-format LED displays for immersive installations.
 
-This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+Every product is backed by our **industry-leading warranty**, dedicated **[technical support team](#)**, and a global network of certified AV partners ready to specify, install, and maintain your Optoma solution.
 
-*This paragraph is intended to demonstrate italic text formatting.*`,
+*Experience the Optoma difference — book a personalised demonstration today.*`,
   }),
 };

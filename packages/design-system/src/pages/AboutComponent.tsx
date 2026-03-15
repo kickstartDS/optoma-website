@@ -26,12 +26,12 @@ const About = () => (
         overlay
         highlightText
         textPosition="corner"
-        headline="kickstartDS CMS Starter are here!"
-        sub="Featuring a fully fledged, ready to use and easily themeable Design System"
+        headline="Bringing Ideas to Life"
+        sub="Captivating, inspiring and connecting people through pioneering visual solutions"
         buttons={[
           {
-            label: "Start here",
-            url: "#starthere",
+            label: "Discover our story",
+            url: "#about",
           },
         ]}
         video={{
@@ -43,11 +43,11 @@ const About = () => (
     </Section>
 
     <Section
-      id="starthere"
+      id="about"
       width="wide"
       headline={{
-        text: "A Design System is nothing without a system applying it",
-        sub: "Take off with our Starters 🚀",
+        text: "Our Purpose, Vision & Mission",
+        sub: "What drives us every day",
         width: "default",
         align: "left",
         large: true,
@@ -61,17 +61,21 @@ const About = () => (
       <Cta
         align="top"
         highlightText
-        image={{ src: "/img/about/cta.png" }}
+        image={{ src: "img/optoma/about-immersive-art.jpg" }}
         text="
-We bring you [CMS starter](/starter) to help setup your next professional website lighning fast. For the beginning you can choose between headless CMS backends like **Static CMS**, **Storyblok**, **Netlify Create** (formerly **Stackbit**) or you go with **11ty static site** generation.
+**Our Purpose:** To captivate, inspire and connect people.
 
-**Dive into our demos, starter, components and discover the kickstartDS experience that suits you best!**"
+**Our Vision:** To bring people together through pioneering visual solutions that captivate, inspire and connect.
+
+**Our Mission:** To deliver sustainable and captivating visual solutions that meet customers' evolving needs through innovation, reliability and exceptional service.
+
+**We believe technology should bring people closer — whether in a boardroom, a classroom, or a gallery.**"
         order={{ desktopImageLast: true }}
         buttons={[
           {
             icon: "chevron-right",
-            label: "Go with a starter",
-            url: "/starter",
+            label: "Explore our products",
+            url: "#",
           },
         ]}
       />
@@ -80,66 +84,40 @@ We bring you [CMS starter](/starter) to help setup your next professional websit
     <Section
       width="wide"
       headline={{
-        text: "Highlights of the CMS Starter",
-        sub: "Slide through our highlights",
+        text: "Our Values",
+        sub: "The principles that guide everything we do",
         textAlign: "left",
       }}
     >
       <Slider autoplay equalHeight gap={15} arrows>
         <ImageText
-          text={""}
+          text={`
+### Customer Focus
+We listen, understand and respond to our customers' evolving needs. Every solution we build starts with the people who use it — ensuring reliability, ease of use and genuine value in every interaction.`}
           image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-01.svg",
-            alt: "A Slideshow - content of this slide: Connecting a Design System to a CMS has never been easier. And cheaper. Create your next digital experience faster, more consistent and sustainably than ever.",
+            src: "img/optoma/about-team-discussion.jpg",
+            alt: "Optoma team collaborating in a modern meeting space",
           }}
           layout={"above"}
         />
         <ImageText
           image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-02.svg",
-            alt: "A Slideshow - content of this slide: StaticCMS, Storyblok, Netlify Create (formerly Stackbit) and 11ty. Meet our Starters, low-code, open source, ready to start and batteries included",
+            src: "img/optoma/about-data-analytics.jpg",
+            alt: "Innovative data analytics and visual solutions",
           }}
-          text={""}
+          text={`
+### Innovation
+We push the boundaries of what's possible in visual technology. From laser projection to all-in-one LED displays, we continuously invest in R&D to deliver solutions that set new industry benchmarks.`}
           layout={"above"}
         />
         <ImageText
           image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-03.svg",
-            alt: "A Slideshow - content of this slide: From zero to a deployed production website in less than 30 mins. For Storyblok, Stackbit (aka Netlify Create), StaticCMS or even as a static site with 11ty. Your choice!",
+            src: "img/optoma/about-sustainability.jpg",
+            alt: "Sustainable manufacturing and eco-friendly technology",
           }}
-          text={""}
-          layout={"above"}
-        />
-        <ImageText
-          image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-05.svg",
-            alt: "A Slideshow - content of this slide: Full Design System with branding layer included. Professional components, optimized for content & marketing websites to be used as a starting point for your very own Design System!",
-          }}
-          text={""}
-          layout={"above"}
-        />
-        <ImageText
-          image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-04.svg",
-            alt: "A Slideshow - content of this slide: All component variants as presets in the CMS editor. Develop components once and reuse everywhere.",
-          }}
-          text={""}
-          layout={"above"}
-        />
-        <ImageText
-          image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-06.svg",
-            alt: "A Slideshow - content of this slide: Automatic conversion with next-gen schema tooling! Use our transformers, or write your own one, based on an extensive library we wrote. Component screenshots, presets and configuration ... all automated!",
-          }}
-          text={""}
-          layout={"above"}
-        />
-        <ImageText
-          image={{
-            src: "/static/img/kickstartDS/CMS-Starter producthunt-slide-07.svg",
-            alt: "A Slideshow - content of this slide: Enter the world of headless CMS and start today. It's just one click away! We're on a mission to democratize Design Systems. Are you too?",
-          }}
-          text={""}
+          text={`
+### Integrity
+We act with honesty, transparency and accountability. Our commitment to ethical practices extends from how we treat our partners and employees to how we design products that respect the environment.`}
           layout={"above"}
         />
       </Slider>
@@ -153,45 +131,41 @@ We bring you [CMS starter](/starter) to help setup your next professional websit
       }}
     >
       <ImageStory
-        headline="Open Source vs. Premium Experience"
+        headline="A Message from Our Chairman"
         layout="imageLeft"
         text={`
-We built two distinct demo websites to represent the range of possibilities with kickstartDS. Plus, You'll find website starters, to start your journey even faster.
+Since founding Optoma, our goal has always been to bring people together through the power of visual technology.
 
-#### Basic Demo of an Agency Website
-The Open Source Demo, built entirely on our [**open-source** modules](https://www.kickstartds.com/modules/), demonstrates the robust capabilities you can leverage at no cost. It highlights the immense value **kickstartDS** offers, without any investment.
+What began as a passion for projection has grown into a global company with offices in over **25 countries**, delivering award-winning display solutions across corporate, education, entertainment and public spaces.
 
-#### Premium Experience Demo
-For a more enhanced experience, check out the Premium Experience Demo. It demonstrates the potential of our [**premium** kickstartDS Content Component Module](https://www.kickstartds.com/content-module/). See how a modest and fair one time investment can significantly elevate the look and feel of your website or content-driven application, sustainably.
+We believe that great technology should be **accessible**, **sustainable** and **captivating**. As we look to the future, we remain committed to pioneering solutions that inspire connection and creativity — while respecting both our customers and the planet.
+
+**— S.Y. Chen, Chairman**
 `}
         image={{
-          src: "/img/full-shot-different-people-working-together.png",
-          alt: "Digital art of two friendly girls standing in front of each other, playing with a huge pile of toy bricks in their center. the scene is surrounded by horizontal light stripes in motion creating a ring around them, light blue, violet and purple colors, light neon-lights, laser-light, wide-angle",
+          src: "img/optoma/about-chairman.jpg",
+          alt: "S.Y. Chen, Chairman of Optoma",
         }}
       />
     </Section>
 
-    <Section width="wide">
-      <Cta
-        backgroundColor="var(--ks-background-color-bold)"
-        padding
-        headline="Spoiler Alert!"
+    <Section style="framed" transition="to-accent" width="wide">
+      <ImageStory
+        headline="Our Working Culture"
+        layout="imageRight"
+        text={`
+At Optoma, we foster a collaborative and inclusive environment where every team member is valued.
+
+Our culture is built on **mutual respect**, **open communication** and a shared commitment to excellence. We encourage cross-functional collaboration, continuous learning and creative problem-solving.
+
+With a diverse team spanning over 25 countries, we embrace different perspectives and backgrounds. Our flexible working arrangements and focus on employee wellbeing create an environment where people can do their best work — whether in the office, at home, or on the road.
+
+**We're not just building displays — we're building a team that makes a difference.**
+`}
         image={{
-          src: "/static/img/about/spoiler.png",
-          padding: true,
+          src: "img/optoma/about-team-highfive.jpg",
+          alt: "Optoma team members celebrating a milestone",
         }}
-        highlightText
-        text="Although this is just a website for demo purposes, if you are looking for an agency to serve your **headless** or **Design System** needs, contact us, we are real experts!"
-        order={{
-          desktopImageLast: true,
-        }}
-        buttons={[
-          {
-            label: "Contact us",
-            url: "https://app.lemcal.com/@daniel-ley",
-            icon: "person",
-          },
-        ]}
       />
     </Section>
 
@@ -201,95 +175,102 @@ For a more enhanced experience, check out the Premium Experience Demo. It demons
       headline={{
         width: "default",
         align: "left",
-        text: "Comparing both demos, you can **gain** a clear understanding of the **value** proposition offered by **kickstartDS**",
-        sub: "From Open Source solution to premium marketing experience",
+        text: "Global Reach, Local Expertise",
+        sub: "Offices in 25+ countries with deep local knowledge",
         switchOrder: true,
       }}
     >
       <TeaserCard
-        headline="Basic Agency Website Demo"
-        text="Compare what the free version, using Open Source components only, can already offer"
-        url={"https://basic.design-system.agency/"}
+        headline="Corporate Solutions"
+        text="Transform meeting rooms and collaboration spaces with projection, interactive displays and LED solutions"
+        url={"#"}
         button={{
-          label: "Browse basic Demo",
+          label: "Explore corporate",
         }}
       />
       <TeaserCard
-        headline="Premium Content Experience"
-        text="Which is enriched with more complex components, based on the kickstartDS Content Module."
-        url={"https://design-system.agency/"}
+        headline="Education"
+        text="Empower teaching and learning with Google-certified interactive displays and classroom technology"
+        url={"#"}
         button={{
-          label: "Browse premium Demo",
+          label: "Explore education",
         }}
       />
       <TeaserCard
-        headline="65+ Examples build on top of 18 components"
-        text="Flick through our component collection, switching themes or toggling inverted styles"
-        url={"/components"}
+        headline="Professional AV"
+        text="Large-venue projection, digital signage and LED displays for immersive public spaces and events"
+        url={"#"}
         button={{
-          label: "Browse all Components",
+          label: "Explore Pro AV",
         }}
       />
       <TeaserCard
-        headline="Check out the Storybook"
-        text="Browsing our Storybook will allow a look behind the scenes on what the kickstartDS Design System starter has to offer"
-        url={"https://main--64f08cbba622af835d382b4f.chromatic.com/"}
+        headline="Home Entertainment"
+        text="Award-winning home cinema projectors delivering stunning 4K UHD and laser performance"
+        url={"#"}
         button={{
-          label: "Explore Storybook",
+          label: "Explore home cinema",
         }}
       />
     </Section>
 
     <Section
-      spaceBefore="none"
-      transition="to-inverted"
-      style="framed"
       width="wide"
+      headline={{
+        text: "Sustainability & Responsibility",
+        sub: "Building a better future through responsible innovation",
+        textAlign: "left",
+      }}
     >
-      <ImageText
-        image={{
-          src: "/img/about/purpose.png",
-        }}
+      <ImageStory
+        layout="imageLeft"
         text={`
-### The purpose of this demo
-This demo is intended to provide a firsthand experience of the capabilities of [**kickstartDS**](https://www.kickstartds.com). It's not just a website; it's a demonstration of how we can transform your digital landscape. Please note that while this demo represents a **Design System Agency**, the principles and techniques showcased are applicable to a wide range of industries and use cases.
-        `}
-        layout={"above"}
-      />
-      <ImageText
-        text={`
-### Important disclaimer
-While we've strived to provide a comprehensive demonstration, please bear in mind that this is a simplified showcase of the potential of [**kickstartDS**](https://www.kickstartds.com). The actual implementation of a **Design System** and **headless CMS** like **Storyblok** or **Netlify Create** can be tailored to your specific needs and goals, ensuring a custom solution that drives your digital success.
-        `}
+Sustainability is at the heart of Optoma's product development and operations.
+
+### Our Commitments
+- **Reduced carbon footprint** through energy-efficient designs and eco-friendly manufacturing processes
+- **Hazardous-free materials** — meeting and exceeding global environmental regulations
+- **Recycled and recyclable packaging** to minimise waste across our supply chain
+- **Laser technology transition** — eliminating mercury-containing lamps with long-lasting laser light sources that last up to 30,000 hours
+- **Ultra-low standby power** — our LED displays consume less than 0.5W in standby mode
+
+We are committed to creating technology that is not only innovative and reliable, but also responsible — ensuring a positive impact on both our customers and the environment.
+`}
         image={{
-          src: "/img/about/disclaimer.png",
-          alt: "",
+          src: "img/optoma/about-sustainability.jpg",
+          alt: "Optoma sustainability and eco-friendly technology initiatives",
         }}
-        layout={"above"}
+        buttons={[
+          {
+            label: "Learn more",
+            icon: "chevron-right",
+            url: "#",
+          },
+        ]}
       />
     </Section>
 
-    <Section inverted width="wide">
+    <Section width="wide">
       <Cta
-        headline="Want to know more?"
-        sub="Intrigued by what a kickstartDS-driven website can do for your brand?"
-        text="Let's explore how we can shape your digital journey. Get in touch today!"
+        headline="Join our team or partner with us"
+        sub="We're always looking for talented people and ambitious partners"
+        text="Whether you want to develop your career at Optoma or become an authorised reseller, we'd love to hear from you."
         order={{
           desktopImageLast: false,
         }}
         image={{
-          src: "img/about/cutout.png",
+          src: "img/optoma/about-coworking.jpg",
         }}
         buttons={[
           {
-            label: "Contact us",
-            url: "https://app.lemcal.com/@daniel-ley",
+            label: "View careers",
+            url: "#",
             icon: "person",
           },
           {
-            label: "Book a meeting",
-            url: "https://app.lemcal.com/@daniel-ley",
-            icon: "date",
+            label: "Become a partner",
+            url: "#",
+            icon: "chevron-right",
           },
         ]}
       />
@@ -299,4 +280,4 @@ While we've strived to provide a comprehensive demonstration, please bear in min
   </>
 );
 
-export default About
+export default About;

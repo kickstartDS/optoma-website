@@ -37,17 +37,17 @@ export const Search: Story = {
       title: "Search Filters",
       categories: [
         {
-          title: "Pages",
+          title: "Products",
           url: "#",
           amount: 10,
         },
         {
-          title: "News",
+          title: "Case Studies",
           url: "#",
           amount: 5,
         },
         {
-          title: "Blog Posts",
+          title: "Support",
           url: "#",
           amount: 2,
         },
@@ -55,83 +55,77 @@ export const Search: Story = {
     },
     searchResults: [
       {
-        title: "Sustainable Living: Everyday Tips",
-        previewImage: "img/people-brainstorming-work-meeting.png",
+        title: "Creative Touch 5-Series Interactive Flat Panel Displays",
+        previewImage: "img/optoma/ifpd-creative-board.jpg",
         initialMatch:
-          "Embracing a **sustainable** lifestyle can significantly reduce your environmental impact. From using energy-efficient appliances to adopting renewable energy sources, every small step counts towards a greener future.",
+          "The **Creative Touch** 5-Series brings collaboration to life with built-in whiteboard tools, wireless screen sharing, and Google Classroom integration.",
         matches: [
           {
-            title: "Home",
+            title: "Specifications",
             snippet:
-              "Simple changes can make your home more **sustainable** and energy-efficient.",
+              'The **Creative Touch** 5-Series is available in 65", 75", and 86" screen sizes.',
             url: "#",
           },
           {
-            title: "Lifestyle",
+            title: "Features",
             snippet:
-              "Adopting a **sustainable** lifestyle benefits both you and the planet.",
+              "Built-in annotation tools and wireless casting make the **Creative Touch** ideal for classrooms.",
             url: "#",
           },
         ],
-        url: "www.example.com/lifestyle/sustainable-living",
+        url: "#",
       },
       {
-        title: "Sustainable Architecture Trends",
-        previewImage: "img/full-shot-different-people-working-together.png",
+        title: "N-Series Professional Displays",
+        previewImage: "img/optoma/professional-brand-image.jpg",
         initialMatch:
-          "Discover how **sustainable** design is shaping the future of urban development, from green buildings to eco-friendly materials. Research shows that **sustainable** architecture not only benefits the environment but also enhances the well-being of its occupants.",
-        url: "www.example.com/architecture/sustainable-trends",
+          "The **N-Series** delivers commercial-grade 4K UHD performance designed for 24/7 operation with integrated OMS remote management.",
+        url: "#",
       },
       {
-        title: "How to Build a Sustainable Business",
+        title: "How Sussex Learning Trust Transformed Classroom Engagement",
         matches: [
           {
-            title: "Getting Started",
+            title: "The Challenge",
             snippet:
-              "A **sustainable** business model focuses on long-term growth and environmental responsibility.",
+              "Sussex Learning Trust needed to modernise **interactive** displays across 15 primary schools.",
             url: "#",
           },
           {
-            title: "Case Studies",
+            title: "The Solution",
             snippet:
-              "Explore examples of companies that have adopted **sustainable** practices successfully.",
+              "Optoma **Creative Touch** displays were deployed with Google Classroom integration.",
             url: "#",
           },
           {
-            title: "Materials",
+            title: "The Results",
             snippet:
-              "Using **sustainable** materials can significantly reduce a building’s carbon footprint.",
+              "Teacher satisfaction with **interactive** teaching tools increased by 85% across the trust.",
             url: "#",
           },
         ],
-        url: "www.example.com/business/sustainable-model",
+        url: "#",
       },
       {
-        title: "Sustainable Living: Everyday Tips",
-        previewImage: "img/full-shot-different-people-working-together.png",
+        title: "Optoma Management Suite (OMS)",
+        previewImage: "img/optoma/corporate-communication.jpg",
         initialMatch:
-          "Embracing a **sustainable** lifestyle can significantly reduce your environmental impact. From using energy-efficient appliances to adopting renewable energy sources, every small step counts towards a greener future.",
+          "Centrally monitor, manage, and control all your Optoma displays from a single cloud-based **management** dashboard.",
         matches: [
           {
-            title: "Getting Started",
+            title: "Remote Updates",
             snippet:
-              "A **sustainable** business model focuses on long-term growth and environmental responsibility.",
+              "Push firmware updates and configuration changes to all devices via the **management** console.",
             url: "#",
           },
           {
-            title: "Case Studies",
+            title: "Device Monitoring",
             snippet:
-              "Explore examples of companies that have adopted **sustainable** practices successfully.",
-            url: "#",
-          },
-          {
-            title: "Materials",
-            snippet:
-              "Using **sustainable** materials can significantly reduce a building’s carbon footprint.",
+              "Real-time status monitoring and alerting through the **management** dashboard.",
             url: "#",
           },
         ],
-        url: "www.example.com/business/sustainable-model",
+        url: "#",
       },
     ],
   }),

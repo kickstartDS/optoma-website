@@ -26,35 +26,35 @@ export const Default: Story = {
     },
   },
   args: pack({
-    locationName: "Berlin Congress Center",
-    address: `Alexanderplatz 1<br />
-  10178 Berlin`,
+    locationName: "Fira de Barcelona, Gran Vía",
+    address: `Av. Joan Carles I, 64<br />
+  08908 L'Hospitalet de Llobregat, Barcelona`,
     dates: [
       {
-        date: "18.09.2025",
-        time: "09:00 – 17:00",
+        date: "04.02.2026",
+        time: "09:00 – 18:00",
         label: "Register",
         url: "#",
         ariaLabel:
-          "Register for the event on 18th September 2025 from 09:00 to 17:00",
+          "Register for ISE 2026 on 4th February 2026 from 09:00 to 18:00",
       },
       {
-        date: "18.09.2025",
-        time: "09:00 – 17:00",
+        date: "05.02.2026",
+        time: "09:00 – 18:00",
         label: "Register",
         url: "#",
         ariaLabel:
-          "Register for the event on 18th September 2025 from 09:00 to 17:00",
+          "Register for ISE 2026 on 5th February 2026 from 09:00 to 18:00",
       },
     ],
     links: [
       {
-        url: "https://maps.google.com/?q=Berlin+Congress+Center",
+        url: "https://maps.google.com/?q=Fira+de+Barcelona+Gran+Via",
         label: "Open in Google Maps",
       },
       {
-        url: "https://maps.google.com/?q=Berlin+Congress+Center",
-        label: "Location Website",
+        url: "#",
+        label: "Venue Website",
       },
     ],
   }),

@@ -26,9 +26,9 @@ export const Default: Story = {
     },
   },
   args: pack({
-    title: "Title of the specific Event",
-    categories: [{ label: "First Category" }, { label: "Second Category" }],
+    title: "Optoma at ISE 2026",
+    categories: [{ label: "Trade Show" }, { label: "Product Launch" }],
     intro:
-      "This text serves as a placeholder for descriptive content. It can be replaced with real copy to explain features, concepts, or key messages in more detail.",
+      "Visit Optoma at ISE 2026, Europe's leading AV and systems integration exhibition. Experience our latest interactive displays, laser projectors, and professional signage solutions first-hand.",
   }),
 };

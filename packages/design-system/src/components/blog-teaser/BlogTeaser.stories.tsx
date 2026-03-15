@@ -28,21 +28,22 @@ export const Default: Story = {
     },
   },
   args: pack({
-    date: "12/30/2022",
+    date: "06/15/2025",
     tags: [
       {
-        entry: "Technology",
+        entry: "Case Study",
       },
       {
-        entry: "AI",
+        entry: "Education",
       },
     ],
-    headline: "The Future of AI",
+    headline:
+      "How Sussex Learning Trust Transformed Classroom Engagement with Optoma IFPDs",
     teaserText:
-      "Dive into the future of AI in this detailed blog post. Discover how technology is rapidly evolving, the impact of AI on various industries, and what to expect in the coming years. Learn about the latest advancements, challenges, and the potential solutions that AI brings to the table.",
+      "Discover how Sussex Learning Trust deployed Creative Touch 5-Series interactive displays across multiple schools, resulting in improved student engagement, streamlined lesson delivery, and significant time savings for teaching staff. Learn about the implementation process, integration with Google Classroom, and the measurable impact on learning outcomes.",
     author: {
-      name: "Jane Smith",
-      title: "Senior AI Researcher",
+      name: "Sarah Mitchell",
+      title: "Head of Digital Learning",
       image: "img/people/author-emily.png",
     },
   }),

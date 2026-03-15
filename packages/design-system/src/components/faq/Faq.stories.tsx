@@ -30,19 +30,19 @@ export const DropdownList: Story = {
   args: pack({
     questions: [
       {
-        question: "Can the content be customized?",
+        question: "What warranty do Optoma products come with?",
         answer:
-          "Yes. All content within this component can be fully customized. Text length, wording, and structure can be adapted to match different audiences, communication styles, or content strategies. The component supports both short, concise answers and more detailed explanations, depending on editorial needs.",
+          "All Optoma projectors and displays come with a comprehensive manufacturer warranty. Standard projectors include a 3-year return-to-base warranty, while our professional display range and IFPDs include an on-site warranty. Laser light sources are covered for up to 5 years or 20,000 hours, whichever comes first. Extended warranty options are available through your authorised reseller.",
       },
       {
-        question: "What is this component used for?",
+        question: "How do I book a product demonstration?",
         answer:
-          "This component can be used across different pages and contexts, such as product pages, service descriptions, or informational sections.",
+          "You can request a free demonstration of any Optoma product by contacting our sales team via the website contact form or by calling our UK office. We offer both on-site demonstrations and virtual demos via our showroom in Watford, Hertfordshire.",
       },
       {
-        question: "How many items are supported?",
+        question: "Are Optoma displays compatible with existing AV systems?",
         answer:
-          "The number of questions and answers can be configured based on the component settings.",
+          "Yes. Optoma displays support a wide range of connectivity options including HDMI, USB-C, DisplayPort, and wireless casting via Display Share. Our products integrate with popular video conferencing platforms and can be managed remotely using the Optoma Management Suite (OMS).",
       },
     ],
   }),
@@ -58,9 +58,9 @@ export const SingleDropdown: Story = {
   args: pack({
     questions: [
       {
-        question: "Can the content be customized?",
+        question: "What is the Optoma Management Suite (OMS)?",
         answer:
-          "Yes. All content within this component can be fully customized. Text length, wording, and structure can be adapted to match different audiences, communication styles, or content strategies. The component supports both short, concise answers and more detailed explanations, depending on editorial needs.",
+          "The Optoma Management Suite is a cloud-based remote management platform that allows IT administrators to monitor, control, and maintain their entire fleet of Optoma displays from a single dashboard. Features include real-time device status monitoring, remote power on/off, firmware updates, alert notifications, and scheduled content broadcasting. OMS is free to use with compatible Optoma professional displays.",
       },
     ],
   }),

@@ -28,18 +28,18 @@ export const Default: Story = {
     },
   },
   args: pack({
-    text: "This paragraph represents generic body text. It can be used to describe products, services, or relevant information.The Future of AI is here and now - Join us to explore the latest advancements in artificial intelligence.",
-    date: "30.12.2025",
+    text: "Experience Optoma's latest interactive flat panel displays, laser projectors, and professional signage solutions at ISE 2026 — Europe's leading exhibition for AV and systems integration.",
+    date: "04.02.2026",
     location: {
-      name: "Tech Conference Center",
-      address: `Alexanderplatz 1<br />
-10178 Berlin`,
+      name: "Fira de Barcelona, Gran Vía",
+      address: `Av. Joan Carles I, 64<br />
+08908 L'Hospitalet de Llobregat, Barcelona`,
     },
-    title: "Title of an Event",
-    category: "Category",
+    title: "Optoma at ISE 2026",
+    category: "Trade Show",
     image: {
-      src: "img/placeholder/avatar-square.svg",
-      alt: "A placeholder Image",
+      src: "img/optoma/professional-presenting.jpg",
+      alt: "Optoma display at a trade show",
     },
     url: "#",
     ctaText: "Go to event",

@@ -5,7 +5,7 @@ export const dsa = {
     src: "/logo.svg",
     srcInverted: "/logo-inverted.svg",
     homepageHref: "#",
-    alt: "Systemics Logo",
+    alt: "Optoma Logo",
     width: 176,
     height: 40,
   },

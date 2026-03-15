@@ -28,34 +28,34 @@ export const StickyImageNextToScrollingText: Story = {
     },
   },
   args: pack({
-    headline: "Key headline for this section",
-    sub: "Brief supporting description",
+    headline: "Why Choose Optoma?",
+    sub: "Over 25 years of award-winning display innovation",
     text: `
-This section is intended to provide additional context and supporting information, while the accompanying image keeps sticky beside on larger screens.
+Optoma has been at the forefront of visual display technology since 2002, delivering projectors, interactive flat panel displays, and professional signage to customers in over 150 countries.
 
-### Clear Structure
-This section provides space for structured content that can be used to explain topics in more detail. Headings help break down information into manageable parts and guide readers through the content in a clear and logical way.
+### Brilliant Image Quality
+Every Optoma display is engineered for stunning 4K UHD resolution with vibrant colours and exceptional contrast. Our DuraCore laser engine delivers up to 30,000 hours of consistent, maintenance-free projection.
 
-### Flexible Usage
-The text area can be used in different contexts and on various pages. Content can be short or extended, depending on the communication goal and the needs of the audience.
+### Seamless Collaboration
+From wireless screen sharing with Display Share to built-in video conferencing, Optoma solutions bridge the gap between in-room and remote teams. Present from any device — no dongles or drivers required.
 
-### Easy to Maintain
-All content can be updated or replaced without affecting other parts of the page. This makes it easier to keep information current and ensures long-term usability.
+### Simple Remote Management
+The Optoma Management Suite (OMS) gives IT teams complete control over their entire display network. Monitor status, push updates, set alerts, and broadcast announcements from a single dashboard.
 
-### Consistent Presentation
-Using a standardized text section helps maintain a consistent look and feel across the platform. This supports readability and creates a coherent user experience.
+### Sustainable by Design
+Industry-leading 0.5W standby power consumption, intelligent brightness adjustment, and eco-friendly packaging made from 99% recyclable materials — because great technology should also be responsible.
 
-Ready to make your journey exceptional?
+Ready to transform your visual experience?
     `,
     largeHeadline: true,
     image: {
-      src: "img/placeholder/image-gallery-05.svg",
+      src: "img/optoma/corporate-collaboration.jpg",
       aspectRatio: "unset",
       vAlign: "top",
     },
     buttons: [
       {
-        label: "Follow up",
+        label: "Request a Demo",
         url: "#",
         icon: "arrow-right",
       },

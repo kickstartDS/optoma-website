@@ -31,27 +31,27 @@ export const ColorfulTiles: Story = {
     layout: "alternate",
     tile: [
       {
-        backgroundColor: "#ffd4f1",
-        headline: "Collaborative Environment",
-        text: "Our team thrives in a collaborative environment, fostering creativity and innovation.",
+        backgroundColor: "#e8f4fd",
+        headline: "Corporate Solutions",
+        text: "Transform meeting rooms and collaboration spaces with Optoma professional displays and projection solutions.",
         image: {
-          src: "img/placeholder/avatar-square.svg",
+          src: "img/optoma/corporate-collaboration.jpg",
         },
       },
       {
-        backgroundColor: "#d8e8f",
-        headline: "Modern Infrastructure",
-        text: "Our state-of-the-art office facilities inspire productivity and efficiency.",
+        backgroundColor: "#fff3e0",
+        headline: "Education Technology",
+        text: "Empower teachers and engage students with interactive flat panel displays and integrated learning tools.",
         image: {
-          src: "img/placeholder/avatar-square.svg",
+          src: "img/optoma/ifpd-school1.jpg",
         },
       },
       {
-        backgroundColor: "#ddfffe",
-        headline: "Teamwork",
-        text: "We believe in the power of teamwork. Together, we can achieve great things.",
+        backgroundColor: "#e8eaf6",
+        headline: "Immersive Experiences",
+        text: "Create unforgettable visual experiences with large-format projection and LED display technology.",
         image: {
-          src: "img/placeholder/avatar-square.svg",
+          src: "img/optoma/case-study-lente.jpg",
         },
       },
     ],
@@ -69,36 +69,36 @@ export const ColorfulTextWithImagesBeside: Story = {
     layout: "textLeft",
     tile: [
       {
-        textColor: "#086d10ff",
+        textColor: "#0d47a1",
         button: {
           toggle: false,
         },
-        headline: "First Example",
-        text: "A representative example showing how individual items can be displayed and described.",
+        headline: "Creative Touch 5-Series",
+        text: "Interactive flat panel displays with built-in whiteboard, wireless sharing, and Google Classroom integration.",
         image: {
-          src: "img/placeholder/product-shot-sqaure-spacing.svg",
+          src: "img/optoma/ifpd-5g3-75inch.webp",
         },
       },
       {
-        textColor: "#5717b0ff",
+        textColor: "#1b5e20",
         button: {
           toggle: false,
         },
-        headline: "Second Example",
-        text: "This example highlights consistency across items and supports visual comparison.",
+        headline: "N-Series Professional Displays",
+        text: "4K UHD signage and meeting room displays with 24/7 operation, remote management via OMS, and Display Share.",
         image: {
-          src: "img/placeholder/product-shot-sqaure-spacing.svg",
+          src: "img/optoma/professional-brand-image.jpg",
         },
       },
       {
-        textColor: "#007387ff",
+        textColor: "#4a148c",
         button: {
           toggle: false,
         },
-        headline: "Third Example",
-        text: "A simple placeholder item intended to be adapted to real-world content.",
+        headline: "Laser Projectors",
+        text: "DuraCore laser engine with up to 30,000 hours of maintenance-free 4K UHD projection for any environment.",
         image: {
-          src: "img/placeholder/product-shot-sqaure-spacing.svg",
+          src: "img/optoma/case-study-roblox.jpg",
         },
       },
     ],

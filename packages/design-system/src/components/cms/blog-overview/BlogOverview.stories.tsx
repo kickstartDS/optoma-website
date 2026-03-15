@@ -23,134 +23,136 @@ type Story = StoryObj<typeof BlogOverviewComponent>;
 export const BlogOverview: Story = {
   args: pack({
     latest: {
-      date: "12/30/2022",
+      date: "03/15/2025",
       tags: [
         {
-          entry: "Design Systems",
+          entry: "Case Studies",
         },
         {
-          entry: "Headless Websites",
+          entry: "Education",
         },
         {
-          entry: "Training",
+          entry: "IFPDs",
         },
       ],
       headline:
-        "Mastering the Art of Design Systems with Systemics: A Journey from Vision to Reality",
+        "How Sussex Learning Trust Transformed Classroom Engagement with Optoma IFPDs",
       teaserText:
-        "In this enlightening article, we delve into how Systemics, your go-to Design System agency, brings clarity and coherence to your brand's digital presence. We discuss our unique approach to Design System Consulting, where we align your vision with actionable strategies for seamless and captivating user experiences.",
-      image: "img/close-up-young-business-team-working.png",
-      link: { url: "https://example.com/article1", label: "Read more" },
-      readingTime: "5 min read",
+        "Discover how Sussex Learning Trust deployed Optoma Creative Touch interactive flat panel displays across 15 primary schools, replacing outdated projectors and whiteboards to create dynamic, collaborative learning environments that boosted student engagement by 40%.",
+      image: "img/optoma/ifpd-school1.jpg",
+      link: { url: "#", label: "Read more" },
+      readingTime: "7 min read",
       author: {
-        name: "John Doe",
-        title: "CEO",
+        name: "Sarah Mitchell",
+        title: "Education Technology Specialist",
         image: "img/people/author-alex.png",
       },
     },
     list: [
       {
-        date: "12/30/2022",
+        date: "02/28/2025",
         tags: [
           {
-            entry: "Design Systems",
+            entry: "Case Studies",
           },
         ],
-        headline: "Mastering the Art of Design Systems with Systemics",
+        headline: "Roblox Takes Gamescom by Storm with Optoma Laser Projectors",
         teaserText:
-          "In this enlightening article, we delve into how Systemics, your go-to Design System agency, brings clarity and coherence to your brand's digital presence..",
-        image: "img/close-up-young-business-team-working.png",
-        link: { url: "https://example.com/article1", label: "Read more" },
+          "How Roblox created an immersive 360-degree gaming experience at Gamescom using Optoma's high-brightness laser projectors, drawing thousands of visitors to their stand.",
+        image: "img/optoma/case-study-roblox.jpg",
+        link: { url: "#", label: "Read more" },
         readingTime: "5 min read",
         author: {
-          name: "John Doe",
-          title: "CEO",
+          name: "James Porter",
+          title: "Events & Experiences Manager",
           image: "img/people/author-alex.png",
         },
       },
       {
-        date: "12/30/2022",
+        date: "02/10/2025",
         tags: [
           {
-            entry: "Headless Websites",
+            entry: "Products",
           },
         ],
-        headline: "Unleashing Innovation with Headless Websites",
+        headline:
+          "Introducing the Creative Touch 5-Series: Next-Generation IFPDs",
         teaserText:
-          "Dive into the exciting world of headless architecture with Systemics. This article explores our Headless Websites service, a playground of innovation and creativity for brands seeking to redefine their digital journey.",
-        image: "img/close-up-young-business-team-working.png",
-        link: { url: "https://example.com/article2", label: "Read more" },
-        readingTime: "5 min read",
+          "Optoma's new Creative Touch 5-Series interactive flat panel displays bring zero-bonding technology, built-in Google EDLA certification, and enhanced collaboration tools to classrooms and meeting rooms.",
+        image: "img/optoma/ifpd-creative-board.jpg",
+        link: { url: "#", label: "Read more" },
+        readingTime: "4 min read",
         author: {
-          name: "Jane Doe",
-          title: "CTO",
+          name: "Laura Jennings",
+          title: "Solutions Architect",
           image: "img/people/author-emily.png",
         },
       },
       {
-        date: "12/30/2022",
+        date: "01/22/2025",
         tags: [
           {
-            entry: "Training",
+            entry: "Case Studies",
           },
         ],
         headline:
-          "Investing in Digital Excellence: Systemics' Design System Trainings",
+          "Lente: How Optoma Projectors Brought Birmingham's Art Installation to Life",
         teaserText:
-          "Investing in your digital team's growth is crucial for sustainable success. In this article, we highlight Systemics' Design System Trainings, designed to equip your team with the skills they need to harness your design system effectively.",
-        image: "img/close-up-young-business-team-working.png",
-        link: { url: "https://example.com/article3", label: "Read more" },
-        readingTime: "5 min read",
+          "Artist Davy Evans used Optoma laser projectors to create 'Lente', a mesmerising large-scale projection mapping installation in Birmingham that captivated over 50,000 visitors.",
+        image: "img/optoma/case-study-lente.jpg",
+        link: { url: "#", label: "Read more" },
+        readingTime: "6 min read",
         author: {
-          name: "John Doe",
-          title: "CEO",
+          name: "Sarah Mitchell",
+          title: "Education Technology Specialist",
           image: "img/people/author-alex.png",
         },
       },
     ],
     more: [
       {
-        date: "12/30/2022",
+        date: "01/08/2025",
         tags: [
           {
-            entry: "Design Systems",
+            entry: "Corporate",
           },
         ],
-        headline: "Mastering the Art of Design Systems with Systemics",
+        headline:
+          "Schindler Group HQ Upgrades Meeting Rooms with Optoma N-Series",
         teaserText:
-          "In this enlightening article, we delve into how Systemics, your go-to Design System agency, brings clarity and coherence to your brand's digital presence..",
-        image: "img/close-up-young-business-team-working.png",
-        link: { url: "https://example.com/article1", label: "Read more" },
+          "Schindler's European headquarters modernised 40+ meeting rooms with Optoma N-Series professional displays, enabling seamless hybrid collaboration across global offices.",
+        image: "img/optoma/corporate-collaboration.jpg",
+        link: { url: "#", label: "Read more" },
         readingTime: "5 min read",
         author: {
-          name: "John Doe",
-          title: "CEO",
+          name: "David Chen",
+          title: "IT Solutions Consultant",
           image: "img/people/author-alex.png",
         },
       },
       {
-        date: "12/30/2022",
+        date: "12/18/2024",
         tags: [
           {
-            entry: "Headless Websites",
+            entry: "Technology",
           },
         ],
-        headline: "Unleashing Innovation with Headless Websites",
+        headline: "Why Optoma Management Suite Is a Game-Changer for IT Teams",
         teaserText:
-          "Dive into the exciting world of headless architecture with Systemics. This article explores our Headless Websites service, a playground of innovation and creativity for brands seeking to redefine their digital journey.",
-        image: "img/close-up-young-business-team-working.png",
-        link: { url: "https://example.com/article2", label: "Read more" },
-        readingTime: "5 min read",
+          "With remote device monitoring, scheduling, and firmware updates across your entire display fleet, Optoma Management Suite (OMS) gives IT administrators unprecedented control and efficiency.",
+        image: "img/optoma/corporate-stay-connected.jpg",
+        link: { url: "#", label: "Read more" },
+        readingTime: "4 min read",
         author: {
-          name: "Jane Doe",
-          title: "CTO",
+          name: "Michael Torres",
+          title: "Technical Support Engineer",
           image: "img/people/author-emily.png",
         },
       },
     ],
     cta: {
       headline: "Get in touch",
-      sub: "Chat with us about getting your product or platform to market faster",
+      sub: "Speak with our team about the right display solution for your organisation",
       highlightText: false,
       colorNeutral: false,
       fullWidth: true,
@@ -161,7 +163,7 @@ export const BlogOverview: Story = {
           url: "#",
         },
         {
-          label: "Book a meeting",
+          label: "Request a demo",
           icon: "date",
           url: "#",
         },
@@ -176,7 +178,7 @@ export const BlogOverview: Story = {
       },
       textAlign: "left",
       contentAlign: "center",
-      text: "Our modular design approach allows for flexibility and scalability in your application's architecture.",
+      text: "From interactive displays to laser projectors, we'll help you find the perfect solution for your space.",
       width: "wide",
     },
   }),

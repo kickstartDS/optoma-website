@@ -26,30 +26,30 @@ export const Default: Story = {
     },
   },
   args: pack({
-    title: "GreenTech Summit 2023",
-    previewImage: "img/full-shot-different-people-working-together.png",
+    title: "Creative Touch 5-Series Interactive Flat Panel Displays",
+    previewImage: "img/optoma/ifpd-creative-board.jpg",
     initialMatch:
-      "Embracing a **sustainable** lifestyle can significantly reduce your environmental impact. From using energy-efficient appliances to adopting renewable energy sources, every small step counts towards a greener future.",
+      "The **Creative Touch** 5-Series brings collaboration to life with built-in whiteboard tools, wireless screen sharing, and Google Classroom integration — designed for modern classrooms and meeting rooms.",
     matches: [
       {
-        title: "Keynote: Embracing Sustainability",
+        title: "Features: Built-in Whiteboard",
         snippet:
-          "Learn how leading companies are integrating **sustainability** into their core strategies.",
+          "The **Creative Touch** includes intuitive annotation and whiteboard tools accessible from any input source.",
         url: "#",
       },
       {
-        title: "Panel: Sustainability in Practice",
+        title: "Specification: Display Sizes",
         snippet:
-          "Business models that prioritize **sustainability** are shared by industry experts in this session.",
+          'The **Creative Touch** 5-Series is available in 65", 75", and 86" screen sizes to suit any installation.',
         url: "#",
       },
       {
-        title: "Workshop: Measuring Sustainability",
+        title: "Case Study: Sussex Learning Trust",
         snippet:
-          "In your organization, **sustainability** can be assessed using new tools and techniques.",
+          "How 15 primary schools transformed classroom engagement with Optoma **Creative Touch** interactive displays.",
         url: "#",
       },
     ],
-    url: "https://www.example.com/greentech-summit-2023",
+    url: "#",
   }),
 };

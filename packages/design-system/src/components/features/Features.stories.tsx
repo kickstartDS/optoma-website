@@ -33,8 +33,8 @@ export const IconCentered: Story = {
     feature: [
       {
         icon: "star",
-        title: "Consistent Experience",
-        text: "Ensures a consistent and recognizable experience across different pages and touchpoints. This helps users navigate content more easily and builds trust through visual continuity.",
+        title: "4K UHD Resolution",
+        text: "Experience stunning clarity with true 4K UHD resolution across our projectors and displays. Every detail is rendered with precision, delivering immersive visuals for presentations, education and entertainment.",
         cta: {
           url: "#",
           label: "Learn more",
@@ -42,17 +42,17 @@ export const IconCentered: Story = {
       },
       {
         icon: "time",
-        title: "Flexible Configuration",
-        text: "The component can be adapted to different requirements and contexts. Content, structure, and presentation can be adjusted without changing the underlying setup.",
+        title: "24/7 Operation",
+        text: "Built for continuous use in demanding environments. Optoma's professional displays are engineered for round-the-clock operation with energy-efficient designs that optimise power savings.",
         cta: {
           url: "#",
-          label: "View options",
+          label: "View specs",
         },
       },
       {
         icon: "upload",
-        title: "Ready for Integration",
-        text: "Designed to work seamlessly within existing systems and workflows. It supports integration into various environments and can evolve alongside your platform.",
+        title: "Wireless Sharing",
+        text: "Share content effortlessly from any device with Display Share. Screen mirror high-quality images, videos, documents and audio from smartphones, laptops or PCs — all at the touch of a button.",
         cta: {
           url: "#",
           label: "See details",
@@ -60,17 +60,17 @@ export const IconCentered: Story = {
       },
       {
         icon: "login",
-        title: "Built with Care",
-        text: "Developed with stability, reliability, and best practices in mind. The component supports long-term use and helps maintain a robust and dependable setup.",
+        title: "Remote Management",
+        text: "Monitor and control all your Optoma displays remotely with the Optoma Management Suite (OMS). Diagnose issues, set alerts, and broadcast announcements from anywhere.",
         cta: {
           url: "#",
-          label: "Read more",
+          label: "Explore OMS",
         },
       },
       {
         icon: "person",
-        title: "Easy to Maintain",
-        text: "Structured in a way that simplifies updates and ongoing maintenance. Changes can be applied efficiently without affecting unrelated parts of the system.",
+        title: "Hybrid Collaboration",
+        text: "Bridge the gap between in-office and remote teams. Optoma's video conferencing solutions and interactive displays enable seamless collaboration regardless of location.",
         cta: {
           url: "#",
           label: "Learn how",
@@ -78,11 +78,11 @@ export const IconCentered: Story = {
       },
       {
         icon: "map",
-        title: "Reusable by Design",
-        text: "Created to be reused across multiple pages and scenarios. This helps reduce duplication and supports a more efficient content and component workflow.",
+        title: "Eco-Friendly Design",
+        text: "Industry-leading 0.5W standby power consumption, auto-off features, brightness adjustment and eco-friendly packaging made from 99% recyclable materials.",
         cta: {
           url: "#",
-          label: "Explore usage",
+          label: "Sustainability",
         },
       },
     ],
@@ -105,8 +105,8 @@ export const StackWithButton: Story = {
     feature: [
       {
         icon: "star",
-        title: "Consistent Experience",
-        text: "Ensures a consistent and recognizable experience across different pages and touchpoints. This helps users navigate content more easily and builds trust through visual continuity.",
+        title: "DuraCore Laser",
+        text: "Up to 30,000 hours of maintenance-free operation with full brightness. Optoma's DuraCore laser technology delivers reliable, long-lasting performance for professional installations.",
         cta: {
           url: "#",
           label: "Learn more",
@@ -114,26 +114,26 @@ export const StackWithButton: Story = {
       },
       {
         icon: "time",
-        title: "Flexible Configuration",
-        text: "The component can be adapted to different requirements and contexts. Content, structure, and presentation can be adjusted without changing the underlying setup.",
+        title: "Quick Launch Pen",
+        text: "Start presenting in seconds. Simply take the pen from the holder and the Whiteboard app launches automatically. Dual-tip design lets you switch between thin or thick strokes.",
         cta: {
           url: "#",
-          label: "View options",
+          label: "View details",
         },
       },
       {
         icon: "upload",
-        title: "Ready for Integration",
-        text: "Designed to work seamlessly within existing systems and workflows. It supports integration into various environments and can evolve alongside your platform.",
+        title: "Cloud Whiteboard",
+        text: "Sync with your cloud accounts to plan lessons or meetings from anywhere. Access materials from any Optoma display in your organisation via the cloud-based Whiteboard platform.",
         cta: {
           url: "#",
-          label: "See details",
+          label: "See features",
         },
       },
       {
         icon: "login",
-        title: "Built with Care",
-        text: "Developed with stability, reliability, and best practices in mind. The component supports long-term use and helps maintain a robust and dependable setup.",
+        title: "Google Classroom",
+        text: "Seamless integration with Google Classroom brings the benefits of paperless sharing and digital collaboration. Import lesson materials instantly to any classroom display.",
         cta: {
           url: "#",
           label: "Read more",
@@ -160,8 +160,8 @@ export const ListView: Story = {
     feature: [
       {
         icon: "star",
-        title: "Consistent Experience",
-        text: "Ensures a consistent and recognizable experience across different pages and touchpoints. This helps users navigate content more easily and builds trust through visual continuity.",
+        title: "4K UHD Resolution",
+        text: "Experience stunning clarity with true 4K UHD resolution across our projectors and displays. Every detail is rendered with precision, delivering immersive visuals for any application.",
         cta: {
           url: "#",
           label: "Learn more",
@@ -169,17 +169,17 @@ export const ListView: Story = {
       },
       {
         icon: "time",
-        title: "Flexible Configuration",
-        text: "The component can be adapted to different requirements and contexts. Content, structure, and presentation can be adjusted without changing the underlying setup.",
+        title: "24/7 Operation",
+        text: "Built for continuous use in demanding environments. Optoma's professional displays are engineered for round-the-clock operation with energy-efficient designs that optimise power savings.",
         cta: {
           url: "#",
-          label: "View options",
+          label: "View specs",
         },
       },
       {
         icon: "upload",
-        title: "Ready for Integration",
-        text: "Designed to work seamlessly within existing systems and workflows. It supports integration into various environments and can evolve alongside your platform.",
+        title: "Wireless Sharing",
+        text: "Share content effortlessly from any device with Display Share. Screen mirror high-quality images, videos, documents and audio from smartphones, laptops or PCs.",
         cta: {
           url: "#",
           label: "See details",
@@ -187,17 +187,17 @@ export const ListView: Story = {
       },
       {
         icon: "login",
-        title: "Built with Care",
-        text: "Developed with stability, reliability, and best practices in mind. The component supports long-term use and helps maintain a robust and dependable setup.",
+        title: "Remote Management",
+        text: "Monitor and control all your Optoma displays remotely with the Optoma Management Suite (OMS). Diagnose issues, set alerts, and broadcast announcements from anywhere.",
         cta: {
           url: "#",
-          label: "Read more",
+          label: "Explore OMS",
         },
       },
       {
         icon: "person",
-        title: "Easy to Maintain",
-        text: "Structured in a way that simplifies updates and ongoing maintenance. Changes can be applied efficiently without affecting unrelated parts of the system.",
+        title: "Hybrid Collaboration",
+        text: "Bridge the gap between in-office and remote teams. Optoma's video conferencing solutions and interactive displays enable seamless collaboration regardless of location.",
         cta: {
           url: "#",
           label: "Learn how",
@@ -205,11 +205,11 @@ export const ListView: Story = {
       },
       {
         icon: "map",
-        title: "Reusable by Design",
-        text: "Created to be reused across multiple pages and scenarios. This helps reduce duplication and supports a more efficient content and component workflow.",
+        title: "Eco-Friendly Design",
+        text: "Industry-leading 0.5W standby power consumption, auto-off features, brightness adjustment and eco-friendly packaging made from 99% recyclable materials.",
         cta: {
           url: "#",
-          label: "Explore usage",
+          label: "Sustainability",
         },
       },
     ],
@@ -232,8 +232,8 @@ export const IconBesideWithLinkInText: Story = {
     feature: [
       {
         icon: "star",
-        title: "Consistent Experience",
-        text: "Ensures a consistent and recognizable experience across different pages and touchpoints. This helps users navigate content more easily and builds trust through visual continuity.",
+        title: "4K UHD Resolution",
+        text: "Experience stunning clarity with true 4K UHD resolution across our projectors and displays. Every detail is rendered with precision, delivering immersive visuals for any application.",
         cta: {
           url: "#",
           label: "Learn more",
@@ -241,17 +241,17 @@ export const IconBesideWithLinkInText: Story = {
       },
       {
         icon: "time",
-        title: "Flexible Configuration",
-        text: "The component can be adapted to different requirements and contexts. Content, structure, and presentation can be adjusted without changing the underlying setup.",
+        title: "24/7 Operation",
+        text: "Built for continuous use in demanding environments. Optoma's professional displays are engineered for round-the-clock operation with energy-efficient designs that optimise power savings.",
         cta: {
           url: "#",
-          label: "View options",
+          label: "View specs",
         },
       },
       {
         icon: "upload",
-        title: "Ready for Integration",
-        text: "Designed to work seamlessly within existing systems and workflows. It supports integration into various environments and can evolve alongside your platform.",
+        title: "Wireless Sharing",
+        text: "Share content effortlessly from any device with Display Share. Screen mirror high-quality images, videos, documents and audio from smartphones, laptops or PCs.",
         cta: {
           url: "#",
           label: "See details",
@@ -259,17 +259,17 @@ export const IconBesideWithLinkInText: Story = {
       },
       {
         icon: "login",
-        title: "Built with Care",
-        text: "Developed with stability, reliability, and best practices in mind. The component supports long-term use and helps maintain a robust and dependable setup.",
+        title: "Remote Management",
+        text: "Monitor and control all your Optoma displays remotely with the Optoma Management Suite (OMS). Diagnose issues, set alerts, and broadcast announcements from anywhere.",
         cta: {
           url: "#",
-          label: "Read more",
+          label: "Explore OMS",
         },
       },
       {
         icon: "person",
-        title: "Easy to Maintain",
-        text: "Structured in a way that simplifies updates and ongoing maintenance. Changes can be applied efficiently without affecting unrelated parts of the system.",
+        title: "Hybrid Collaboration",
+        text: "Bridge the gap between in-office and remote teams. Optoma's video conferencing solutions and interactive displays enable seamless collaboration regardless of location.",
         cta: {
           url: "#",
           label: "Learn how",
@@ -277,11 +277,11 @@ export const IconBesideWithLinkInText: Story = {
       },
       {
         icon: "map",
-        title: "Reusable by Design",
-        text: "Created to be reused across multiple pages and scenarios. This helps reduce duplication and supports a more efficient content and component workflow.",
+        title: "Eco-Friendly Design",
+        text: "Industry-leading 0.5W standby power consumption, auto-off features, brightness adjustment and eco-friendly packaging made from 99% recyclable materials.",
         cta: {
           url: "#",
-          label: "Explore usage",
+          label: "Sustainability",
         },
       },
     ],
@@ -303,8 +303,8 @@ export const IconIntextWithLink: Story = {
     feature: [
       {
         icon: "star",
-        title: "Consistent Experience",
-        text: "Ensures a consistent and recognizable experience across different pages and touchpoints. This helps users navigate content more easily and builds trust through visual continuity.",
+        title: "4K UHD Resolution",
+        text: "Experience stunning clarity with true 4K UHD resolution across our projectors and displays. Every detail is rendered with precision, delivering immersive visuals for any application.",
         cta: {
           url: "#",
           label: "Learn more",
@@ -312,17 +312,17 @@ export const IconIntextWithLink: Story = {
       },
       {
         icon: "time",
-        title: "Flexible Configuration",
-        text: "The component can be adapted to different requirements and contexts. Content, structure, and presentation can be adjusted without changing the underlying setup.",
+        title: "24/7 Operation",
+        text: "Built for continuous use in demanding environments. Optoma's professional displays are engineered for round-the-clock operation with energy-efficient designs that optimise power savings.",
         cta: {
           url: "#",
-          label: "View options",
+          label: "View specs",
         },
       },
       {
         icon: "upload",
-        title: "Ready for Integration",
-        text: "Designed to work seamlessly within existing systems and workflows. It supports integration into various environments and can evolve alongside your platform.",
+        title: "Wireless Sharing",
+        text: "Share content effortlessly from any device with Display Share. Screen mirror high-quality images, videos, documents and audio from smartphones, laptops or PCs.",
         cta: {
           url: "#",
           label: "See details",
@@ -330,17 +330,17 @@ export const IconIntextWithLink: Story = {
       },
       {
         icon: "login",
-        title: "Built with Care",
-        text: "Developed with stability, reliability, and best practices in mind. The component supports long-term use and helps maintain a robust and dependable setup.",
+        title: "Remote Management",
+        text: "Monitor and control all your Optoma displays remotely with the Optoma Management Suite (OMS). Diagnose issues, set alerts, and broadcast announcements from anywhere.",
         cta: {
           url: "#",
-          label: "Read more",
+          label: "Explore OMS",
         },
       },
       {
         icon: "person",
-        title: "Easy to Maintain",
-        text: "Structured in a way that simplifies updates and ongoing maintenance. Changes can be applied efficiently without affecting unrelated parts of the system.",
+        title: "Hybrid Collaboration",
+        text: "Bridge the gap between in-office and remote teams. Optoma's video conferencing solutions and interactive displays enable seamless collaboration regardless of location.",
         cta: {
           url: "#",
           label: "Learn how",
@@ -348,11 +348,11 @@ export const IconIntextWithLink: Story = {
       },
       {
         icon: "map",
-        title: "Reusable by Design",
-        text: "Created to be reused across multiple pages and scenarios. This helps reduce duplication and supports a more efficient content and component workflow.",
+        title: "Eco-Friendly Design",
+        text: "Industry-leading 0.5W standby power consumption, auto-off features, brightness adjustment and eco-friendly packaging made from 99% recyclable materials.",
         cta: {
           url: "#",
-          label: "Explore usage",
+          label: "Sustainability",
         },
       },
     ],

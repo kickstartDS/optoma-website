@@ -21,34 +21,34 @@ const meta: Meta = {
     <Section {...args}>
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Interactive Flat Panel Displays"
+        text="Discover the Creative Touch 5-Series with built-in whiteboard, wireless sharing, and Google Classroom integration."
+        image="img/optoma/ifpd-creative-board.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Professional Display Solutions"
+        text="N-Series 4K UHD displays with 24/7 operation, remote management via OMS, and Display Share wireless casting."
+        image="img/optoma/professional-brand-image.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Laser Projectors"
+        text="DuraCore laser engine with up to 30,000 hours of maintenance-free 4K UHD projection for any environment."
+        image="img/optoma/case-study-roblox.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
@@ -72,8 +72,8 @@ export const DynamicLayout: Story = {
       mode: "flex",
     },
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Our Product Range",
+      sub: "Display solutions for every environment",
       align: "center",
     },
     buttons: [],
@@ -82,23 +82,23 @@ export const DynamicLayout: Story = {
     <Section {...args}>
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Interactive Flat Panel Displays"
+        text="Discover the Creative Touch 5-Series with built-in whiteboard, wireless sharing, and Google Classroom integration."
+        image="img/optoma/ifpd-creative-board.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Professional Display Solutions"
+        text="N-Series 4K UHD displays with 24/7 operation, remote management via OMS, and Display Share wireless casting."
+        image="img/optoma/professional-brand-image.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
@@ -119,8 +119,8 @@ export const TileLayout: Story = {
       mode: "tile",
     },
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Solutions by Sector",
+      sub: "Tailored display solutions for your industry",
       align: "center",
     },
     buttons: [],
@@ -129,34 +129,34 @@ export const TileLayout: Story = {
     <Section {...args}>
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Corporate"
+        text="Meeting rooms, huddle spaces, and digital signage powered by Optoma professional displays and projectors."
+        image="img/optoma/corporate-huddle-spaces.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Explore",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Education"
+        text="Interactive flat panel displays with built-in whiteboard tools and Google Classroom integration."
+        image="img/optoma/ifpd-school1.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Explore",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Immersive Experiences"
+        text="Large-format projection and LED displays for museums, galleries, events, and retail environments."
+        image="img/optoma/case-study-lente.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Explore",
           hidden: true,
         }}
       />
@@ -176,8 +176,8 @@ export const ListLayout: Story = {
       mode: "list",
     },
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Latest Case Studies",
+      sub: "See how organisations are using Optoma",
       align: "center",
     },
     buttons: [],
@@ -206,122 +206,122 @@ export const Slider: Story = {
     <Section {...args}>
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Creative Touch 5-Series"
+        text="Interactive flat panels with built-in whiteboard, annotation tools, and wireless screen sharing for collaborative learning."
+        image="img/optoma/ifpd-creative-board.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Learn More",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="N-Series Professional Displays"
+        text="Commercial-grade 4K UHD displays designed for 24/7 operation with integrated OMS remote management."
+        image="img/optoma/professional-brand-image.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Learn More",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Laser Projectors"
+        text="DuraCore laser engine delivering up to 30,000 hours of maintenance-free, vibrant 4K UHD projection."
+        image="img/optoma/case-study-roblox.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Learn More",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Sussex Learning Trust"
+        text="How 15 primary schools transformed classroom engagement with Optoma Creative Touch interactive displays."
+        image="img/optoma/ifpd-school1.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Read Case Study",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Roblox at Gamescom"
+        text="Immersive gaming experience powered by Optoma laser projectors at Europe's largest gaming event."
+        image="img/optoma/case-study-roblox.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Read Case Study",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Lente Art Installation"
+        text="A stunning projection-mapped art installation in Birmingham using Optoma's high-brightness laser projectors."
+        image="img/optoma/case-study-lente.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Read Case Study",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Optoma Management Suite"
+        text="Centrally monitor, manage, and control all your Optoma displays from a single cloud-based dashboard."
+        image="img/optoma/corporate-communication.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Learn More",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Display Share"
+        text="Wireless presentation and collaboration software — share screens from any device with one click."
+        image="img/optoma/corporate-collaboration.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Learn More",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Southmead Primary School"
+        text="Interactive displays bringing STEM subjects to life in rural primary school classrooms."
+        image="img/optoma/case-study-southmead.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Read Case Study",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Schindler Group HQ"
+        text="Next-generation meeting rooms powered by Optoma professional displays and Display Share wireless casting."
+        image="img/optoma/corporate-communication.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Read Case Study",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="arebyte Gallery"
+        text="Immersive digital art exhibitions brought to life with high-brightness Optoma laser projectors."
+        image="img/optoma/case-study-arebyte.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "Read Case Study",
           hidden: true,
         }}
       />
@@ -340,8 +340,8 @@ export const Inverted: Story = {
     inverted: true,
     content: { mode: "default" },
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Collaboration Software",
+      sub: "Tools to connect your teams and spaces",
     },
     buttons: [],
   }),
@@ -357,8 +357,8 @@ export const AccentBackground: Story = {
   args: pack({
     backgroundColor: "accent",
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Why Choose Optoma?",
+      sub: "25+ years of display innovation trusted by organisations worldwide",
       align: "center",
     },
     buttons: [],
@@ -375,8 +375,8 @@ export const BoldBackground: Story = {
   args: pack({
     backgroundColor: "bold",
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Award-Winning Technology",
+      sub: "Recognised globally for innovation in visual display solutions",
       align: "center",
     },
     buttons: [],
@@ -393,8 +393,8 @@ export const Framed: Story = {
   args: pack({
     width: "wide",
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Our Sustainability Commitment",
+      sub: "Eco-friendly design with 0.5W standby power and mercury-free laser technology",
       align: "center",
     },
     style: "framed",
@@ -412,8 +412,8 @@ export const BackgroundImage: Story = {
   args: pack({
     backgroundImage: "/img/bg_dot-carpet-blue.svg",
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Partner Programme",
+      sub: "Join our network of certified resellers and integrators",
     },
     content: {
       mode: "default",
@@ -431,22 +431,22 @@ export const WithButtons: Story = {
   },
   args: pack({
     headline: {
-      text: "Key headline for this section",
-      sub: "Short explanatory subheadline",
+      text: "Explore Our Solutions",
+      sub: "Find the right display technology for your environment",
       align: "center",
     },
     buttons: [
       {
         disabled: false,
         icon: "arrow-right",
-        label: "Premium Topics",
+        label: "View All Products",
         size: "medium",
         variant: "secondary",
       },
       {
         disabled: false,
         icon: "",
-        label: "Topics Overview",
+        label: "Request a Demo",
         size: "medium",
         variant: "secondary",
       },

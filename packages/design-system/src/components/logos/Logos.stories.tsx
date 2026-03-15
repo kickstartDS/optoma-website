@@ -30,28 +30,36 @@ export const CenteredWithButton: Story = {
   args: pack({
     logo: [
       {
-        src: "img/logos/logoipsum-344.svg",
-        alt: "Logo 1",
+        src: "img/optoma/logo-aws-partner.png",
+        alt: "AWS Partner",
       },
       {
-        src: "img/logos/logoipsum-347.svg",
-        alt: "Logo 2",
+        src: "img/optoma/logo-google-education.png",
+        alt: "Google for Education",
       },
       {
-        src: "img/logos/logoipsum-352.svg",
-        alt: "Logo 3",
+        src: "img/optoma/logo-sussex-trust.png",
+        alt: "Sussex Learning Trust",
       },
       {
-        src: "img/logos/logoipsum-356.svg",
-        alt: "Logo 4",
+        src: "img/optoma/logo-schindler.png",
+        alt: "Schindler Group",
       },
       {
-        src: "img/logos/logoipsum-358.svg",
-        alt: "Logo 5",
+        src: "img/optoma/logo-birmingham.png",
+        alt: "Birmingham City Council",
       },
       {
-        src: "img/logos/logoipsum-369.svg",
-        alt: "Logo 6",
+        src: "img/optoma/logo-sounds-vision.png",
+        alt: "Sounds & Vision",
+      },
+      {
+        src: "img/optoma/logo-jpf.png",
+        alt: "James Pantyfedwen Foundation",
+      },
+      {
+        src: "img/optoma/logo-schoenefeld.png",
+        alt: "Brandenburg Schönefeld Airport",
       },
     ],
     cta: {
@@ -71,28 +79,36 @@ export const LeftAlignedWithTextLink: Story = {
   args: pack({
     logo: [
       {
-        src: "img/logos/logoipsum-344.svg",
-        alt: "Logo 1",
+        src: "img/optoma/logo-aws-partner.png",
+        alt: "AWS Partner",
       },
       {
-        src: "img/logos/logoipsum-347.svg",
-        alt: "Logo 2",
+        src: "img/optoma/logo-google-education.png",
+        alt: "Google for Education",
       },
       {
-        src: "img/logos/logoipsum-352.svg",
-        alt: "Logo 3",
+        src: "img/optoma/logo-reactiv-suite.png",
+        alt: "Reactiv Suite",
       },
       {
-        src: "img/logos/logoipsum-356.svg",
-        alt: "Logo 4",
+        src: "img/optoma/logo-sussex-trust.png",
+        alt: "Sussex Learning Trust",
       },
       {
-        src: "img/logos/logoipsum-358.svg",
-        alt: "Logo 5",
+        src: "img/optoma/logo-schindler.png",
+        alt: "Schindler Group",
       },
       {
-        src: "img/logos/logoipsum-369.svg",
-        alt: "Logo 6",
+        src: "img/optoma/logo-sounds-vision.png",
+        alt: "Sounds & Vision",
+      },
+      {
+        src: "img/optoma/logo-jpf.png",
+        alt: "James Pantyfedwen Foundation",
+      },
+      {
+        src: "img/optoma/logo-birmingham.png",
+        alt: "Birmingham City Council",
       },
     ],
     cta: {
@@ -113,52 +129,52 @@ export const LogoWall: Story = {
     logosPerRow: 4,
     logo: [
       {
-        src: "img/logos/logoipsum-344.svg",
-        alt: "Logo 1",
+        src: "img/optoma/logo-aws-partner.png",
+        alt: "AWS Partner",
       },
       {
-        src: "img/logos/logoipsum-347.svg",
-        alt: "Logo 2",
+        src: "img/optoma/logo-google-education.png",
+        alt: "Google for Education",
       },
       {
-        src: "img/logos/logoipsum-352.svg",
-        alt: "Logo 3",
+        src: "img/optoma/logo-sussex-trust.png",
+        alt: "Sussex Learning Trust",
       },
       {
-        src: "img/logos/logoipsum-356.svg",
-        alt: "Logo 4",
+        src: "img/optoma/logo-schindler.png",
+        alt: "Schindler Group",
       },
       {
-        src: "img/logos/logoipsum-358.svg",
-        alt: "Logo 5",
+        src: "img/optoma/logo-birmingham.png",
+        alt: "Birmingham City Council",
       },
       {
-        src: "img/logos/logoipsum-369.svg",
-        alt: "Logo 6",
+        src: "img/optoma/logo-schoenefeld.png",
+        alt: "Brandenburg Schönefeld Airport",
       },
       {
-        src: "img/logos/logoipsum-356.svg",
-        alt: "Logo 4",
+        src: "img/optoma/logo-sounds-vision.png",
+        alt: "Sounds & Vision",
       },
       {
-        src: "img/logos/logoipsum-358.svg",
-        alt: "Logo 5",
+        src: "img/optoma/logo-jpf.png",
+        alt: "James Pantyfedwen Foundation",
       },
       {
-        src: "img/logos/logoipsum-369.svg",
-        alt: "Logo 6",
+        src: "img/optoma/logo-reactiv-suite.png",
+        alt: "Reactiv Suite",
       },
       {
-        src: "img/logos/logoipsum-356.svg",
-        alt: "Logo 4",
+        src: "img/optoma/logo-heavym.jpg",
+        alt: "HeavyM",
       },
       {
-        src: "img/logos/logoipsum-358.svg",
-        alt: "Logo 5",
+        src: "img/optoma/logo-vioso.png",
+        alt: "VIOSO",
       },
       {
-        src: "img/logos/logoipsum-369.svg",
-        alt: "Logo 6",
+        src: "img/optoma/logo-google-partner.png",
+        alt: "Google Partner",
       },
     ],
 
@@ -179,28 +195,36 @@ export const LogoRow: Story = {
     logosPerRow: 6,
     logo: [
       {
-        src: "img/logos/logoipsum-344.svg",
-        alt: "Logo 1",
+        src: "img/optoma/logo-aws-partner.png",
+        alt: "AWS Partner",
       },
       {
-        src: "img/logos/logoipsum-347.svg",
-        alt: "Logo 2",
+        src: "img/optoma/logo-google-education.png",
+        alt: "Google for Education",
       },
       {
-        src: "img/logos/logoipsum-352.svg",
-        alt: "Logo 3",
+        src: "img/optoma/logo-sussex-trust.png",
+        alt: "Sussex Learning Trust",
       },
       {
-        src: "img/logos/logoipsum-356.svg",
-        alt: "Logo 4",
+        src: "img/optoma/logo-schindler.png",
+        alt: "Schindler Group",
       },
       {
-        src: "img/logos/logoipsum-358.svg",
-        alt: "Logo 5",
+        src: "img/optoma/logo-sounds-vision.png",
+        alt: "Sounds & Vision",
       },
       {
-        src: "img/logos/logoipsum-369.svg",
-        alt: "Logo 6",
+        src: "img/optoma/logo-jpf.png",
+        alt: "James Pantyfedwen Foundation",
+      },
+      {
+        src: "img/optoma/logo-reactiv-suite.png",
+        alt: "Reactiv Suite",
+      },
+      {
+        src: "img/optoma/logo-birmingham.png",
+        alt: "Birmingham City Council",
       },
     ],
 

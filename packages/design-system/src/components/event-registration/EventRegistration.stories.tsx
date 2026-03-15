@@ -28,17 +28,17 @@ export const Default: Story = {
   args: pack({
     label: "Registration Request",
     location: {
-      name: "Tech Conference Center",
-      address: `Alexanderplatz 1<br/>10178 Berlin`,
+      name: "Fira de Barcelona, Gran Vía",
+      address: `Av. Joan Carles I, 64<br/>08908 L'Hospitalet de Llobregat, Barcelona`,
     },
-    date: "18.09.2026",
-    time: "09:00 – 17:00",
+    date: "04.02.2026",
+    time: "09:00 – 18:00",
     confirmationCheckboxLabel: `I read and agree to the terms and conditions*`,
     cta: {
       label: "Send Request",
       url: "#",
       ariaLabel:
-        "Register for the event on 18th September 2026 from 09:00 to 17:00",
+        "Register for ISE 2026 on 4th February 2026 from 09:00 to 18:00",
     },
   }),
 };

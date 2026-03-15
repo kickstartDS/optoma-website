@@ -28,34 +28,34 @@ export const Default: Story = {
   args: pack({
     centered: false,
     image: {
-      src: "img/placeholder/avatar-square.svg",
-      alt: "A placeholder image",
+      src: "img/optoma/corporate-collaboration.jpg",
+      alt: "Optoma corporate collaboration environment",
     },
     logo: {
       src: "logo.svg",
-      alt: "Business Logo",
+      alt: "Optoma Logo",
       url: "#",
     },
-    topic: "Industry Intelligence",
-    address: `1234 Business Lane<br />Suite 567 <br />Business City, BC 12345`,
+    topic: "Professional AV Solutions",
+    address: `Optoma Europe Ltd<br />42 Caxton Way<br />Watford, WD18 8QZ`,
     avatar: {
       src: "img/placeholder/avatar-business-card-round.svg",
-      alt: "Emily Johnson",
+      alt: "Emma Richardson",
     },
     contact: [
-      { icon: "phone", label: "+1 234 567 890", url: "tel:+1234567890" },
+      { icon: "phone", label: "+44 (0)1923 691 800", url: "tel:+441923691800" },
       {
         icon: "email",
-        label: "emily@example.com",
-        url: "mailto:emily@example.com",
+        label: "emma.richardson@optoma.co.uk",
+        url: "mailto:emma.richardson@optoma.co.uk",
       },
       {
         icon: "linkedin",
-        label: "Emily Johnson",
+        label: "Emma Richardson",
         url: "#",
       },
     ],
-    buttons: [{ label: "Contact me", url: "#" }],
+    buttons: [{ label: "Book a Demo", url: "#" }],
   }),
 };
 
@@ -69,34 +69,34 @@ export const Centered: Story = {
   args: pack({
     centered: true,
     image: {
-      src: "img/placeholder/avatar-square.svg",
-      alt: "A placeholder image",
+      src: "img/optoma/corporate-collaboration.jpg",
+      alt: "Optoma corporate collaboration environment",
     },
     logo: {
       src: "logo.svg",
-      alt: "Business Logo",
+      alt: "Optoma Logo",
       url: "#",
     },
-    topic: "Industry Intelligence",
-    address: `1234 Business Lane<br />Suite 567 <br />Business City, BC 12345`,
+    topic: "Professional AV Solutions",
+    address: `Optoma Europe Ltd<br />42 Caxton Way<br />Watford, WD18 8QZ`,
     avatar: {
       src: "img/placeholder/avatar-business-card-round.svg",
-      alt: "Emily Johnson",
+      alt: "Emma Richardson",
     },
     contact: [
-      { icon: "phone", label: "+1 234 567 890", url: "tel:+1234567890" },
+      { icon: "phone", label: "+44 (0)1923 691 800", url: "tel:+441923691800" },
       {
         icon: "email",
-        label: "emily@example.com",
-        url: "mailto:emily@example.com",
+        label: "emma.richardson@optoma.co.uk",
+        url: "mailto:emma.richardson@optoma.co.uk",
       },
       {
         icon: "linkedin",
-        label: "Emily Johnson",
+        label: "Emma Richardson",
         url: "#",
       },
     ],
-    buttons: [{ label: "Contact me", url: "#" }],
+    buttons: [{ label: "Book a Demo", url: "#" }],
   }),
 };
 
@@ -111,28 +111,28 @@ export const WithoutImage: Story = {
     centered: false,
     logo: {
       src: "logo.svg",
-      alt: "Business Logo",
+      alt: "Optoma Logo",
       url: "#",
     },
-    topic: "Industry Intelligence",
-    address: `1234 Business Lane<br />Suite 567 <br />Business City, BC 12345`,
+    topic: "Professional AV Solutions",
+    address: `Optoma Europe Ltd<br />42 Caxton Way<br />Watford, WD18 8QZ`,
     avatar: {
       src: "img/placeholder/avatar-business-card-round.svg",
-      alt: "Emily Johnson",
+      alt: "Emma Richardson",
     },
     contact: [
-      { icon: "phone", label: "+1 234 567 890", url: "tel:+1234567890" },
+      { icon: "phone", label: "+44 (0)1923 691 800", url: "tel:+441923691800" },
       {
         icon: "email",
-        label: "emily@example.com",
-        url: "mailto:emily@example.com",
+        label: "emma.richardson@optoma.co.uk",
+        url: "mailto:emma.richardson@optoma.co.uk",
       },
       {
         icon: "linkedin",
-        label: "Emily Johnson",
+        label: "Emma Richardson",
         url: "#",
       },
     ],
-    buttons: [{ label: "Contact me", url: "#" }],
+    buttons: [{ label: "Book a Demo", url: "#" }],
   }),
 };

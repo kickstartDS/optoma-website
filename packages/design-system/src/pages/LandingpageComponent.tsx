@@ -20,35 +20,32 @@ const LandingPage = () => (
         buttons={[
           {
             icon: "arrow-down",
-            label: "Explore further",
-            url: "#startit",
+            label: "Explore solutions",
+            url: "#solutions",
           },
         ]}
-        headline="Welcome to Our Dynamic Workplace"
+        headline="Transform the Way You Present, Connect and Collaborate"
         textbox
         textPosition="left"
         height="fullScreen"
         highlightText
         image={{
           indent: "none",
-          src: "https://picsum.photos/seed/kdsvisual/640/270",
-          srcDesktop:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
-          srcMobile:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
-          srcTablet:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
+          src: "img/optoma/corporate-collaboration.jpg",
+          srcDesktop: "img/optoma/corporate-collaboration.jpg",
+          srcMobile: "img/optoma/corporate-collaboration.jpg",
+          srcTablet: "img/optoma/corporate-collaboration.jpg",
         }}
-        sub="Where Creativity Meets Innovation"
-        text="Experience the perfect blend of creativity, innovation, and productivity in our modern office environment."
+        sub="Corporate Display Solutions"
+        text="From small huddle spaces to large conference rooms, Optoma offers projection, interactive displays, professional displays and LED displays to meet your needs."
       />
     </Section>
     <Section
       spotlight
-      id="startit"
+      id="solutions"
       headline={{
-        text: "Design System Services",
-        sub: "Crafting Consistency, Fostering Growth",
+        text: "Corporate Solutions",
+        sub: "Ignite Collaboration and Communication",
         switchOrder: true,
         width: "default",
         align: "center",
@@ -60,31 +57,31 @@ const LandingPage = () => (
       <ImageStory
         layout="imageLeft"
         text={`
-Here at Systemics, we bring a range of design system services that can make a difference:
+Optoma's corporate solutions create dynamic interactive spaces for increased collaboration and communication.
 
-### 1. Design System **Consulting**
-Let's work side by side to shape a design system strategy that aligns perfectly with your goals. It's not just about tools; it's about guiding principles, stakeholder management und making the right decisions at the right time.
+### 1. **Stay Connected**
+Work together in real-time from any location. With webcam connectivity and Optoma's Whiteboard software, employees can join collaborative sessions remotely from separate locations.
 
-### 2. Design System **Creation & Development**
-We'll bring your design system from concept to production, giving you consistent and engaging user experiences across different platforms. We will work together with your digital teams to transfer all complex Figma ideas into code using kickstartDS.
+### 2. **Huddle Spaces**
+From small spaces to large conference rooms and lobbies — no matter the size or type of environment, Optoma offers solutions to meet your needs.
 
-### 3. Headless **CMS & Websites**
-We leverage the power of headless CMSs to provide scalable, flexible, and versatile websites that drive your online presence.
+### 3. **Collaboration**
+With a ready-to-use whiteboard and the ultra-versatile quick launch pen, users can start presenting in seconds. Share content from any device with Display Share.
 
-### 4. Design System **Training**
-We empower your digital teams with the knowledge and skills to manage and evolve your design system effectively.
+### 4. **Communication**
+Keep employees safe and informed using Optoma Management Suite (OMS). Broadcast videos, share photos, and send emergency messages across any display company wide.
 
-**Ready to make your digital journey exceptional?**`}
+**Ready to transform your meeting spaces?**`}
         image={{
-          src: "/img/full-shot-different-people-working-together.png",
-          alt: "Just a decorative illustration",
+          src: "img/optoma/corporate-stay-connected.jpg",
+          alt: "Optoma corporate collaboration solution",
           vAlign: "top",
         }}
         buttons={[
           {
-            label: "Reach out today!",
+            label: "Request a demo",
             icon: "chevron-right",
-            url: "https://app.lemcal.com/@daniel-ley",
+            url: "#",
           },
         ]}
       />
@@ -94,8 +91,8 @@ We empower your digital teams with the knowledge and skills to manage and evolve
       style="framed"
       transition="to-accent"
       headline={{
-        text: "No Agency site without some shiny happy Customer",
-        sub: "AI-generated smiles, as you see them everywhere nowadays",
+        text: "What Our Customers Say",
+        sub: "Trusted by organisations worldwide",
         textAlign: "left",
       }}
     >
@@ -105,32 +102,32 @@ We empower your digital teams with the knowledge and skills to manage and evolve
           {
             image: {
               src: "/img/people/author-emily.png",
-              alt: "Fake Testimonial Portrait",
+              alt: "Sarah Mitchell portrait",
             },
-            name: "- Emily Johnson",
+            name: "- Sarah Mitchell",
             quote:
-              "Systemics's Design System transformed our development process. The consistency it introduced across our platforms not only saved us time but also boosted our brand's credibility. It's a partnership that continues to pay dividends.",
-            title: "Director of Digital Strategy at EcoTech Solutions",
+              "The Creative Touch displays have completely transformed how our teachers deliver lessons. Student engagement has increased by 40% since deployment, and the built-in Google Classroom integration has been a game-changer.",
+            title: "IT Director, Sussex Learning Trust",
           },
           {
             image: {
               src: "/img/people/author-john.png",
-              alt: "Fake Testimonial Portrait",
+              alt: "David Chen portrait",
             },
-            name: "- John Smith",
+            name: "- David Chen",
             quote:
-              "Working with Systemics technology has been a game-changer for our brand. Their design system expertise brought harmony to our user experiences, making our digital platforms not just functional, but truly captivating.",
-            title: "Chief Marketing Officer at TechFusion Enterprises",
+              "Upgrading our 40+ meeting rooms to Optoma N-Series displays has streamlined hybrid collaboration across our global offices. The picture quality and ease of use exceeded our expectations.",
+            title: "IT Solutions Director, Schindler Group",
           },
           {
             image: {
               src: "/img/people/author-alex.png",
-              alt: "Fake Testimonial Portrait",
+              alt: "James Porter portrait",
             },
-            name: "- Alex Chen",
+            name: "- James Porter",
             quote:
-              "As a startup, we needed to hit the ground running. Systemics's approach streamlined our dev and design process, allowing us to scale faster and focus on what truly matters - building a product that stands out in the market.",
-            title: "CEO of LaunchPad Innovations",
+              "Optoma's laser projectors enabled us to create an immersive 360-degree art installation that captivated over 50,000 visitors. The brightness and colour accuracy were exceptional.",
+            title: "Creative Director, arebyte Gallery",
           },
         ]}
       />
@@ -140,38 +137,38 @@ We empower your digital teams with the knowledge and skills to manage and evolve
       backgroundColor="accent"
       width="wide"
       headline={{
-        text: "Happy Customers Showcases",
-        sub: "We can create something shining for you too!",
+        text: "Featured Case Studies",
+        sub: "See how organisations are transforming their spaces with Optoma",
       }}
     >
       <TeaserCard
-        url="/showcase-techfusion_paid"
-        headline="Transformation Love Story"
-        text="See how we saved TechFusions a year's worth of development time"
-        image="/img/showcases/comp_tfe01.jpg"
+        url="#"
+        headline="Sussex Learning Trust"
+        text="How 15 primary schools transformed classroom engagement with Optoma Creative Touch IFPDs"
+        image="img/optoma/ifpd-school1.jpg"
         button={{
-          label: "View showcase",
+          label: "View case study",
           chevron: true,
         }}
       />
       <TeaserCard
-        url="/showcase-launchpad_paid"
-        headline="Speed and Scale"
-        label="Freshest Fruit"
-        text="Thanks to rapid landing page creation for LaunchPad Audio Innovations"
-        image="/img/showcases/comp_audio01.jpg"
+        url="#"
+        headline="Roblox at Gamescom"
+        label="Immersive Experiences"
+        text="Creating an immersive 360-degree gaming experience with Optoma laser projectors"
+        image="img/optoma/case-study-roblox.jpg"
         button={{
-          label: "View showcase",
+          label: "View case study",
           chevron: true,
         }}
       />
       <TeaserCard
-        url="/showcase-eco_paid"
-        headline="Saving Time and Money"
-        text="Navigating the Headless Frontier for EcoTech's 'Brand Consistency"
-        image="/img/showcases/comp_eco01.jpg"
+        url="#"
+        headline="Schindler Group HQ"
+        text="Modernising 40+ meeting rooms with N-Series professional displays for seamless hybrid collaboration"
+        image="img/optoma/corporate-huddle-spaces.jpg"
         button={{
-          label: "View showcase",
+          label: "View case study",
           chevron: true,
         }}
       />
@@ -179,7 +176,7 @@ We empower your digital teams with the knowledge and skills to manage and evolve
 
     <Section width="wide">
       <Cta
-        headline="Get in touch and chat with us about getting your product or platform to market faster"
+        headline="Speak with our team about the right display solution for your organisation"
         backgroundImage="/img/bg/bg_dot-carpet-blue.svg"
         image={{
           src: "/img/people/contact-person.png",
@@ -188,12 +185,12 @@ We empower your digital teams with the knowledge and skills to manage and evolve
         buttons={[
           {
             label: "Contact us",
-            url: "https://app.lemcal.com/@daniel-ley",
+            url: "#",
             icon: "person",
           },
           {
-            label: "Book a meeting",
-            url: "https://app.lemcal.com/@daniel-ley",
+            label: "Request a demo",
+            url: "#",
             icon: "date",
           },
         ]}
@@ -202,8 +199,8 @@ We empower your digital teams with the knowledge and skills to manage and evolve
 
     <Section
       headline={{
-        text: "Design Systems, all you need to know",
-        sub: "Why Design Systems have gained popularity in digital product development.",
+        text: "Frequently Asked Questions",
+        sub: "Everything you need to know about Optoma's display solutions.",
         large: true,
         align: "left",
       }}
@@ -211,41 +208,34 @@ We empower your digital teams with the knowledge and skills to manage and evolve
       <Faq
         questions={[
           {
-            question: "What is a Design System?",
+            question: "What types of displays does Optoma offer?",
             answer:
-              "A Design System is a comprehensive set of guidelines, components, and tools that facilitate the consistent creation and maintenance of digital products. It serves as a single source of truth for designers, developers, and content creators, ensuring a cohesive brand identity and user experience across all platforms and devices.",
+              "Optoma offers a comprehensive range of display solutions including laser projectors, interactive flat panel displays (Creative Touch), N-Series professional LCD displays, and ProScene LED displays. Each product line is designed for specific environments from classrooms and meeting rooms to large-scale installations.",
           },
           {
-            question: "What are the benefits of investing in a Design System?",
+            question: "What is the Optoma Management Suite (OMS)?",
             answer:
-              "Investing in a Design System offers numerous benefits, including increased efficiency, improved collaboration, enhanced consistency, and streamlined workflows. It ensures a unified brand voice, facilitates faster product development, and enables teams to create scalable, maintainable, and adaptable digital experiences.",
+              "OMS is a cloud-based platform that allows IT administrators to remotely monitor, diagnose, and control Optoma displays across a local area network or the cloud. It streamlines operations by managing firmware updates, scheduling, and broadcasting from a single dashboard — reducing the need for on-site visits.",
           },
           {
-            question:
-              "How does it help enterprise companies with complex SaaS products?",
+            question: "How do Optoma IFPDs integrate with Google Classroom?",
             answer:
-              "We assist enterprise companies by creating tailored Design Systems that cater to the unique requirements of their complex SaaS products. Our approach involves understanding the product's goals, user needs, and brand identity, and then crafting a comprehensive Design System that streamlines workflows, enhances collaboration, and ensures a consistent user experience.",
+              "Optoma's Creative Touch 5-Series displays are Google EDLA certified, providing native access to Google Classroom and the Google Play Store. Teachers can sign in with their Google account to access lessons, assignments, and collaborative tools directly on the display.",
           },
           {
-            question: "Is a Design System not too expensive for a Startup?",
+            question: "What warranty and support does Optoma provide?",
             answer:
-              "While Design Systems may initially seem expensive, they are a long-term investment that can save startups time, resources, and money in the long run. By establishing a solid foundation for design and development, startups can reduce inconsistencies, minimize rework, and improve overall product quality, which ultimately leads to a more successful and sustainable business.",
+              "Optoma offers standard manufacturer warranties on all products, with optional extended warranties available on selected models. Our dedicated support team provides technical assistance via phone, email, and online resources. We also offer on-site installation and training services through our approved reseller network.",
           },
           {
-            question: "How long does a Design System take to build?",
+            question: "Are Optoma displays energy efficient?",
             answer:
-              "The time required to build a Design System varies depending on the project's complexity, scope, and specific requirements. On average, a Design System can take anywhere from a few weeks to several months to develop. However, it is essential to remember that a Design System is an evolving entity that requires ongoing maintenance and updates.",
+              "Yes, Optoma is committed to sustainability. Our laser projectors eliminate lamp replacements and offer up to 30,000 hours of maintenance-free operation. Our LED displays feature eco-friendly standby modes under 0.5W, and the all-in-one design reduces the number of components and power cables needed.",
           },
           {
-            question:
-              "What's the difference between a Design System and a Style Guide?",
+            question: "Can I try an Optoma display before purchasing?",
             answer:
-              "A Style Guide is a subset of a Design System, focusing primarily on the visual aspects of a brand, such as colors, typography, and iconography. A Design System, on the other hand, is a more comprehensive framework that encompasses not only visual elements but also components, patterns, guidelines, and tools for design, development, and content creation.",
-          },
-          {
-            question: "How much does a Design System cost?",
-            answer:
-              "The cost of a Design System varies depending on factors such as project scope, complexity, and specific requirements. It is essential to view a Design System as a long-term investment that yields significant returns in terms of improved efficiency, reduced rework, and enhanced brand consistency. If you start at zero and the design system should serve at least 5 digital touchpoints, it could take months to years to develop all the code base. We believe in tailored solutions, so get in touch with us to discuss your specific requirements. As we work with kickstartDS, you can save lots of money because all the main concepts and aspects are already covered. Invest in its paid modules is really low in comparison to the development time you normally need to spend. For the rest, we'll provide you with a transparent, customized quote that aligns with your goals.",
+              "Absolutely. Optoma offers free product demonstrations at your premises or at our UK showroom. Contact our sales team or visit the demo booking page on our website to arrange a demonstration tailored to your specific requirements.",
           },
         ]}
       />
@@ -254,8 +244,8 @@ We empower your digital teams with the knowledge and skills to manage and evolve
     <Section width="wide" spaceBefore="none" spaceAfter="small">
       <ImageText
         image={{
-          src: "/img/office-divider-image.png",
-          alt: "Photorealistic image Super wide scale of a view into a hyper modern design & web development agency, glass walls, no people, wide angle, blade runner movie like aesthetics, neon-light, lens-flare, pink, blue, and cyan color tonality, wide angle, sharp, ",
+          src: "img/optoma/led-solutions.webp",
+          alt: "Optoma LED display solutions in a modern environment",
         }}
         text={""}
         layout={"above"}
@@ -264,33 +254,31 @@ We empower your digital teams with the knowledge and skills to manage and evolve
 
     <Section
       headline={{
-        text: "Headless CMS for the modern web",
-        sub: "Frequently asked questions",
+        text: "Software Solutions",
+        sub: "Powering your displays with intelligent software",
       }}
     >
       <Faq
         questions={[
           {
-            question: "How do Headless CMSs fit into the picture?",
+            question: "What is Optoma Whiteboard?",
             answer:
-              "A Headless CMS fits perfectly into the picture by offering a content-first approach that complements a Design System. It decouples the back-end content repository from the front-end presentation layer, allowing for seamless integration with any design system. The result is a flexible, scalable, and platform-agnostic system that ensures content consistency across all platforms and devices.",
+              "Optoma Whiteboard is a built-in collaborative application on Creative Touch IFPDs that provides smart annotation tools, multi-user support, and cloud saving. It's designed for hybrid collaboration, allowing teams to create, share, and save interactive sessions from anywhere.",
           },
           {
-            question:
-              "How does the combination of Headless CMS and Design System create value?",
+            question: "How does Display Share work?",
             answer:
-              "The combination of a Headless CMS and a Design System creates value by enhancing efficiency, consistency, and scalability. A Headless CMS allows for seamless content management across various platforms, while a Design System ensures a consistent user experience and brand identity. Together, they enable teams to create and manage digital experiences more effectively, resulting in improved user engagement and business growth.",
+              "Display Share enables wireless screen mirroring from any device — laptops, tablets, and smartphones — to Optoma displays. Multiple users can connect simultaneously, making it ideal for collaborative meetings and classroom presentations without cables or adapters.",
           },
           {
-            question: "Is transitioning to a Headless Web complicated?",
+            question: "Can OMS manage non-Optoma displays?",
             answer:
-              "Transitioning to a Headless Web can be a significant change, but it doesn't have to be complicated. With the right planning, tools, and expertise, the transition can be smooth and beneficial. It's about understanding your specific needs and goals, choosing the right Headless CMS, and effectively integrating it with your Design System.",
+              "Yes, Optoma Management Suite can monitor and control compatible third-party displays alongside Optoma devices, providing a unified management platform for mixed-vendor environments.",
           },
           {
-            question:
-              "How can I ensure a consistent design across various channels with a Headless Web setup? ",
+            question: "What is the Optoma Collaboration Hub?",
             answer:
-              "Ensuring a consistent design across various channels with a Headless Web setup is achieved through the integration of a Design System. The Design System serves as a single source of truth for design elements and guidelines, ensuring a unified brand identity and user experience across all platforms and devices. Combined with the platform-agnostic nature of a Headless CMS, you can deliver a consistent and engaging user experience across all channels.",
+              "The OC HUB enables users to upgrade existing displays with Optoma's software ecosystem, including Optoma Solutions Suite (OSS) for collaboration, content sharing, and file management, as well as OMS for remote device management.",
           },
         ]}
       />
@@ -300,17 +288,17 @@ We empower your digital teams with the knowledge and skills to manage and evolve
       <Cta
         highlightText
         textAlign="center"
-        headline="Ready to embark on a transformative digital journey?"
-        sub="Reach out to us for insights and solutions that seamlessly merge design systems and headless web architecture."
+        headline="Ready to transform your display experience?"
+        sub="From classrooms to boardrooms, Optoma has the right solution for your space."
         buttons={[
           {
             label: "Contact us",
-            url: "https://app.lemcal.com/@daniel-ley",
+            url: "#",
             icon: "person",
           },
           {
-            label: "Book a meeting",
-            url: "https://app.lemcal.com/@daniel-ley",
+            label: "View all products",
+            url: "#",
             icon: "date",
           },
         ]}

@@ -14,7 +14,7 @@ export const footerProps = {
     srcInverted: "/logo-inverted.svg",
     inverted: false,
     homepageHref: "#",
-    alt: "Systemics Logo",
+    alt: "Optoma Logo",
     width: 176,
     height: 40,
   },

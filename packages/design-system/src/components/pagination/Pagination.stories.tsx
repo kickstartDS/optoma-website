@@ -30,41 +30,41 @@ export const Default: Story = {
   args: pack({
     pages: [
       {
-        url: "https://example.com/page1",
+        url: "#page1",
       },
       {
-        url: "https://example.com/page2",
+        url: "#page2",
       },
       {
-        url: "https://example.com/page3",
+        url: "#page3",
       },
       {
-        url: "https://example.com/page4",
+        url: "#page4",
       },
       {
-        url: "https://example.com/page5",
+        url: "#page5",
       },
       {
-        url: "https://example.com/page6",
+        url: "#page6",
         active: true,
       },
       {
-        url: "https://example.com/page7",
+        url: "#page7",
       },
       {
-        url: "https://example.com/page8",
+        url: "#page8",
       },
       {
-        url: "https://example.com/page9",
+        url: "#page9",
       },
       {
-        url: "https://example.com/page10",
+        url: "#page10",
       },
       {
-        url: "https://example.com/page11",
+        url: "#page11",
       },
       {
-        url: "https://example.com/page12",
+        url: "#page12",
       },
     ],
   }),

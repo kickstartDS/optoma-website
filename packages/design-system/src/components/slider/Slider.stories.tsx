@@ -19,34 +19,34 @@ const meta: Meta = {
     <Slider {...args}>
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Creative Touch 5-Series"
+        text="Interactive flat panel displays with built-in whiteboard, wireless sharing, and Google Classroom integration for collaborative learning."
+        image="img/optoma/ifpd-creative-board.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="N-Series Professional Displays"
+        text="Commercial-grade 4K UHD displays designed for 24/7 operation with integrated OMS remote management."
+        image="img/optoma/professional-brand-image.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Explore This Topic"
-        text="This teaser introduces a topic or piece of content and provides a short summary to encourage further exploration."
-        image="img/placeholder/avatar-wide.svg"
+        headline="Laser Projectors"
+        text="DuraCore laser engine delivering up to 30,000 hours of brilliant, maintenance-free 4K UHD projection."
+        image="img/optoma/case-study-roblox.jpg"
         url="#"
         button={{
-          label: "Go to Page",
+          label: "View Range",
           hidden: true,
         }}
       />

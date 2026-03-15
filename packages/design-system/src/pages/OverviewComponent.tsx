@@ -16,22 +16,19 @@ const Overview = () => (
       <Hero
         height="fullScreen"
         image={{
-          alt: undefined,
+          alt: "Optoma ProScene LED displays in a corporate environment",
           indent: "none",
-          src: "https://picsum.photos/seed/kdsvisual/640/270",
-          srcDesktop:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
-          srcMobile:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
-          srcTablet:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
+          src: "img/optoma/led-solutions.webp",
+          srcDesktop: "img/optoma/led-solutions.webp",
+          srcMobile: "img/optoma/led-solutions.webp",
+          srcTablet: "img/optoma/led-solutions.webp",
         }}
         highlightText
         overlay
-        headline="Transformations powered by 💗, Innovation & Design Systems"
-        sub="Selected showcases from Design Systems and headless Webs of the biggest global Enterprises 😁"
+        headline="ProScene LED Displays"
+        sub="All-in-One COB LED solutions for every environment"
         textPosition="offset"
-        text={`Welcome to our showcase of success stories. Here, you'll discover how we've partnered with diverse organizations to revolutionize their digital landscapes. From creating bespoke design systems to implementing headless CMSs, our solutions have empowered brands to streamline processes, enhance user experiences, and foster brand consistency. Dive in to explore how we've turned challenges into opportunities, and visions into reality.`}
+        text={`Optoma's ProScene LED displays combine flip-chip LED and COB technology in an all-in-one design. With built-in speakers, Android OS, and single-cable installation, they deliver stunning visual performance with minimal complexity — ideal for corporate, education, digital signage and hospitality environments.`}
       />
     </Section>
 
@@ -40,20 +37,18 @@ const Overview = () => (
         layout="textLeft"
         tile={[
           {
-            headline: "A Digital Transformation Love Story",
-            sub: "TechFusion Enterprises",
-            text: "Discover how we revolutionized TechFusion Enterprises' digital landscape by developing a tailored Design System. Our innovative approach saved them a year's worth of development time and harmonized their user experiences across all platforms.",
+            headline: 'FHDC135 — 135" All-in-One LED',
+            sub: "ProScene Series",
+            text: "The FHDC135 delivers Full HD resolution across a stunning 135-inch diagonal. With built-in speakers, Android OS and single-cable power, it's the perfect large-format display for boardrooms, lecture halls and digital signage installations.",
             image: {
-              src: "img/showcases/preview_tfe.png",
+              src: "img/optoma/led-fhdc135.webp",
             },
-            backgroundColor: "#670A82",
-            backgroundImage: "img/showcases/tfe_bg.svg",
-
+            backgroundColor: "#1a1a2e",
             button: {
-              label: "See showcase",
+              label: "View product",
               icon: "chevron-right",
               toggle: true,
-              url: "/showcase-techfusion",
+              url: "#",
             },
           },
         ]}
@@ -62,19 +57,18 @@ const Overview = () => (
         layout="textRight"
         tile={[
           {
-            headline: "Speed and Scale",
-            sub: "LaunchPad Audio Innovations",
-            text: "Explore how we empowered LaunchPad, an AI-powered digital audio controller startup, with rapid landing page creation for market testing and a robust foundation for future growth.",
+            headline: 'FHDC163 — 163" All-in-One LED',
+            sub: "ProScene Series",
+            text: "Make a bold impact with the FHDC163 — our largest all-in-one LED display at 163 inches. Featuring COB technology for superior durability and image quality, it's designed for large venues, exhibition spaces and high-traffic lobbies.",
             image: {
-              src: "img/showcases/preview_audio.png",
+              src: "img/optoma/led-fhdc163.webp",
             },
-            backgroundColor: "#0101A3",
-            backgroundImage: "img/showcases/audio_bg.svg",
+            backgroundColor: "#0f3460",
             button: {
-              label: "See showcase",
+              label: "View product",
               icon: "chevron-right",
               toggle: true,
-              url: "/showcase-launchpad",
+              url: "#",
             },
           },
         ]}
@@ -83,17 +77,16 @@ const Overview = () => (
         layout="textLeft"
         tile={[
           {
-            headline: "Navigating the Headless Frontier for Brand Consistency",
-            sub: "EcoTech Solutions",
-            text: "See how we collaborated with EcoTech Solutions to set up a tailored Design System and migrate their main website to a headless CMS, enhancing brand credibility and saving valuable time.",
+            headline: 'FHDC108 — 108" All-in-One LED',
+            sub: "ProScene Series",
+            text: "The compact FHDC108 packs Full HD resolution into a 108-inch form factor. Perfect for meeting rooms, huddle spaces and retail environments where a large display is needed without the complexity of multi-panel installations.",
             image: {
-              src: "img/showcases/preview_eco.png",
+              src: "img/optoma/led-fhdc108.webp",
             },
-            backgroundColor: "#21331E",
-            backgroundImage: "img/showcases/eco_bg.png",
+            backgroundColor: "#16213e",
             button: {
-              url: "/showcase-eco",
-              label: "See showcase",
+              url: "#",
+              label: "View product",
               icon: "chevron-right",
               toggle: true,
             },
@@ -106,18 +99,18 @@ const Overview = () => (
       <Cta
         textAlign="center"
         highlightText
-        headline="Ready to embark on a transformative digital journey?"
-        sub="Reach out to us for insights and solutions that seamlessly merge design systems and headless web architecture."
+        headline="Experience the future of LED display technology"
+        sub="Book a free demonstration at our UK showroom or at your premises"
         buttons={[
           {
-            label: "Contact us",
-            url: "https://app.lemcal.com/@daniel-ley",
-            icon: "person",
+            label: "Request a demo",
+            url: "#",
+            icon: "date",
           },
           {
-            label: "Book a meeting",
-            url: "https://app.lemcal.com/@daniel-ley",
-            icon: "date",
+            label: "Contact sales",
+            url: "#",
+            icon: "person",
           },
         ]}
       />
@@ -128,51 +121,43 @@ const Overview = () => (
       width="wide"
       headline={{
         align: "center",
-        text: "**More Sucess Stories incoming**",
+        text: "**Trusted across industries**",
       }}
     >
       <Logos
         align="center"
         logo={[
           {
-            alt: "Logo 1",
-            src: "img/logos/logoipsum-344.svg",
+            alt: "AWS Qualified Partner",
+            src: "img/optoma/logo-aws-qualified.png",
           },
           {
-            alt: "Logo 2",
-            src: "img/logos/logoipsum-347.svg",
+            alt: "Google for Education Partner",
+            src: "img/optoma/logo-google-education.png",
           },
           {
-            alt: "Logo 3",
-            src: "img/logos/logoipsum-352.svg",
+            alt: "Sussex Learning Trust",
+            src: "img/optoma/logo-sussex-trust.png",
           },
           {
-            alt: "Logo 4",
-            src: "img/logos/logoipsum-356.svg",
+            alt: "Schindler Group",
+            src: "img/optoma/logo-schindler.png",
           },
           {
-            alt: "Logo 5",
-            src: "img/logos/logoipsum-358.svg",
+            alt: "Birmingham City University",
+            src: "img/optoma/logo-birmingham.png",
           },
           {
-            alt: "Logo 6",
-            src: "img/logos/logoipsum-369.svg",
+            alt: "Sounds & Vision",
+            src: "img/optoma/logo-sounds-vision.png",
           },
           {
-            alt: "Logo 7",
-            src: "img/logos/logoipsum-373.svg",
+            alt: "James Pantyfedwen Foundation",
+            src: "img/optoma/logo-jpf.png",
           },
           {
-            alt: "Logo 8",
-            src: "img/logos/logoipsum-344.svg",
-          },
-          {
-            alt: "Logo 9",
-            src: "img/logos/logoipsum-347.svg",
-          },
-          {
-            alt: "Logo 10",
-            src: "img/logos/logoipsum-352.svg",
+            alt: "Reactiv Suite",
+            src: "img/optoma/logo-reactiv-suite.png",
           },
         ]}
         logosPerRow={4}
@@ -182,7 +167,7 @@ const Overview = () => (
 
     <Section>
       <Text
-        text={`Many thanks to Freepik. All website comps by [Freepik](https://www.freepik.com/free-psd/smart-home-app-web-template_16692832.htm#query=website%20mockup%20tech&position=0&from_view=search&track=ais).`}
+        text={`Optoma ProScene LED displays feature flip-chip LED and COB technology for superior durability, with eco-friendly standby power under 0.5W. [Learn more about our sustainability commitment](#).`}
         align="center"
       />
     </Section>

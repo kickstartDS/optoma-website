@@ -30,16 +30,16 @@ export const Default: Story = {
   args: pack({
     pages: [
       {
-        url: "https://example.com/page1",
-        label: "Page 1",
+        url: "#",
+        label: "Home",
       },
       {
-        url: "https://example.com/page2",
-        label: "Page 2",
+        url: "#",
+        label: "Products",
       },
       {
-        url: "https://example.com/page3",
-        label: "Page 3",
+        url: "#",
+        label: "Interactive Displays",
       },
     ],
   }),

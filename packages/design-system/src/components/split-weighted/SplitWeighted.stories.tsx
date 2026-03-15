@@ -41,35 +41,35 @@ export const TextWithContact: Story = {
     main: (
       <>
         <Cta
-          headline="Discover our solutions for Industry 4.0"
-          text={`We help companies make their production processes more efficient and future-proof through digitalization, automation, and smart technologies. Rely on our many years of experience in the industrial sector.
+          headline="Display solutions for every environment"
+          text={`From corporate meeting rooms to school classrooms, Optoma provides professional-grade display technology trusted by organisations in over 150 countries.
 
-Revolutionize your manufacturing with our tailored solutions designed to meet the specific needs of your industry.`}
-          buttons={[{ label: "Learn more" }]}
+Discover our range of interactive flat panels, laser projectors, and professional displays designed for seamless collaboration.`}
+          buttons={[{ label: "Explore solutions" }]}
         />
       </>
     ),
     aside: (
       <>
         <Contact
-          title={"Isabella Doe"}
-          subtitle={"Creative Director"}
+          title={"Emma Richardson"}
+          subtitle={"Regional Sales Manager"}
           image={{
             src: "img/people/contact-isabella.png",
             aspectRatio: "wide",
           }}
           links={[
             {
-              icon: "twitter",
-              url: "#",
-              label: "@Isabella_Doe",
-              ariaLabel: "Isabella Doe on Twitter",
+              icon: "email",
+              url: "mailto:emma.richardson@optoma.com",
+              label: "emma.richardson@optoma.com",
+              ariaLabel: "Email Emma Richardson",
             },
             {
-              url: "mailto:mail@example.com",
-              icon: "linkedin",
-              label: "Isabella.Doe",
-              ariaLabel: "Isabella Doe on LinkedIn",
+              url: "tel:+441923691800",
+              icon: "phone",
+              label: "+44 (0)1923 691 800",
+              ariaLabel: "Call Optoma Europe",
             },
           ]}
         />
@@ -96,15 +96,15 @@ export const TextWithTeaser: Story = {
     main: (
       <>
         <Headline
-          text={"Innovative solutions for Industry 4.0"}
+          text={"Professional Display Solutions"}
           level={"h2"}
           spaceAfter="minimum"
         />
         <Text
           highlightText
-          text={`We help companies make their production processes more efficient and future-proof through digitalization, automation, and smart technologies. Rely on our many years of experience in the industrial sector.
+          text={`Optoma’s N-Series professional displays deliver commercial-grade 4K UHD performance designed for 24/7 operation. With integrated OMS remote management, Display Share wireless casting, and a slim bezel design, they’re ideal for digital signage, corporate communications, and public spaces.
 
-Revolutionize your manufacturing with our tailored solutions designed to meet the specific needs of your industry.`}
+Available in 55", 65", 75", and 86" screen sizes to suit any installation.`}
         />
       </>
     ),
@@ -114,12 +114,12 @@ Revolutionize your manufacturing with our tailored solutions designed to meet th
         button={{
           chevron: false,
           hidden: false,
-          label: "Read more",
+          label: "Read case study",
         }}
         imageRatio="landscape"
-        headline="Transforming Industry"
-        text="with Smart Solutions"
-        image="img/logos/castaway.svg"
+        headline="Sussex Learning Trust"
+        text="Transforming classroom engagement with IFPDs"
+        image="img/optoma/ifpd-school1.jpg"
         url="#"
       />
     ),
@@ -153,12 +153,12 @@ export const TextWithTeaserTiles: Story = {
     aside: (
       <>
         <ImageText
-          text={`This paragraph highlights **information** and includes a text link for further reference. Additional details can be found by visiting **[this example link](#)** to explore related content or documentation.
+          text={`Optoma’s **Creative Touch 5-Series** interactive flat panel displays bring collaboration to life in any environment. With built-in annotation tools, wireless screen sharing, and seamless **[Google Classroom integration](#)**, they’re designed for modern teaching and meeting spaces.
 
-*This paragraph is intended to demonstrate italic text formatting.*"`}
+*Available in 65", 75", and 86" screen sizes.*"`}
           image={{
-            src: "img/placeholder/avatar-wide.svg",
-            alt: "",
+            src: "img/optoma/ifpd-creative-board.jpg",
+            alt: "Optoma Creative Touch interactive display in a classroom",
           }}
           layout={"above"}
         />
@@ -168,43 +168,43 @@ export const TextWithTeaserTiles: Story = {
       <>
         <TeaserCard
           url={""}
-          headline="Lorem Ipsum"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Corporate"
+          image="img/optoma/corporate-huddle-spaces.jpg"
           imageRatio="square"
           layout="compact"
         />
         <TeaserCard
           url={""}
-          headline="Dolor Sit Amet"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Education"
+          image="img/optoma/ifpd-school2.jpg"
           imageRatio="square"
           layout="compact"
         />
         <TeaserCard
           url={""}
-          headline="Consectetur Adipiscing"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Retail & Signage"
+          image="img/optoma/professional-signage.jpg"
           imageRatio="square"
           layout="compact"
         />
         <TeaserCard
           url={""}
-          headline="Eiusmod Tempor"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Museums & Galleries"
+          image="img/optoma/case-study-museum.jpg"
           imageRatio="square"
           layout="compact"
         />
         <TeaserCard
           url={""}
-          headline="Incididunt Ut Labore"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Live Events"
+          image="img/optoma/case-study-commonwealth.jpg"
           imageRatio="square"
           layout="compact"
         />
         <TeaserCard
           url={""}
-          headline="Et Dolore Magna"
-          image="img/placeholder/avatar-wide.svg"
+          headline="Hospitality"
+          image="img/optoma/professional-hybrid.jpg"
           imageRatio="square"
           layout="compact"
         />

@@ -30,7 +30,7 @@ export const H1: Story = {
   args: pack({
     level: "h1",
     style: "h1",
-    text: "Key headline for this sectionPage or section headline",
+    text: "Visual Display Solutions for Every Environment",
   }),
 };
 
@@ -44,7 +44,7 @@ export const H2: Story = {
   args: pack({
     level: "h2",
     style: "h2",
-    text: "Headline text placeholder",
+    text: "Interactive Flat Panel Displays",
   }),
 };
 
@@ -58,7 +58,7 @@ export const H3: Story = {
   args: pack({
     level: "h3",
     style: "h3",
-    text: "Another section headline",
+    text: "Why Choose Optoma?",
   }),
 };
 
@@ -72,7 +72,7 @@ export const H4: Story = {
   args: pack({
     level: "h4",
     style: "h4",
-    text: "Message headline",
+    text: "Sustainability Commitment",
   }),
 };
 
@@ -84,8 +84,8 @@ export const WithSubheadline: Story = {
     },
   },
   args: pack({
-    text: "Key headline for this section",
-    sub: "Subheading for additional context",
+    text: "Creative Touch 5-Series",
+    sub: "Interactive displays for education and collaboration",
   }),
 };
 
@@ -97,8 +97,8 @@ export const OrderSwapped: Story = {
     },
   },
   args: pack({
-    text: "Key headline for this section",
-    sub: "Eyebrow heading to frame the context",
+    text: "Professional Display Solutions",
+    sub: "N-Series for Corporate Environments",
     switchOrder: true,
   }),
 };
@@ -111,7 +111,7 @@ export const WithMarkdown: Story = {
     },
   },
   args: pack({
-    text: "**Key headline** for this section",
-    sub: "Subheading for _additional_ context",
+    text: "**Brilliant Visuals**, Sustainable Design",
+    sub: "Optoma's commitment to _eco-friendly_ innovation",
   }),
 };

@@ -29,11 +29,11 @@ export const Default: Story = {
     categories: {
       categoryCheckboxes: [
         "All",
-        "Buyers",
-        "Sellers",
-        "Renters",
-        "Landlords",
-        "Tenants",
+        "Trade Shows",
+        "Product Launches",
+        "Webinars",
+        "Training",
+        "Workshops",
       ],
     },
   }),

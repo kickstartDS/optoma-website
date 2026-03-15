@@ -17,36 +17,36 @@ const Jobs = () => (
     <Header {...headerProps} />
     <Section width="full" spaceAfter="none" spaceBefore="none">
       <Hero
-        headline="Welcome to Systemics"
-        sub="Your partner in innovative software solutions"
+        headline="Careers at Optoma"
+        sub="Shape the future of visual technology"
         textPosition="corner"
         buttons={[
           {
-            label: "Skip to Openings",
+            label: "View openings",
             url: "#openings",
             icon: "arrow-down",
           },
         ]}
         image={{
-          srcMobile:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
+          srcMobile: "img/optoma/about-coworking.jpg",
         }}
       />
     </Section>
     <Section
       headline={{
-        text: "Job Opportunities at Systemics",
-        sub: "Explore our current job openings",
+        text: "Why Work at Optoma?",
+        sub: "Join a global leader in display solutions",
       }}
     >
       <ImageText
-        text={`Join our team to build innovative software solutions. We are looking for passionate individuals to help us shape the future of technology.
-Explore our current job openings and find the perfect fit for your skills and career goals.
-Whether you are a seasoned professional or just starting your career, we have opportunities for you to grow and thrive in a dynamic work environment.
-At Systemics, we value creativity, collaboration, and a commitment to excellence. Be part of a team that is dedicated to making a difference in the tech industry.`}
+        text={`Optoma Europe Ltd was established in 1997 and has grown to approximately 130 employees across Europe and MEA, headquartered in Hemel Hempstead, UK.
+
+We're a passionate team of innovators, engineers and business professionals dedicated to delivering award-winning projection, interactive display, and LED solutions to customers worldwide.
+
+Whether you're an experienced professional or just starting your career, Optoma offers a collaborative, inclusive environment where your contributions make a real impact on how people present, learn and connect.`}
         image={{
-          src: "img/people-brainstorming-work-meeting.png",
-          alt: "Software Engineer",
+          src: "img/optoma/about-team-discussion.jpg",
+          alt: "Optoma team discussing in a modern office",
         }}
         layout={"beside-right"}
       />
@@ -58,41 +58,41 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
         testimonial={[
           {
             image: {
-              alt: "Alt Text Customer 1",
+              alt: "Emma portrait",
               src: "img/people/author-emily.png",
             },
-            name: "Emily Johnson",
+            name: "Emma Richardson",
             quote:
-              "Working with Systemics technology has been a game-changer for our brand. Their design system expertise brought harmony to our user experiences, making our digital platforms not just functional, but truly captivating.",
-            title: "Chief Marketing Officer at TechFusion Enterprises",
+              "What I love about Optoma is the opportunity to work with cutting-edge visual technology while being part of a genuinely supportive team. Every project feels like it matters, and there's always room to grow.",
+            title: "Product Marketing Manager, Optoma Europe",
           },
           {
             image: {
-              alt: "Alt Text Customer 2",
+              alt: "Tom portrait",
               src: "img/people/author-john.png",
             },
-            name: "John Smith",
+            name: "Tom Hawkins",
             quote:
-              "Systemics's design system transformed our development process. The consistency it introduced across our platforms not only saved us time but also boosted our brand's credibility. It's a partnership that continues to pay dividends.",
-            title: "Director of Digital Strategy at EcoTech Solutions",
+              "Joining Optoma was the best career move I've made. The hybrid working model gives me flexibility, and the team culture encourages innovation. I've been able to develop my skills in ways I never expected.",
+            title: "Senior Sales Engineer, Optoma Europe",
           },
           {
             image: {
-              alt: "Alt Text Customer 3",
+              alt: "Priya portrait",
               src: "img/people/author-alex.png",
             },
-            name: "Alex Chen",
+            name: "Priya Sharma",
             quote:
-              "As a startup, we needed to hit the ground running. Systemics's approach streamlined our dev and design process, allowing us to scale faster and focus on what truly matters - building a product that stands out in the market.",
-            title: "CEO of LaunchPad Innovations",
+              "As part of the education team, I see first-hand how our products transform classrooms across the UK. It's incredibly rewarding to know that the work we do directly benefits teachers and students.",
+            title: "Education Account Manager, Optoma Europe",
           },
         ]}
       />
     </Section>
     <Section
       headline={{
-        text: "Facts and Figures",
-        sub: "Get to know Systemics by the numbers.",
+        text: "Optoma at a Glance",
+        sub: "The numbers behind our global success",
         align: "center",
       }}
       width="wide"
@@ -100,20 +100,20 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
       <Stats
         stat={[
           {
-            title: "Offices Worldwide",
-            number: "5",
+            title: "Countries with Offices",
+            number: "25+",
           },
           {
-            title: "Employees in our Team",
-            number: "150+",
+            title: "Employees across Europe & MEA",
+            number: "130+",
           },
           {
-            title: "Years in Business",
-            number: "10+",
+            title: "Years in the AV Industry",
+            number: "25+",
           },
           {
-            title: "Projects Completed",
-            number: "500+",
+            title: "Award-Winning Products",
+            number: "200+",
           },
         ]}
       />
@@ -121,8 +121,8 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
     <Section
       id="openings"
       headline={{
-        text: "Current Job Openings",
-        sub: "Find the role that matches your skills and ambitions.",
+        text: "Current Vacancies",
+        sub: "Find the role that's right for you",
       }}
       content={{
         mode: "list",
@@ -130,55 +130,37 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
     >
       <TeaserCard
         layout="row"
-        headline="Software Engineer"
-        text="Join our team as a Software Engineer and help us build innovative solutions."
+        headline="Partner Account Manager"
+        text="Drive growth through strategic partner relationships across the UK AV/IT channel. Based in Hemel Hempstead with hybrid working."
         url={"#"}
         button={{
-          label: "See opening",
+          label: "View vacancy",
         }}
       />
       <TeaserCard
         layout="row"
-        headline="Product Manager"
-        text="We are looking for a Product Manager to drive our product strategy."
+        headline="Technical Support Engineer"
+        text="Provide expert technical support for our range of projectors, IFPDs and LED displays. Help customers get the most from their Optoma solutions."
         url={"#"}
         button={{
-          label: "See opening",
+          label: "View vacancy",
         }}
       />
       <TeaserCard
         layout="row"
-        headline="UX Designer"
-        text="Apply now for the UX Designer position and shape user experiences."
+        headline="Digital Marketing Executive"
+        text="Create compelling content and manage campaigns that showcase Optoma's display solutions across digital channels."
         url={"#"}
         button={{
-          label: "See opening",
-        }}
-      />
-      <TeaserCard
-        layout="row"
-        headline="Software Engineer"
-        text="Join our team as a Software Engineer and help us build innovative solutions."
-        url={"#"}
-        button={{
-          label: "See opening",
-        }}
-      />
-      <TeaserCard
-        layout="row"
-        headline="Product Manager"
-        text="We are looking for a Product Manager to drive our product strategy."
-        url={"#"}
-        button={{
-          label: "See opening",
+          label: "View vacancy",
         }}
       />
     </Section>
     <Section
       width="wide"
       headline={{
-        text: "Application Process",
-        sub: "Your path to joining Systemics – step by step.",
+        text: "Our Recruitment Process",
+        sub: "Your journey to joining Optoma — clear and straightforward",
       }}
       content={{
         mode: "slider",
@@ -192,12 +174,11 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
         textbox={false}
         overlay
         image={{
-          srcMobile:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
-          alt: "Application Process",
+          srcMobile: "img/optoma/about-coworking.jpg",
+          alt: "Browse open positions at Optoma",
         }}
-        headline="Discover Your Opportunity..."
-        text="Browse our open positions and find the role that matches your skills and ambitions. We offer a variety of opportunities for professionals at every stage of their career."
+        headline="Browse & Apply"
+        text="Explore our current vacancies and find a role that matches your skills and ambitions. Submit your CV and cover letter through our careers portal or email recruitment@optoma.co.uk."
       />
       <Hero
         textPosition="left"
@@ -205,11 +186,11 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
         textbox={false}
         overlay
         image={{
-          srcMobile: "img/people-brainstorming-work-meeting.png",
-          alt: "Application Process",
+          srcMobile: "img/optoma/about-team-discussion.jpg",
+          alt: "Interview process at Optoma",
         }}
-        headline="... Apply to Us ..."
-        text="Prepare your resume and cover letter, then submit your application through our online portal. Make sure to highlight your experience and motivation for joining Systemics."
+        headline="Interview & Assessment"
+        text="If your profile is a good fit, we'll invite you for an interview — typically a mix of competency-based questions and a practical assessment relevant to the role. We want to get to know you, and for you to get to know us."
       />
       <Hero
         textPosition="left"
@@ -217,12 +198,11 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
         textbox={false}
         overlay
         image={{
-          srcMobile:
-            "img/colleagues-work-office-using-computers-looking-aside.png",
-          alt: "Application Process",
+          srcMobile: "img/optoma/about-team-highfive.jpg",
+          alt: "Welcome to the Optoma team",
         }}
-        headline="... Ace the Interview ..."
-        text="If your profile matches our requirements, we’ll invite you to an interview. This is your chance to get to know us and for us to learn more about you."
+        headline="Offer & Onboarding"
+        text="Successful candidates receive a comprehensive offer including competitive salary, benefits package and a structured onboarding programme to help you hit the ground running from day one."
       />
       <Hero
         textPosition="right"
@@ -230,53 +210,53 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
         textbox={false}
         overlay
         image={{
-          srcMobile: "img/people-brainstorming-work-meeting.png",
-          alt: "Application Process",
+          srcMobile: "img/optoma/corporate-collaboration.jpg",
+          alt: "Grow your career at Optoma",
         }}
-        headline="and Join Our Team!"
-        text="Congratulations! If you’re selected, we’ll send you an offer and guide you through the onboarding process."
+        headline="Grow & Thrive"
+        text="At Optoma you'll have access to ongoing professional development, industry certifications, and internal mobility opportunities as we continue to grow across Europe and MEA."
       />
     </Section>
     <Section
       headline={{
         text: "Frequently Asked Questions",
-        sub: "Everything you need to know about working and applying at Systemics.",
+        sub: "Everything you need to know about working at Optoma",
       }}
     >
       <Faq
         questions={[
           {
-            question: "What is the application process?",
+            question: "Where is Optoma's office located?",
             answer:
-              "To apply, please submit your resume and cover letter through our careers page. Our team will review your application and contact you if you are selected for an interview.",
+              "Our European headquarters is in Hemel Hempstead, Hertfordshire, UK — well connected by road and rail, approximately 30 minutes from central London. We also have offices across Europe and MEA.",
           },
           {
-            question: "What benefits do you offer?",
+            question: "Do you offer hybrid or remote working?",
             answer:
-              "We offer a comprehensive benefits package including health insurance, retirement plans, and professional development opportunities.",
+              "Yes, many of our roles support hybrid working arrangements. The specific split depends on the role and team, but we're committed to flexible working that supports both productivity and work-life balance.",
           },
           {
-            question: "How can I prepare for the interview?",
+            question: "What benefits does Optoma offer?",
             answer:
-              "Research our company, understand our products, and be ready to discuss your relevant experience and how it aligns with the role you are applying for.",
+              "We offer a competitive salary alongside a comprehensive benefits package including private medical insurance, dental cover, pension scheme, up to 30 days annual leave, and professional development opportunities.",
+          },
+          {
+            question: "How do I apply for a position?",
+            answer:
+              "You can apply directly through the vacancy listing on our careers page, or send your CV and cover letter to recruitment@optoma.co.uk. Please reference the specific role you're interested in.",
           },
           {
             question: "What is the company culture like?",
             answer:
-              "Our company culture is collaborative, innovative, and focused on continuous improvement. We value diversity and inclusion and strive to create a supportive work environment.",
-          },
-          {
-            question: "Are there opportunities for career growth?",
-            answer:
-              "Yes, we encourage career growth and provide various opportunities for professional development, including training programs, mentorship, and internal promotions.",
+              "Optoma's culture is collaborative, innovative and inclusive. We value diversity of thought and background, encourage continuous learning, and celebrate team achievements. Regular social events and team-building activities help build strong connections across departments.",
           },
         ]}
       />
     </Section>
     <Section
       headline={{
-        text: "Our Benefits at a Glance",
-        sub: "Working at Systemics comes with many advantages. These are just a few of them.",
+        text: "Benefits & Perks",
+        sub: "What you get when you join the Optoma team",
       }}
     >
       <Features
@@ -286,33 +266,33 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
         feature={[
           {
             icon: "arrow-right",
-            title: "Flexible Work Arrangements",
-            text: "Enjoy the freedom to work remotely or from our modern offices. We support flexible schedules to help you balance your professional and personal life.",
+            title: "Competitive Salary",
+            text: "We offer competitive remuneration packages benchmarked against the AV and technology industry, with annual reviews and performance-based bonuses.",
           },
           {
             icon: "arrow-right",
-            title: "Continuous Learning",
-            text: "Benefit from ongoing training, workshops, and access to the latest technologies. We invest in your growth and professional development.",
+            title: "Health & Dental Cover",
+            text: "Comprehensive private medical insurance and dental cover for you — because your wellbeing is our priority.",
           },
           {
             icon: "arrow-right",
-            title: "Collaborative Culture",
-            text: "Be part of a diverse and inclusive team where your ideas are valued. Collaboration and open communication are at the heart of our success.",
+            title: "Generous Leave",
+            text: "Up to 30 days annual leave plus bank holidays, giving you plenty of time to recharge and enjoy life outside of work.",
           },
           {
             icon: "arrow-right",
-            title: "Attractive Compensation",
-            text: "Receive a competitive salary and performance-based bonuses. We recognize and reward your contributions to our shared goals.",
+            title: "Pension Scheme",
+            text: "A solid pension scheme to help you build financial security for the future, with employer contributions.",
           },
           {
             icon: "arrow-right",
-            title: "Health & Wellbeing",
-            text: "Take advantage of comprehensive health benefits, wellness programs, and regular team events to keep you healthy and motivated.",
+            title: "Hybrid Working",
+            text: "Flexible hybrid working arrangements that let you balance office collaboration with the comfort and focus of working from home.",
           },
           {
             icon: "arrow-right",
-            title: "Career Advancement",
-            text: "Grow with us! We offer clear career paths, mentorship, and opportunities for internal promotions so you can achieve your ambitions.",
+            title: "Professional Development",
+            text: "Ongoing training, industry certifications and career development opportunities to help you grow and advance within Optoma.",
           },
         ]}
         layout="largeTiles"
@@ -322,39 +302,39 @@ At Systemics, we value creativity, collaboration, and a commitment to excellence
     <Section
       headline={{
         text: "Get in Touch",
-        sub: "Contact our recruitment team for any questions about your application.",
+        sub: "Contact our recruitment team about any vacancy",
       }}
     >
       <Contact
         image={{
-          alt: "Picture of Isabella Doe",
+          alt: "Optoma recruitment team contact",
           aspectRatio: "wide",
           fullWidth: true,
           src: "img/people/contact-jim.png",
         }}
         links={[
           {
-            ariaLabel: "Link to Isabella Doe's social media profile",
+            ariaLabel: "Email the Optoma recruitment team",
             icon: "email",
-            label: "jim.johnsson@mail.com",
+            label: "recruitment@optoma.co.uk",
             newTab: false,
-            url: "mailto:mail@example.com",
+            url: "mailto:recruitment@optoma.co.uk",
           },
           {
-            ariaLabel: "Link to Isabella Doe's social media profile",
+            ariaLabel: "Visit Optoma on LinkedIn",
             icon: "facebook",
-            label: "@jim_johnsson",
-            newTab: false,
+            label: "@OptomaEurope",
+            newTab: true,
             url: "#",
           },
         ]}
-        copy="For any inquiries about job openings or the application process, feel free to reach out to our Head of Recruitment, Jim Johnsson."
-        subtitle="Head of Recruitment"
-        title="Jim Johnsson"
+        copy="For any questions about current vacancies or the application process, please contact our HR team. We're happy to help with any queries about life at Optoma."
+        subtitle="HR & Recruitment"
+        title="Optoma Europe HR Team"
       />
     </Section>
     <Footer {...footerProps} />
   </>
 );
 
-export default Jobs
+export default Jobs;

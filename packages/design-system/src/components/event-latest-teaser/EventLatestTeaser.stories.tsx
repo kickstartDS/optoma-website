@@ -28,15 +28,15 @@ export const Default: Story = {
     },
   },
   args: pack({
-    date: "09/18/2025",
-    title: "Title of an Event",
-    location: "Example City",
+    date: "02/04/2026",
+    title: "Optoma at ISE 2026",
+    location: "Barcelona",
     url: "#",
     cta: "Go to event",
     calendar: {
-      day: "18",
-      month: "Sep",
+      day: "04",
+      month: "Feb",
     },
-    ariaLabel: "Demo Event One on September 18, 2025 in Example City",
+    ariaLabel: "Optoma at ISE 2026 on February 4, 2026 in Barcelona",
   }),
 };
