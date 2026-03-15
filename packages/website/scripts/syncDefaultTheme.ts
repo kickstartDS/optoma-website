@@ -81,19 +81,15 @@ async function main(): Promise<void> {
     oauthToken,
   });
 
-  const contentClient = new StoryblokClient({
-    accessToken: apiToken,
-  });
-
   // ── Check if the default theme already exists ──────────────────
+  // Use management API (not CDN) so we find unpublished/draft stories too
   let existingStory: Record<string, any> | null = null;
   try {
-    const response = await contentClient.get("cdn/stories", {
-      starts_with: `${THEME_FOLDER}/${THEME_SLUG}`,
-      content_type: "token-theme",
+    const response = await managementClient.get(`spaces/${spaceId}/stories`, {
+      with_slug: `${THEME_FOLDER}/${THEME_SLUG}`,
       per_page: 1,
     });
-    const stories: Record<string, any>[] = response.data.stories || [];
+    const stories: Record<string, any>[] = (response.data as any).stories || [];
     existingStory = stories.find((s) => s.slug === THEME_SLUG) || null;
   } catch {
     // Not found — will create
@@ -198,20 +194,43 @@ async function ensureFolder(
     if (existing) {
       parentId = existing.id;
     } else {
-      // Create the folder
-      const createResponse = await client.post(`spaces/${spaceId}/stories`, {
-        story: {
-          name: segment.charAt(0).toUpperCase() + segment.slice(1),
-          slug: segment,
-          parent_id: parentId || undefined,
-          is_folder: true,
-          content: {
-            component: "page",
-            _uid: randomUUID(),
+      // Create the folder, handling "slug already taken" gracefully
+      try {
+        const createResponse = await client.post(`spaces/${spaceId}/stories`, {
+          story: {
+            name: segment.charAt(0).toUpperCase() + segment.slice(1),
+            slug: segment,
+            parent_id: parentId || undefined,
+            is_folder: true,
+            content: {
+              component: "page",
+              _uid: randomUUID(),
+            },
           },
-        },
-      });
-      parentId = (createResponse.data as any).story.id;
+        });
+        parentId = (createResponse.data as any).story.id;
+      } catch (err: any) {
+        if (err?.status === 422 || err?.response?.status === 422) {
+          // Folder already exists — look it up by full slug path so far
+          const fullSlug = segments
+            .slice(0, segments.indexOf(segment) + 1)
+            .join("/");
+          const retryResponse = await client.get(`spaces/${spaceId}/stories`, {
+            with_slug: fullSlug,
+            is_folder: true,
+          });
+          const retryStories: Record<string, any>[] =
+            (retryResponse.data as any).stories || [];
+          const found = retryStories.find((s) => s.slug === segment);
+          if (found) {
+            parentId = found.id;
+          } else {
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
     }
   }
 
