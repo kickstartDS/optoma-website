@@ -21,6 +21,11 @@ import {
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
+import {
+  verifyToken,
+  extractBearerToken,
+  isAuthEnabled,
+} from "@kickstartds/shared-auth";
 import { tools } from "./tools.js";
 import { dispatch } from "./handlers.js";
 import { resources, readResource } from "./resources.js";
@@ -47,7 +52,7 @@ function createMcpServer(): Server {
         tools: {},
         resources: {},
       },
-    }
+    },
   );
 
   // ── Tool handlers ─────────────────────────────────────────────
@@ -104,20 +109,38 @@ async function main(): Promise<void> {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader(
         "Access-Control-Allow-Methods",
-        "GET, POST, DELETE, OPTIONS"
+        "GET, POST, DELETE, OPTIONS",
       );
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, mcp-session-id, Last-Event-ID, mcp-protocol-version"
+        "Content-Type, Authorization, mcp-session-id, Last-Event-ID, mcp-protocol-version",
       );
       res.setHeader(
         "Access-Control-Expose-Headers",
-        "mcp-session-id, mcp-protocol-version"
+        "mcp-session-id, mcp-protocol-version",
       );
 
       if (req.method === "OPTIONS") {
         res.writeHead(204).end();
         return;
+      }
+
+      // ── Auth guard ──────────────────────────────────────
+      if (isAuthEnabled()) {
+        const token = extractBearerToken(req);
+        const user = token ? verifyToken(token) : null;
+        if (!user) {
+          res.writeHead(401, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({
+              jsonrpc: "2.0",
+              error: { code: -32001, message: "Unauthorized" },
+              id: null,
+            }),
+          );
+          return;
+        }
+        console.error(`Authenticated: ${user.sub} (role: ${user.role})`);
       }
 
       try {
@@ -154,7 +177,7 @@ async function main(): Promise<void> {
               jsonrpc: "2.0",
               error: { code: -32603, message: "Internal server error" },
               id: null,
-            })
+            }),
           );
         }
       }
@@ -162,10 +185,15 @@ async function main(): Promise<void> {
 
     httpServer.listen(PORT, () => {
       console.error(
-        `Component Builder MCP Server (Streamable HTTP, stateless) listening on port ${PORT}`
+        `Component Builder MCP Server (Streamable HTTP, stateless) listening on port ${PORT}`,
       );
       console.error(`  Endpoint:     http://0.0.0.0:${PORT}/mcp`);
       console.error(`  Health check: http://0.0.0.0:${PORT}/health`);
+      if (!isAuthEnabled()) {
+        console.error(
+          "⚠ MCP_JWT_SECRET not set — authentication disabled. All requests are unauthenticated.",
+        );
+      }
     });
 
     // Graceful shutdown
@@ -180,7 +208,7 @@ async function main(): Promise<void> {
     const transport = new StdioServerTransport();
     await mcpServer.connect(transport);
     console.error(
-      "Design System Component Builder MCP server running on stdio"
+      "Design System Component Builder MCP server running on stdio",
     );
   }
 }

@@ -477,11 +477,13 @@ All errors return consistent JSON:
 
 ## Environment Variables
 
-| Variable        | Description                         | Default      |
-| --------------- | ----------------------------------- | ------------ |
-| `MCP_TRANSPORT` | Transport mode: `stdio` or `http`   | `stdio`      |
-| `MCP_PORT`      | HTTP server port (when `http` mode) | `8080`       |
-| `NODE_ENV`      | Environment mode                    | `production` |
+| Variable          | Description                         | Default      |
+| ----------------- | ----------------------------------- | ------------ |
+| `MCP_TRANSPORT`   | Transport mode: `stdio` or `http`   | `stdio`      |
+| `MCP_PORT`        | HTTP server port (when `http` mode) | `8080`       |
+| `MCP_JWT_SECRET`  | JWT signing secret for HTTP auth    | _(disabled)_ |
+| `MCP_REVOKED_TOKENS` | Comma-separated JTI blocklist    | _(none)_     |
+| `NODE_ENV`        | Environment mode                    | `production` |
 
 ## License
 

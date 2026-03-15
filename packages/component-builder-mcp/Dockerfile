@@ -9,6 +9,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 # Copy pnpm patches so they are applied during install
 COPY patches/ ./patches/
 # Copy package.json for the component-builder-mcp package
+COPY packages/shared-auth/package.json ./packages/shared-auth/
 COPY packages/component-builder-mcp/package.json ./packages/component-builder-mcp/
 
 # Install dependencies
@@ -19,9 +20,11 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 ARG CACHEBUST=0
 
 # Copy source code
+COPY packages/shared-auth/ ./packages/shared-auth/
 COPY packages/component-builder-mcp/ ./packages/component-builder-mcp/
 
-# Build TypeScript
+# Build shared auth, then TypeScript
+RUN pnpm --filter @kickstartds/shared-auth run build
 RUN pnpm --filter @kickstartds/component-builder-mcp run build
 
 # Production stage — use pnpm deploy for a pruned, self-contained bundle

@@ -30,6 +30,7 @@
     "@kickstartds/core": "^4.1.0",
     "@kickstartds/design-system": "workspace:*",
     "@kickstartds/form": "^4.1.0",
+    "@kickstartds/shared-auth": "workspace:*",
     "@kickstartds/storyblok-services": "workspace:*",
     "@modelcontextprotocol/ext-apps": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.0.0",

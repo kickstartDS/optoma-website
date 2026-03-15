@@ -7,10 +7,13 @@
 
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { resolve, dirname } from "path";
 import { existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { createRoutes } from "./routes.js";
+import { createAuthRoutes, requireAuth } from "./auth.js";
+import { isAuthEnabled } from "@kickstartds/shared-auth";
 import type { StoryblokConfig } from "./storyblok.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -20,6 +23,13 @@ export function startServer(config: StoryblokConfig, port: number): void {
 
   // Enable CORS for dev mode (Vite on different port)
   app.use(cors());
+  app.use(cookieParser());
+
+  // Mount auth routes (login, logout, me) — unauthenticated
+  app.use(createAuthRoutes());
+
+  // Protect /api/tokens/* routes with auth middleware
+  app.use("/api/tokens", requireAuth);
 
   // Mount API routes
   const routes = createRoutes(config);
@@ -45,6 +55,11 @@ export function startServer(config: StoryblokConfig, port: number): void {
       `  OAuth Token: ${config.oauthToken ? config.oauthToken.slice(0, 8) + "..." : "(missing)"}`,
     );
     console.log(`  API Base: ${config.apiBase}`);
+    if (!isAuthEnabled()) {
+      console.log(
+        "  \u26a0 MCP_JWT_SECRET not set \u2014 authentication disabled. All requests are unauthenticated.",
+      );
+    }
     console.log();
   });
 }
