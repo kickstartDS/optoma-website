@@ -6,6 +6,12 @@ import { useEffect, useMemo, useState } from "react";
 import "./Preview.scss";
 import { Select } from "../controls/select/Select";
 import { useSearchParams } from "../utils/router";
+import { Code } from "../editor/toolbar/Code";
+import { Css } from "../editor/toolbar/Css";
+import { Load } from "../editor/toolbar/Load";
+import { Restore } from "../editor/toolbar/Restore";
+import { Save } from "../editor/toolbar/Save";
+import { SaveAs } from "../editor/toolbar/SaveAs";
 
 const widths = ["100%", "400px", "800px"];
 const pages = [
@@ -76,19 +82,32 @@ export const Preview = () => {
     <div className="preview">
       <AppBar position="static" elevation={0} className="preview__toolbar">
         <Toolbar variant="dense">
-          <Select options={pages} value={page} onChange={setPage} label="preview" />
+          <Select options={pages} value={page} onChange={setPage} label="preview:" />
           <Select
             options={widths.map((w) => ({ value: w, label: w }))}
             value={width}
             onChange={setWidth}
-            label="viewport"
+            label="viewport:"
           />
           <FormControlLabel
             control={
-              <Checkbox checked={inverted} onChange={(e) => setInverted(e.target.checked)} />
+              <Checkbox
+                checked={inverted}
+                onChange={(e) => setInverted(e.target.checked)}
+                size="small"
+                sx={{ color: "text.secondary" }}
+              />
             }
             label="Inverted?"
+            sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem', color: 'text.secondary' } }}
           />
+          <Box sx={{ flexGrow: 1 }} />
+          <Restore />
+          <Save />
+          <SaveAs />
+          <Load />
+          <Code />
+          <Css />
         </Toolbar>
       </AppBar>
       <Box className="preview__content">
