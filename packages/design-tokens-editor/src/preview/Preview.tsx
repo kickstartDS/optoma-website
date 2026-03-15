@@ -74,7 +74,7 @@ export const Preview = () => {
 
   return (
     <div className="preview">
-      <AppBar position="static" className="preview__toolbar">
+      <AppBar position="static" elevation={0} className="preview__toolbar">
         <Toolbar variant="dense">
           <Select options={pages} value={page} onChange={setPage} label="preview" />
           <Select

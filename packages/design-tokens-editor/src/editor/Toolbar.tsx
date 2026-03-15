@@ -10,7 +10,7 @@ import { SaveAs } from "./toolbar/SaveAs";
 
 export const EditorToolbar = () => {
   return (
-    <AppBar position="static">
+    <AppBar position="static" elevation={0}>
       <Toolbar variant="dense">
         <Box
           component="img"

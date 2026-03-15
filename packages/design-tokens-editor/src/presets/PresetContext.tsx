@@ -19,9 +19,12 @@ export interface PresetListEntry {
 export interface IPresetContext {
   presetName: string | undefined;
   preset: any | undefined;
-  presetNames: PresetListEntry[] | undefined;
+  presetNames: PresetListEntry[] | null | undefined;
   isSystemPreset: boolean;
-  getPresetList: () => Promise<void>;
+  getPresetList: (
+    url?: string,
+    options?: RequestInit,
+  ) => Promise<PresetListEntry[] | null>;
   selectPreset: (name: string) => void;
   savePreset: (tokens: any, name?: string | null) => Promise<void>;
 }
@@ -31,7 +34,9 @@ const PresetContext = createContext<IPresetContext>({
   preset: undefined,
   presetNames: undefined,
   isSystemPreset: false,
-  async getPresetList() {},
+  async getPresetList() {
+    return null;
+  },
   selectPreset() {},
   async savePreset() {},
 });

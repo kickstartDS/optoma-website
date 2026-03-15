@@ -1,28 +1,30 @@
 /* ── Schema Layer Editor — Minimal, functional CSS ─────────────────────── */
-/* Token values sourced from @kickstartds/design-system tokens.js              */
+/* Token values sourced from @kickstartds/design-system tokens.css              */
+/* DS token CSS is imported in main.tsx — all --ks-* properties are available   */
 
 :root {
-  --color-bg: #f3f3f4; /* KsBackgroundColorAccentBase */
-  --color-surface: #ffffff; /* KsBackgroundColorDefaultBase */
-  --color-surface-hover: #e4ebf7; /* KsColorPrimaryToBg8Base */
-  --color-surface-active: #cddaf0; /* KsColorPrimaryToBg7Base */
-  --color-border: #c3c4c9; /* KsColorFgToBg7Base */
-  --color-text: rgba(6, 8, 31, 0.76); /* KsTextColorDefaultBase */
-  --color-text-muted: rgba(6, 8, 31, 0.5); /* KsColorFgAlpha5Base */
-  --color-primary: #3065c0; /* KsColorPrimaryBase */
-  --color-primary-hover: #4b79c8; /* KsColorPrimaryToBg2Base */
-  --color-danger: #c0392b;
-  --color-success: #27864a;
-  --color-warning: #b8760c;
-  --color-hidden-bg: rgba(192, 57, 43, 0.06);
-  --font-mono:
-    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-    monospace; /* KsFontFamilyMono */
-  --font-sans:
-    system-ui, -apple-system, BlinkMacSystemFont, "Avenir Next", "Avenir",
-    "Segoe UI", "Lucida Grande", "Helvetica Neue", "Helvetica", "Fira Sans",
-    "Roboto", "Noto", "Droid Sans", "Cantarell", "Oxygen", "Ubuntu",
-    "Franklin Gothic Medium", "Century Gothic", "Liberation Sans", sans-serif; /* KsFontFamilyInterface */
+  --color-bg: var(--ks-background-color-accent-base);
+  --color-surface: var(--ks-background-color-default-base);
+  --color-surface-hover: var(--ks-color-primary-to-bg-8-base);
+  --color-surface-active: var(--ks-color-primary-to-bg-7-base);
+  --color-border: var(--ks-color-fg-to-bg-7-base);
+  --color-text: var(--ks-text-color-default-base);
+  --color-text-muted: var(--ks-color-fg-alpha-5-base);
+  --color-primary: var(--ks-color-primary-base);
+  --color-primary-hover: var(--ks-color-primary-to-bg-2-base);
+  --color-primary-bg: var(--ks-color-primary-alpha-8-base);
+  --color-danger: var(--ks-color-negative-base);
+  --color-danger-bg: var(--ks-color-negative-alpha-8-base);
+  --color-danger-bg-subtle: var(--ks-color-negative-alpha-9-base);
+  --color-success: var(--ks-color-positive-base);
+  --color-success-darker: var(--ks-color-positive-to-fg-1-base);
+  --color-success-bg: var(--ks-color-positive-alpha-8-base);
+  --color-warning: var(--ks-color-notice-base);
+  --color-warning-darker: var(--ks-color-notice-to-fg-2-base);
+  --color-warning-bg: var(--ks-color-notice-alpha-8-base);
+  --color-hidden-bg: var(--ks-color-negative-alpha-9-base);
+  --font-mono: var(--ks-font-family-mono);
+  --font-sans: var(--ks-font-family-interface);
 }
 
 * {
@@ -33,7 +35,7 @@
 
 body {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   background: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
@@ -58,7 +60,7 @@ body {
 }
 
 .app-header h1 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -130,17 +132,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 10px 12px;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--color-text-muted);
   position: sticky;
   top: 0;
   z-index: 2;
+  min-height: 42px;
+  box-sizing: border-box;
 }
 
 /* ── Content Type List ────────────────────────────────────────────────── */
@@ -169,14 +173,14 @@ body {
 }
 
 .content-type-name {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .content-type-badge {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-muted);
   background: var(--color-surface);
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: 8px;
 }
 
@@ -187,8 +191,8 @@ body {
 }
 
 .group-header {
-  padding: 6px 12px;
-  font-size: 11px;
+  padding: 8px 12px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -203,10 +207,10 @@ body {
 .component-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 8px;
+  padding: 8px 12px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   transition: background 0.1s;
 }
 
@@ -227,24 +231,24 @@ body {
 
 .override-indicator {
   color: var(--color-primary);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .field-type-small {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--color-text-muted);
 }
 
 .component-search {
   width: calc(100% - 24px);
-  margin: 4px 12px;
-  padding: 4px 8px;
+  margin: 6px 12px;
+  padding: 6px 8px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   color: var(--color-text);
-  font-size: 12px;
+  font-size: 13px;
   outline: none;
 }
 
@@ -254,7 +258,7 @@ body {
 
 .component-legend {
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-muted);
   line-height: 1.6;
 }
@@ -267,41 +271,79 @@ body {
 
 .field-row {
   border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.3s ease;
 }
 
 .field-row.field-hidden {
   background: var(--color-hidden-bg);
 }
 
+.field-row.field-reorder-flash {
+  animation: reorder-flash 0.6s ease-out;
+}
+
+@keyframes reorder-flash {
+  0% {
+    background-color: var(--color-primary-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.field-children {
+  border-top: 1px solid var(--color-border);
+}
+
 .field-row-main {
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  min-height: 38px;
+}
+
+.field-row-left {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  min-height: 32px;
+  gap: 8px;
+  min-width: 0;
+}
+
+.field-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .expand-btn {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background: none;
   border: none;
   color: var(--color-text-muted);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  border-radius: 4px;
+  transition: all 0.15s;
 }
 
 .expand-btn:hover {
   color: var(--color-text);
+  background: var(--color-surface-hover);
+}
+
+.expand-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .expand-spacer {
-  width: 20px;
-  flex-shrink: 0;
+  width: 24px;
 }
 
 .visibility-toggle {
@@ -309,29 +351,31 @@ body {
 }
 
 .visibility-toggle input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   accent-color: var(--color-primary);
 }
 
 .field-name {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text);
-  flex-shrink: 0;
-  min-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 80px;
 }
 
 .field-title-input {
-  flex: 1;
-  max-width: 200px;
-  padding: 2px 6px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 8px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: 4px;
   color: var(--color-text);
-  font-size: 12px;
+  font-size: 13px;
   outline: none;
   transition: border-color 0.15s;
 }
@@ -346,68 +390,101 @@ body {
 }
 
 .detail-btn {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   background: none;
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: 6px;
   color: var(--color-text-muted);
   cursor: pointer;
-  font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   transition: all 0.15s;
+}
+
+.detail-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .detail-btn:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.detail-btn-active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
 }
 
 .order-controls {
   display: flex;
   align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
+  gap: 4px;
 }
 
 .order-number {
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--color-text-muted);
+  min-width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  transition: all 0.2s ease;
+}
+
+.order-number-changed {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+  font-weight: 700;
 }
 
 .order-btn {
-  width: 18px;
-  height: 14px;
+  width: 30px;
+  height: 30px;
   background: none;
-  border: none;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
   color: var(--color-text-muted);
   cursor: pointer;
-  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s;
+}
+
+.order-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .order-btn:hover {
-  color: var(--color-text);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary);
 }
 
 /* ── Polymorphic Component Picker ─────────────────────────────────────── */
 
 .poly-count {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-muted);
   background: var(--color-surface);
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: 8px;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .poly-count.poly-restricted {
-  background: rgba(48, 101, 192, 0.1);
+  background: var(--color-primary-bg);
   color: var(--color-primary);
 }
 
@@ -425,7 +502,7 @@ body {
 }
 
 .poly-picker-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -446,11 +523,11 @@ body {
 .poly-picker-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 6px;
-  border-radius: 3px;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   transition: background 0.1s;
 }
 
@@ -477,7 +554,7 @@ body {
 /* ── Field Meta Row ───────────────────────────────────────────────────── */
 
 .field-row-meta {
-  padding: 0 12px 4px;
+  padding: 0 12px 6px;
 }
 
 .field-badges {
@@ -488,10 +565,11 @@ body {
 
 .badge {
   display: inline-block;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .badge-type {
@@ -500,49 +578,50 @@ body {
 }
 
 .badge-type-string {
-  color: #1a7a3a;
+  color: var(--color-success-darker);
 }
 
 .badge-type-boolean {
-  color: #2563a0;
+  color: var(--color-primary);
 }
 
 .badge-type-number,
 .badge-type-integer {
-  color: #9a6800;
+  color: var(--color-warning-darker);
 }
 
 .badge-type-object {
-  color: #7b3f9e;
+  color: var(--ks-color-informative-base, #7b3f9e);
 }
 
 .badge-type-array {
-  color: #8b4fb8;
+  color: var(--ks-color-informative-to-bg-2-base, #8b4fb8);
 }
 
 .badge-required {
-  background: rgba(184, 118, 12, 0.1);
-  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-darker);
+  font-weight: 600;
 }
 
 .badge-default {
-  background: rgba(48, 101, 192, 0.1);
-  color: #2563a0;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
 }
 
 .badge-hidden {
-  background: rgba(192, 57, 43, 0.08);
+  background: var(--color-danger-bg);
   color: var(--color-danger);
 }
 
 .badge-inherited {
-  background: rgba(192, 57, 43, 0.06);
+  background: var(--color-danger-bg-subtle);
   color: var(--color-text-muted);
   font-style: italic;
 }
 
 .badge-polymorphic {
-  background: rgba(48, 101, 192, 0.1);
+  background: var(--color-primary-bg);
   color: var(--color-primary);
   font-style: italic;
 }
@@ -550,34 +629,34 @@ body {
 /* Diff status badges */
 .badge-diff {
   font-weight: 600;
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
 .badge-diff-new {
-  background: rgba(39, 134, 74, 0.12);
-  color: #1a7a3a;
+  background: var(--color-success-bg);
+  color: var(--color-success-darker);
 }
 
 .badge-diff-changed {
-  background: rgba(184, 118, 12, 0.12);
-  color: #8a6200;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-darker);
 }
 
 .badge-diff-removed {
-  background: rgba(192, 57, 43, 0.1);
+  background: var(--color-danger-bg);
   color: var(--color-danger);
   text-decoration: line-through;
 }
 
 /* Stale override badge */
 .badge-stale {
-  background: rgba(184, 118, 12, 0.1);
-  color: #8a6200;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-darker);
   font-weight: 600;
-  font-size: 10px;
-  border: 1px dashed rgba(184, 118, 12, 0.3);
+  font-size: 11px;
+  border: 1px dashed var(--color-warning);
 }
 
 /* ── Field Detail Panel ───────────────────────────────────────────────── */
@@ -594,7 +673,7 @@ body {
 
 .detail-field label {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--color-text-muted);
   margin-bottom: 4px;
@@ -606,12 +685,12 @@ body {
 .detail-field input[type="number"] {
   width: 100%;
   max-width: 400px;
-  padding: 4px 8px;
+  padding: 6px 8px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   color: var(--color-text);
-  font-size: 12px;
+  font-size: 13px;
   outline: none;
   font-family: var(--font-sans);
   resize: vertical;
@@ -623,17 +702,17 @@ body {
 }
 
 .detail-readonly {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-muted);
   line-height: 1.8;
 }
 
 .detail-readonly code {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   background: var(--color-surface);
-  padding: 1px 4px;
-  border-radius: 2px;
+  padding: 2px 6px;
+  border-radius: 3px;
 }
 
 /* ── Bulk Actions ─────────────────────────────────────────────────────── */
@@ -644,12 +723,12 @@ body {
 }
 
 .bulk-btn {
-  padding: 3px 8px;
+  padding: 4px 10px;
   background: var(--color-surface-hover);
   border: 1px solid var(--color-border);
-  border-radius: 3px;
+  border-radius: 4px;
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -660,7 +739,7 @@ body {
 }
 
 .bulk-btn-danger:hover {
-  background: rgba(192, 57, 43, 0.08);
+  background: var(--color-danger-bg);
   border-color: var(--color-danger);
   color: var(--color-danger);
 }
@@ -679,7 +758,7 @@ body {
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--ks-color-fg-alpha-7-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -694,7 +773,7 @@ body {
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px var(--ks-color-fg-alpha-8-base);
 }
 
 .dialog-header {
@@ -706,7 +785,7 @@ body {
 }
 
 .dialog-header h2 {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -784,7 +863,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 4px 0;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .config-field label {
@@ -793,7 +872,7 @@ body {
 
 .config-field code {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   background: var(--color-bg);
   padding: 2px 6px;
   border-radius: 3px;
@@ -802,18 +881,18 @@ body {
 .save-result {
   padding: 12px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 8px;
 }
 
 .save-success {
-  background: rgba(39, 134, 74, 0.08);
-  border: 1px solid rgba(39, 134, 74, 0.25);
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
 }
 
 .save-error {
-  background: rgba(192, 57, 43, 0.06);
-  border: 1px solid rgba(192, 57, 43, 0.2);
+  background: var(--color-danger-bg-subtle);
+  border: 1px solid var(--color-danger);
 }
 
 .save-result-header {
@@ -855,7 +934,7 @@ body {
 
 .field-name-inline {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* ── Scrollbar ────────────────────────────────────────────────────────── */
@@ -900,8 +979,8 @@ body {
 }
 
 .safe-mode-on {
-  background: rgba(39, 134, 74, 0.08);
-  border-color: rgba(39, 134, 74, 0.35);
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
 }
 
 .safe-mode-off {
@@ -915,7 +994,7 @@ body {
 }
 
 .safe-mode-on .safe-mode-label {
-  color: #1a7a3a;
+  color: var(--color-success-darker);
 }
 
 /* ── Safety-protected fields ──────────────────────────────────────────── */
@@ -930,7 +1009,7 @@ body {
 }
 
 .safety-lock {
-  font-size: 11px;
+  font-size: 13px;
   margin-left: 2px;
   cursor: help;
 }

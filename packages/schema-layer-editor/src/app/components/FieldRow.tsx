@@ -2,7 +2,7 @@
  * Single field row with visibility toggle, title, description, type badge, and order.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { FieldNode, FieldOverride } from "../../shared/types.js";
 import { FieldBadges } from "./FieldBadges.js";
 import { useOverrides, getDiffStatus } from "../hooks/useOverrides.js";
@@ -38,6 +38,8 @@ export function FieldRow({
   const [expanded, setExpanded] = useState(depth < 2);
   const [detailOpen, setDetailOpen] = useState(false);
   const [polyPickerOpen, setPolyPickerOpen] = useState(false);
+  const [reorderFlash, setReorderFlash] = useState(false);
+  const prevIndexRef = useRef<number | null>(null);
 
   // Respond to expand/collapse all
   useEffect(() => {
@@ -48,6 +50,24 @@ export function FieldRow({
 
   const compOverrides = overrides.get(componentName) || new Map();
   const fieldOverride: FieldOverride = compOverrides.get(field.meta.path) || {};
+
+  // Compute sorted position and detect reorder
+  const sorted = sortFieldsByOrder(siblings, compOverrides);
+  const sortedIndex = sorted.findIndex((s) => s.meta.path === field.meta.path);
+  const originalIndex = [...siblings]
+    .sort((a, b) => a.meta.schemaOrder - b.meta.schemaOrder)
+    .findIndex((s) => s.meta.path === field.meta.path);
+  const isReordered = sortedIndex !== originalIndex;
+
+  // Flash animation when position changes
+  useEffect(() => {
+    if (prevIndexRef.current !== null && prevIndexRef.current !== sortedIndex) {
+      setReorderFlash(true);
+      const timer = setTimeout(() => setReorderFlash(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevIndexRef.current = sortedIndex;
+  }, [sortedIndex]);
   const isHidden = fieldOverride.hidden === true;
   const inheritedHidden = isParentHidden(compOverrides, field.meta.path);
   const effectivelyHidden = isHidden || inheritedHidden;
@@ -123,10 +143,11 @@ export function FieldRow({
 
   return (
     <div
-      className={`field-row ${effectivelyHidden ? "field-hidden" : ""}`}
-      style={{ paddingLeft: `${depth * 20}px` }}
+      className={`field-row ${effectivelyHidden ? "field-hidden" : ""} ${reorderFlash ? "field-reorder-flash" : ""}`}
     >
       <div className="field-row-main">
+        {/* Left block: indented expand + checkbox + name + poly count */}
+        <div className="field-row-left" style={{ paddingLeft: `${depth * 20}px` }}>
         {/* Expand/collapse for nested fields */}
         {hasChildren || hasPolyVariants ? (
           <button
@@ -146,7 +167,10 @@ export function FieldRow({
                 : "Expand"
             }
           >
-            {(hasPolyVariants ? polyPickerOpen : expanded) ? "▾" : "▸"}
+            {(hasPolyVariants ? polyPickerOpen : expanded)
+              ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+              : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            }
           </button>
         ) : (
           <span className="expand-spacer" />
@@ -199,6 +223,7 @@ export function FieldRow({
             {allowedCount}/{allVariants.length}
           </span>
         )}
+        </div>
 
         {/* Title override (inline editable) */}
         <input
@@ -216,20 +241,20 @@ export function FieldRow({
           }
         />
 
+        {/* Right block: edit + order controls, mirrored indentation */}
+        <div className="field-row-right" style={{ paddingRight: `${depth * 20}px` }}>
         {/* Detail edit button */}
         <button
-          className="detail-btn"
+          className={`detail-btn ${detailOpen ? "detail-btn-active" : ""}`}
           onClick={() => setDetailOpen(!detailOpen)}
           title="Edit details"
         >
-          ○
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
         </button>
 
         {/* Order controls */}
         <span className="order-controls">
-          {fieldOverride.order !== undefined && (
-            <span className="order-number">{fieldOverride.order}</span>
-          )}
+          <span className={`order-number ${isReordered ? "order-number-changed" : ""}`}>{sortedIndex + 1}</span>
           <button
             className="order-btn"
             onClick={() =>
@@ -243,7 +268,7 @@ export function FieldRow({
             }
             title="Move up"
           >
-            ▴
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15" /></svg>
           </button>
           <button
             className="order-btn"
@@ -258,15 +283,16 @@ export function FieldRow({
             }
             title="Move down"
           >
-            ▾
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
           </button>
         </span>
+        </div>
       </div>
 
       {/* Type badges row */}
       <div
         className="field-row-meta"
-        style={{ paddingLeft: `${depth * 20 + 56}px` }}
+        style={{ paddingLeft: `${depth * 20 + 62}px` }}
       >
         <FieldBadges
           meta={field.meta}
@@ -282,7 +308,6 @@ export function FieldRow({
       {detailOpen && (
         <div
           className="field-detail-panel"
-          style={{ paddingLeft: `${depth * 20 + 56}px` }}
         >
           <div className="detail-field">
             <label>Description</label>
@@ -394,7 +419,6 @@ export function FieldRow({
       {polyPickerOpen && hasPolyVariants && (
         <div
           className="poly-picker"
-          style={{ paddingLeft: `${depth * 20 + 56}px` }}
         >
           <div className="poly-picker-header">
             <span className="poly-picker-title">Allowed Components</span>

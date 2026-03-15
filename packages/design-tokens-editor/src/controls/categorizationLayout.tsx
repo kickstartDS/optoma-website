@@ -152,12 +152,12 @@ export const MaterialCategorizationLayoutRenderer = (
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" elevation={0}>
         <Tabs
           value={safeCategory}
           onChange={onTabChange}
-          textColor="inherit"
-          indicatorColor="secondary"
+          textColor="primary"
+          indicatorColor="primary"
           variant="scrollable"
         >
           {categories.map((_, idx: number) => (
@@ -165,7 +165,7 @@ export const MaterialCategorizationLayoutRenderer = (
           ))}
         </Tabs>
       </AppBar>
-      <div style={{ marginTop: "0.5em" }}>
+      <div style={{ padding: "12px 16px" }}>
         <MaterialLayoutRenderer {...childProps} key={safeCategory} />
       </div>
     </>
