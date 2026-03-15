@@ -229,7 +229,7 @@ export async function importContentIntoStory(
     }
   }
 
-  return importByPrompterReplacement(client, spaceId, {
+  return importByPrompterReplacement(client as any, spaceId, {
     storyUid,
     prompterUid,
     sections,
@@ -273,7 +273,7 @@ export async function insertContentAtPosition(
     }
   }
 
-  return importAtPosition(client, spaceId, {
+  return importAtPosition(client as any, spaceId, {
     storyUid,
     position,
     sections,

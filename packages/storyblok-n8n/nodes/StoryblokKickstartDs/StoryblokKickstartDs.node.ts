@@ -967,7 +967,7 @@ async function executeImport(
       }
 
       updatedStory = await insertContentAtPosition(
-        client,
+        client as any,
         spaceId,
         storyUid,
         positionIndex,
@@ -989,7 +989,7 @@ async function executeImport(
       ) as string;
 
       updatedStory = await importContentIntoStory(
-        client,
+        client as any,
         spaceId,
         storyUid,
         prompterUid,
