@@ -1,6 +1,5 @@
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import StoryblokClient from "storyblok-js-client";
 import { OpenAI } from "openai";
 import { tokensToCss } from "@kickstartds/design-system/tokens/tokensToCss.mjs";
 import { StoryblokConfig } from "./config.js";
@@ -168,8 +167,8 @@ export type {
  * MCP-specific methods (CRUD stories, components, assets, search) remain here.
  */
 export class StoryblokService {
-  private managementClient: StoryblokClient;
-  private contentClient: StoryblokClient;
+  private managementClient: any;
+  private contentClient: any;
   private spaceId: string;
 
   constructor(config: StoryblokConfig) {
@@ -189,7 +188,7 @@ export class StoryblokService {
   }
 
   /** Expose the content API client for shared functions that need it. */
-  getContentClient(): StoryblokClient {
+  getContentClient(): any {
     return this.contentClient;
   }
 
