@@ -8,7 +8,10 @@ export function isRevoked(user) {
     const raw = process.env.MCP_REVOKED_TOKENS || "";
     if (!raw)
         return false;
-    const entries = raw.split(",").map((e) => e.trim()).filter(Boolean);
+    const entries = raw
+        .split(",")
+        .map((e) => e.trim())
+        .filter(Boolean);
     for (const entry of entries) {
         const colonIdx = entry.indexOf(":");
         if (colonIdx === -1)
