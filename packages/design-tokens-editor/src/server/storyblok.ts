@@ -167,7 +167,9 @@ async function ensureThemesFolder(config: StoryblokConfig): Promise<number> {
 
 export interface ThemeListEntry {
   name: string;
+  displayName: string;
   system: boolean;
+  tokens?: string;
 }
 
 /** List all token themes with metadata. */
@@ -186,10 +188,28 @@ export async function listThemes(
   }
 
   const data = (await res.json()) as StoryblokListResponse;
-  return data.stories.map((s) => ({
-    name: s.slug,
-    system: s.content?.system === true,
-  }));
+
+  // Management API list endpoint doesn't return content fields.
+  // Fetch each story individually to get tokens, name, and system flag.
+  const entries: ThemeListEntry[] = await Promise.all(
+    data.stories.map(async (s) => {
+      const fullRes = await rateLimitedFetch(
+        `${getApiBase(config)}/spaces/${config.spaceId}/stories/${s.id}`,
+        { headers: headers(config) },
+      );
+      const content = fullRes.ok
+        ? ((await fullRes.json()) as StoryblokSingleResponse).story.content
+        : undefined;
+      return {
+        name: s.slug,
+        displayName: content?.name || s.name || s.slug,
+        system: content?.system === true,
+        tokens: (content?.tokens as string) || undefined,
+      };
+    }),
+  );
+
+  return entries;
 }
 
 /** Check if a token theme is system-managed (protected from modification). */

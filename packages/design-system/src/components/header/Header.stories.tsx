@@ -5,12 +5,12 @@ import { pack, unpack, getArgsShared } from "@kickstartds/core/lib/storybook";
 import { Header as HeaderComponent } from "./HeaderComponent";
 import schema from "./header.schema.dereffed.json";
 import customProperties from "./header-tokens.json";
-import * as themes from "../../themes";
+import { dsa } from "../../themes";
 
 const { args, argTypes } = getArgsShared(schema as JSONSchema7);
 export const headerProps = {
   ...unpack(args),
-  logo: themes.dsa.logo,
+  logo: dsa.logo,
 };
 const meta: Meta = {
   title: "Layout/Header",
@@ -35,7 +35,4 @@ export const Header: Story = {
       height: 226,
     },
   },
-  render: (args, { globals: { theme } }) => (
-    <HeaderComponent {...args} logo={themes[theme || "dsa"].logo} />
-  ),
 };

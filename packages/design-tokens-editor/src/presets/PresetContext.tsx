@@ -11,7 +11,9 @@ import { useGet, usePut } from "../utils/useFetch";
 
 export interface PresetListEntry {
   name: string;
+  displayName: string;
   system: boolean;
+  tokens?: string;
 }
 
 export interface IPresetContext {

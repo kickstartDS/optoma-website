@@ -28,7 +28,7 @@ const config: StorybookConfig = {
     const schemaIds = await processSchemaGlobs(
       ["src/components/**/*.schema.json"],
       ajv,
-      processingConfiguration
+      processingConfiguration,
     );
     const customSchemaIds = getCustomSchemaIds(schemaIds);
     const dereferencedSchemas = await dereference(customSchemaIds, ajv);
@@ -36,13 +36,13 @@ const config: StorybookConfig = {
     const modifiedManifests = existingManifests;
 
     for (const [manifestId, componentManifest] of Object.entries(
-      modifiedManifests.components.components
+      modifiedManifests.components.components,
     )) {
       const componentName = manifestId.split("-").slice(1).join("-");
       if (componentName.startsWith("archetypes-")) continue;
 
       const schemaPath = Object.keys(dereferencedSchemas).find((path) =>
-        path.endsWith(`${componentName}.schema.json`)
+        path.endsWith(`${componentName}.schema.json`),
       );
       if (!schemaPath) continue;
 
@@ -81,8 +81,16 @@ const config: StorybookConfig = {
     disableTelemetry: true,
   },
 
+  managerHead: (head) =>
+    `${head}<script>window.__STORYBLOK_TOKEN__=${JSON.stringify(process.env.STORYBLOK_API_TOKEN || "")}</script>`,
+
   viteFinal: async (config) => {
     return mergeConfig(config, {
+      define: {
+        STORYBLOK_API_TOKEN: JSON.stringify(
+          process.env.STORYBLOK_API_TOKEN || "",
+        ),
+      },
       optimizeDeps: {
         include: ["@storybook/addon-docs"],
       },

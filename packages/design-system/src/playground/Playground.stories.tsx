@@ -1,4 +1,3 @@
-import DemoPageControls from "./demo-page-controls/DemoPageControls";
 import ColorDemo from "./ColorDemoComponent";
 import FontDemo from "./FontDemoComponent";
 import SpacingDemo from "./SpacingDemoComponent";
@@ -15,62 +14,20 @@ export default {
 };
 
 export const Color = {
-  render() {
-    return (
-      <>
-        <DemoPageControls />
-        <ColorDemo />
-      </>
-    );
-  },
+  render: () => <ColorDemo />,
 };
 export const Font = {
-  render() {
-    return (
-      <>
-        <DemoPageControls />
-        <FontDemo />
-      </>
-    );
-  },
+  render: () => <FontDemo />,
 };
 export const Spacing = {
-  render() {
-    return (
-      <>
-        <DemoPageControls />
-        <SpacingDemo />
-      </>
-    );
-  },
+  render: () => <SpacingDemo />,
 };
 export const Shadow = {
-  render() {
-    return (
-      <>
-        <DemoPageControls />
-        <ShadowDemo />
-      </>
-    );
-  },
+  render: () => <ShadowDemo />,
 };
 export const Transition = {
-  render() {
-    return (
-      <>
-        <DemoPageControls />
-        <TransitionDemo />
-      </>
-    );
-  },
+  render: () => <TransitionDemo />,
 };
 export const Border = {
-  render() {
-    return (
-      <>
-        <DemoPageControls />
-        <BorderDemo />
-      </>
-    );
-  },
+  render: () => <BorderDemo />,
 };

@@ -414,6 +414,40 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.4.5)(happy-dom@13.10.1)(jsdom@28.1.0(@noble/hashes@1.8.0))(sass@1.97.3)(terser@5.46.0)
 
+  packages/storyblok-icon-sprite-picker-field-plugin:
+    dependencies:
+      '@storyblok/field-plugin':
+        specifier: ^1.0.0
+        version: 1.7.1(typescript@5.9.3)
+      '@storyblok/js':
+        specifier: ^3.1.4
+        version: 3.5.0
+      react:
+        specifier: ^19.2.1
+        version: 19.2.1
+      react-dom:
+        specifier: ^19.2.1
+        version: 19.2.1(react@19.2.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: ^5.1.2
+        version: 5.1.4(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^7.2.7
+        version: 7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+      vite-plugin-css-injected-by-js:
+        specifier: ^4.0.1
+        version: 4.0.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+
   packages/storyblok-mcp:
     dependencies:
       '@kickstartds/base':
@@ -13961,10 +13995,10 @@ snapshots:
 
   '@balena/dockerignore@1.0.2': {}
 
-  '@base-ui/react@1.2.0(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@base-ui/react@1.2.0(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
-      '@base-ui/utils': 0.2.5(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@base-ui/utils': 0.2.5(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@floating-ui/react-dom': 2.1.8(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@floating-ui/utils': 0.2.11
       react: 19.2.1
@@ -13972,9 +14006,9 @@ snapshots:
       tabbable: 6.4.0
       use-sync-external-store: 1.6.0(react@19.2.1)
     optionalDependencies:
-      '@types/react': 18.2.17
+      '@types/react': 19.2.14
 
-  '@base-ui/utils@0.2.5(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@base-ui/utils@0.2.5(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@floating-ui/utils': 0.2.11
@@ -13983,7 +14017,7 @@ snapshots:
       reselect: 5.1.1
       use-sync-external-store: 1.6.0(react@19.2.1)
     optionalDependencies:
-      '@types/react': 18.2.17
+      '@types/react': 19.2.14
 
   '@base2/pretty-print-object@1.0.1': {}
 
@@ -18463,7 +18497,7 @@ snapshots:
 
   '@types/react-dom@18.2.7':
     dependencies:
-      '@types/react': 18.2.17
+      '@types/react': 19.2.14
 
   '@types/react-dom@19.2.3(@types/react@19.2.14)':
     dependencies:
@@ -20076,10 +20110,10 @@ snapshots:
 
   clsx@2.1.1: {}
 
-  cmdk-base@1.0.0(@base-ui/react@1.2.0(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
+  cmdk-base@1.0.0(@base-ui/react@1.2.0(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1):
     dependencies:
-      '@base-ui/react': 1.2.0(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      '@base-ui/utils': 0.2.5(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@base-ui/react': 1.2.0(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@base-ui/utils': 0.2.5(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
     transitivePeerDependencies:
@@ -25272,14 +25306,14 @@ snapshots:
       '@babel/preset-env': 7.29.0(@babel/core@7.29.0)
       '@babel/preset-react': 7.28.5(@babel/core@7.29.0)
       '@babel/preset-typescript': 7.28.5(@babel/core@7.29.0)
-      '@base-ui/react': 1.2.0(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@base-ui/react': 1.2.0(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@capsizecss/metrics': 3.6.2
       '@capsizecss/vanilla-extract': 2.0.4(@vanilla-extract/css@1.18.0(babel-plugin-macros@3.1.0))
       '@soda/friendly-errors-webpack-plugin': 1.8.1(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.27.3))
       '@types/codemirror': 5.60.17
       '@types/prettier': 2.7.3
-      '@types/react': 18.2.17
-      '@types/react-dom': 18.2.7
+      '@types/react': 19.2.14
+      '@types/react-dom': 19.2.3(@types/react@19.2.14)
       '@vanilla-extract/css': 1.18.0(babel-plugin-macros@3.1.0)
       '@vanilla-extract/css-utils': 0.1.6
       '@vanilla-extract/dynamic': 2.1.5
@@ -25289,7 +25323,7 @@ snapshots:
       '@zumer/snapdom': 1.9.14
       babel-loader: 9.2.1(@babel/core@7.29.0)(webpack@5.105.3(@swc/core@1.15.18)(esbuild@0.27.3))
       clsx: 2.1.1
-      cmdk-base: 1.0.0(@base-ui/react@1.2.0(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@types/react@18.2.17)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      cmdk-base: 1.0.0(@base-ui/react@1.2.0(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@types/react@19.2.14)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       codemirror: 5.65.21
       command-line-args: 5.2.1
       command-line-usage: 6.1.3
