@@ -153,7 +153,7 @@ pnpm --filter @kickstartds/ruhmesmeile-storyblok-starter run update-storyblok-co
 
 This runs: `create-storyblok-config` → `rename-generated-config` → `pull-content-schema` → `merge-storyblok-config` → `push-components`
 
-The merge script preserves manually-added fields, maps tab UUIDs, and produces a report at `cms/merge-report.json`. See [docs/adr-storyblok-config-merge.md](docs/adr-storyblok-config-merge.md) for details.
+The merge script preserves manually-added fields, maps tab UUIDs, and produces a report at `cms/merge-report.json`. See [docs/adr/adr-storyblok-config-merge.md](docs/adr/adr-storyblok-config-merge.md) for details.
 
 ---
 
@@ -176,9 +176,12 @@ Set these in `.kamal/secrets` or your CI environment:
 | `STORYBLOK_OAUTH_TOKEN`      | Storyblok MCP, Design Tokens Editor | Runtime             |
 | `STORYBLOK_SPACE_ID`         | Storyblok MCP, Design Tokens Editor | Runtime             |
 | `OPENAI_API_KEY`             | Storyblok MCP                       | Runtime             |
+| `MCP_JWT_SECRET`             | All MCP servers, Design Tokens Editor | JWT signing secret |
 | `POSTGRES_PASSWORD`          | Umami Analytics                     | DB password         |
 
 > **Why two sets of Storyblok vars?** The website uses the `NEXT_` prefix (Next.js convention). The MCP server and token editor are standalone services that use unprefixed names. Both point to the same Storyblok space.
+
+> **JWT Auth:** `MCP_JWT_SECRET` enables authentication on all MCP servers and the Design Tokens Editor. Generate a secret and issue tokens with `scripts/issue-token.mjs`. See [docs/guides/authentication.md](docs/guides/authentication.md) for the full guide.
 
 ### Deploy Config Files
 

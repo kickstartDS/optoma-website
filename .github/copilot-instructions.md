@@ -11,6 +11,7 @@ packages/
   design-system/          — Core Design System (74+ React components, tokens, Storybook, Playroom)
   website/                — Next.js 13 site (Storyblok CMS, ISR, Visual Editor)
   storyblok-services/     — Shared library (schema, validation, transforms)
+  shared-auth/            — Shared JWT authentication library (HS256 verification, revocation)
   storyblok-mcp/          — Storyblok MCP server (content generation, CMS tools)
   storyblok-n8n/          — n8n community node for Storyblok workflows
   component-builder-mcp/  — MCP server (component-building instructions & templates)
@@ -357,9 +358,9 @@ Key env vars for deployment: `DOCKER_MCP_IMAGE_NAME`, `MCP_PUBLIC_DOMAIN`, `HOST
 - [packages/website/components/prompter/PrompterComponent.tsx](packages/website/components/prompter/PrompterComponent.tsx) - Prompter main UI component
 - [packages/website/components/prompter/usePrompter.ts](packages/website/components/prompter/usePrompter.ts) - Prompter state machine hook
 - [packages/website/pages/api/prompter/\_helpers.ts](packages/website/pages/api/prompter/_helpers.ts) - Shared helpers for Prompter API routes
-- [docs/prompter-reactivation-prd.md](docs/prompter-reactivation-prd.md) - Prompter reactivation PRD (all 5 phases)
+- [docs/internal/prd/prompter-reactivation-prd.md](docs/internal/prd/prompter-reactivation-prd.md) - Prompter reactivation PRD (all 5 phases)
 - [docs/skills/plan-page-structure.md](docs/skills/plan-page-structure.md) - Section-by-section generation workflow guide
-- [docs/guided-generation-plan.md](docs/guided-generation-plan.md) - Design document for guided content generation
+- [docs/internal/plans/guided-generation-plan.md](docs/internal/plans/guided-generation-plan.md) - Design document for guided content generation
 
 ## n8n Community Node
 
@@ -560,3 +561,50 @@ Use second argument in `editable()` for components with nested content:
 section: editable(Section, "components"),  // "components" is the blok field name
 slider: editable(Slider, "components"),
 ```
+
+## Authentication
+
+All hosted services (3 MCP servers + Design Tokens Editor) use **JWT authentication** with HS256 (HMAC-SHA256), implemented in the shared `packages/shared-auth/` package.
+
+### Architecture
+
+- **Single shared secret** (`MCP_JWT_SECRET` env var) used across all 4 services
+- **Graceful degradation**: when `MCP_JWT_SECRET` is unset, auth is disabled — backward-compatible for local development
+- **Token issuance**: Admin-only via CLI script `scripts/issue-token.mjs`
+- **Token revocation**: Comma-separated JTI blocklist via `MCP_REVOKED_TOKENS` env var
+
+### MCP Server Auth (Storyblok MCP, Design Tokens MCP, Component Builder MCP)
+
+- Bearer token in `Authorization` header: `Authorization: Bearer <jwt>`
+- Auth guard runs after CORS/OPTIONS handling but before body parsing
+- Returns JSON-RPC error `{code: -32001, message: "Unauthorized"}` on 401
+- MCP client config adds the header via `requestInit.headers`
+
+### Design Tokens Editor Auth
+
+- **Token-paste login**: User pastes a JWT into a login form, server verifies it and sets an `httpOnly` cookie
+- **Routes**: `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`
+- **Middleware**: `requireAuth` protects all `/api/tokens/*` routes (accepts cookie or Bearer header)
+- **SPA gating**: `main.tsx` checks `/api/auth/me` on load; shows `LoginPage` when unauthenticated
+
+### Key Files
+
+- [packages/shared-auth/src/verify.ts](packages/shared-auth/src/verify.ts) — `verifyToken()`, `extractBearerToken()`, `isAuthEnabled()`
+- [packages/shared-auth/src/revocation.ts](packages/shared-auth/src/revocation.ts) — `isRevoked()` via `MCP_REVOKED_TOKENS`
+- [scripts/issue-token.mjs](scripts/issue-token.mjs) — CLI for issuing JWTs (`--user`, `--role`, `--expires`, `--generate-secret`)
+- [packages/design-tokens-editor/src/server/auth.ts](packages/design-tokens-editor/src/server/auth.ts) — Editor auth routes + middleware
+- [packages/design-tokens-editor/src/LoginPage.tsx](packages/design-tokens-editor/src/LoginPage.tsx) — Token-paste login UI
+
+### Issuing Tokens
+
+```bash
+# Generate a secret (first time)
+node scripts/issue-token.mjs --generate-secret
+
+# Issue a token for a user
+MCP_JWT_SECRET=<secret> node scripts/issue-token.mjs --user alice --role admin --expires 90d
+```
+
+### Deployment
+
+All 4 Kamal deploy configs include `MCP_JWT_SECRET` in `env.secret`. Set the secret via `kamal env push`.
